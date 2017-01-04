@@ -1,0 +1,307 @@
+.pos-dialog .ui-dialog-titlebar-close
+{
+    display: none;
+}
+
+.pos-select-form-class .ui-dialog-titlebar-close
+{
+    display: none;
+}
+
+.pos-dialog
+{
+    position: static !important;
+    margin: 0 auto;
+}
+
+#pos-container-table
+{
+    width: 100%;
+    height: 100%;
+    vertical-align: top;
+}
+
+#pos-table
+{
+    border-top: 2px solid #4297D7;
+}
+
+#pos-table tbody td
+{
+    cursor: default;
+}
+
+#pos-container-table td
+{
+    vertical-align: top;
+}
+
+#pos-container-table #pos-table-header
+{
+    height: 60px;
+}
+
+#pos-table_filter
+{
+    display: none;
+}
+
+#pos-table_paginate
+{
+    display: none;
+}
+
+#pos-table_wrapper .ui-widget-header
+{
+    display: none;
+}
+
+#pos-table_wrapper div
+{
+    background-image: none;
+}
+
+#pos-table_wrapper .ui-toolbar
+{
+    padding: 0;
+}
+
+#pos-container-table .ui-widget-header
+{
+    background-position: top;
+}
+
+#pos-table-footer
+{
+    height: 10px;
+}
+
+#sale_details
+{
+    margin: 0 3px;
+    /*font-size: 18px;*/
+}
+
+#sale_details #sales_items
+{
+	height: 30px;
+    background: url("../images/pos/subtotals.png") no-repeat scroll left top transparent;
+    /*font-size: .7em;*/
+}
+
+#sale_details #sales_items td
+{
+    padding-top: 10px;
+}
+
+#sale_details #sales_items_total
+{
+    background: url("../images/pos/subtotals.png") no-repeat scroll left bottom transparent;
+    border-top: 1px solid #AAA;
+   /* font-size: 1.1em;
+    font-weight: bold;*/
+    margin-bottom: 10px;
+    width: 220px;
+}
+
+#sale_details .left
+{
+    height: 20px;
+    padding: 0 0 0 10px;
+    text-align: left;
+    vertical-align: bottom;
+}
+
+#sale_details .right
+{
+    height: 20px;
+    padding: 0 10px 0 0;
+    text-align: right;
+    vertical-align: bottom;
+}
+
+#sale_details table
+{
+    border-collapse: collapse;
+    width: 100%;
+}
+
+#sale_details #sales_items_total td
+{
+    height: 30px;
+    padding: 0 10px;
+    vertical-align: middle;
+}
+
+#amount_due
+{
+    border-bottom: 1px solid #BBB;
+    border-top: 1px solid #BBB;
+    width: 220px;
+}
+
+#make_payment
+{
+    background: url("../images/pos/payments.png") no-repeat scroll left bottom transparent;
+   /* font-size: .95em;*/
+    width: 220px;
+}
+
+#amount_due td
+{
+    background: none repeat scroll 0 0 #FF8;
+    height: 30px;
+    padding: 0 10px;
+}
+
+#make_payment_table
+{
+    margin: auto;
+    width: 200px;
+}
+
+#mpt_top
+{
+    height: 30px;
+}
+
+#mpt_top td
+{
+    vertical-align: middle;
+}
+
+#payment_types
+{
+   /* font-size: 1.50em;*/
+}
+
+#pos-seoy
+{
+    position: relative;
+    -moz-border-radius: 16px;
+    -webkit-border-radius: 16px;
+    border-radius: 16px;
+}
+
+#pos-seoy #seoy-input
+{
+    border: none;
+    color: #888;
+    background: url("../images/pos/search_box.png") no-repeat;
+    float: left;
+   /* font-size: 15px;*/
+    height: 36px;
+    line-height: 36px;
+    margin-right: 12px;
+    outline: medium none;
+    padding: 0 0 0 35px;
+    text-shadow: 1px 1px 0 white;
+    width: 588px;
+    margin: 10px 0 10px 10px;
+}
+
+#seoy_button
+{
+    float: right;
+    margin: 10px 10px 10px 0;
+    padding: 1px 0;
+}
+
+#make_payment
+{
+    margin: 0 3px;
+    -moz-border-radius: 6px;
+    -webkit-border-radius: 6px;
+    border-radius: 6px;
+}
+
+#make_payment #pay_box
+{
+    text-align: right;
+}
+
+#make_payment #pay_box input
+{
+    border: 1px solid #999;
+    border-radius: 4px 4px 4px 4px;
+    /*font-size: 1.5em;*/
+    padding: 4px 5px;
+    text-align: right;
+    width: 210px;
+    height: 32px;
+}
+
+#pay_box
+{
+    padding: 5px 5px;
+}
+#add_payment
+{
+    padding: 4px;
+    margin: 0 50px;
+}
+
+#add_payment_button
+{
+    padding: 5px 5px;
+}
+
+.pos-prod-delete
+{
+    background: url("../images/pos/delete_prod.png") no-repeat;
+    width: 16px;
+    height: 16px;
+    text-indent: -9999px;
+    cursor: pointer;
+	display: block;
+}
+
+#pos_title
+{
+    background: url("../images/pos/shopping_icon.png") no-repeat;
+    background-size: 35px;
+    width: 550px;
+    height: 36px;
+    left: 15px;
+    top: 15px;
+    position: absolute;
+}
+
+#pos_title span
+{
+    /*font-size: 24px;*/
+    margin-left: 40px;
+}
+
+#sale_type
+{
+    padding: 5px 28px;
+    background-position: center !important;
+    float: right;
+}
+
+#sale_type #sale_price
+{
+    border: solid 1px #85b1de;
+    height: 26px;
+    width: 105px;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
+}
+
+#pos_buttons
+{
+    margin: 0 3px;
+    padding: 1px 1px;
+    background-position: center !important;
+    width: 400px;
+    position: absolute;
+    right: 15px;
+    top: 15px;
+}
+
+#save_trans_button
+{
+    margin-left: 16px;
+}

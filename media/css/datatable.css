@@ -1,0 +1,280 @@
+body {
+    font-size: 13px;
+	font-family: BPG arial;
+}
+ 
+@font-face {
+	font-family: "BPG Arial";
+	src:	url("../fonts/bpg_arial.eot");
+	src:	url("../fonts/bpg_arial.eot?#iefix") format("embedded-opentype"),
+			url("../fonts/bpg_arial.ttf") format("truetype"),
+			url("../fonts/bpg_arial.svg#JournalRegular") format("svg");
+}
+
+h2{
+	font-size: 16px;
+	font-family: BPG arial;
+}
+
+span{
+	font-family: BPG arial;
+}
+
+label{
+	font-size: 11px;
+	font-family: BPG arial;
+	font-weight: normal;
+	padding: 0 0 3px 1px;
+	display: block;
+}
+table{
+	font-size: 13px;
+	font-family: BPG arial !important;
+}
+table td{
+    font-size: 11px;
+    font-family: BPG arial !important;
+}
+input{
+	font-size: 13px;
+	font-family: BPG arial !important;
+}
+.ui-widget-header{
+	font-size: 13px;
+	font-family: BPG arial !important;;
+}
+
+.clear{
+	clear: both;
+	display: block;
+	overflow: hidden;
+	visibility: hidden;
+	width: 0;
+	height: 10px;
+}
+
+.left{
+	float: left !important;
+}
+
+.right{
+	float: right !important;
+}
+
+.center{
+	margin: 0 auto !important;
+	display: block !important;
+}
+
+.price
+{
+    width: 90px !important;
+}
+
+.num
+{
+    width: 100px !important;
+}
+
+.user_id
+{
+    width: 90px !important;
+}
+
+.address
+{
+    width: 225px !important;
+}
+
+.small
+{
+    width: 55px !important;
+}
+
+.medium
+{
+    width: 120px !important;
+}
+
+.large
+{
+    width: 320px !important;
+}
+
+.date
+{
+    width: 75px !important;
+}
+
+.date_time
+{
+    width: 125px !important;
+}
+
+.comment{
+	height: 70px !important;
+}
+
+.high{
+	height: 40px;
+}
+
+.form-dialog{
+	display: none;
+}
+
+#seller{
+	width:100%;
+	overflow:hidden;
+	
+}
+#seller ul li{
+	float: left;
+	margin-left:5px;
+	list-style: none;
+	margin-top: 15px;
+	margin-bottom: 5px;
+	
+}
+
+#seller ul li {
+	background: #5F98DF;
+	display: block;
+	padding:5px 15px;
+	color: white;
+	font-weight: bold;
+	text-decoration: none;
+	cursor: pointer;
+}
+
+#research{
+	width:100%;
+    overflow:hidden;
+}
+
+#research ul li{
+    float: left;
+    margin-left:5px;
+    list-style: none;
+    margin-top: 15px;
+    margin-bottom: 5px;
+	background: #5F98DF;
+    display: block;
+    padding:5px 15px;
+    color: white;
+    font-weight: bold;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.seller_select {
+	background: #FFF !important;
+	color: #5F98DF !important;
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+}
+ 
+::-webkit-scrollbar-track {
+    background-color: #C8D6DC;
+    
+}
+ 
+::-webkit-scrollbar-thumb {
+      
+    background-color: #AFAFAF;
+}
+
+.callapp_checkbox {
+	width: 10px;
+	margin: auto;
+	position: relative;
+}
+.callapp_checkbox label {
+	margin-top: 2px;
+	width: 10px;
+	height: 10px;
+	cursor: pointer;
+	position: absolute;
+	top: 0;
+	left: 0;
+	background: #F9F9F9;
+	background: linear-gradient(top, #fcfff4 0%, #dfe5d7 40%, #b3bead 100%);
+	border-radius: 3px;
+	box-shadow: inset 0px 1px 1px white, 0px 1px 3px rgba(0,0,0,0.5);
+}
+.callapp_checkbox label:after {
+	content: '';
+	width: 6px;
+	height: 2px;
+	position: absolute;
+	top: 3px;
+	left: 1px;
+	border: 3px solid #333;
+	border-top: none;
+	border-right: none;
+	background: transparent;
+	opacity: 0;
+	transform: rotate(-45deg);
+}
+.callapp_checkbox label:hover::after {
+	opacity: 0.5;
+}
+.callapp_checkbox input[type=checkbox] {
+	visibility: hidden;
+}
+.callapp_checkbox input[type=checkbox]:checked + label:after {
+	opacity: 1;
+}
+
+.callapp_head{
+	font-family: pvn;
+	font-weight: bold;
+	font-size: 20px;
+	color: #2681DC;
+}
+.callapp_head_hr{
+	border: 1px solid #2681DC;
+}
+#table_right_menu{
+    position: relative;
+    float: right;
+    width: 70px;
+    top: 28px;
+	z-index: 99;
+	border: 1px solid #E6E6E6;
+	padding: 4px;
+}
+.ColVis, .dataTable_buttons{
+	z-index: 100;
+}
+#stepby{
+	margin: auto;
+}
+#stepby td{
+    padding: 6px 12px;border: 1px solid #2681DC;
+	cursor: pointer;
+	font-family: pvn !important;
+	font-size: 12px;
+	font-weight: bold;
+	color: #2681DC
+}
+#stepby td:HOVER{    
+	color: #FFF;
+	background: #2681DC;
+}
+#instruqcia{
+	margin: auto;
+	width: 50px;
+	margin-bottom: 5px;
+	color: #2681DC;
+	font-family: pvn !important;
+	font-size: 13px;
+	font-weight: bold;
+}
+tfoot tr th{
+	padding: 1px;
+	font-size: 10px;
+	text-align: right;
+}

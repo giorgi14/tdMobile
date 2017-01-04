@@ -1,0 +1,78 @@
+tr.odd
+{
+    border: 1px solid #C5DBEC;
+    background: #DFEFFC url(images/ui-bg_glass_85_dfeffc_1x400.png) 50% 50% repeat-x;
+}
+
+.ex_highlight_row .display tr.odd:hover
+{
+    background: #DFEFFC url(images/ui-bg_glass_75_d0e5f5_1x400.png) 50% 50% repeat-x;
+}
+
+tr.odd td.sorting_1
+{
+    background-color: #CBE1FC;
+    background: #DFEFFC url(images/ui-bg_glass_75_d0e5f5_1x400.png) 50% 50% repeat-x;
+}
+
+.search_header
+{
+	background-color: #F1F7FD;
+}
+
+.search_header th
+{
+    border: 1px solid #C5DBEC;
+}
+
+tr.even td.sorting_1 {
+	background-color: #DFEFFC;
+}
+
+.ex_highlight_row .display tr.even:hover td.sorting_1
+{
+    background-color: #D5E9FC;
+}
+
+tr.even
+{
+    background-color: white;
+    border-left: 1px solid #cccccc;
+    border-right: 1px solid #cccccc;
+}
+
+.ex_highlight_row .display tr.even:hover
+{
+    background-color: #F1F7FD;
+}
+
+.dialog-form-inner-table
+{
+	width: 100%;
+    border: solid 1px #A6C9E2;
+}
+
+.dialog-form-inner-table th
+{
+	height: 30px;
+	text-align: center;
+	vertical-align: middle;
+}
+
+.dialog-form-inner-table td
+{
+	padding: 1px 10px;
+	vertical-align: middle;
+}
+
+.dialog-form-inner-table tr:nth-child(2n+1) {
+	background-color: #F2F3F3;
+	background: #dfeffc url(../themes/jQuery-UI/redmond/images/ui-bg_glass_85_dfeffc_1x400.png) 50% 50% repeat-x;
+	border: 1px solid #C5DBEC;
+}
+
+.dialog-form-inner-table tr:nth-child(2n+0) {
+	background-color: #FFF;
+	border-left: 1px solid #C5DBEC;
+	border-right: 1px solid #C5DBEC;
+}

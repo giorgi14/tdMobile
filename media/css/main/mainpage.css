@@ -1,0 +1,204 @@
+/* TILES  */
+
+table.tiles td
+{
+    padding: 4px;
+    vertical-align: top;
+    max-width: 320px;
+}
+
+table.tiles .tile_small:hover, table.tiles .tile_large:hover
+{
+    background-color: #494949 !important;
+    cursor: pointer;
+    box-shadow: 0px 0px 5px #505050;
+    transition: background 350ms linear 0s;
+    -webkit-transition: background 350ms linear 0s;
+}
+
+table.tiles .tile_small:active, table.tiles .tile_large:active
+{
+    transform: scale(0.98);
+    -ms-transform: scale(0.98);
+    -webkit-transform: scale(0.98);
+    -o-transform: scale(0.98);
+}
+
+.tile_while
+{
+    background: none repeat scroll 0 0 #FFFFFF;
+}
+
+    .tile_while > p
+    {
+        color: black;
+    }
+
+    .tile_while:hover
+    {
+    }
+
+
+.tiles .tile_icon
+{
+    float: left;
+}
+
+    .tiles .tile_icon > img
+    {
+        background: url(/img1/mainpage/sprite.png);
+    }
+
+
+.tile_small
+{
+    height: 90px;
+    display: table;
+    width: 130px;
+    border-radius: 5px 5px 5px 5px;
+    color: #FFFFFF;
+    float: left;
+    font-size: 13px;
+    margin-right: 10px;
+    margin-top: 10px;
+    text-align: center;
+    width: 135px;
+    padding: 8px;
+}
+
+    .tile_small > p
+    {
+        display: table-cell;
+        vertical-align: middle;
+        line-height: 1.2;
+    }
+
+    .tile_small > .tile_icon
+    {
+        float: none !important;
+    }
+
+.tile_large
+{
+    width: 270px;
+    height: 80px;
+    border-radius: 5px;
+    font-size: 20px;
+    font-weight: bold;
+    padding: 10px 0 0 10px;
+    color: #FFF;
+    margin-top: 10px;
+    position: relative;
+    float:left;
+}
+
+    .tile_large .tile_icon > img
+    {
+        background-position: -3px -18px;
+    }
+
+    .tile_large span
+    {
+        font-size: 11px;
+        display: block;
+        color: white;
+        font-weight: normal;
+        padding-top: 0px;
+    }
+
+
+
+
+.tile_waybill_notification
+{
+    position: relative;
+    float: left;
+    border-radius: 10px;
+    background-color: #FFF;
+    width: 50px;
+    height: 15px;
+    margin-left: 5px;
+    font-size: 10px;
+    font-weight: normal;
+}
+
+    .tile_waybill_notification > img
+    {
+        margin: 3px 0 0 4px;
+        width: 10px;
+        height: 12px;
+        background: url(/img1/mainpage/sprite.png);
+    }
+
+    .tile_waybill_notification > span
+    {
+        position: absolute;
+        left: 0px;
+        top: 0px;
+        padding: 0;
+        color: #709c0e;
+        left: 18px;
+        font-size: 11px;
+        margin-top: 2px;
+    }
+
+.app_new
+{
+    color: #0C6A57;
+    text-decoration: underline;
+    cursor: pointer;
+    display: block;
+    font-size: 13px;
+    height: 25px;
+    padding: 9px 0 0 10px;
+    text-align: left;
+    width: 600px;
+    font-size: 16px;
+}
+
+.app_new_container a
+{
+    text-decoration: none !important;
+}
+
+    .app_new:hover
+    {
+        font-style: italic;
+    }
+
+
+.temp_Popup
+{
+    position: absolute;
+    background-color: white;
+    z-index: 10;
+    margin-left: 200px;
+    margin-top: 50px;
+    box-shadow: 0 5px 15px #505050;    
+    visibility: hidden;
+}
+
+    .temp_Popup > div
+    {
+        padding:10px;
+    }
+
+    .temp_Popup .popup_header_green
+    {
+        padding-bottom: 0px !important;   
+        font-size: 14px;
+        font-weight: bold;
+        height: 30px !important;
+    }
+
+    .popup_header_green img
+    {
+        float:right;
+        background:url("/img1/header/common_sprite.png") no-repeat scroll -100px -3px transparent;
+        cursor: pointer;
+    }
+
+.temp_Popup .poll_mainDiv
+{
+    width: 650px;
+}
