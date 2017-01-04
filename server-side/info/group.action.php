@@ -64,13 +64,13 @@ switch ($action) {
 									FROM      `pages`
 									LEFT JOIN `menu_detail` ON `menu_detail`.`page_id` = `pages`.`id`
 									LEFT JOIN `group_permission` ON group_permission.page_id = `pages`.`id` && `group_permission`.`group_id` = $group_id
-									WHERE     ((`menu_detail`.`parent` != 0 && menu_detail.url = '#') || (menu_detail.url = '')) ");
+									WHERE     ((`menu_detail`.`parent` != 0 && menu_detail.url = '#') || (menu_detail.url = '')) AND menu_detail.page_id != 3");
 		}else {
 			$rResult = mysql_query("SELECT    `pages`.`id`,
     								          `menu_detail`.`title`
     								FROM      `pages`
     								LEFT JOIN `menu_detail` ON `menu_detail`.`page_id` = `pages`.`id`
-    								WHERE     (`menu_detail`.`parent` != 0 && menu_detail.url = '#') || (menu_detail.url = '')");
+    								WHERE     (`menu_detail`.`parent` != 0 && menu_detail.url = '#') || (menu_detail.url = '') AND menu_detail.page_id != 3");
 		}	
 		
 		$data = array("aaData"	=> array());
@@ -164,7 +164,7 @@ function SaveGroup($group_name, $group_pages){
 	mysql_query("INSERT	INTO `group_permission`
 					(`group_permission`.`group_id`, `group_permission`.`page_id`)
 				VALUES
-					('$group_id','7')");
+					('$group_id','3')");
 
 	
 	foreach($parrentaray as $parrent) {
@@ -181,22 +181,21 @@ function UpdateGroup($group_id, $group_pages, $group_name){
 	
 	mysql_query("UPDATE  `group`
 					SET  `name` = '$group_name'
-			      WHERE  `id`  = $group_id
-	");
+			      WHERE  `id`  = $group_id");
 	
 	$parrentaray = array();
 	foreach($group_pages as $group_page) {
 		mysql_query("INSERT	INTO `group_permission`
-		(`group_permission`.`group_id`, `group_permission`.`page_id`)
-		VALUES
-		('$group_id','$group_page')");
+            		            (`group_permission`.`group_id`, `group_permission`.`page_id`)
+            		      VALUES
+            		            ('$group_id','$group_page')");
 	
 	
 		$res = mysql_fetch_assoc( mysql_query("	SELECT		`menu_detail`.`parent` as `parent_id`
-				FROM		`pages`
-				LEFT JOIN	`menu_detail` ON `menu_detail`.`page_id` = `pages`.`id`
-				LEFT JOIN	`menu_detail` as `menu_detail1` ON `menu_detail1`.`id` =  `menu_detail`.`parent`
-				WHERE		`pages`.`id` = '$group_page' AND `menu_detail`.`parent` != 0 "));
+                                				FROM		`pages`
+                                				LEFT JOIN	`menu_detail` ON `menu_detail`.`page_id` = `pages`.`id`
+                                				LEFT JOIN	`menu_detail` as `menu_detail1` ON `menu_detail1`.`id` =  `menu_detail`.`parent`
+                                				WHERE		`pages`.`id` = '$group_page' AND `menu_detail`.`parent` != 0 "));
 		if( !in_array($res['parent_id'], $parrentaray) ){
 			array_push($parrentaray, $res['parent_id']);
 		}
@@ -205,22 +204,22 @@ function UpdateGroup($group_id, $group_pages, $group_name){
 											FROM	`pages`
 											WHERE	`pages`.`name` = 'logout'"));
 	mysql_query("INSERT	INTO `group_permission`
-	(`group_permission`.`group_id`, `group_permission`.`page_id`)
-	VALUES
-	('$group_id','$res[id]')");
+                        	(`group_permission`.`group_id`, `group_permission`.`page_id`)
+                      VALUES
+                        	('$group_id','$res[id]')");
 	
 	
 	mysql_query("INSERT	INTO `group_permission`
-	(`group_permission`.`group_id`, `group_permission`.`page_id`)
-	VALUES
-	('$group_id','7')");
+                        	(`group_permission`.`group_id`, `group_permission`.`page_id`)
+                      VALUES
+                        	('$group_id','3')");
 	
 	
 	foreach($parrentaray as $parrent) {
 		mysql_query("INSERT	INTO `group_permission`
-		(`group_permission`.`group_id`, `group_permission`.`page_id`)
-		VALUES
-		('$group_id','$parrent')");
+                        		(`group_permission`.`group_id`, `group_permission`.`page_id`)
+                          VALUES
+                        		('$group_id','$parrent')");
 	
 	}
 	
@@ -246,7 +245,7 @@ function GetGroupNameById($group_id){
 
 function ClearForUpdate($group_id){
 	mysql_query("DELETE FROM group_permission
-				       WHERE group_id = $group_id");
+				 WHERE group_id = $group_id");
 }
 
 function GetGroupPage($res = ''){

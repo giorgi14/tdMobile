@@ -60,7 +60,7 @@ switch ($action) {
 		$tin 				= $_REQUEST['t'];
 		$position 			= $_REQUEST['p'];
 		$address 			= htmlspecialchars($_REQUEST['a'], ENT_QUOTES);
-		$image				= $_REQUEST['img'];
+		$file_id			= $_REQUEST['file_id'];
 		$password			= $_REQUEST['pas'];
 		$home_number		= $_REQUEST['h_n'];
 		$mobile_number		= $_REQUEST['m_n'];
@@ -75,12 +75,12 @@ switch ($action) {
 
 		if(empty($persons_id)){
 			if($CheckUser){
-				AddWorker($user_id, $name, $tin, $position, $address, $image, $password, $home_number, $mobile_number, $comment,  $user, $userpassword, $group_permission);
-				}else{
-					$error = "მომხმარებელი ასეთი სახელით  უკვე არსებობს\nაირჩიეთ სხვა მომხმარებლის სახელი";
-				}
+				AddWorker($user_id, $name, $tin, $position, $address, $password, $home_number, $mobile_number, $comment,  $user, $userpassword, $group_permission, $file_id);
+			}else{
+				$error = "მომხმარებელი ასეთი სახელით  უკვე არსებობს\nაირჩიეთ სხვა მომხმარებლის სახელი";
+			}
 		}else{
-			SaveWorker($persons_id, $user_id, $name, $tin, $position, $address, $image, $password, $home_number, $mobile_number, $comment,  $user, $userpassword, $group_permission);
+			SaveWorker($persons_id, $user_id, $name, $tin, $position, $address, $password, $home_number, $mobile_number, $comment,  $user, $userpassword, $group_permission);
 		}
 
 
@@ -90,28 +90,30 @@ switch ($action) {
 		DisableWorker($per_id);
 
         break;
-	case 'delete_image':
-		$pers_id 		= $_REQUEST['id'];
-		DeleteImage($pers_id);
-
-		break;
+    case 'update_file_id':
+        $per_id  = $_REQUEST['pers_id'];
+        $file_id = $_REQUEST['file_id'];
+        
+        mysql_query("UPDATE `user_info` 
+                        SET `file_id` = '$file_id'
+                     WHERE  `user_id` =  $per_id");
+        
+        break;
+    case 'delete_file_id':
+        $per_id  = $_REQUEST['pers_id'];
+    
+        mysql_query("UPDATE `user_info`
+                        SET `file_id` = '0'
+                     WHERE  `user_id` =  $per_id");
+    
+        break;
+	
 	case 'view_img':
 	    $page		= GetIMG($_REQUEST[id]);
 	    $data		= array('page'	=> $page);
 	     
 	    break;
-	case 'clear':
-		$file_list = $_REQUEST['file'];
-		ClearProduct();
-		if (!empty($file_list)) {
-			$file_list = ClearFiles(json_decode($file_list));
-		}
-		$data = array('file_list' => json_encode($file_list));
-
-
-
-
-    default:
+	default:
        $error = 'Action is Null';
 }
 
@@ -228,7 +230,7 @@ function ClearProduct() {
 	}
 }
 
-function AddWorker($user_id, $name, $tin, $position, $address, $image, $password, $home_number, $mobile_number, $comment,  $user, $userpassword, $group_permission)
+function AddWorker($user_id, $name, $tin, $position, $address, $password, $home_number, $mobile_number, $comment,  $user, $userpassword, $group_permission, $file_id)
 {
     if($user != '' && $userpassword !='' && $group_permission !=''){
         $ext			= $_REQUEST['ext'];
@@ -245,13 +247,13 @@ function AddWorker($user_id, $name, $tin, $position, $address, $image, $password
     $persons_id = mysql_insert_id();
     
 	mysql_query("INSERT INTO `user_info`
-					(`user_id`, `name`, `tin`, `position_id`, `address`, `image`, `home_phone`, `mobile_phone`, `comment`)
+					(`user_id`, `name`, `tin`, `position_id`, `address`, `home_phone`, `mobile_phone`, `comment`, `file_id`)
 				 VALUES
-					($persons_id, '$name', '$tin', $position, '$address', '$image', '$home_number', '$mobile_number', '$comment')");
+					($persons_id, '$name', '$tin', $position, '$address', '$home_number', '$mobile_number', '$comment', '$file_id')");
 
 }
 
-function SaveWorker($persons_id, $user_id, $name, $tin, $position, $address, $image, $password, $home_number, $mobile_number, $comment, $user, $userpassword, $group_permission)
+function SaveWorker($persons_id, $user_id, $name, $tin, $position, $address, $password, $home_number, $mobile_number, $comment, $user, $userpassword, $group_permission)
 {
 	mysql_query("UPDATE `user_info` SET
                     	`user_id`		= '$persons_id',
@@ -259,7 +261,6 @@ function SaveWorker($persons_id, $user_id, $name, $tin, $position, $address, $im
                     	`tin`			= '$tin',
                     	`position_id`	= $position,
                     	`address`		= '$address',
-                    	`image`			= '$image',
                     	`home_phone`	= '$home_number',
                     	`mobile_phone`  = '$mobile_number',
                     	`comment`		= '$comment'
@@ -348,7 +349,7 @@ function GetWorker($per_id){
                                     				`user_info`.`comment` as `comment`
                                             FROM	`user_info`
                                             LEFT JOIN	`users` ON `users`.`id` = `user_info`.`user_id`
-                                            LEFT JOIN	`file` ON `users`.`id` = `file`.`users_id`
+                                            LEFT JOIN	`file` ON `user_info`.`file_id` = `file`.`id`
                                             WHERE	`user_info`.`user_id` = '$per_id'"));
 	return $res;
 }
@@ -458,7 +459,7 @@ function GetPage($res = '')
 				</div>
 				<div style=" margin-top: 2px; ">
 					<div style="width: 170px; display: inline; margin-top: 5px;"><label for="group_permission" style="float:left;">ჯგუფი :</label>
-						<select id="group_permission" class="idls" style="display: inline; margin-left: 101px;">' . GetGroupPermission( $res['group_id'] ) . '</select>
+						<select  id="group_permission" class="idls" style="display: inline; margin-left: 101px; width: 165px;">' . GetGroupPermission( $res['group_id'] ) . '</select>
 					</div>
 				</div>
 			  </div>
@@ -491,6 +492,7 @@ function GetPage($res = '')
 			</table>
         </fieldset>
 		<input type="hidden" id="pers_id" value="' . $res['id'] . '" />
+		<input type="hidden" id="file_id" value="" />
 		<input type="hidden" id="is_user" value="'; 
 		$incUs = mysql_fetch_array(mysql_query("SELECT id+1 AS `id` FROM users ORDER BY id DESC LIMIT 1"));
 		$data .= $incUs[0];

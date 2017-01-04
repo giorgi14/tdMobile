@@ -56,25 +56,25 @@
 			param = new Object();
 
             //Action
-	    	param.act	= "save_pers";
+	    	param.act	  = "save_pers";
 
-		    param.id	= $("#pers_id").val();
+		    param.id	  = $("#pers_id").val();
 
-		    param.n		= $("#name").val();
-		    param.t		= $("#tin").val();
-		    param.p		= $("#position").val();
-		    param.dep_id= $("#dep_id").val();
-		    param.a		= $("#address").val();
-		    param.pas	= $("#password").val();
-		    param.h_n	= $("#home_number").val();
-		    param.m_n	= $("#mobile_number").val();
-		    param.comm	= $("#comment").val();
+		    param.n		  = $("#name").val();
+		    param.t		  = $("#tin").val();
+		    param.p		  = $("#position").val();
+		    param.dep_id  = $("#dep_id").val();
+		    param.a		  = $("#address").val();
+		    param.pas	  = $("#password").val();
+		    param.h_n	  = $("#home_number").val();
+		    param.m_n	  = $("#mobile_number").val();
+		    param.comm	  = $("#comment").val();
 
-		    param.user	= $("#user").val();
-		    param.userp	= $("#user_password").val();
-		    param.gp	= $("#group_permission").val();
-		    param.ext	= $("#ext").val();
-		    param.img 	= img_name;
+		    param.user	  = $("#user").val();
+		    param.userp	  = $("#user_password").val();
+		    param.gp	  = $("#group_permission").val();
+		    param.ext	  = $("#ext").val();
+		    param.file_id = $("#file_id").val();
 
 			if(param.n == ""){
 				alert("შეავსეთ სახელი და გვარი!");
@@ -111,6 +111,8 @@
 
 	    
 	    $(document).on("change", "#choose_file", function () {
+	    	
+		    
 	        var file_url  = $(this).val();
 	        var file_name = this.files[0].name;
 	        var file_size = this.files[0].size;
@@ -135,7 +137,6 @@
 				    data: {
 						act: "file_upload",
 						button_id: "choose_file",
-						table_name: 'users',
 						file_name: Math.ceil(Math.random()*99999999999),
 						file_name_original: file_name,
 						file_type: file_type,
@@ -153,6 +154,29 @@
 								$('#choose_button').attr('id','choose_buttondisabled');
 								$("#delete_image").attr('image_id',data.page[0].id);
 								$(".complate").attr('onclick','view_image('+ data.page[0].id + ')');
+								$("#file_id").val(data.page[0].id);
+								
+								if($("#pers_id").val() != ''){
+									param = new Object();
+
+						            param.act	= "update_file_id";
+
+								    param.pers_id = $("#pers_id").val();
+								    param.file_id = $("#file_id").val();
+								    
+    								$.ajax({
+    							        url: aJaxURL,
+    								    data: param,
+    							        success: function(data) {
+    										if(typeof(data.error) != "undefined"){
+    											if(data.error != ""){
+    												alert(data.error);
+    											}else{
+    											}
+    										}
+    								    }
+    							    });
+    							}
 							}						
 						}					
 				    }
@@ -163,11 +187,30 @@
 	    $(document).on("click", "#delete_image", function () {
 		    $.ajax({
 	            url: "server-side/upload/file.action.php",
-	            data: "act=delete_file&file_id="+$(this).attr('image_id')+"&table_name=client",
+	            data: "act=delete_file&file_id="+$(this).attr('image_id'),
 	            success: function(data) {
 	               $('#upload_img').attr('src','media/uploads/file/0.jpg');               
 	               $("#choose_button").button();
-	               $('#choose_buttondisabled').attr('id','choose_button')
+	               $('#choose_buttondisabled').attr('id','choose_button');
+	               $("#file_id").val('');
+	               if($("#pers_id").val !=''){
+                	    param         = new Object();
+    					param.act	  = "delete_file_id";
+    					param.pers_id = $("#pers_id").val();
+    					
+    				    $.ajax({
+    				        url: aJaxURL,
+    					    data: param,
+    				        success: function(data) {
+    							if(typeof(data.error) != "undefined"){
+    								if(data.error != ""){
+    									alert(data.error);
+    								}else{
+    								}
+    							}
+    					    }
+    				    });
+		           }
 	            }
 	        });
 		});
