@@ -276,15 +276,18 @@
     </div>
     
 <div class="callapp_filter_show">
-<table id="table_right_menu">
-<tr>
-<td><img alt="table" src="media/images/icons/table_w.png" height="14" width="14">
-</td>
-<td><img alt="log" src="media/images/icons/log.png" height="14" width="14">
-</td>
-<td id="show_copy_prit_exel" myvar="0"><img alt="link" src="media/images/icons/select.png" height="14" width="14">
-</td>
-</tr>
+<table id="table_right_menu" style="top: 24px;">
+    <tr>
+        <td>
+        	<img alt="table" src="media/images/icons/table_w.png" height="14" width="14">
+        </td>
+        <td>
+        	<img alt="log" src="media/images/icons/log.png" height="14" width="14">
+        </td>
+        <td id="show_copy_prit_exel" myvar="0">
+        	<img alt="link" src="media/images/icons/select.png" height="14" width="14">
+        </td>
+    </tr>
 </table>
 <table class="display" id="example" style="width: 100%">
     <thead>
