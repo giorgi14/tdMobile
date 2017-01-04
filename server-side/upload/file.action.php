@@ -72,7 +72,7 @@ switch ($action) {
 			    $str_file_table[] = array('name' => $file_res_table[name],'rand_name' => $file_res_table[rand_name],'id' => $file_res_table[id]);
 			}
 			
-            $data = array('page'	=> $str_file_table);
+            $data = array('page' => $str_file_table);
 			
 			@unlink ( $_FILES [$element] );
 		}
