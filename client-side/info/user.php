@@ -139,10 +139,11 @@
 						button_id: "choose_file",
 						file_name: Math.ceil(Math.random()*99999999999),
 						file_name_original: file_name,
+						table_name: '',
 						file_type: file_type,
 						file_size: file_size,
 						path: path,
-						table_id: users_id,
+						table_id: "",
 
 					},
 			        success: function(data) {			        

@@ -578,12 +578,7 @@ function SetEvents(add, dis, check, tname, fname, aJaxURL, c_data, tbl,col_num,a
 	                    	if(other_act == 1){
 	                    		LoadTable(tbl,col_num,act,change_colum,lenght,other_act);
 	                    	}else{
-	                    	LoadTable(tbl,col_num,act,change_colum,lenght,other_act);
-	                    	LoadTable('index',colum_number,main_act,change_colum_main);
-	                    	LoadTable('client',6,'get_list_person',"<'F'lip>");
-	                    	LoadTable('project',5,'get_list_project',"<'F'lip>");
-	                    	LoadTable('number',5,'get_list_number',"<'F'lip>");
-	                    	LoadTable('import',6,'get_list_import',"<'F'lip>");
+	                    		LoadTable(tbl,col_num,act,change_colum,lenght,other_act);
 	                    	}
 	                        $("#" + check).attr("checked", false);
 	                    }
@@ -878,7 +873,9 @@ function GetDateTimes(iname) {
 
 function GetDateTimes1(iname) {
     $("." + iname).datetimepicker({
-    	dateFormat: "yy-mm-dd"
+    	dateFormat: "yy-mm-dd",
+    	changeMonth: false,
+    	changeYear: false
     });
 }
 /**

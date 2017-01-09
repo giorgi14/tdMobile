@@ -3,7 +3,7 @@ require_once('../../includes/classes/core.php');
 
 $action = $_REQUEST['act'];
 $error	= '';
-$data	= '';
+$data   = '';
 $user   = $_SESSION['USERID'];
 
 switch ($action) {
@@ -48,48 +48,140 @@ switch ($action) {
 		}elseif (empty ( $_FILES [$element] ['tmp_name'] ) || $_FILES [$element] ['tmp_name'] == 'none'){
 			$error = 'No file was uploaded..';
 		}else{
-			if(file_exists($path)){
-				unlink($path);
-			}
-			move_uploaded_file ( $_FILES [$element] ['tmp_name'], $path);
-			
-			mysql_query("INSERT INTO `file` 
-			                        (`user_id`, `name`, `rand_name`, `date`) 
-			                  VALUES 
-			                        ('$user', '$original_name', '$rand_name', NOW())");
-			
-			$file_id = mysql_insert_id();
-			
-			$file_tbale = mysql_query("SELECT `name`,
-                                    		  `rand_name`,
-                                    		  `file_date`,
-			                                  `id`
-                            		   FROM   `file`
-                            		   WHERE  `id` = $file_id AND `actived` = 1");
-			$str_file_table = array();
-			
-			while ($file_res_table = mysql_fetch_assoc($file_tbale)){
-			    $str_file_table[] = array('name' => $file_res_table[name],'rand_name' => $file_res_table[rand_name],'id' => $file_res_table[id]);
-			}
-			
-            $data = array('page' => $str_file_table);
-			
-			@unlink ( $_FILES [$element] );
+		    if ($table_name == ''){
+    			if(file_exists($path)){
+    				unlink($path);
+    			}
+    			
+    			move_uploaded_file ( $_FILES [$element] ['tmp_name'], $path);
+    			
+    			mysql_query("INSERT INTO `file` 
+    			                        (`user_id`, `name`, `rand_name`, `date`) 
+    			                  VALUES 
+    			                        ('$user', '$original_name', '$rand_name', NOW())");
+    			
+    			$file_id = mysql_insert_id();
+    			
+    			$file_tbale = mysql_query("SELECT `name`,
+                                        		  `rand_name`,
+                                        		  `date`,
+    			                                  `id`
+                                		   FROM   `file`
+                                		   WHERE  `id` = $file_id AND `actived` = 1");
+    			$str_file_table = array();
+    			
+    			while ($file_res_table = mysql_fetch_assoc($file_tbale)){
+    			    $str_file_table[] = array('name' => $file_res_table[name],'rand_name' => $file_res_table[rand_name],'id' => $file_res_table[id]);
+    			}
+    			
+                $data = array('page' => $str_file_table);
+    			
+    			@unlink ( $_FILES [$element] );
+		    }elseif ($table_name == 'client_documents'){
+		        if(file_exists($path)){
+		            unlink($path);
+		        }
+		         
+		        move_uploaded_file ( $_FILES [$element] ['tmp_name'], $path);
+		         
+		        mysql_query("INSERT INTO `file`
+		                                (`user_id`, `name`, `rand_name`, `date`)
+		                          VALUES
+		                                ('$user', '$original_name', '$rand_name', NOW())");
+		         
+		        $file_id = mysql_insert_id();
+		        
+		        mysql_query("INSERT INTO `client_documents` 
+                                        (`client_id`, `file_id`) 
+                                  VALUES 
+                                        ('$table_id', '$file_id')");
+		        
+		       
+		         
+		        @unlink ( $_FILES [$element] );
+		    }elseif ($table_name == 'client_papers'){
+		        if(file_exists($path)){
+		            unlink($path);
+		        }
+		         
+		        move_uploaded_file ( $_FILES [$element] ['tmp_name'], $path);
+		         
+		        mysql_query("INSERT INTO `file`
+		                                (`user_id`, `name`, `rand_name`, `date`)
+		                          VALUES
+		                                ('$user', '$original_name', '$rand_name', NOW())");
+		         
+		        $file_id = mysql_insert_id();
+		        
+		        mysql_query("INSERT INTO `client_papers` 
+                                        (`client_id`, `file_id`) 
+                                  VALUES 
+                                        ('$table_id', '$file_id')");
+		        
+		       
+		         
+		        @unlink ( $_FILES [$element] );
+		    }
 		}
 
 		break;		
     case 'delete_file':
-        $file_id    = $_REQUEST['file_id'];
-        $table_name = $_REQUEST['table_name'];
-		$path		= "../../media/uploads/file/";
+        $file_id  = $_REQUEST['file_id'];
+        $local_id = $_REQUEST['local_id'];
+        $table_id = $_REQUEST['table_id'];
+		if ($table_id == 'client_documents') {
+    		mysql_query("UPDATE `file` 
+    		                SET `actived` = 0 
+    		              WHERE `id`      = $file_id");
+    		mysql_query("UPDATE `client_document`
+            		        SET `actived` = 0
+            		     WHERE `file_id`  = $file_id");
+    		
+             
+             $file_tbale = mysql_query("SELECT  file.`name`,
+                                				file.`rand_name`,
+                                				file.`date`,
+                                				file.`id`
+                                        FROM   `client_documents`
+                                        JOIN    file ON file.id = client_documents.file_id
+                                        WHERE   client_documents.`client_id` = '$local_id' AND file.`actived` = 1");
+            $str_file_documents = '';
+            while ($file_res_document = mysql_fetch_assoc($file_tbale)){
+                $str_file_documents .= '
+                                        <div style="border:1px solid #CCC; padding:5px; text-align:center; vertical-align:middle; width:29%;float:left;">'.$file_res_document[date].'</div>
+                                        <div style="border:1px solid #CCC; padding:5px; text-align:center; vertical-align:middle; width:29%;float:left;">'.$file_res_document[name].'</div>
+                                        <div style="border:1px solid #CCC; padding:5px; text-align:center; vertical-align:middle; cursor:pointer; width:28%; float:left;" onclick="download_file(\''.$file_res_document[rand_name].'\')">ჩამოტვირთვა</div>
+                                        <div style="border:1px solid #CCC; padding:5px; text-align:center; vertical-align:middle; cursor:pointer; width:8%; float:left;" onclick="delete_file(\''.$file_res_document[id].'\',\'client_documents\')">-</div>';
+            } 
+		}elseif ($table_id == 'client_papers'){
+		    
+		    mysql_query("UPDATE `file`
+        		            SET `actived` = 0
+        		          WHERE `id`      = $file_id");
+		    
+		    mysql_query("UPDATE `client_papers`
+		                    SET `actived` = 0
+		                  WHERE `file_id` = $file_id");
+		    
+		     
+		    $file_tbale = mysql_query("SELECT  file.`name`,
+		                                       file.`rand_name`,
+		                                       file.`date`,
+		                                       file.`id`
+		                               FROM   `client_papers`
+		                               JOIN    file ON file.id = client_papers.file_id
+		                               WHERE   client_papers.`client_id` = '$local_id' AND file.`actived` = 1");
+		    $str_file_documents = '';
+		    while ($file_res_document = mysql_fetch_assoc($file_tbale)){
+		        $str_file_documents .= '
+                                        <div style="border:1px solid #CCC; padding:5px; text-align:center; vertical-align:middle; width:29%;float:left;">'.$file_res_document[date].'</div>
+                                        <div style="border:1px solid #CCC; padding:5px; text-align:center; vertical-align:middle; width:29%;float:left;">'.$file_res_document[name].'</div>
+                                        <div style="border:1px solid #CCC; padding:5px; text-align:center; vertical-align:middle; cursor:pointer; width:28%; float:left;" onclick="download_file(\''.$file_res_document[rand_name].'\',\'client_papers\')">ჩამოტვირთვა</div>
+                                        <div style="border:1px solid #CCC; padding:5px; text-align:center; vertical-align:middle; cursor:pointer; width:8%; float:left;" onclick="delete_file(\''.$file_res_document[id].'\',\'client_papers\')">-</div>';
+		    }
+		}
+        $data = array('documets' => $str_file_documents);
 		
-		mysql_query("UPDATE `file` 
-		                SET `actived` = 0 
-		              WHERE `id`      = $file_id");
-		
-		$str_file_table = 1;
-		
-		$data		= array('page'	=> $str_file_table);
 		
         break;
     default:
