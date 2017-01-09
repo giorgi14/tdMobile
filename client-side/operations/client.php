@@ -497,7 +497,7 @@
 </script>
 </head>
 <body>
-    <div id="tabs" style="width: 100%;">
+    <div id="tabs" style="width: 95%;">
         <div class="callapp_head">ავტო ლომბარდი<span class="callapp_refresh"><img alt="refresh" src="media/images/icons/refresh.png" height="14" width="14">   განახლება</span><hr class="callapp_head_hr"></div>
         <div class="callapp_tabs"></div>
     	<button id="add_button" style="float: left;margin-bottom: 10px;">დამატება</button>
