@@ -206,7 +206,7 @@
 
     function hide_right_side(){
     	$("#side_menu").children('spam').children('div').css('color','#FFF');
-        $(".info").children('img').attr('src','media/images/icons/info.png');
+        $(".info").children('img').attr('src','media/images/icons/client_menu.png');
         $(".auto_mobile").children('img').attr('src','media/images/icons/car.png');
         $(".agreement").children('img').attr('src','media/images/icons/handshake.png');
         $(".pledge").children('img').attr('src','media/images/icons');

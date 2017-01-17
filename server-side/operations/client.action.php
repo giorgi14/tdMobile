@@ -4018,7 +4018,7 @@ function GetPage($res){
                    </table>
                 </fieldset>
                 <div id="side_menu" style="float: left;height: 608px; width: 80px; margin-left: 10px; background: #272727; color: #FFF;margin-top: 6px;">
-                    <spam class="info" style="display: block;padding: 10px 5px;  cursor: pointer;" onclick="show_right_side(\'info\')"><img style="padding-left: 22px;padding-bottom: 5px;" src="media/images/icons/info.png" alt="24 ICON" height="24" width="24"><div style="text-align: center;">კლიენტი</div></spam>
+                    <spam class="info" style="display: block;padding: 10px 5px;  cursor: pointer;" onclick="show_right_side(\'info\')"><img style="padding-left: 22px;padding-bottom: 5px;" src="media/images/icons/client_menu.png" alt="24 ICON" height="24" width="24"><div style="text-align: center;">კლიენტი</div></spam>
                     <spam class="auto_mobile" style="display: block;padding: 10px 5px;  cursor: pointer;" onclick="show_right_side(\'auto_mobile\')"><img style="padding-left: 22px;padding-bottom: 5px;" src="media/images/icons/car.png" alt="24 ICON" height="24" width="24"><div style="text-align: center;">მანქანა</div></spam>
                     <spam class="agreement" style="display: block;padding: 10px 5px;  cursor: pointer;" onclick="show_right_side(\'agreement\')"><img style="padding-left: 22px;padding-bottom: 5px;" src="media/images/icons/handshake.png" alt="24 ICON" height="24" width="24"><div style="text-align: center;">ხელშეკრუ<br>ლება</div></spam>
                     <spam class="papers" style="display: block;padding: 10px 5px;  cursor: pointer;" onclick="show_right_side(\'papers\')"><img style="padding-left: 22px;padding-bottom: 5px;" src="media/images/icons/file.png" alt="24 ICON" height="24" width="24"><div style="text-align: center;">საბუთები</div></spam>
@@ -4307,30 +4307,9 @@ function show_documents_file($res){
     
    $data = '<div style="margin-top: 15px;">
                 <div style="width: 100%; border:1px solid #CCC;float: left;">    	            
-            	    <div style="border:1px solid #CCC; padding:5px; text-align:center; vertical-align:middle; width:80%; float:left;">დასახელება</div>
-                    <div style="border:1px solid #CCC; padding:5px; text-align:center; vertical-align:middle; width:17%; float:left;">ქმედება</div>
-                    <div id="paste_files">
-                        <div style="border:1px solid #CCC; padding:5px; text-align:center; vertical-align:middle; width:80%;float:left; margin-top: 10px;">ხელწერილი.doc</div>
-                        <div style="border:1px solid #CCC; padding:5px; text-align:center; vertical-align:middle; cursor:pointer; width:17%; float:left; margin-top: 10px;" onclick="show_document(\'receipt\', \'ხელწერილი\')">დეტალურად</div>
-                            
-                        <div style="border:1px solid #CCC; padding:5px; text-align:center; vertical-align:middle; width:80%;float:left;">მიღება-ჩაბარების აქტი.doc</div>
-                        <div style="border:1px solid #CCC; padding:5px; text-align:center; vertical-align:middle; cursor:pointer; width:17%; float:left;" onclick="show_document(\'acceptance_act\', \'მიღება-ჩაბარების აქტი\')">დეტალურად</div>
-                            
-                        <div style="border:1px solid #CCC; padding:5px; text-align:center; vertical-align:middle; width:80%;float:left;">ვიზეც არის გაფორმებული წერილი კლიენტის მანქანის ჩამორთმევაზე.doc</div>
-                        <div style="border:1px solid #CCC; padding:5px; text-align:center; vertical-align:middle; cursor:pointer; width:17%; float:left;" onclick="show_document(\'Client_car_confiscation\', \'ვიზეც არის გაფორმებული წერილი კლიენტის მანქანის ჩამორთმევაზე\')">დეტალურად</div>
-                            
-                        <div style="border:1px solid #CCC; padding:5px; text-align:center; vertical-align:middle; width:80%;float:left;">გადახდის გრაფიკი.xls</div>
-                        <div style="border:1px solid #CCC; padding:5px; text-align:center; vertical-align:middle; cursor:pointer; width:17%; float:left;" onclick="show_document(\'payment_schedule\', \'გადახდის გრაფიკი\')">დეტალურად</div>
-       
-                        <div style="border:1px solid #CCC; padding:5px; text-align:center; vertical-align:middle; width:80%;float:left;">თანხმობა.doc</div>
-                        <div style="border:1px solid #CCC; padding:5px; text-align:center; vertical-align:middle; cursor:pointer; width:17%; float:left;" onclick="show_document(\'approval\', \'თანხმობა\')">დეტალურად</div>
-       
-                        <div style="border:1px solid #CCC; padding:5px; text-align:center; vertical-align:middle; width:80%;float:left;">ხელწერილი დაზღვევაზე.doc</div>
-                        <div style="border:1px solid #CCC; padding:5px; text-align:center; vertical-align:middle; cursor:pointer; width:17%; float:left;" onclick="show_document(\'receipt_insurance\', \'ხელწერილი დაზღვევაზე\')">დეტალურად</div>
-       
-                        <div style="border:1px solid #CCC; padding:5px; text-align:center; vertical-align:middle; width:80%;float:left;">თავდებობა.doc</div>
-                        <div style="border:1px solid #CCC; padding:5px; text-align:center; vertical-align:middle; cursor:pointer; width:17%; float:left;" onclick="show_document(\'guarantee\', \'თავდებობა\')">დეტალურად</div>';
-                        
+            	    <div style="border:1px solid #CCC; padding:5px; text-align:center; background: #c1c1c1; vertical-align:middle; width:80%; float:left;">დასახელება</div>
+                    <div style="border:1px solid #CCC; padding:5px; text-align:center; background: #c1c1c1; vertical-align:middle; width:17%; float:left;">ქმედება</div>
+                    <div id="paste_files">';
                         if($res[loan_type_id] == 2 && $res[agreement_type_id]==1){
                             $data.='<div style="border:1px solid #CCC; padding:5px; text-align:center; vertical-align:middle; width:80%;float:left;">საკრედიტო ხელშეკრულება 3% გრაფიკით - შ.პ.ს + განუბაჟებელი.doc</div>
                                     <div style="border:1px solid #CCC; padding:5px; text-align:center; vertical-align:middle; cursor:pointer; width:17%; float:left;" onclick="show_document(\'Schedule_ltd_nocustoms\', \'საკრედიტო ხელშეკრულება 3% გრაფიკით - შ.პ.ს + განუბაჟებელი\')">დეტალურად</div>';
@@ -4374,9 +4353,28 @@ function show_documents_file($res){
                             $data.='<div style="border:1px solid #CCC; padding:5px; text-align:center; vertical-align:middle; width:80%;float:left;">საკრედიტო ხელშეკრულება 3% 70ლ 15%  - საკომისიო 3% - შპს.doc</div>
                                     <div style="border:1px solid #CCC; padding:5px; text-align:center; vertical-align:middle; cursor:pointer; width:17%; float:left;" onclick="show_document(\'agreement_fee_ltd\', \'საკრედიტო ხელშეკრულება 3% 70ლ 15%  - საკომისიო 3% - შპს\')">დეტალურად</div>';
                         }
+                $data.='<div style="border:1px solid #CCC; padding:5px; text-align:center; vertical-align:middle; width:80%;float:left;">გადახდის გრაფიკი.xls</div>
+                        <div style="border:1px solid #CCC; padding:5px; text-align:center; vertical-align:middle; cursor:pointer; width:17%; float:left;" onclick="show_document(\'payment_schedule\', \'გადახდის გრაფიკი\')">დეტალურად</div>
                         
-                        $data.='<div style="border:1px solid #CCC; padding:5px; text-align:center; vertical-align:middle; width:80%;float:left;">გირავნობა.doc</div>
-                                <div style="border:1px solid #CCC; padding:5px; text-align:center; vertical-align:middle; cursor:pointer; width:17%; float:left;" onclick="show_document(\'Pledge\', \'გირავნობა\')">დეტალურად</div>
+                        <div style="border:1px solid #CCC; padding:5px; text-align:center; vertical-align:middle; width:80%;float:left;">ხელწერილი.doc</div>
+                        <div style="border:1px solid #CCC; padding:5px; text-align:center; vertical-align:middle; cursor:pointer; width:17%; float:left; margin-top: 10px;" onclick="show_document(\'receipt\', \'ხელწერილი\')">დეტალურად</div>
+                            
+                        <div style="border:1px solid #CCC; padding:5px; text-align:center; vertical-align:middle; width:80%;float:left;">მიღება-ჩაბარების აქტი.doc</div>
+                        <div style="border:1px solid #CCC; padding:5px; text-align:center; vertical-align:middle; cursor:pointer; width:17%; float:left;" onclick="show_document(\'acceptance_act\', \'მიღება-ჩაბარების აქტი\')">დეტალურად</div>
+                            
+                        <div style="border:1px solid #CCC; padding:5px; text-align:center; vertical-align:middle; width:80%;float:left;">ვიზეც არის გაფორმებული წერილი კლიენტის მანქანის ჩამორთმევაზე.doc</div>
+                        <div style="border:1px solid #CCC; padding:5px; text-align:center; vertical-align:middle; cursor:pointer; width:17%; float:left;" onclick="show_document(\'Client_car_confiscation\', \'ვიზეც არის გაფორმებული წერილი კლიენტის მანქანის ჩამორთმევაზე\')">დეტალურად</div>
+                            
+                        <div style="border:1px solid #CCC; padding:5px; text-align:center; vertical-align:middle; width:80%;float:left;">თანხმობა.doc</div>
+                        <div style="border:1px solid #CCC; padding:5px; text-align:center; vertical-align:middle; cursor:pointer; width:17%; float:left;" onclick="show_document(\'approval\', \'თანხმობა\')">დეტალურად</div>
+       
+                        <div style="border:1px solid #CCC; padding:5px; text-align:center; vertical-align:middle; width:80%;float:left;">ხელწერილი დაზღვევაზე.doc</div>
+                        <div style="border:1px solid #CCC; padding:5px; text-align:center; vertical-align:middle; cursor:pointer; width:17%; float:left;" onclick="show_document(\'receipt_insurance\', \'ხელწერილი დაზღვევაზე\')">დეტალურად</div>
+       
+                        <div style="border:1px solid #CCC; padding:5px; text-align:center; vertical-align:middle; width:80%;float:left;">თავდებობა.doc</div>
+                        <div style="border:1px solid #CCC; padding:5px; text-align:center; vertical-align:middle; cursor:pointer; width:17%; float:left;" onclick="show_document(\'guarantee\', \'თავდებობა\')">დეტალურად</div>
+                        <div style="border:1px solid #CCC; padding:5px; text-align:center; vertical-align:middle; width:80%;float:left;">გირავნობა.doc</div>
+                        <div style="border:1px solid #CCC; padding:5px; text-align:center; vertical-align:middle; cursor:pointer; width:17%; float:left;" onclick="show_document(\'Pledge\', \'გირავნობა\')">დეტალურად</div>
                     </div>
         	    </div>
             </div>';
@@ -4404,10 +4402,10 @@ function show_papers_file($res){
     
     $data = '<div style="margin-top: 15px;">
                 <div style="width: 100%; border:1px solid #CCC;float: left;">
-                    <div style="border:1px solid #CCC; padding:5px; text-align:center; vertical-align:middle; width:29%; float:left;">თარიღი</div>
-            	    <div style="border:1px solid #CCC; padding:5px; text-align:center; vertical-align:middle; width:29%; float:left;">დასახელება</div>
-            	    <div style="border:1px solid #CCC; padding:5px; text-align:center; vertical-align:middle; width:28%; float:left;">ჩამოტვირთვა</div>
-                    <div style="border:1px solid #CCC; padding:5px; text-align:center; vertical-align:middle; width:8%; float:left;">-</div>
+                    <div style="border:1px solid #CCC; background: #c1c1c1; padding:5px; text-align:center; vertical-align:middle; width:29%; float:left;">თარიღი</div>
+            	    <div style="border:1px solid #CCC; background: #c1c1c1; padding:5px; text-align:center; vertical-align:middle; width:29%; float:left;">დასახელება</div>
+            	    <div style="border:1px solid #CCC; background: #c1c1c1; padding:5px; text-align:center; vertical-align:middle; width:28%; float:left;">ჩამოტვირთვა</div>
+                    <div style="border:1px solid #CCC; background: #c1c1c1; padding:5px; text-align:center; vertical-align:middle; width:8%; float:left;">-</div>
                     <div style="text-align: center; vertical-align:middle; float:left; width: 100%;"><button id="file_upload" style="cursor: pointer;background: none;border: none;width: 100%;height: 25px;padding: 0;margin: 0;">აირჩიეთ ფაილი</button><input style="display:none;" type="file" name="file_name1" id="file_name1"></div>
                     <div id="paste_files1">
                         '.$str_file_papers.'
