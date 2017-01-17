@@ -69,9 +69,8 @@
     }
     
 </style>
-<script src="js/exporting.js"></script>
 <script type="text/javascript">
-    var aJaxURL           = "server-side/operations/client.action.php";
+    var aJaxURL           = "server-side/operations/realestate.action.php";
     var aJaxURL_cl_person = "server-side/operations/subtables/client_person.action.php";
 
     var tName             = "table_";
@@ -116,6 +115,8 @@
             $('.info').click();
             $('#name').focus();
             $('#datetime').blur();
+            $('#car_type').chosen();
+            $('#car_type_chosen').css('width', '206px');
      		$('.ui-widget-overlay').css('z-index',99);
      		
      		GetDate('born_date');
@@ -178,13 +179,6 @@
 	function show_right_side(id){
         $("#right_side fieldset").hide();
         $("#" + id).show();
-        if(id == 'auto_mobile'){
-            $("#upload_picture").show();
-        }else if(id == 'agreement'){
-        	$("#agreement_grafic").show();
-        }else if(id == 'info'){
-        	$("#table_person_fieldset").show();
-        }
         $(".add-edit-form-class").css("width", "1200");
         hide_right_side();
         var str = $("."+id).children('img').attr('src');
@@ -192,26 +186,16 @@
         $("."+id).children('img').attr('src',str+'_blue.png');
         $("."+id).children('div').css('color','#2681DC');
         $('#car_type').chosen();
-        $('#loan_agreement_type').chosen();
-        $('#agreement_type_id').chosen();
-        $('#car_type_chosen').css('width', '206px');
-        $('#loan_agreement_type_chosen').css('width', '206px');
-        $('#agreement_type_id_chosen').css('width', '206px');
-        $('#choose_button').button();
-        $('#show_payment_schedule').button();
-        $('#hidde_payment_schedule').button();
-        GetDateTimes('agreement_date');
-        GetDateTimes('trusting_date');
     }
 
     function hide_right_side(){
     	$("#side_menu").children('spam').children('div').css('color','#FFF');
         $(".info").children('img').attr('src','media/images/icons/info.png');
-        $(".auto_mobile").children('img').attr('src','media/images/icons/car.png');
-        $(".agreement").children('img').attr('src','media/images/icons/handshake.png');
+        $(".auto_mobile").children('img').attr('src','media/images/icons');
+        $(".agreement").children('img').attr('src','media/images/icons');
         $(".pledge").children('img').attr('src','media/images/icons');
         $(".papers").children('img').attr('src','media/images/icons/file.png');
-        $(".documents").children('img').attr('src','media/images/icons/document.png');
+        $(".documents").children('img').attr('src','media/images/icons/file.png');
     }
 
     function show_main(id,my_this){
@@ -243,24 +227,15 @@
 		param.phone	       = $('#phone').val();
 		param.fact_address = $('#fact_address').val();
 		param.jur_address  = $('#jur_address').val();
-		param.ltd_name	   = $('#ltd_name').val();
-		param.ltd_id       = $('#ltd_id').val();
-		param.client_type  = $("input[class=client_type]:checked").val();
 
 		//მინდობილი პირის მონაცემები//
-		param.client_trust_name	        = $('#client_trust_name').val();
-		param.client_trust_surname	    = $('#client_trust_surname').val();
-		param.client_trust_tin	        = $('#client_trust_tin').val();
-		param.client_trust_phone	    = $('#client_trust_phone').val();
-		param.client_trust_mail	        = $('#client_trust_mail').val();
+		param.client_trust_name	       = $('#client_trust_name').val();
+		param.client_trust_surname	   = $('#client_trust_surname').val();
+		param.client_trust_tin	       = $('#client_trust_tin').val();
+		param.client_trust_phone	       = $('#client_trust_phone').val();
+		param.client_trust_mail	       = $('#client_trust_mail').val();
 		param.client_trust_fact_address = $('#client_trust_fact_address').val();
 		param.client_trust_jur_address  = $('#client_trust_jur_address').val();
-		
-		param.trusting_number	        = $('#trusting_number').val();
-		param.trusting_date	            = $('#trusting_date').val();
-		param.trusting_notary	        = $('#trusting_notary').val();
-		param.trusting_notary_address   = $('#trusting_notary_address').val();
-		param.trusting_notary_phone     = $('#trusting_notary_phone').val();
 
 		//მანქანის მონაცემები//
 		param.car_model	              = $('#car_model').val();
@@ -272,28 +247,6 @@
 		param.car_owner               = $('#car_owner').val();
 		param.car_ident               = $('#car_ident').val();
 		param.car_ertificate          = $('#car_ertificate').val();
-
-		//ხელშეკრულების მონაცემები//
-		param.agreement_type_id           = $('#agreement_type_id').val();
-		param.loan_agreement_type	      = $('#loan_agreement_type').val();
-		param.agreement_number	          = $('#agreement_number').val();
-		param.agreement_date	          = $('#agreement_date').val();
-		param.loan_amount	              = $('#loan_amount').val();
-		param.loan_months                 = $('#loan_months').val();
-		param.insurance_fee               = $('#insurance_fee').val();
-		param.pledge_fee                  = $('#pledge_fee').val();
-		param.month_percent               = $('#month_percent').val();
-		param.monthly_pay                 = $('#monthly_pay').val();
-		param.rs_message_number           = $('#rs_message_number').val();
-		param.pay_day                     = $('#pay_day').val();
-		param.exchange_rate               = $('#exchange_rate').val();
-		param.penalty_days                = $('#penalty_days').val();
-		param.penalty_percent             = $('#penalty_percent').val();
-		param.penalty_additional_percent  = $('#penalty_additional_percent').val();
-		param.loan_fee                    = $('#loan_fee').val();
-		param.proceed_fee                 = $('#proceed_fee').val();
-		param.proceed_percent             = $('#proceed_percent').val();
-		
 		
 		$.ajax({
 	        url: aJaxURL,
@@ -342,97 +295,12 @@
     	LoadTable('index',colum_number,main_act,change_colum_main,aJaxURL);
     });
 
-    $(document).on("click", ".client_type", function () {
-    	if($(this).val()==1){
-    		$("#ltd_name").css('display','none');
-    		$("#ltd_id").css('display','none');
-    		$(".hidde_label").css('display','none');
-        }else{
-        	$("#ltd_name").css('display','block');
-    		$("#ltd_id").css('display','block');
-    		$(".hidde_label").css('display','block');
-        }
-    });
-
     $(document).on("click", "#trust_pers_checkbox", function () {
        
         if($(this).prop("checked") == false){
             $("#truste_table").css('display','none');
        	}else{
        		$("#truste_table").css('display','block');
-        }
-    });
-
-    $(document).on("change", "#loan_agreement_type", function () {
-        
-        if($(this).val() == 2){
-            $(".label_label").css('display','none');
-            $("#proceed_fee").css('display','none');
-            $("#proceed_percent").css('display','none');
-       	}else{
-       		$(".label_label").css('display','block');
-       		$("#proceed_fee").css('display','block');
-       		$("#proceed_percent").css('display','block');
-        }
-
-        param 			          = new Object();
-        param.act                 = 'get_default';
-    	param.loan_agreement_type = $(this).val();
-    	param.agreement_type_id   = $("#agreement_type_id").val();
-    	
-    	if(param.agreement_type_id!=0 && $("#id_hidden").val() == ''){
-        	$.ajax({
-                url: aJaxURL,
-        	    data: param,
-                success: function(data) {
-                	if(typeof(data.error) != "undefined"){
-    					if(data.error != ""){
-    						alert(data.error);
-    					}else{
-    						$("#month_percent").val(data.percent);
-    						$("#loan_fee").val(data.loan_fee);
-    						$("#proceed_fee").val(data.proceed_fee);
-    						$("#proceed_percent").val(data.proceed_percent);
-    						$("#rs_message_number").val(data.rs_message_number);
-    						$("#penalty_days").val(data.penalty_days);
-    						$("#penalty_percent").val(data.penalty_percent);
-    						$("#penalty_additional_percent").val(data.penalty_additional_percent);
-    					}
-    				}
-        	    }
-            });
-        }
-    });
-
-	$(document).on("change", "#agreement_type_id", function () {
-
-		param 			          = new Object();
-		
-        param.act                 = 'get_default';
-    	param.agreement_type_id   = $(this).val();
-    	param.loan_agreement_type = $("#loan_agreement_type").val();
-    	
-		if(param.loan_agreement_type!=0 && $("#id_hidden").val() == ''){
-        	$.ajax({
-                url: aJaxURL,
-        	    data: param,
-                success: function(data) {
-                	if(typeof(data.error) != "undefined"){
-    					if(data.error != ""){
-    						alert(data.error);
-    					}else{
-    						$("#month_percent").val(data.percent);
-    						$("#loan_fee").val(data.loan_fee);
-    						$("#proceed_fee").val(data.proceed_fee);
-    						$("#proceed_percent").val(data.proceed_percent);
-    						$("#rs_message_number").val(data.rs_message_number);
-    						$("#penalty_days").val(data.penalty_days);
-    						$("#penalty_percent").val(data.penalty_percent);
-    						$("#penalty_additional_percent").val(data.penalty_additional_percent);
-    					}
-    				}
-        	    }
-            });
         }
     });
     
@@ -455,208 +323,74 @@
             $(this).attr('myvar','0');
         }
     });
-    $(document).on("click", "#show_payment_schedule", function () {
-    	file_type = 'payment_schedule';
 
-    	if($("#loan_amount").val() == ''){
-        	alert('შეავსეთ "სესხის სრული მოცულობა"');
-        }else if($("#month_percent").val() == ''){
-        	alert('შეავსეთ "ყოველთვიური პროცენტი"');
-        }else if($("#loan_months").val() == ''){
-        	alert('შეავსეთ "სესხის სარგებლობის ვადა"');
-        }else if($("#loan_agreement_type").val() == 0){
-        	alert('შეავსეთ "სესხის ტიპი"');
-        }else{
-        	$.ajax({
-                url: aJaxURL,
-                data: "act=show_document&file_type="+file_type+"&local_id="+$("#local_id").val()+"&id_hidden="+$("#id_hidden").val()+"&loan_amount="+$("#loan_amount").val()+"&month_percent="+$("#month_percent").val()+"&loan_months="+$("#loan_months").val()+"&loan_agreement_type="+$("#loan_agreement_type").val()+"&name="+$("#name").val()+"&surname="+$("#surname").val(),
-                success: function(data) {
-                	$("#payment_schedule_td").html(data.documets_page);
-                }
-        	});
-        }
-    });
-
-    $(document).on("click", "#hidde_payment_schedule", function () {
-    	
-       $("#payment_schedule_td").html('');
-         
-    });
-	
-    function show_document(file_type,file_name){
-    	$.ajax({
-            url: aJaxURL,
-            data: "act=show_document&file_type="+file_type+"&local_id="+$("#local_id").val()+"&id_hidden="+$("#id_hidden").val(),
-            success: function(data) {
-            	$("#add-edit-form-document").html(data.documets_page);
-
-                var buttons = {
-                    
-            		"print": {
-    		            text: "ბეჭდვა",
-    		            id: "print-dialog",
-    		            click: function () {
-    		            	var local_id = $("#local_id").val();
-    		                local_id  = "&local_id="+local_id+"&file_type="+file_type
-    		        		win=window.open("server-side/operations/subtables/print_documents.action.php?"+local_id, "" , "scrollbars=no,toolbar=no,screenx=0,screeny=0,location=no,titlebar=no,directories=no,status=no,menubar=no");
-    		            }
-    		        },
-    	        	"download": {
-    		            text: "ჩამოტვირთვა",
-    		            id: "download-dialog",
-    		            click: function () {
-        		            if(file_type != 'payment_schedule'){
-        		            	URL="server-side/operations/subtables/download_doc.php?file_type="+file_type+"&local_id="+$("#local_id").val()+"&file_name="+file_name;
-        		            	open(URL);
-        		            }else{
-        		            	parame 			 = new Object();
-        		            	parame.local_id  = $("#local_id").val();
-
-        		            	$.ajax({
-        		                    url: 'server-side/operations/subtables/excel.php',
-        		            	    data: parame,
-        		                    success: function(data) {
-        		            	        if(data == 1){
-        		            		        alert('ჩანაწერი არ მოიძებნა');
-        		            	        }else{
-        		                    		SaveToDisk('server-side/operations/subtables/excel.xls', 'excel.xls');
-        		            	        }
-        		            	    }
-        		                });
-            		        }
-    		            }
-    		        },
-    		        "cancel": {
-    		            text: "დახურვა",
-    		            id: "cancel-dialog",
-    		            click: function () {
-    		            	$(this).dialog("close");
-    		            }
-    		        }
-    		    };
-               	GetDialog("add-edit-form-document", 790, "auto", buttons, 'left+43 top');
-    		}
-        });
-    }
-
-    //სურატები//
-
-    $(document).on("click", "#choose_button", function () {
-	    $("#choose_file").click();
-	});
-
-    $(document).on("change", "#choose_file", function () {
-    	
+    //დოკუმენტები//
+    $(document).on("click", "#upload_file", function () {
+	    $('#file_name').click();
 	    
+	});
+	
+    $(document).on("change", "#file_name", function () {
         var file_url  = $(this).val();
         var file_name = this.files[0].name;
         var file_size = this.files[0].size;
         var file_type = file_url.split('.').pop().toLowerCase();
         var path	  = "../../media/uploads/file/";
-
-        if($.inArray(file_type, ['png','jpg']) == -1){
-            alert("დაშვებულია მხოლოდ 'png', 'jpg'  გაფართოება");
+        
+		if($.inArray(file_type, ['pdf','png','xls','xlsx','jpg','docx','doc','csv']) == -1){
+			alert("დაშვებულია მხოლოდ 'pdf', 'png', 'xls', 'xlsx', 'jpg', 'docx', 'doc', 'csv' გაფართოება");
         }else if(file_size > '15728639'){
             alert("ფაილის ზომა 15MB-ზე მეტია");
         }else{
-            if($("#pers_id").val() == ''){
-	            users_id = $("#is_user").val();
-            }else{
-            	users_id = $("#pers_id").val()
-            }
         	$.ajaxFileUpload({
 		        url: "server-side/upload/file.action.php",
 		        secureuri: false,
-     			fileElementId: "choose_file",
+     			fileElementId: "file_name",
      			dataType: 'json',
 			    data: {
 					act: "file_upload",
-					button_id: "choose_file",
+					button_id: "file_name",
+					table_name: 'client_documents',
 					file_name: Math.ceil(Math.random()*99999999999),
 					file_name_original: file_name,
-					table_name: 'car_picture',
 					file_type: file_type,
 					file_size: file_size,
 					path: path,
 					table_id: $("#local_id").val(),
 
 				},
-		        success: function(data) {			        
-			        if(typeof(data.error) != 'undefined'){
+				success: function(data) {
+					
+					if(typeof(data.error) != 'undefined'){
 						if(data.error != ''){
 							alert(data.error);
 						}else{
-							
+							$("#paste_files").html(data.page);
 						}						
 					}					
 			    }
-			});
+		    });
         	setTimeout(function(){
             	$.ajax({
         	        url: aJaxURL,
         		    data: {
-        				act: "upload_picture",
+        				act: "upload_document",
         				local_id: $("#local_id").val(),
-    				},
+    
+        			},
         	        success: function(data) {
-        		        $("#img_colum").html(data.str_file_picture);
+        		        $("#paste_files").html(data.documets);
         		    }
         	    });
         	}, 500);
         }
     });
-    function view_image(id){
-		param = new Object();
 
-        //Action
-    	param.act	= "view_img";
-    	param.id    = id;
-    	
-		$.ajax({
-	        url: aJaxURL,
-		    data: param,
-	        success: function(data) {
-				if(typeof(data.error) != "undefined"){
-					if(data.error != ""){
-						alert(data.error);
-					}else{
-						var buttons = {
-					        	"cancel": {
-						            text: "დახურვა",
-						            id: "cancel-dialog",
-						            click: function () {
-						            	$(this).dialog("close");
-						            }
-						        }
-						    };
-						GetDialog("add-edit-form-img", 401, "auto", buttons, 'center top');
-						$("#add-edit-form-img").html(data.page);
-					}
-				}
-		    }
-	    });
-	}
-
-    $(document).on("click", "#delete_image", function () {
-	    $.ajax({
-            url: aJaxURL,
-            data: "act=delete_image&image_id="+$(this).attr('image_id') + "&local_id="+$("#local_id").val(),
-            success: function(data) {
-            	if(typeof(data.error) != "undefined"){
-            		if(data.error != ""){
-						alert(data.error);
-					}else{
-						$("#img_colum").html(data.str_file_picture);
-					}
-                }
-            }
-        });
-	});
-
-	
-	//საბუთები//
+    //საბუთები//
+    
     $(document).on("click", "#file_upload", function () {
 	    $('#file_name1').click();
+	    
 	});
 	
 	
@@ -727,7 +461,9 @@
             url: "server-side/upload/file.action.php",
             data: "act=delete_file&file_id="+id+"&local_id="+$("#local_id").val()+"&table_id="+table_id,
             success: function(data) {
-                if(table_id == 'client_papers'){
+                if(table_id == 'client_documents'){
+                	$("#paste_files").html(data.documets); 
+                }else if(table_id == 'client_papers'){
                 	$("#paste_files1").html(data.documets);
                 }
                	
@@ -762,7 +498,7 @@
 </head>
 <body>
     <div id="tabs" style="width: 95%;">
-        <div class="callapp_head">ავტო ლომბარდი<span class="callapp_refresh"><img alt="refresh" src="media/images/icons/refresh.png" height="14" width="14">   განახლება</span><hr class="callapp_head_hr"></div>
+        <div class="callapp_head">უძრავი ქონების ლომბარდი<span class="callapp_refresh"><img alt="refresh" src="media/images/icons/refresh.png" height="14" width="14">   განახლება</span><hr class="callapp_head_hr"></div>
         <div class="callapp_tabs"></div>
     	<button id="add_button" style="float: left;margin-bottom: 10px;">დამატება</button>
     	<button id="delete_button" style="float: left;margin-bottom: 10px;margin-left: 10px;">გაუქმება</button>
@@ -829,9 +565,6 @@
             </thead>
         </table>
     
-    <div  id="add-edit-form" class="form-dialog" title="ავტო ლომბარდი"></div>
+    <div  id="add-edit-form" class="form-dialog" title="უძრავი ქონების ლომბარდი"></div>
     <div  id="add-edit-form-pers" class="form-dialog" title="საკონტაქტო პირი"></div>
-    <div  id="add-edit-form-document" class="form-dialog" title="დოკუმენტი"></div>
-    <div id="add-edit-form-img" class="form-dialog" title="ავტომობილის სურათი">
-	</div>
 </body>

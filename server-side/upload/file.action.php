@@ -77,7 +77,7 @@ switch ($action) {
                 $data = array('page' => $str_file_table);
     			
     			@unlink ( $_FILES [$element] );
-		    }elseif ($table_name == 'client_documents'){
+		    }elseif ($table_name == 'car_picture'){
 		        if(file_exists($path)){
 		            unlink($path);
 		        }
@@ -91,7 +91,7 @@ switch ($action) {
 		         
 		        $file_id = mysql_insert_id();
 		        
-		        mysql_query("INSERT INTO `client_documents` 
+		        mysql_query("INSERT INTO `car_picture` 
                                         (`client_id`, `file_id`) 
                                   VALUES 
                                         ('$table_id', '$file_id')");
@@ -129,11 +129,11 @@ switch ($action) {
         $file_id  = $_REQUEST['file_id'];
         $local_id = $_REQUEST['local_id'];
         $table_id = $_REQUEST['table_id'];
-		if ($table_id == 'client_documents') {
+		if ($table_id == 'client_papers') {
     		mysql_query("UPDATE `file` 
     		                SET `actived` = 0 
     		              WHERE `id`      = $file_id");
-    		mysql_query("UPDATE `client_document`
+    		mysql_query("UPDATE `client_papers`
             		        SET `actived` = 0
             		     WHERE `file_id`  = $file_id");
     		
@@ -142,43 +142,17 @@ switch ($action) {
                                 				file.`rand_name`,
                                 				file.`date`,
                                 				file.`id`
-                                        FROM   `client_documents`
-                                        JOIN    file ON file.id = client_documents.file_id
-                                        WHERE   client_documents.`client_id` = '$local_id' AND file.`actived` = 1");
+                                        FROM   `client_papers`
+                                        JOIN    file ON file.id = client_papers.file_id
+                                        WHERE   client_papers.`client_id` = '$local_id' AND file.`actived` = 1");
             $str_file_documents = '';
             while ($file_res_document = mysql_fetch_assoc($file_tbale)){
                 $str_file_documents .= '
                                         <div style="border:1px solid #CCC; padding:5px; text-align:center; vertical-align:middle; width:29%;float:left;">'.$file_res_document[date].'</div>
                                         <div style="border:1px solid #CCC; padding:5px; text-align:center; vertical-align:middle; width:29%;float:left;">'.$file_res_document[name].'</div>
                                         <div style="border:1px solid #CCC; padding:5px; text-align:center; vertical-align:middle; cursor:pointer; width:28%; float:left;" onclick="download_file(\''.$file_res_document[rand_name].'\')">ჩამოტვირთვა</div>
-                                        <div style="border:1px solid #CCC; padding:5px; text-align:center; vertical-align:middle; cursor:pointer; width:8%; float:left;" onclick="delete_file(\''.$file_res_document[id].'\',\'client_documents\')">-</div>';
-            } 
-		}elseif ($table_id == 'client_papers'){
-		    
-		    mysql_query("UPDATE `file`
-        		            SET `actived` = 0
-        		          WHERE `id`      = $file_id");
-		    
-		    mysql_query("UPDATE `client_papers`
-		                    SET `actived` = 0
-		                  WHERE `file_id` = $file_id");
-		    
-		     
-		    $file_tbale = mysql_query("SELECT  file.`name`,
-		                                       file.`rand_name`,
-		                                       file.`date`,
-		                                       file.`id`
-		                               FROM   `client_papers`
-		                               JOIN    file ON file.id = client_papers.file_id
-		                               WHERE   client_papers.`client_id` = '$local_id' AND file.`actived` = 1");
-		    $str_file_documents = '';
-		    while ($file_res_document = mysql_fetch_assoc($file_tbale)){
-		        $str_file_documents .= '
-                                        <div style="border:1px solid #CCC; padding:5px; text-align:center; vertical-align:middle; width:29%;float:left;">'.$file_res_document[date].'</div>
-                                        <div style="border:1px solid #CCC; padding:5px; text-align:center; vertical-align:middle; width:29%;float:left;">'.$file_res_document[name].'</div>
-                                        <div style="border:1px solid #CCC; padding:5px; text-align:center; vertical-align:middle; cursor:pointer; width:28%; float:left;" onclick="download_file(\''.$file_res_document[rand_name].'\',\'client_papers\')">ჩამოტვირთვა</div>
                                         <div style="border:1px solid #CCC; padding:5px; text-align:center; vertical-align:middle; cursor:pointer; width:8%; float:left;" onclick="delete_file(\''.$file_res_document[id].'\',\'client_papers\')">-</div>';
-		    }
+            } 
 		}
         $data = array('documets' => $str_file_documents);
 		

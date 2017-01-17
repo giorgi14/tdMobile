@@ -27,10 +27,7 @@ class page {
 		
 		echo '<div id="page-container" class="page-' . $this->page_id . '">';
 		require_once 'client-side/'.$page_name;
-		echo '</div>
-		    <div style="z-index: 99; background: #FFF; width: 100%; height: 40px; position: fixed; bottom: 0; box-shadow: 0px -2px 10px #888888;">
-		      <a href="http://callapp.ge/" target="_blank"><img style="margin-left: 10px;" src="media/images/CA-1.png" alt="footer" height="40" width="100"></a>
-            </div>';
+		echo '</div>';
 		
 	}
 	

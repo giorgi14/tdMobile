@@ -1,0 +1,776 @@
+
+<?xml version="1.0" encoding="utf-8"?><?mso-application progid="Excel.Sheet"?>
+<ss:Workbook xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns:o="urn:schemas-microsoft-com:office:office">
+	<o:DocumentProperties>
+		<o:Title>sesxis dafarvis grafiki</o:Title>
+	</o:DocumentProperties>
+	<ss:ExcelWorkbook>
+		<ss:WindowHeight>9000</ss:WindowHeight>
+		<ss:WindowWidth>50000</ss:WindowWidth>
+		<ss:ProtectStructure>false</ss:ProtectStructure>
+		<ss:ProtectWindows>false</ss:ProtectWindows>
+	</ss:ExcelWorkbook>
+	<ss:Styles>
+		<ss:Style ss:ID="Default">
+			<ss:Alignment ss:Vertical="Center" ss:Horizontal="Center" ss:WrapText="1" />
+			<ss:Font ss:FontName="Sylfaen" ss:Size="12" />
+			<ss:Interior />
+			<ss:NumberFormat />
+			<ss:Protection />
+			<ss:Borders>
+				<ss:Border ss:Position="Top" ss:Color="#000000" ss:Weight="1" ss:LineStyle="Continuous" />
+				<ss:Border ss:Position="Bottom" ss:Color="#000000" ss:Weight="1" ss:LineStyle="Continuous" />
+				<ss:Border ss:Position="Left" ss:Color="#000000" ss:Weight="1" ss:LineStyle="Continuous" />
+				<ss:Border ss:Position="Right" ss:Color="#000000" ss:Weight="1" ss:LineStyle="Continuous" />
+			</ss:Borders>
+		</ss:Style>
+		<ss:Style ss:ID="title">
+			<ss:Borders />
+			<ss:NumberFormat ss:Format="@" />
+			<ss:Alignment ss:WrapText="1" ss:Horizontal="Center" ss:Vertical="Center" />
+		</ss:Style>
+		<ss:Style ss:ID="headercell">
+			<ss:Font ss:Bold="1" />
+			<ss:Interior ss:Pattern="Solid" />
+			<ss:Alignment ss:WrapText="1" ss:Horizontal="Center" ss:Vertical="Center" />
+		</ss:Style>
+		<ss:Style ss:ID="headercell1">
+			<ss:Font ss:Bold="1" />
+			<ss:Interior ss:Pattern="Solid" />
+			<ss:Alignment ss:WrapText="1" ss:Horizontal="Center" ss:Vertical="Center" />
+		</ss:Style>
+	</ss:Styles>
+	<ss:Worksheet ss:Name="44">
+		<ss:Names>
+			<ss:NamedRange ss:Name="Print_Titles" ss:RefersTo="=' 44 '!R1:R2" />
+		</ss:Names>
+		
+		<ss:Table x:FullRows="1" x:FullColumns="1" ss:ExpandedColumnCount="16" ss:ExpandedRowCount="44">
+		    
+			<ss:Column ss:AutoFitWidth="1" ss:Width="100" />
+			<ss:Column ss:AutoFitWidth="1" ss:Width="100" />
+			<ss:Column ss:AutoFitWidth="1" ss:Width="100" />
+			<ss:Column ss:AutoFitWidth="1" ss:Width="100" />
+			<ss:Column ss:AutoFitWidth="1" ss:Width="100" />
+			<ss:Column ss:AutoFitWidth="1" ss:Width="100" />
+			<ss:Row ss:Height="30">
+				<ss:Cell ss:StyleID="title" ss:MergeAcross="15">
+					<ss:Data xmlns:html="http://www.w3.org/TR/REC-html40" ss:Type="String">
+						<html:B>
+							<html:Font html:Size="14">sesxis dafarvis grafiki</html:Font>
+						</html:B>
+					</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles" />
+				</ss:Cell>
+			</ss:Row>
+			<ss:Row ss:AutoFitHeight="1" ss:Height="25">
+				<ss:Cell ss:StyleID="headercell">
+					<ss:Data ss:Type="String">კლიენტის სახელი:</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles" />
+				</ss:Cell>
+				<ss:Cell ss:MergeAcross="4" ss:StyleID="headercell">
+					<ss:Data ss:Type="String">სახელი გვარი</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles" />
+				</ss:Cell>
+			</ss:Row>
+					    
+			<ss:Row ss:AutoFitHeight="1" ss:Height="25">
+				<ss:Cell ss:StyleID="headercell">
+					<ss:Data ss:Type="String">სესხის მოცულობა:</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles" />
+				</ss:Cell>
+				<ss:Cell ss:StyleID="headercell">
+					<ss:Data ss:Type="String">2380.00</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles" />
+				</ss:Cell>
+				<ss:Cell ss:StyleID="headercell">
+					<ss:Data ss:Type="String"></ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles" />
+				</ss:Cell>
+				<ss:Cell ss:MergeAcross="1"  ss:StyleID="headercell1">
+					<ss:Data ss:Type="String">სესხის გაცემის თარიღი</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles" />
+				</ss:Cell>
+			</ss:Row>
+			<ss:Row ss:AutoFitHeight="1" ss:Height="25">
+				<ss:Cell ss:StyleID="headercell">
+					<ss:Data ss:Type="String">საპროცენტო სარგ. (წლ.):</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+				<ss:Cell ss:StyleID="headercell">
+					<ss:Data ss:Type="String">36</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+				<ss:Cell ss:StyleID="headercell">
+					<ss:Data ss:Type="String"></ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+				<ss:Cell ss:StyleID="headercell">
+					<ss:Data ss:Type="String">თვე</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+			    <ss:Cell ss:StyleID="headercell">
+					<ss:Data ss:Type="String">01</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+			</ss:Row>
+			<ss:Row ss:AutoFitHeight="1" ss:Height="25">
+				<ss:Cell ss:StyleID="headercell">
+					<ss:Data ss:Type="String">ვადა:</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+				<ss:Cell ss:StyleID="headercell">
+					<ss:Data ss:Type="String">24</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+				<ss:Cell ss:StyleID="headercell">
+					<ss:Data ss:Type="String"></ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+				<ss:Cell ss:StyleID="headercell">
+					<ss:Data ss:Type="String">რიცხვი</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+			    <ss:Cell ss:StyleID="headercell">
+					<ss:Data ss:Type="String">04</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+			</ss:Row>
+			<ss:Row ss:AutoFitHeight="1" ss:Height="25">
+				<ss:Cell ss:StyleID="headercell">
+					<ss:Data ss:Type="String">საშეღავათო პერიოდი:</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+				<ss:Cell ss:StyleID="headercell">
+					<ss:Data ss:Type="String"></ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+				<ss:Cell ss:StyleID="headercell">
+					<ss:Data ss:Type="String"></ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+				<ss:Cell ss:StyleID="headercell">
+					<ss:Data ss:Type="String">წელი</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+			    <ss:Cell ss:StyleID="headercell">
+					<ss:Data ss:Type="String">2017</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+			</ss:Row>
+			<ss:Row ss:AutoFitHeight="1" ss:Height="25">
+				<ss:Cell ss:StyleID="headercell">
+					<ss:Data ss:Type="String">საკომისიო წინასწარ:</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+				<ss:Cell ss:StyleID="headercell">
+					<ss:Data ss:Type="String"></ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+				<ss:Cell ss:StyleID="headercell">
+					<ss:Data ss:Type="String"></ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+				<ss:Cell ss:StyleID="headercell">
+					<ss:Data ss:Type="String"></ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+			    <ss:Cell ss:StyleID="headercell">
+					<ss:Data ss:Type="String"></ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+				<ss:Cell  ss:StyleID="headercell">
+					<ss:Data ss:Type="String"></ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+			</ss:Row>
+			<ss:Row ss:AutoFitHeight="1" ss:Height="25">
+				<ss:Cell ss:MergeAcross="5" ss:StyleID="headercell">
+					<ss:Data ss:Type="String"></ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+			</ss:Row>
+			<ss:Row ss:AutoFitHeight="1" ss:Height="25">
+				<ss:Cell ss:StyleID="headercell">
+					<ss:Data ss:Type="String">სულ პროცენტი:</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+				<ss:Cell ss:MergeAcross="1" ss:StyleID="headercell">
+					<ss:Data ss:Type="String">სულ დასაფარი:</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+				<ss:Cell ss:StyleID="headercell">
+					<ss:Data ss:Type="String">992.79</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+				<ss:Cell ss:StyleID="headercell">
+					<ss:Data ss:Type="String">3372.79</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+			    <ss:Cell ss:StyleID="headercell">
+					<ss:Data ss:Type="String">0</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+			</ss:Row>
+			<ss:Row ss:AutoFitHeight="1" ss:Height="25">
+				<ss:Cell ss:MergeAcross="5" ss:StyleID="headercell">
+					<ss:Data ss:Type="String"></ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+			</ss:Row>
+			
+			<ss:Row ss:AutoFitHeight="1" ss:Height="25">
+				<ss:Cell ss:StyleID="headercell">
+					<ss:Data ss:Type="String">#</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+				<ss:Cell ss:StyleID="headercell">
+					<ss:Data ss:Type="String">თარიღი</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+				<ss:Cell ss:StyleID="headercell">
+					<ss:Data ss:Type="String">ძირი</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+				<ss:Cell ss:StyleID="headercell">
+					<ss:Data ss:Type="String">პროცენტი</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>				
+				<ss:Cell ss:StyleID="headercell">
+					<ss:Data ss:Type="String">შენატანი</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+				<ss:Cell ss:StyleID="headercell">
+					<ss:Data ss:Type="String">ნაშთი შენატანის შემდეგ</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+			</ss:Row>
+		
+
+			<ss:Row>
+				<ss:Cell>
+					<ss:Data ss:Type="String">1</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">04-02-2017</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">69.13</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">71.4</ss:Data>
+				</ss:Cell>							
+				<ss:Cell>
+					<ss:Data ss:Type="String">140.53</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">2310.87</ss:Data>
+				</ss:Cell>
+			</ss:Row>
+			<ss:Row>
+				<ss:Cell>
+					<ss:Data ss:Type="String">2</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">04-03-2017</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">71.21</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">69.33</ss:Data>
+				</ss:Cell>							
+				<ss:Cell>
+					<ss:Data ss:Type="String">140.53</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">2239.66</ss:Data>
+				</ss:Cell>
+			</ss:Row>
+			<ss:Row>
+				<ss:Cell>
+					<ss:Data ss:Type="String">3</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">04-04-2017</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">73.34</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">67.19</ss:Data>
+				</ss:Cell>							
+				<ss:Cell>
+					<ss:Data ss:Type="String">140.53</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">2166.32</ss:Data>
+				</ss:Cell>
+			</ss:Row>
+			<ss:Row>
+				<ss:Cell>
+					<ss:Data ss:Type="String">4</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">04-05-2017</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">75.54</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">64.99</ss:Data>
+				</ss:Cell>							
+				<ss:Cell>
+					<ss:Data ss:Type="String">140.53</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">2090.77</ss:Data>
+				</ss:Cell>
+			</ss:Row>
+			<ss:Row>
+				<ss:Cell>
+					<ss:Data ss:Type="String">5</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">04-06-2017</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">77.81</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">62.72</ss:Data>
+				</ss:Cell>							
+				<ss:Cell>
+					<ss:Data ss:Type="String">140.53</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">2012.96</ss:Data>
+				</ss:Cell>
+			</ss:Row>
+			<ss:Row>
+				<ss:Cell>
+					<ss:Data ss:Type="String">6</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">04-07-2017</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">80.14</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">60.39</ss:Data>
+				</ss:Cell>							
+				<ss:Cell>
+					<ss:Data ss:Type="String">140.53</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">1932.82</ss:Data>
+				</ss:Cell>
+			</ss:Row>
+			<ss:Row>
+				<ss:Cell>
+					<ss:Data ss:Type="String">7</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">04-08-2017</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">82.55</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">57.98</ss:Data>
+				</ss:Cell>							
+				<ss:Cell>
+					<ss:Data ss:Type="String">140.53</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">1850.27</ss:Data>
+				</ss:Cell>
+			</ss:Row>
+			<ss:Row>
+				<ss:Cell>
+					<ss:Data ss:Type="String">8</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">04-09-2017</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">85.02</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">55.51</ss:Data>
+				</ss:Cell>							
+				<ss:Cell>
+					<ss:Data ss:Type="String">140.53</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">1765.25</ss:Data>
+				</ss:Cell>
+			</ss:Row>
+			<ss:Row>
+				<ss:Cell>
+					<ss:Data ss:Type="String">9</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">04-10-2017</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">87.58</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">52.96</ss:Data>
+				</ss:Cell>							
+				<ss:Cell>
+					<ss:Data ss:Type="String">140.53</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">1677.67</ss:Data>
+				</ss:Cell>
+			</ss:Row>
+			<ss:Row>
+				<ss:Cell>
+					<ss:Data ss:Type="String">10</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">04-11-2017</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">90.2</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">50.33</ss:Data>
+				</ss:Cell>							
+				<ss:Cell>
+					<ss:Data ss:Type="String">140.53</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">1587.47</ss:Data>
+				</ss:Cell>
+			</ss:Row>
+			<ss:Row>
+				<ss:Cell>
+					<ss:Data ss:Type="String">11</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">04-12-2017</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">92.91</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">47.62</ss:Data>
+				</ss:Cell>							
+				<ss:Cell>
+					<ss:Data ss:Type="String">140.53</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">1494.56</ss:Data>
+				</ss:Cell>
+			</ss:Row>
+			<ss:Row>
+				<ss:Cell>
+					<ss:Data ss:Type="String">12</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">04-01-2018</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">95.7</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">44.84</ss:Data>
+				</ss:Cell>							
+				<ss:Cell>
+					<ss:Data ss:Type="String">140.53</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">1398.86</ss:Data>
+				</ss:Cell>
+			</ss:Row>
+			<ss:Row>
+				<ss:Cell>
+					<ss:Data ss:Type="String">13</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">04-02-2018</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">98.57</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">41.97</ss:Data>
+				</ss:Cell>							
+				<ss:Cell>
+					<ss:Data ss:Type="String">140.53</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">1300.3</ss:Data>
+				</ss:Cell>
+			</ss:Row>
+			<ss:Row>
+				<ss:Cell>
+					<ss:Data ss:Type="String">14</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">04-03-2018</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">101.52</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">39.01</ss:Data>
+				</ss:Cell>							
+				<ss:Cell>
+					<ss:Data ss:Type="String">140.53</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">1198.77</ss:Data>
+				</ss:Cell>
+			</ss:Row>
+			<ss:Row>
+				<ss:Cell>
+					<ss:Data ss:Type="String">15</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">04-04-2018</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">104.57</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">35.96</ss:Data>
+				</ss:Cell>							
+				<ss:Cell>
+					<ss:Data ss:Type="String">140.53</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">1094.2</ss:Data>
+				</ss:Cell>
+			</ss:Row>
+			<ss:Row>
+				<ss:Cell>
+					<ss:Data ss:Type="String">16</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">04-05-2018</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">107.71</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">32.83</ss:Data>
+				</ss:Cell>							
+				<ss:Cell>
+					<ss:Data ss:Type="String">140.53</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">986.5</ss:Data>
+				</ss:Cell>
+			</ss:Row>
+			<ss:Row>
+				<ss:Cell>
+					<ss:Data ss:Type="String">17</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">04-06-2018</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">110.94</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">29.59</ss:Data>
+				</ss:Cell>							
+				<ss:Cell>
+					<ss:Data ss:Type="String">140.53</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">875.56</ss:Data>
+				</ss:Cell>
+			</ss:Row>
+			<ss:Row>
+				<ss:Cell>
+					<ss:Data ss:Type="String">18</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">04-07-2018</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">114.27</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">26.27</ss:Data>
+				</ss:Cell>							
+				<ss:Cell>
+					<ss:Data ss:Type="String">140.53</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">761.29</ss:Data>
+				</ss:Cell>
+			</ss:Row>
+			<ss:Row>
+				<ss:Cell>
+					<ss:Data ss:Type="String">19</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">04-08-2018</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">117.69</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">22.84</ss:Data>
+				</ss:Cell>							
+				<ss:Cell>
+					<ss:Data ss:Type="String">140.53</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">643.6</ss:Data>
+				</ss:Cell>
+			</ss:Row>
+			<ss:Row>
+				<ss:Cell>
+					<ss:Data ss:Type="String">20</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">04-09-2018</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">121.22</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">19.31</ss:Data>
+				</ss:Cell>							
+				<ss:Cell>
+					<ss:Data ss:Type="String">140.53</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">522.37</ss:Data>
+				</ss:Cell>
+			</ss:Row>
+			<ss:Row>
+				<ss:Cell>
+					<ss:Data ss:Type="String">21</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">04-10-2018</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">124.86</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">15.67</ss:Data>
+				</ss:Cell>							
+				<ss:Cell>
+					<ss:Data ss:Type="String">140.53</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">397.51</ss:Data>
+				</ss:Cell>
+			</ss:Row>
+			<ss:Row>
+				<ss:Cell>
+					<ss:Data ss:Type="String">22</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">04-11-2018</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">128.61</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">11.93</ss:Data>
+				</ss:Cell>							
+				<ss:Cell>
+					<ss:Data ss:Type="String">140.53</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">268.91</ss:Data>
+				</ss:Cell>
+			</ss:Row>
+			<ss:Row>
+				<ss:Cell>
+					<ss:Data ss:Type="String">23</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">04-12-2018</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">132.47</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">8.07</ss:Data>
+				</ss:Cell>							
+				<ss:Cell>
+					<ss:Data ss:Type="String">140.53</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">136.44</ss:Data>
+				</ss:Cell>
+			</ss:Row>
+			<ss:Row>
+				<ss:Cell>
+					<ss:Data ss:Type="String">24</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">04-13-2018</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">136.44</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">4.09</ss:Data>
+				</ss:Cell>							
+				<ss:Cell>
+					<ss:Data ss:Type="String">140.53</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">0</ss:Data>
+				</ss:Cell>
+			</ss:Row>   <ss:Row>
+				<ss:Cell>
+					<ss:Data ss:MergeAcross="4" ss:Type="String"></ss:Data>
+				</ss:Cell>
+			</ss:Row>
+			<ss:Row>
+				<ss:Cell>
+					<ss:Data ss:Type="String">ხელმოწერა: ლ</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String"></ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String"></ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String">ხელმოწერა: ლ</ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String"></ss:Data>
+				</ss:Cell>
+				<ss:Cell>
+					<ss:Data ss:Type="String"></ss:Data>
+				</ss:Cell>
+			</ss:Row></ss:Table>
+		<x:WorksheetOptions>
+			<x:PageSetup>
+				<x:Layout x:CenterHorizontal="1" x:Orientation="Portrait" />
+				<x:Header x:Data="&amp;R&#10;&#10;&amp;D" />
+				<x:Footer x:Data="Page &amp;P of &amp;N" x:Margin="0.5" />
+				<x:PageMargins x:Top="0.5" x:Right="0.5" x:Left="0.5" x:Bottom="0.8" />
+			</x:PageSetup>
+			<x:FitToPage />
+			<x:Print>
+				<x:PrintErrors>Blank</x:PrintErrors>
+				<x:FitWidth>1</x:FitWidth>
+				<x:FitHeight>32767</x:FitHeight>
+				<x:ValidPrinterInfo />
+				<x:VerticalResolution>1000</x:VerticalResolution>
+			</x:Print>
+			<x:Selected />
+			<x:DoNotDisplayGridlines />
+			<x:ProtectObjects>False</x:ProtectObjects>
+			<x:ProtectScenarios>False</x:ProtectScenarios>
+		</x:WorksheetOptions>
+	</ss:Worksheet>
+</ss:Workbook>
+		
