@@ -177,14 +177,38 @@
     
 	function show_right_side(id){
         $("#right_side fieldset").hide();
-        $("#" + id).show();
+        
         if(id == 'auto_mobile'){
             $("#upload_picture").show();
         }else if(id == 'agreement'){
         	$("#agreement_grafic").show();
         }else if(id == 'info'){
         	$("#table_person_fieldset").show();
+        }else if(id == 'documents'){
+        	param 	  = new Object();
+    		param.act = "get_documentss";
+
+    		param.local_id = $("#local_id").val();
+    		param.loan_agreement_type = $("#loan_agreement_type").val();
+    		param.agreement_type_id = $("#agreement_type_id").val();
+    		
+        	$.ajax({
+    	        url: aJaxURL,
+    		    data: param,
+    	        success: function(data) {       
+    				if(typeof(data.error) != "undefined"){
+    					if(data.error != ""){
+    						alert(data.error);
+    					}else{
+    						$("#documents_div").val(data.page);
+    						$("#id_hidden").val(data.local_id);
+    					}
+    				}
+    	    	}
+    	   });
         }
+
+        $("#" + id).show();
         $(".add-edit-form-class").css("width", "1200");
         hide_right_side();
         var str = $("."+id).children('img').attr('src');

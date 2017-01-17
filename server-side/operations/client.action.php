@@ -230,6 +230,14 @@ switch ($action) {
         $data		= array('page'	=> $page);
     
         break;
+    case 'get_documentss':
+        $local_id            = $_REQUEST['local_id'];
+        $loan_agreement_type = $_REQUEST['loan_agreement_type'];
+        $agreement_type_id   = $_REQUEST['agreement_type_id'];
+        $page		         = show_documents_file($loan_agreement_type, $agreement_type_id);
+        $data		         = array('page'	=> $page, 'local_id' =>$local_id);
+    
+        break;
     case 'get_default':
         
         $loan_agreement_type = $_REQUEST['loan_agreement_type'];
@@ -4290,11 +4298,15 @@ function GetPage($res){
                     </fieldset>
             	    <fieldset style="display:none;" id="papers">
                         <legend>ძირითადი ინფორმაცია</legend>
+                                   
         	                '.show_papers_file($res).'
+        	                    
                     </fieldset>
         	        <fieldset style="display:none;" id="documents">
                         <legend>ძირითადი ინფორმაცია</legend>
-        	                '.show_documents_file($res).'
+        	                    <div id="documents_div">
+        	                '.show_documents_file($res[loan_type_id], $res[agreement_type_id]).'
+        	                    </div>
                     </fieldset>
                 </div>
             </fieldset>
@@ -4303,53 +4315,53 @@ function GetPage($res){
 	return $data;
 }
 
-function show_documents_file($res){
+function show_documents_file($loan_type_id, $agreement_type_id){
     
    $data = '<div style="margin-top: 15px;">
                 <div style="width: 100%; border:1px solid #CCC;float: left;">    	            
             	    <div style="border:1px solid #CCC; padding:5px; text-align:center; background: #c1c1c1; vertical-align:middle; width:80%; float:left;">დასახელება</div>
                     <div style="border:1px solid #CCC; padding:5px; text-align:center; background: #c1c1c1; vertical-align:middle; width:17%; float:left;">ქმედება</div>
                     <div id="paste_files">';
-                        if($res[loan_type_id] == 2 && $res[agreement_type_id]==1){
+                        if($loan_type_id == 2 && $agreement_type_id==1){
                             $data.='<div style="border:1px solid #CCC; padding:5px; text-align:center; vertical-align:middle; width:80%;float:left;">საკრედიტო ხელშეკრულება 3% გრაფიკით - შ.პ.ს + განუბაჟებელი.doc</div>
                                     <div style="border:1px solid #CCC; padding:5px; text-align:center; vertical-align:middle; cursor:pointer; width:17%; float:left;" onclick="show_document(\'Schedule_ltd_nocustoms\', \'საკრედიტო ხელშეკრულება 3% გრაფიკით - შ.პ.ს + განუბაჟებელი\')">დეტალურად</div>';
-                        }elseif ($res[loan_type_id] == 2 && $res[agreement_type_id]==2){
+                        }elseif ($loan_type_id == 2 && $agreement_type_id==2){
                             $data.='<div style="border:1px solid #CCC; padding:5px; text-align:center; vertical-align:middle; width:80%;float:left;">საკრედიტო ხელშეკრულება 3% გრაფიკით - შ.პ.ს + მინდობილი.doc</div>
                                     <div style="border:1px solid #CCC; padding:5px; text-align:center; vertical-align:middle; cursor:pointer; width:17%; float:left;" onclick="show_document(\'Schedule_ltd_trusted\', \'საკრედიტო ხელშეკრულება 3% გრაფიკით - შ.პ.ს + მინდობილი\')">დეტალურად</div>';
-                        }elseif ($res[loan_type_id] == 2 && $res[agreement_type_id]==3){
+                        }elseif ($loan_type_id == 2 && $agreement_type_id==3){
                             $data.='<div style="border:1px solid #CCC; padding:5px; text-align:center; vertical-align:middle; width:80%;float:left;">საკრედიტო ხელშეკრულება 3% გრაფიკი - შ.პ.ს.doc</div>
                                     <div style="border:1px solid #CCC; padding:5px; text-align:center; vertical-align:middle; cursor:pointer; width:17%; float:left;" onclick="show_document(\'Schedule_ltd\', \'საკრედიტო ხელშეკრულება 3% გრაფიკი - შ.პ.ს\')">დეტალურად</div>';
-                        }elseif ($res[loan_type_id] == 2 && $res[agreement_type_id]==4){
+                        }elseif ($loan_type_id == 2 && $agreement_type_id==4){
                             $data.='<div style="border:1px solid #CCC; padding:5px; text-align:center; vertical-align:middle; width:80%;float:left;">საკრედიტო ხელშეკრულება 3% გრაფიკი - მინდობილობა + განუბაჟებელი.doc</div>
                                     <div style="border:1px solid #CCC; padding:5px; text-align:center; vertical-align:middle; cursor:pointer; width:17%; float:left;" onclick="show_document(\'Schedule_trusted_nocustoms\', \'საკრედიტო ხელშეკრულება 3% გრაფიკი - მინდობილობა + განუბაჟებელი\')">დეტალურად</div>';
-                        }elseif ($res[loan_type_id] == 2 && $res[agreement_type_id]==5){
+                        }elseif ($loan_type_id == 2 && $agreement_type_id==5){
                             $data.='<div style="border:1px solid #CCC; padding:5px; text-align:center; vertical-align:middle; width:80%;float:left;">საკრედიტო ხელშეკრულება 3% გრაფიკი - მინდობილობა.doc</div>
                                     <div style="border:1px solid #CCC; padding:5px; text-align:center; vertical-align:middle; cursor:pointer; width:17%; float:left;" onclick="show_document(\'Schedule_trusted\', \'საკრედიტო ხელშეკრულება 3% გრაფიკი - მინდობილობა\')">დეტალურად</div>';
-                        }elseif ($res[loan_type_id] == 2 && $res[agreement_type_id]==6){
+                        }elseif ($loan_type_id == 2 && $agreement_type_id==6){
                             $data.='<div style="border:1px solid #CCC; padding:5px; text-align:center; vertical-align:middle; width:80%;float:left;">საკრედიტო ხელშეკრულება 3% გრაფიკი - განუბაჟებელი.doc</div>
                                     <div style="border:1px solid #CCC; padding:5px; text-align:center; vertical-align:middle; cursor:pointer; width:17%; float:left;" onclick="show_document(\'Schedule_nocustoms\', \'საკრედიტო ხელშეკრულება 3% გრაფიკი - განუბაჟებელი\')">დეტალურად</div>';
-                        }elseif ($res[loan_type_id] == 2 && $res[agreement_type_id]==7){
+                        }elseif ($loan_type_id == 2 && $agreement_type_id==7){
                             $data.='<div style="border:1px solid #CCC; padding:5px; text-align:center; vertical-align:middle; width:80%;float:left;">საკრედიტო ხელშეკრულება 3% გრაფიკი.doc</div>
                                     <div style="border:1px solid #CCC; padding:5px; text-align:center; vertical-align:middle; cursor:pointer; width:17%; float:left;" onclick="show_document(\'Schedule\', \'საკრედიტო ხელშეკრულება 3% გრაფიკი\')">დეტალურად</div>';
-                        }elseif ($res[loan_type_id] == 1 && $res[agreement_type_id]==8){
+                        }elseif ($loan_type_id == 1 && $agreement_type_id==8){
                             $data.='<div style="border:1px solid #CCC; padding:5px; text-align:center; vertical-align:middle; width:80%;float:left;">საკრედიტო ხელშეკრულება 3% 70ლ 15% - განუბაჟებელი+მინდობილი.doc</div>
                                     <div style="border:1px solid #CCC; padding:5px; text-align:center; vertical-align:middle; cursor:pointer; width:17%; float:left;" onclick="show_document(\'agreement_nocustoms_trusted\', \'საკრედიტო ხელშეკრულება 3% 70ლ 15% - განუბაჟებელი+მინდობილი\')">დეტალურად</div>';
-                        }elseif ($res[loan_type_id] == 1 && $res[agreement_type_id]==9){
+                        }elseif ($loan_type_id == 1 && $agreement_type_id==9){
                             $data.='<div style="border:1px solid #CCC; padding:5px; text-align:center; vertical-align:middle; width:80%;float:left;">საკრედიტო ხელშეკრულება 3% 70ლ 15% - განუბაჟებელი.doc</div>
                                     <div style="border:1px solid #CCC; padding:5px; text-align:center; vertical-align:middle; cursor:pointer; width:17%; float:left;" onclick="show_document(\'agreement_nocustoms\', \'საკრედიტო ხელშეკრულება 3% 70ლ 15% - განუბაჟებელი\')">დეტალურად</div>';
-                        }elseif ($res[loan_type_id] == 1 && $res[agreement_type_id]==10){
+                        }elseif ($loan_type_id == 1 && $agreement_type_id==10){
                             $data.='<div style="border:1px solid #CCC; padding:5px; text-align:center; vertical-align:middle; width:80%;float:left;">საკრედიტო ხელშეკრულება 3% 70ლ 15% - საკომისიო 3% - შპს + განუბაჟებელი.doc</div>
                                     <div style="border:1px solid #CCC; padding:5px; text-align:center; vertical-align:middle; cursor:pointer; width:17%; float:left;" onclick="show_document(\'agreement_fee_ltd_nocustoms\', \'საკრედიტო ხელშეკრულება 3% 70ლ 15% - საკომისიო 3% - შპს + განუბაჟებელი\')">დეტალურად</div>';
-                        }elseif ($res[loan_type_id] == 1 && $res[agreement_type_id]==11){
+                        }elseif ($loan_type_id == 1 && $agreement_type_id==11){
                             $data.='<div style="border:1px solid #CCC; padding:5px; text-align:center; vertical-align:middle; width:80%;float:left;">საკრედიტო ხელშეკრულება 3% 70ლ 15%  - საკომისიო 3% - შპს + მინდობილობა.doc</div>
                                     <div style="border:1px solid #CCC; padding:5px; text-align:center; vertical-align:middle; cursor:pointer; width:17%; float:left;" onclick="show_document(\'agreement_fee_ltd_trusted\', \'საკრედიტო ხელშეკრულება 3% 70ლ 15%  - საკომისიო 3% - შპს + მინდობილობა\')">დეტალურად</div>';
-                        }elseif ($res[loan_type_id] == 1 && $res[agreement_type_id]==12){
+                        }elseif ($loan_type_id == 1 && $agreement_type_id==12){
                             $data.='<div style="border:1px solid #CCC; padding:5px; text-align:center; vertical-align:middle; width:80%;float:left;">საკრედიტო ხელშეკრულება 3% 70ლ 15% - საკომისიო 3% - მინდობილობა.doc</div>
                                     <div style="border:1px solid #CCC; padding:5px; text-align:center; vertical-align:middle; cursor:pointer; width:17%; float:left;" onclick="show_document(\'agreement_fee_trusted\', \'საკრედიტო ხელშეკრულება 3% 70ლ 15% - საკომისიო 3% - მინდობილობა\')">დეტალურად</div>';
-                        }elseif ($res[loan_type_id] == 1 && $res[agreement_type_id]==13){
+                        }elseif ($loan_type_id == 1 && $agreement_type_id==13){
                             $data.='<div style="border:1px solid #CCC; padding:5px; text-align:center; vertical-align:middle; width:80%;float:left;">საკრედიტო ხელშეკრულება 3% 70ლ 15% - საკომისიო 3%.doc</div>
                                     <div style="border:1px solid #CCC; padding:5px; text-align:center; vertical-align:middle; cursor:pointer; width:17%; float:left;" onclick="show_document(\'agreement_fee_\', \'საკრედიტო ხელშეკრულება 3% 70ლ 15% - საკომისიო 3%\')">დეტალურად</div>';
-                        }elseif ($res[loan_type_id] == 1 && $res[agreement_type_id]==14){
+                        }elseif ($loan_type_id == 1 && $agreement_type_id==14){
                             $data.='<div style="border:1px solid #CCC; padding:5px; text-align:center; vertical-align:middle; width:80%;float:left;">საკრედიტო ხელშეკრულება 3% 70ლ 15%  - საკომისიო 3% - შპს.doc</div>
                                     <div style="border:1px solid #CCC; padding:5px; text-align:center; vertical-align:middle; cursor:pointer; width:17%; float:left;" onclick="show_document(\'agreement_fee_ltd\', \'საკრედიტო ხელშეკრულება 3% 70ლ 15%  - საკომისიო 3% - შპს\')">დეტალურად</div>';
                         }
