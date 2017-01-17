@@ -4044,7 +4044,7 @@ function GetPage($res){
                                <td style="width: 215px;"><label for="client_name"></label></td>
                                <td style="width: 215px;"><label for="client_surname"></label></td>
         	                   <td style="width: 215px;"><label class="hidde_label" style="'.$hidde.'" for="phone1">"შპს" დასალეხება</label></td>
-                               <td style="width: 215px;"><label class="hidde_label" style="'.$hidde.'" for="phone2">საიდენთიპიკაციო კოდი</label></td>
+                               <td style="width: 215px;"><label class="hidde_label" style="'.$hidde.'" for="phone2">საიდენტიპიკაციო კოდი</label></td>
                            </tr>
                            <tr>
                                <td style="width: 215px;">
@@ -4171,7 +4171,7 @@ function GetPage($res){
                                <td style="width: 220px;"><label for="client_name">ძრავის მოცულობა</label></td>
                                <td style="width: 220px;"><label for="client_surname">რეგისტრაციის ნომერი</label></td>
         	                   <td style="width: 220px;"><label for="phone1">მესაკუთრე</label></td>
-                               <td style="width: 220px;"><label for="phone2">საიდენთიპიკაციო ნომერი</label></td>
+                               <td style="width: 220px;"><label for="phone2">საიდენტიპიკაციო ნომერი</label></td>
                            </tr>
                            <tr>
                                <td style="width: 220px;"><input style="width: 200px;" id="car_engine" type="text" value="'.$res[client_car_engine_size].'"></td>
@@ -4240,7 +4240,7 @@ function GetPage($res){
                                <td style="width: 220px;"><label style="'.$input_hidde.'" class="label_label" for="phone2">ხელშკრ. გაგრძ. საფასური</label></td>
                                <td style="width: 220px;"><label style="'.$input_hidde.'" class="label_label" for="client_name">პროცენტი</label></td>
                                <td style="width: 220px;"><label for="client_surname">სადაზღვევო ხარჯი</label></td>
-        	                   <td style="width: 220px;"><label for="phone1">გიღავნობის ხარჯი</label></td>
+        	                   <td style="width: 220px;"><label for="phone1">გირავნობის ხარჯი</label></td>
                                
                            </tr>
                            <tr>
