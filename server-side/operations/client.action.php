@@ -4357,7 +4357,7 @@ function show_documents_file($res){
                         <div style="border:1px solid #CCC; padding:5px; text-align:center; vertical-align:middle; cursor:pointer; width:17%; float:left;" onclick="show_document(\'payment_schedule\', \'გადახდის გრაფიკი\')">დეტალურად</div>
                         
                         <div style="border:1px solid #CCC; padding:5px; text-align:center; vertical-align:middle; width:80%;float:left;">ხელწერილი.doc</div>
-                        <div style="border:1px solid #CCC; padding:5px; text-align:center; vertical-align:middle; cursor:pointer; width:17%; float:left; margin-top: 10px;" onclick="show_document(\'receipt\', \'ხელწერილი\')">დეტალურად</div>
+                        <div style="border:1px solid #CCC; padding:5px; text-align:center; vertical-align:middle; cursor:pointer; width:17%; float:left;" onclick="show_document(\'receipt\', \'ხელწერილი\')">დეტალურად</div>
                             
                         <div style="border:1px solid #CCC; padding:5px; text-align:center; vertical-align:middle; width:80%;float:left;">მიღება-ჩაბარების აქტი.doc</div>
                         <div style="border:1px solid #CCC; padding:5px; text-align:center; vertical-align:middle; cursor:pointer; width:17%; float:left;" onclick="show_document(\'acceptance_act\', \'მიღება-ჩაბარების აქტი\')">დეტალურად</div>
