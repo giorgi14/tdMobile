@@ -304,7 +304,7 @@
 						alert(data.error);
 					}else{
 						LoadTable('index',colum_number,main_act,change_colum_main,aJaxURL);
-					    CloseDialog("add-edit-form");
+					    //CloseDialog("add-edit-form");
 					}
 				}
 	    	}
@@ -497,7 +497,7 @@
     		            id: "print-dialog",
     		            click: function () {
     		            	var local_id = $("#local_id").val();
-    		                local_id  = "&local_id="+local_id+"&file_type="+file_type
+    		                local_id  = "&local_id="+local_id+"&file_type="+file_type+"&id_hidden="+$("#id_hidden").val();
     		        		win=window.open("server-side/operations/subtables/print_documents.action.php?"+local_id, "" , "scrollbars=no,toolbar=no,screenx=0,screeny=0,location=no,titlebar=no,directories=no,status=no,menubar=no");
     		            }
     		        },

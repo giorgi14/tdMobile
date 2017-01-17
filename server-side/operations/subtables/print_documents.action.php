@@ -10,50 +10,54 @@ $file_type  = $_REQUEST['file_type'];
 $local_id   = $_REQUEST['local_id'];
 
 $res = mysql_fetch_assoc(mysql_query("SELECT  client.id,
-                                                `month`.`name` AS `month`,
-                                                `month`.`name1` AS `month1`,
-                                                `month`.`name2` AS `month2`,
-                                                DATE_FORMAT(client.datetme,'%Y') AS `year`,
-                                                DATE_FORMAT(client.datetme,'%d') AS `day`,
-                                                CONCAT(client.`name`, ' ', client.lastname) AS `name`,
-                                                client.pid,
-                                                client.pid_date,
-                                                client.pid_number,
-                                                client.born_date,
-                                                client.actual_address,
-                                                client.juridical_address,
-                                                client.phone,
-                                                client.email,
-                                                CONCAT(client_trusted_person.`name`,' ',client_trusted_person.lastname) AS trust_pers,
-                                                client_trusted_person.actual_address AS trusted_actual_address,
-                                                client_trusted_person.juridical_address AS trusted_juridical_address,
-                                                client_trusted_person.pid AS trusted_pid,
-                                                client_trusted_person.phone AS trusted_phone,
-                                                client_trusted_person.email AS trusted_email,
-                                                client_loan_agreement.id AS agreement_id,
-                                                client_loan_agreement.loan_amount,
-                                                client_loan_agreement.monthly_pay,
-                                                client_loan_agreement.id AS loan_agreement_id,
-                                                client_loan_agreement.penalty_days AS penalty_days,
-                                                client_loan_agreement.penalty_percent AS penalty_percent,
-                                                client_loan_agreement.penalty_additional_percent AS penalty_additional_percent,
-                                                client_car.model,
-                                			    client_car.car_id,
-                                			    client_car.manufacturing_date,
-                                			    client_car.color,
-                                			    client_car.registration_number,
-                                                car_type.`name` AS car_type_name,
-                                                client_car.engine_size,
-                                			    client_car.certificate_id,
-                                                GROUP_CONCAT(CONCAT(client_person.phone,' ',client_person.person)) AS client_person_person
-                                    FROM    `client`
-                                    JOIN    `month` ON `month`.id = DATE_FORMAT(client.datetme,'%m')
-                                    LEFT JOIN client_trusted_person ON client_trusted_person.client_id = client.id
-                                    LEFT JOIN client_loan_agreement ON client_loan_agreement.client_id = client.id
-                                    LEFT JOIN client_car ON client_car.client_id = client.id
-                                    LEFT JOIN client_person ON client_person.client_id = client.id
-                                    LEFT JOIN car_type ON car_type.id = client_car.type_id
-                                    WHERE client.id = '$local_id'"));
+                                                 `month`.`name` AS `month`,
+                                                 `month`.`name1` AS `month1`,
+                                                 `month`.`name2` AS `month2`,
+                                                  DATE_FORMAT(client.datetme,'%m') AS `month_id`,
+                                        		  DATE_FORMAT(client.datetme,'%Y') AS `year`,
+                                                  DATE_FORMAT(client.datetme,'%d') AS `day`,
+                                    			  CONCAT(client.`name`, ' ', client.lastname) AS `name`,
+                                    			  client.pid,
+                                    			  client.pid_date,
+                                    			  client.pid_number,
+                                    			  client.born_date,
+                                    			  client.actual_address,
+                                    			  client.juridical_address,
+                                    			  client.phone,
+                                                  client.email,
+                                    			  CONCAT(client_trusted_person.`name`,' ',client_trusted_person.lastname) AS trust_pers,
+                                    			  client_trusted_person.actual_address AS trusted_actual_address,
+                                    			  client_trusted_person.juridical_address AS trusted_juridical_address,
+                                                  client_trusted_person.pid AS trusted_pid,
+                                        		  client_trusted_person.phone AS trusted_phone,
+                                                  client_trusted_person.email AS trusted_email,
+                                                  client_loan_agreement.id AS agreement_id,
+			                                      client_loan_agreement.loan_amount,
+                                                  client_loan_agreement.loan_months,
+                                                  client_loan_agreement.percent,
+                                                  client_loan_agreement.monthly_pay,
+                                                  client_loan_agreement.id AS loan_agreement_id,
+                                                  client_loan_agreement.loan_type_id AS loan_type_id,
+                                                  client_loan_agreement.penalty_days AS penalty_days,
+                                                  client_loan_agreement.penalty_percent AS penalty_percent,
+                                                  client_loan_agreement.penalty_additional_percent AS penalty_additional_percent,
+                                                  client_car.model,
+                                    			  client_car.car_id,
+                                    			  client_car.manufacturing_date,
+                                    			  client_car.color,
+                                    			  client_car.registration_number,
+                                                  car_type.`name` AS car_type_name,
+                                                  client_car.engine_size,
+                                    			  client_car.certificate_id,
+                                                  GROUP_CONCAT(CONCAT(client_person.phone,' ',client_person.person)) AS client_person_person
+                                         FROM    `client`
+                                         JOIN    `month` ON `month`.id = DATE_FORMAT(client.datetme,'%m')
+                                         LEFT JOIN client_trusted_person ON client_trusted_person.client_id = client.id
+                                         LEFT JOIN client_loan_agreement ON client_loan_agreement.client_id = client.id
+                                         LEFT JOIN client_car ON client_car.client_id = client.id
+                                         LEFT JOIN client_person ON client_person.client_id = client.id
+                                         LEFT JOIN car_type ON car_type.id = client_car.type_id
+                                         WHERE client.id = '$local_id'"));
 
 if ($file_type == 'receipt') {
     $data  .= ' <div style="size: 7in 9.25in; margin: 15mm 16mm 15mm 16mm;" id="dialog-form">
@@ -2954,6 +2958,204 @@ if ($file_type == 'receipt') {
                             </div>
                          </div>
                    </div>';
+    }elseif ($file_type == 'payment_schedule'){
+        $id_hidden = $_REQUEST['id_hidden'];
+        $c_date	   = date('Y-m-d H:i:s');
+        
+        if ($id_hidden == ''){
+            $loan_amount         = $_REQUEST['loan_amount'];
+            $month_percent       = $_REQUEST['month_percent'];
+            $loan_months         = $_REQUEST['loan_months'];
+            $loan_agreement_type = $_REQUEST['loan_agreement_type'];
+            $name                = $_REQUEST['name'].' '.$_REQUEST['surname'];
+            $month_id            = date('m');
+            $day                 = date('d');
+            $year                = date('Y');
+        }else{
+            $loan_amount   = $res[loan_amount];
+            $month_percent = $res[percent];
+            $loan_months   = $res[loan_months];
+            $month_id      = $res[month_id];
+            $day           = $res[day];
+            $year          = $res[year];
+            $name          = $res[name];
+        }
+        
+        $sum_percent = 0;
+        $sum_P       = 0;
+        
+        if ($id_hidden == ''){
+            $loan_type  = $loan_agreement_type;
+            $PV         = $loan_amount;
+            $r          = $month_percent/100;
+            $n          = $loan_months;
+            $year_month = $month_percent*12;
+        }else {
+            $loan_type   = $res[loan_type_id];
+            $PV          = $res[loan_amount]; //სესხის მოცულობა
+            $r           = $res[percent]/100; //პროცენტი თვეში
+            $n           = $res[loan_months]; //სესხის ვადა თვეში
+            $year_month  = $res[percent]*12;
+        } 
+        
+        
+        
+        $hint        = 'წლ';
+        
+        if ($loan_type == 1) {
+            
+            $P           = $PV*$r;
+            $ziri        = 0.00;
+            $percent     = $P;
+            if ($id_hidden == ''){
+                $year_month = $month_percent;
+            }else{
+                $year_month  = $res[percent];
+            }
+            $hint        = 'თვ';
+            $sum_percent = $n*$percent;
+            $sum_P       = $sum_percent+$PV;
+        }else {
+            $P = ($PV*$r)/(1-(pow((1+$r),-$n))); //ყოველთვიური გადასახდელი
+        }
+        
+        for ($i = 1 ; $i<=$n; $i++){
+            if ($id_hidden == ''){
+                $month = $month_id +$i;
+            }else{
+                $month = $res[month_id]+$i;
+            }
+            
+            if ($loan_type == 1 && $i == $n) {
+                if ($id_hidden == ''){
+                    $P       = $P + $loan_amount;
+                    $ziri    = $loan_amount;
+                    $PV      = 0.00;
+                }else{
+                    $P       = $P + $res[loan_amount];
+                    $ziri    = $res[loan_amount];
+                    $PV      = 0.00;
+                }
+                
+            }elseif ($loan_type != 1){
+                $percent      = $PV / $n * $r * $n; //ყოველთვიური გადასახდელი პროცენტი
+                $ziri         = $P - $percent; //ყოველთვიური გადასახდელი ძირი
+                $PV           = $PV - $ziri; //დარჩენილი ძირი
+                $sum_percent += $percent;
+                $sum_P        = $sum_P +$P;
+            }
+            
+            if ($month<=12) {
+                if ($month<10) {
+                    $month = '0'.$month;
+                }
+                if ($id_hidden == ''){
+                    $date = $day.'-'.$month.'-'.$year;
+                }else{
+                    $date = $res[day].'-'.$month.'-'.$res[year];
+                }
+            }else{
+                $month = $month - 12;
+                if ($month<10) {
+                    $month = '0'.$month;
+                }
+                if ($id_hidden == ''){
+                    $year  = $year +1;
+                    $date = $day.'-'.$month.'-'.$year;
+                }else{
+                    $year  = $res[year] +1;
+                    $date = $res[day].'-'.$month.'-'.$year;
+                }
+               
+            }
+            
+            $dat.='<tr style="width:100%; border: 1px solid #000;">
+                        <td style="width:5%; border-right: 1px solid #000;"><label style="font-size: 12px; text-align:center;">'.$i.'<label></td>
+                        <td style="width:19%; border-right: 1px solid #000;"><label style="font-size: 12px; text-align:center;">'.$date.'</label></td>
+                        <td style="width:19%; border-right: 1px solid #000;"><label style="font-size: 12px; text-align:center;">'.round($ziri,2).'</label></td>
+                        <td style="width:19%; border-right: 1px solid #000;"><label style="font-size: 12px; text-align:center;">'.round($percent,2).'<label></td>
+                        <td style="width:19%; border-right: 1px solid #000;"><label style="font-size: 12px; text-align:center;">'.round($P,2).'</label></td>
+                        <td style="width:19%;"><label style="font-size: 12px; text-align:center;">'.round($PV,2).'</label></td>
+                    </tr>';
+        }
+        
+        $data.='<div style="width:100%;">
+                <div style="width:100%; font-size: 16px; text-align:center;">სესხის დაფარვის გრაფიკი</div>
+                <div style="width:100%; font-size: 14px;">
+                    <table style="width:100%; margin-top: 5px;">
+                        <tr style="width:100%; border: 1px solid #000;">
+                            <td style="width:20%; border-right: 1px solid #000;"><label style="font-size: 14px;">კლიენტის სახელი:<label></td>
+                            <td style="width:80%;"><label style="font-size: 14px;">'.$name.'</label></td>
+                        </tr>
+                    </table> 
+                </div>
+                <div style="width:100%; margin-top: 5px;">
+                    <table style="width:100%;">
+                        <tr style="width:100%;border: 1px solid #000;">
+                            <td style="width:20%;border-right: 1px solid #000;"><label style="font-size: 12px;">სესხის მცულობა:<label></td>
+                            <td style="width:15%;border-right: 1px solid #000;"><label style="font-size: 12px;">'.$loan_amount.'</label></td>
+                            <td style="width:45%;border-right: 1px solid #000;"><label style="font-size: 12px; text-align:center;"></label></td>
+                            <td colspan="2" style="width:40%;"><label style="font-size: 12px; text-align:center;">სესხის გაცემის თარიღი</label></td>
+                        </tr>
+                        <tr style="width:100%;border: 1px solid #000;">
+                            <td style="width:20%;border-right: 1px solid #000;"><label style="font-size: 12px;">საპროცემტო სარგ. ('.$hint.'.):<label></td>
+                            <td style="width:15%;border-right: 1px solid #000;"><label style="font-size: 12px;">'.round($year_month,2).'</label></td>
+                            <td style="width:45%;border-right: 1px solid #000;"><label style="font-size: 12px;"></label></td>
+                            <td style="width:10%;border-right: 1px solid #000;"><label style="font-size: 12px; text-align:center;">თვე</label></td>
+                            <td style="width:10%;"><label style="font-size: 12px; text-align:center;">'.$month_id.'</label></td>
+                        </tr>
+                        <tr style="width:100%;border: 1px solid #000;">
+                            <td style="width:20%;border-right: 1px solid #000;"><label style="font-size: 12px;">ვადა:<label></td>
+                            <td style="width:15%;border-right: 1px solid #000;"><label style="font-size: 12px;">'.$n.'</label></td>
+                            <td style="width:45%;border-right: 1px solid #000;"><label style="font-size: 12px;"></label></td>
+                            <td style="width:10%;border-right: 1px solid #000;"><label style="font-size: 12px; text-align:center;">რიცხვი</label></td>
+                            <td style="width:10%;"><label style="font-size: 12px; text-align:center;">'.$day.'</label></td>
+                        </tr>
+                        <tr style="width:100%;border: 1px solid #000;">
+                            <td style="width:20%;border-right: 1px solid #000;"><label style="font-size: 12px;">საშეღავათო პერიოდი:<label></td>
+                            <td style="width:15%;border-right: 1px solid #000;"><label style="font-size: 12px;"></label></td>
+                            <td style="width:45%;border-right: 1px solid #000;"><label style="font-size: 12px;"></label></td>
+                            <td style="width:10%;border-right: 1px solid #000;"><label style="font-size: 12px; text-align:center;">წელი</label></td>
+                            <td style="width:10%;"><label style="font-size: 12px; text-align:center;">'.$year.'</label></td>
+                        </tr>
+                        <tr style="width:100%;border: 1px solid #000;">
+                            <td style="width:20%; border-right: 1px solid #000;"><label style="font-size: 12px;">საკომისიო წინასწარ(%):<label></td>
+                            <td colspan="4" style="width:20%;"><label style="font-size: 12px;"><label></td>
+                        </tr>
+                    </table>
+                </div>
+                <div style="width:100%; margin-top: 25px; border: 1px solid #000;">
+                    <table style="width:100%;">
+                        <tr style="width:100%;border: 1px solid #000;">
+                            <td colspan="2" style="width:5%;border-right: 1px solid #000;"><label style="font-size: 12px;">სულ პროცენტი<label></td>
+                            <td style="width:19%;border-right: 1px solid #000;"><label style="font-size: 12px;">სულ დასაფარი</label></td>
+                            <td style="width:19%;border-right: 1px solid #000;"><label style="font-size: 12px; text-align:center;">'.round($sum_percent,2).'</label></td>
+                            <td style="width:19%;border-right: 1px solid #000;"><label style="font-size: 12px; text-align:center;">'.round($sum_P, 2).'</label></td>
+                            <td style="width:19%;"><label style="font-size: 12px; text-align:center;">0</label></td>
+                        </tr>
+                        <tr colspan="6" style="height:25px; border: 1px solid #000;">
+                            <td colspan="6"style="width:20%; border-right: 1px solid #000;"><label style="font-size: 12px;"><label></td>
+                        </tr>
+                        <tr style="width:100%; border: 1px solid #000;">
+                            <td style="width:5%; border-right: 1px solid #000;"><label style="font-size: 12px; text-align:center;">#<label></td>
+                            <td style="width:19%; border-right: 1px solid #000;"><label style="font-size: 12px; text-align:center;">თარიღი</label></td>
+                            <td style="width:19%; border-right: 1px solid #000;"><label style="font-size: 12px; text-align:center;">ძირი<label></td>
+                            <td style="width:19%; border-right: 1px solid #000;"><label style="font-size: 12px; text-align:center;">პროცენტი</label></td>
+                            <td style="width:19%; border-right: 1px solid #000;"><label style="font-size: 12px; text-align:center;">შესატანი</label></td>
+                            <td style="width:19%;"><label style="font-size: 12px; text-align:center;">ნაშთი შენატანის შემდეგ</label></td>
+                        </tr>';
+        $data.=$dat;
+        
+        $data.='<tr colspan="6" style="height:25px; border: 1px solid #000;">
+                    <td colspan="6"style="width:20%; border-right: 1px solid #000;"><label style="font-size: 12px;"><label></td>
+                </tr>
+                <tr style="width:100%;border: 1px solid #000;">
+                    <td colspan="3"style="width:20%; border-right: 1px solid #000;"><label style="font-size: 12px;">ხელმოწერა ლ:<label></td>
+                    <td colspan="3" style="width:20%; border-right: 1px solid #000;"><label style="font-size: 12px;">ხელმოწერა ლ:<label></td>
+                </tr>
+                </table>
+               </div>
+            </div>';
     }
 ?>
     <head>
