@@ -4304,9 +4304,9 @@ function GetPage($res){
                     </fieldset>
         	        <fieldset style="display:none;" id="documents">
                         <legend>ძირითადი ინფორმაცია</legend>
-        	                    <div id="documents_div">
+        	            <div id="documents_div">
         	                '.show_documents_file($res[loan_type_id], $res[agreement_type_id]).'
-        	                    </div>
+        	           </div>
                     </fieldset>
                 </div>
             </fieldset>

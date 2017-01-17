@@ -200,15 +200,17 @@
     					if(data.error != ""){
     						alert(data.error);
     					}else{
-    						$("#documents_div").val(data.page);
+        					console.log(data.page);
+    						$("#documents_div").html(data.page);
     						$("#id_hidden").val(data.local_id);
     					}
     				}
     	    	}
     	   });
         }
-
+        setTimeout(function(){
         $("#" + id).show();
+        }, 100);
         $(".add-edit-form-class").css("width", "1200");
         hide_right_side();
         var str = $("."+id).children('img').attr('src');
