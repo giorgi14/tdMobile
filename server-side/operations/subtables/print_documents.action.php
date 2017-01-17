@@ -47,7 +47,7 @@ $res = mysql_fetch_assoc(mysql_query("SELECT  client.id,
                                 			    client_car.certificate_id,
                                                 GROUP_CONCAT(CONCAT(client_person.phone,' ',client_person.person)) AS client_person_person
                                     FROM    `client`
-                                    JOIN    `month` ON `month`.id = DATE_FORMAT(client.datetme,'%d')
+                                    JOIN    `month` ON `month`.id = DATE_FORMAT(client.datetme,'%m')
                                     LEFT JOIN client_trusted_person ON client_trusted_person.client_id = client.id
                                     LEFT JOIN client_loan_agreement ON client_loan_agreement.client_id = client.id
                                     LEFT JOIN client_car ON client_car.client_id = client.id
