@@ -200,8 +200,7 @@
     					if(data.error != ""){
     						alert(data.error);
     					}else{
-        					console.log(data.page);
-    						$("#documents_div").html(data.page);
+        					$("#documents_div").html(data.page);
     						$("#id_hidden").val(data.local_id);
     					}
     				}
