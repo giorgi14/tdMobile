@@ -3939,6 +3939,7 @@ function GetPage($res){
     
     if ($res[id] == '') {
         $checked = "";
+        $spanvalue = 0;
         $table_hidde ="display:none;";
     }else if ($res[trust_person_id] == '') {
         $checked = "";
@@ -3946,6 +3947,7 @@ function GetPage($res){
     }else {
         $checked = "checked";
         $table_hidde = "display:block;";
+        $spanvalue   = 1;
     }
     
     if ($res[type] == 2) {
@@ -3977,6 +3979,7 @@ function GetPage($res){
                 <fieldset style="width: 145px;  float: left;">
                    <input id="id_hidden" type="hidden" value="'.$res['id'].'">
                    <input id="local_id" type="hidden" value="'.$res['id'].'">
+                   <input id="span_status" type="hidden" value="'.$spanvalue.'">
                    <legend>ინფორმაცია</legend>
                    <table class="dialog-form-table">
             	       <tr style="height:0px;">
@@ -4033,11 +4036,11 @@ function GetPage($res){
                    </table>
                 </fieldset>
                 <div id="side_menu" style="float: left;height: 608px; width: 80px; margin-left: 10px; background: #272727; color: #FFF;margin-top: 6px;">
-                    <spam class="info" style="display: block;padding: 10px 5px;  cursor: pointer;" onclick="show_right_side(\'info\')"><img style="padding-left: 22px;padding-bottom: 5px;" src="media/images/icons/client_menu.png" alt="24 ICON" height="24" width="24"><div style="text-align: center;">კლიენტი</div></spam>
-                    <spam class="auto_mobile" style="display: block;padding: 10px 5px;  cursor: pointer;" onclick="show_right_side(\'auto_mobile\')"><img style="padding-left: 22px;padding-bottom: 5px;" src="media/images/icons/car.png" alt="24 ICON" height="24" width="24"><div style="text-align: center;">მანქანა</div></spam>
-                    <spam class="agreement" style="display: block;padding: 10px 5px;  cursor: pointer;" onclick="show_right_side(\'agreement\')"><img style="padding-left: 22px;padding-bottom: 5px;" src="media/images/icons/handshake.png" alt="24 ICON" height="24" width="24"><div style="text-align: center;">ხელშეკრუ<br>ლება</div></spam>
-                    <spam class="papers" style="display: block;padding: 10px 5px;  cursor: pointer;" onclick="show_right_side(\'papers\')"><img style="padding-left: 22px;padding-bottom: 5px;" src="media/images/icons/file.png" alt="24 ICON" height="24" width="24"><div style="text-align: center;">საბუთები</div></spam>
-                    <spam class="documents" style="display: block;padding: 10px 5px;  cursor: pointer;" onclick="show_right_side(\'documents\')"><img style="padding-left: 22px;padding-bottom: 5px;" src="media/images/icons/document.png" alt="24 ICON" height="24" width="24"><div style="text-align: center;">დოკუმენ<br>ტები</div></spam>
+                    <spam class="info" style="display: block;padding: 10px 5px;  cursor: pointer;" onclick="show_right_side(\'info\',\'1\')"><img style="padding-left: 22px;padding-bottom: 5px;" src="media/images/icons/client_menu.png" alt="24 ICON" height="24" width="24"><div style="text-align: center;">კლიენტი</div></spam>
+                    <spam class="auto_mobile" style="display: block;padding: 10px 5px;  cursor: pointer;" onclick="show_right_side(\'auto_mobile\',\'1\')"><img style="padding-left: 22px;padding-bottom: 5px;" src="media/images/icons/car.png" alt="24 ICON" height="24" width="24"><div style="text-align: center;">მანქანა</div></spam>
+                    <spam class="agreement" style="display: block;padding: 10px 5px;  cursor: pointer;" onclick="show_right_side(\'agreement\',\'1\')"><img style="padding-left: 22px;padding-bottom: 5px;" src="media/images/icons/handshake.png" alt="24 ICON" height="24" width="24"><div style="text-align: center;">ხელშეკრუ<br>ლება</div></spam>
+                    <spam class="papers" style="display: block;padding: 10px 5px;  cursor: pointer;" onclick="show_right_side(\'papers\',\'1\')"><img style="padding-left: 22px;padding-bottom: 5px;" src="media/images/icons/file.png" alt="24 ICON" height="24" width="24"><div style="text-align: center;">საბუთები</div></spam>
+                    <spam class="documents" style="display: block;padding: 10px 5px;  cursor: pointer;" onclick="show_right_side(\'documents\','.$spanvalue.')"><img style="padding-left: 22px;padding-bottom: 5px;" src="media/images/icons/document.png" alt="24 ICON" height="24" width="24"><div style="text-align: center;">დოკუმენ<br>ტები</div></spam>
                 </div>
     	        <div style="width:905px; float:left; margin-left:10px;" id="right_side">
                     <fieldset style="display:none;" id="info">

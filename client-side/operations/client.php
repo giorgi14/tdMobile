@@ -128,7 +128,9 @@
          		$("#tin_date").val('');
          		$("#car_born").val('');
             }
-            
+            if($("#id_hidden").val()==''){
+            	$(".documents").css('filter','brightness(0.3)');
+            }
             setTimeout(function(){
          		LoadTable('person',3,main_act,"<'F'Cpl>",aJaxURL_cl_person, '', 'local_id='+$("#local_id").val());
          		$("#table_person_length").css('top', '2px');
@@ -175,7 +177,7 @@
 	   });
     }
     
-	function show_right_side(id){
+	function show_right_side(id,value){
         $("#right_side fieldset").hide();
         
         if(id == 'auto_mobile'){
@@ -208,7 +210,9 @@
     	   });
         }
         setTimeout(function(){
-        $("#" + id).show();
+            if(value==1 || $("#span_status").val()==1){
+                $("#" + id).show();
+        	}
         }, 100);
         $(".add-edit-form-class").css("width", "1200");
         hide_right_side();
@@ -329,7 +333,8 @@
 						alert(data.error);
 					}else{
 						LoadTable('index',colum_number,main_act,change_colum_main,aJaxURL);
-					    //CloseDialog("add-edit-form");
+						$("#span_status").val(1);
+						$(".documents").css('filter','');
 					}
 				}
 	    	}
