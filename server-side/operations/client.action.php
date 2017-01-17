@@ -238,6 +238,12 @@ switch ($action) {
         $data		         = array('page'	=> $page, 'local_id' =>$local_id);
     
         break;
+    case 'get_agreement':
+        $loan_agreement_type = $_REQUEST['loan_agreement_type'];
+        $page		         = agreement_type('', $loan_agreement_type);
+        $data		         = array('page'	=> $page);
+    
+        break;
     case 'get_default':
         
         $loan_agreement_type = $_REQUEST['loan_agreement_type'];
@@ -686,10 +692,11 @@ function loan_type($id){
     return $data;
 }
 
-function agreement_type($id){
+function agreement_type($id, $loan_type_id){
     $req = mysql_query("SELECT id,
                               `name`
-                        FROM   agreement_type");
+                        FROM   agreement_type
+                        where  loan_type_id = $loan_type_id");
 
     $data .= '<option value="0" selected="selected">----</option>';
     while( $res = mysql_fetch_assoc($req)){
@@ -4228,7 +4235,7 @@ function GetPage($res){
                                <td style="width: 220px;"><input style="width: 200px;" id="agreement_number" type="text" value="'.$res[loan_agreement_id].'" disabled="disabled"></td>
                                <td style="width: 220px;"><input style="width: 200px;" id="agreement_date" type="text" value="'.$res[loan_agreement_datetime].'"></td>
                                <td><select id="loan_agreement_type" style="width: 195px;">'.loan_type($res[loan_type_id]).'</select></td>
-                               <td><select id="agreement_type_id" style="width: 195px;">'.agreement_type($res[agreement_type_id]).'</select></td>
+                               <td><select id="agreement_type_id" style="width: 195px;">'.agreement_type($res[agreement_type_id],$res[loan_type_id]).'</select></td>
                            </tr>
                            <tr style="height:18px"></tr>
                            <tr>

@@ -399,7 +399,24 @@
        		$("#proceed_fee").css('display','block');
        		$("#proceed_percent").css('display','block');
         }
-
+        
+        param1 			          = new Object();
+        param1.act                 = 'get_agreement';
+    	param1.loan_agreement_type = $(this).val();
+        $.ajax({
+            url: aJaxURL,
+    	    data: param1,
+            success: function(data) {
+            	if(typeof(data.error) != "undefined"){
+					if(data.error != ""){
+						alert(data.error);
+					}else{
+						$("#agreement_type_id").html(data.page).trigger("chosen:updated");
+					}
+				}
+    	    }
+        });
+        
         param 			          = new Object();
         param.act                 = 'get_default';
     	param.loan_agreement_type = $(this).val();
