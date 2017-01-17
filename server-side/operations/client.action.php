@@ -56,9 +56,10 @@ switch ($action) {
                         			   CONCAT(client.`name`,' ',client.lastname),
                         			   client.pid,
                         			   client.phone,
-                        			   '',
+                        			   client_loan_agreement.id,
                         			   ''
                                 FROM  `client`
+	  	                        LEFT JOIN client_loan_agreement ON client_loan_agreement.client_id = client.id
                                 WHERE  client.actived = 1");
 	  
 		$data = array("aaData"	=> array());
