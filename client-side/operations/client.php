@@ -1,6 +1,10 @@
 <head>
 <style type="text/css">
-   .add-edit-form-research_lab-class,
+
+
+
+
+.add-edit-form-research_lab-class,
    .add-edit-form-function_detail-class,
    .add-edit-form-emergency-class,
    .add-edit-form-claim-class,
@@ -73,10 +77,10 @@
 <script type="text/javascript">
     var aJaxURL           = "server-side/operations/client.action.php";
     var aJaxURL_cl_person = "server-side/operations/subtables/client_person.action.php";
-
+    var aJaxURL_cl_car_driver = "server-side/operations/subtables/client_car_drivers.action.php";
     var tName             = "table_";
     var dialog            = "add-edit-form";
-    var colum_number      = 8;
+    var colum_number      = 9;
     var main_act          = "get_list";
     var change_colum_main = "<'dataTable_buttons'T><'F'Cfipl>";
      
@@ -90,15 +94,47 @@
     function LoadTable(tbl,col_num,act,change_colum,URL,leng,dataparam,total){
 
     	if(dataparam == undefined){dataparam = leng;}
-    	if(tbl == 'person'){dataparam = 'local_id='+$("#local_id").val();}
+    	if(tbl == 'person' || tbl == 'cardrivers'){dataparam = 'local_id='+$("#local_id").val();}
     	GetDataTable(tName+tbl,URL,act,col_num,dataparam,0,"",1,"desc",total,change_colum);
     	$("#table_person_length").css('top', '2px');
+    	$("#table_cardrivers_length").css('top', '2px');
     	setTimeout(function(){$('.ColVis, .dataTable_buttons').css('display','none');}, 50);
     }
 
     function LoadDialog(fName){
         if(fName == 'add-edit-form'){
         	var buttons = {
+        			"activate-dialog": {
+    		            text: "გააქტიურება",
+    		            id: "activate-dialog",
+    		            click: function () {
+    		            	param 	       = new Object();
+    		        		param.act      = "activate_agreement";
+    		        		param.hidde_id = $("#id_hidden").val();
+    		        		
+    		        		$.ajax({
+    		        	        url: aJaxURL,
+    		        		    data: param,
+    		        	        success: function(data) {       
+    		        				if(typeof(data.error) != "undefined"){
+    		        					if(data.error != ""){
+    		        						alert(data.error);
+    		        					}else{
+    		        						alert('ხელშეკრულება წარმატებით გააქტიურდა');
+    		        						$("#activate-dialog").button("disable");
+    		        						$("#save-dialog").button("disable");
+    		        						LoadTable('index',colum_number,main_act,change_colum_main,aJaxURL);
+    		        						$('#add-edit-form, .idle').attr('disabled', true);
+    		        						$("#hidde_status").val(1);
+    		        						$('#loan_agreement_type').prop('disabled', true).trigger("chosen:updated");
+    		        	    				$('#agreement_type_id').prop('disabled', true).trigger("chosen:updated");
+    		        	    				$('#car_type').prop('disabled', true).trigger("chosen:updated");
+    		        					}
+    		        				}
+    		        	    	}
+    		        	    });
+    		            }
+    		        },
     				"save": {
     		            text: "შენახვა",
     		            id: "save-dialog"
@@ -121,24 +157,71 @@
      		GetDate('born_date');
      		GetDate('tin_date');
      		GetDate('car_born');
-     		
+     		GetDate('insurance_start_date');
+     		GetDate('insurance_end_date');
             if($("#local_id").val()==''){
             	get_local_id('client');
             	$("#born_date").val('');
          		$("#tin_date").val('');
          		$("#car_born").val('');
+         		$("#insurance_start_date").val('');
+         		$("#insurance_end_date").val('');
             }
             if($("#id_hidden").val()==''){
             	$(".documents").css('filter','brightness(0.3)');
+            	$(".client_insurance").css('filter','brightness(0.3)');
+            	$("#activate-dialog").button("disable");
+            }else{
+                if($("#hidde_status").val()==1){
+                	$("#activate-dialog").button("disable");
+    				$("#save-dialog").button("disable");
+    				$('#add-edit-form, .idle').attr('disabled', true);
+    				$('#loan_agreement_type').prop('disabled', true).trigger("chosen:updated");
+    				$('#agreement_type_id').prop('disabled', true).trigger("chosen:updated");
+    				$('#car_type').prop('disabled', true).trigger("chosen:updated");
+                }
             }
+            if($("#car_insurance_info_hidde").val()==''){
+            	$("#print_insurance").button("disable");
+            	$("#download_insurance").button("disable");
+            }
+            
             setTimeout(function(){
          		LoadTable('person',3,main_act,"<'F'Cpl>",aJaxURL_cl_person, '', 'local_id='+$("#local_id").val());
          		$("#table_person_length").css('top', '2px');
          		SetEvents("add_button_pers", "delete_button_pers", "check-all_pers", tName+'person', 'add-edit-form-pers', aJaxURL_cl_person,'','person',4,main_act,"<'F'Cpl>",aJaxURL_cl_person,'');
             	GetButtons("add_button_pers","delete_button_pers");
          	}, 50);
+            setTimeout(function(){
+         		LoadTable('cardrivers',5,main_act,"<'F'Cpl>",aJaxURL_cl_car_driver, '', 'local_id='+$("#local_id").val());
+         		$("#table_cardrivers_length").css('top', '2px');
+         		SetEvents("add_button_cardriver", "delete_button_cardriver", "check-all_car_driver", tName+'cardrivers', 'add-edit-form-car_driver', aJaxURL_cl_car_driver,'','cardrivers',5,main_act,"<'F'Cpl>",aJaxURL_cl_car_driver,'');
+            	GetButtons("add_button_cardriver","delete_button_cardriver");
+         	}, 50);
          	
-     	}else{
+     	}else if(fName == 'add-edit-form-car_driver'){
+     		var buttons = {
+    				"save": {
+    		            text: "შენახვა",
+    		            id: "save-driver"
+    		        },
+    	        	"cancel": {
+    		            text: "დახურვა",
+    		            id: "cancel-dialog",
+    		            click: function () {
+    		            	$(this).dialog("close");
+    		            }
+    		        }
+    		    };
+                GetDialog("add-edit-form-car_driver", 490, "auto", buttons, 'left+43 top');
+                GetDate('license_born');
+                GetDate('born');
+         		if($("#car_driver_hidde").val()==''){
+                	$("#license_born").val('');
+             		$("#born").val('');
+             		
+                }
+        }else{
             var buttons = {
 				"save": {
 		            text: "შენახვა",
@@ -182,7 +265,11 @@
         
         if(id == 'auto_mobile'){
             $("#upload_picture").show();
-        }else if(id == 'agreement'){
+            $("#car_drivers_fieldset").show();
+            GetDate('car_sale_date');
+     		GetDate('car_ins_start');
+     		GetDate('car_ins_end');
+     	}else if(id == 'agreement'){
         	$("#agreement_grafic").show();
         }else if(id == 'info'){
         	$("#table_person_fieldset").show();
@@ -227,8 +314,12 @@
         $('#loan_agreement_type_chosen').css('width', '206px');
         $('#agreement_type_id_chosen').css('width', '206px');
         $('#choose_button').button();
+        $('#check_monthly_pay').button();
         $('#show_payment_schedule').button();
         $('#hidde_payment_schedule').button();
+        $('#print_insurance').button();
+        $('#download_insurance').button();
+        $('#save_insurance_info').button();
         GetDateTimes('agreement_date');
         GetDateTimes('trusting_date');
     }
@@ -241,6 +332,7 @@
         $(".pledge").children('img').attr('src','media/images/icons');
         $(".papers").children('img').attr('src','media/images/icons/file.png');
         $(".documents").children('img').attr('src','media/images/icons/document.png');
+        $(".client_insurance").children('img').attr('src','media/images/icons/car-insurance.png');
     }
 
     function show_main(id,my_this){
@@ -258,24 +350,27 @@
 		param 			= new Object();
 		param.act		= "save_client";
 
+		
+		param.id_hidden	          = $('#id_hidden').val();
+		param.local_id	          = $('#local_id').val();
+		
 		//ცლიენტის მონაცემები//
-		param.id_hidden	   = $('#id_hidden').val();
-		param.local_id	   = $('#local_id').val();
-		param.name	       = $('#name').val();
-		param.surname	   = $('#surname').val();
-		param.born_date	   = $('#born_date').val();
-		param.tin	       = $('#tin').val();
-		param.tin_number   = $('#tin_number').val();
-		param.tin_date	   = $('#tin_date').val();
-		param.comment	   = $('#comment').val();
-		param.mail	       = $('#mail').val();
-		param.phone	       = $('#phone').val();
-		param.fact_address = $('#fact_address').val();
-		param.jur_address  = $('#jur_address').val();
-		param.ltd_name	   = $('#ltd_name').val();
-		param.ltd_id       = $('#ltd_id').val();
-		param.client_type  = $("input[class=client_type]:checked").val();
-
+		param.name	              = $('#name').val();
+		param.surname	          = $('#surname').val();
+		param.born_date	          = $('#born_date').val();
+		param.tin	              = $('#tin').val();
+		param.tin_number          = $('#tin_number').val();
+		param.tin_date	          = $('#tin_date').val();
+		param.comment	          = $('#comment').val();
+		param.mail	              = $('#mail').val();
+		param.phone	              = $('#phone').val();
+		param.fact_address        = $('#fact_address').val();
+		param.jur_address         = $('#jur_address').val();
+		param.ltd_name	          = $('#ltd_name').val();
+		param.ltd_id              = $('#ltd_id').val();
+		param.client_type         = $("input[class=client_type]:checked").val();
+		param.trust_pers_checkbox = $("input[id='trust_pers_checkbox']:checked").val();
+		
 		//მინდობილი პირის მონაცემები//
 		param.client_trust_name	        = $('#client_trust_name').val();
 		param.client_trust_surname	    = $('#client_trust_surname').val();
@@ -292,6 +387,7 @@
 		param.trusting_notary_phone     = $('#trusting_notary_phone').val();
 
 		//მანქანის მონაცემები//
+		param.car_marc	              = $('#car_marc').val();
 		param.car_model	              = $('#car_model').val();
 		param.car_born	              = $('#car_born').val();
 		param.car_color	              = $('#car_color').val();
@@ -301,7 +397,17 @@
 		param.car_owner               = $('#car_owner').val();
 		param.car_ident               = $('#car_ident').val();
 		param.car_ertificate          = $('#car_ertificate').val();
-
+		
+		param.car_wheel               = $('#car_wheel').val();
+		param.car_seats               = $('#car_seats').val();
+		param.car_price               = $('#car_price').val();
+		param.car_sale_date           = $('#car_sale_date').val();
+		param.car_insurance_price     = $('#car_insurance_price').val();
+		param.car_ins_start           = $('#car_ins_start').val();
+		param.car_ins_end             = $('#car_ins_end').val();
+		
+		$("#name, #surname, #born_date, #tin, #tin_number,#tin_date,#phone,#fact_address,#jur_address,#ltd_name,#ltd_id,#client_trust_name,client_trust_surname,#client_trust_tin,#client_trust_phone,#client_trust_fact_address,#client_trust_jur_address,#trusting_number,#trusting_date,#trusting_notary,#trusting_notary_address,#trusting_notary_phone,#car_model,#car_born,#car_color,#car_engine,#car_registration_number,#car_ident,#car_ertificate,#agreement_date,#loan_amount,#loan_months,#insurance_fee,#pledge_fee,#monthly_pay,#month_percent,#monthly_pay,#exchange_rate,#penalty_days,#penalty_percent,#penalty_additional_percent,#loan_fee,#proceed_fee,#proceed_percent").css('border','1px solid #42B4E6');
+		$("#loan_agreement_type_chosen, #agreement_type_id_chosen, #car_type_chosen").css('border','');
 		//ხელშეკრულების მონაცემები//
 		param.agreement_type_id           = $('#agreement_type_id').val();
 		param.loan_agreement_type	      = $('#loan_agreement_type').val();
@@ -323,24 +429,196 @@
 		param.proceed_fee                 = $('#proceed_fee').val();
 		param.proceed_percent             = $('#proceed_percent').val();
 		
-		
-		$.ajax({
-	        url: aJaxURL,
-		    data: param,
-	        success: function(data) {       
-				if(typeof(data.error) != "undefined"){
-					if(data.error != ""){
-						alert(data.error);
-					}else{
-						LoadTable('index',colum_number,main_act,change_colum_main,aJaxURL);
-						$("#span_status").val(1);
-						$(".documents").css('filter','');
-					}
-				}
-	    	}
-	   });
+		if(param.name == ''){
+			alert('შეავსეთ "სახელი"');
+			$("#name").css('border','1px solid #F44336');
+		}else if(param.surname == ''){
+			alert('შეავსეთ "გვარი"');
+			$("#surname").css('border','1px solid #F44336');
+		}else if(param.born_date == ''){
+			alert('შეავსეთ "დაბადების თარიღი"');
+			$("#born_date").css('border','1px solid #F44336');
+		}else if(param.tin == ''){
+			alert('შეავსეთ "პირადი ნომერი"');
+			$("#tin").css('border','1px solid #F44336');
+		}else if(param.tin_number == ''){
+			alert('შეავსეთ "პირ. მოწმ. ნომერი"');
+			$("#tin_number").css('border','1px solid #F44336');
+		}else if(param.tin_date == ''){
+			alert('შეავსეთ "პირ. გაცემის თარიღი"');
+			$("#tin_date").css('border','1px solid #F44336');
+		}else if(param.phone == ''){
+			alert('შეავსეთ "ტელეფონი"');
+			$("#phone").css('border','1px solid #F44336');
+		}else if(param.fact_address == '' && param.jur_address == ''){
+			alert('შეავსეთ "მისამართი"');
+			$("#fact_address").css('border','1px solid #F44336');
+			$("#jur_address").css('border','1px solid #F44336');
+		}else if(param.client_type == 2 && param.ltd_name == ''){
+			alert('შეავსეთ "შპს დასახელება"');
+			$("#ltd_name").css('border','1px solid #F44336');
+		}else if(param.client_type == 2 && param.ltd_id == ''){
+			alert('შეავსეთ "საიდენტიფიკაციო კოდი"');
+			$("#ltd_id").css('border','1px solid #F44336');
+		}else if(param.trust_pers_checkbox == 1 && param.client_trust_name == ''){
+			alert('შეავსეთ "მ/პ სახელი"');
+			$("#client_trust_name").css('border','1px solid #F44336');
+		}else if(param.trust_pers_checkbox == 1 && param.client_trust_surname == ''){
+			alert('შეავსეთ "მ/პ გვარი"');
+			$("#client_trust_surname").css('border','1px solid #F44336');
+		}else if(param.trust_pers_checkbox == 1 && param.client_trust_tin == ''){
+			alert('შეავსეთ "მ/პ პირადი ნომერი"');
+			$("#client_trust_tin").css('border','1px solid #F44336');
+		}else if(param.trust_pers_checkbox == 1 && param.client_trust_phone == ''){
+			alert('შეავსეთ "მ/პ ტელეფონი"');
+			$("#client_trust_phone").css('border','1px solid #F44336');
+		}else if(param.trust_pers_checkbox == 1 && param.client_trust_fact_address == '' && param.client_trust_jur_address == ''){
+			alert('შეავსეთ "მ/პ მისამართი"');
+			$("#client_trust_fact_address").css('border','1px solid #F44336');
+			$("#client_trust_jur_address").css('border','1px solid #F44336');
+		}else if(param.trust_pers_checkbox == 1 && param.trusting_number == ''){
+			alert('შეავსეთ "სანოტ. რეგისტრ. ნომერი"');
+			$("#trusting_number").css('border','1px solid #F44336');
+		}else if(param.trust_pers_checkbox == 1 && param.trusting_date == ''){
+			alert('შეავსეთ "სანოტ. რეგისტრ. თარიღი"');
+			$("#trusting_date").css('border','1px solid #F44336');
+		}else if(param.trust_pers_checkbox == 1 && param.trusting_notary == ''){
+			alert('შეავსეთ "ნოტარიუსი"');
+			$("#trusting_notary").css('border','1px solid #F44336');
+		}else if(param.trust_pers_checkbox == 1 && param.trusting_notary_phone  == ''){
+			alert('შეავსეთ "ნოტარიუსის ტელეფონი"');
+			$("#trusting_notary_phone").css('border','1px solid #F44336');
+		}else if(param.trust_pers_checkbox == 1 && param.trusting_notary_address  == ''){
+			alert('შეავსეთ "ნოტარიუსის მისამართი"');
+			$("#trusting_notary_address").css('border','1px solid #F44336');
+		}else if(param.car_model == ''){
+			alert('შეავსეთ "მანქანის მოდელი"');
+			$("#car_model").css('border','1px solid #F44336');
+		}else if(param.car_born == ''){
+			alert('შეავსეთ "მანქანის გამოშვების წელი"');
+			$("#car_born").css('border','1px solid #F44336');
+		}else if(param.car_color == ''){
+			alert('შეავსეთ "მანქანის ფერი"');
+			$("#car_color").css('border','1px solid #F44336');
+		}else if(param.car_type == 0){
+			alert('შეავსეთ "მანქანის ტიპი"');
+			$("#car_type_chosen").css('border','1px solid #F44336');
+		}else if(param.car_engine == ''){
+			alert('შეავსეთ "მანქანის ძრავის მოცულობა"');
+			$("#car_engine").css('border','1px solid #F44336');
+		}else if(param.car_registration_number==''){
+			alert('შეავსეთ "მანქანის რეგისტრაციის ნომერი"');
+			$("#car_registration_number").css('border','1px solid #F44336');
+		}else if(param.car_ident == ''){
+			alert('შეავსეთ "მანქანის საიდენტიფიკაციო ნომერი"');
+			$("#car_ident").css('border','1px solid #F44336');
+		}else if(param.car_ertificate == ''){
+			alert('შეავსეთ "მოწმობის ნომერი"');
+			$("#car_ertificate").css('border','1px solid #F44336');
+		}else if(param.agreement_date == ''){
+			alert('შეავსეთ "ხელშეკრულების თარიღი"');
+			$("#agreement_date").css('border','1px solid #F44336');
+		}else if(param.loan_agreement_type == 0){
+			alert('შეავსეთ "სესხის ტიპი"');
+			$("#loan_agreement_type_chosen").css('border','1px solid #F44336');
+		}else if(param.agreement_type_id == 0){
+			alert('შეავსეთ "ხელშეკრულების ტიპი"');
+			$("#agreement_type_id_chosen").css('border','1px solid #F44336');
+		}else if(param.loan_amount == ''){
+			alert('შეავსეთ "სესხის სრული მოცულობა"');
+			$("#loan_amount").css('border','1px solid #F44336');
+		}else if(param.month_percent == ''){
+			alert('შეავსეთ "ყოველთვიური პროცენტი"');
+			$("#month_percent").css('border','1px solid #F44336');
+		}else if(param.loan_months == ''){
+			alert('შეავსეთ "სესხის სარგებლობის ვადა"');
+			$("#loan_months").css('border','1px solid #F44336');
+		}else if(param.loan_fee == ''){
+			alert('შეავსეთ "სესხის გაცემის საკომისიო"');
+			$("#loan_fee").css('border','1px solid #F44336');
+		}else if(param.loan_agreement_type == 1 && param.proceed_fee == ''){
+			alert('შეავსეთ "ხელშკრ. გაგრძ. საფასური"');
+			$("#proceed_fee").css('border','1px solid #F44336');
+		}else if(param.loan_agreement_type == 1 && param.proceed_percent == ''){
+			alert('შეავსეთ "პროცენტი"');
+			$("#proceed_percent").css('border','1px solid #F44336');
+		}else if(param.insurance_fee == ''){
+			alert('შეავსეთ "სადაზღვევო ხარჯი"');
+			$("#insurance_fee").css('border','1px solid #F44336');
+		}else if(param.pledge_fee == ''){
+			alert('შეავსეთ "გირავნობის ხარჯი"');
+			$("#pledge_fee").css('border','1px solid #F44336');
+		}else if(param.monthly_pay == ''){
+			alert('შეამოწმეთ "ყოველთვიურად შეს. თანხა"');
+			$("#monthly_pay").css('border','1px solid #F44336');
+		}else if(param.exchange_rate == ''){
+			alert('შეავსეთ "ვალუტის კურსი"');
+			$("#exchange_rate").css('border','1px solid #F44336');
+		}else if(param.penalty_days == ''){
+			alert('შეავსეთ "ვადაგადაცილებული დღეები"');
+			$("#penalty_days").css('border','1px solid #F44336');
+		}else if(param.penalty_percent == ''){
+			alert('შეავსეთ "ვადაგადაც. პირგასამტეხლო%"');
+			$("#penalty_percent").css('border','1px solid #F44336');
+		}else if(param.penalty_additional_percent == ''){
+			alert('შეავსეთ "ვადაგადაც. პირგასამტეხლო%"');
+			$("#penalty_additional_percent").css('border','1px solid #F44336');
+		}else{
+    		$.ajax({
+    	        url: aJaxURL,
+    		    data: param,
+    	        success: function(data) {       
+    				if(typeof(data.error) != "undefined"){
+    					if(data.error != ""){
+    						alert(data.error);
+    					}else{
+    						alert('ოპერაცია წარმატებით შესრულდა');
+    						$("#activate-dialog").button("enable");
+    						LoadTable('index',colum_number,main_act,change_colum_main,aJaxURL);
+    						$("#span_status").val(1);
+    						$(".documents").css('filter','');
+    						$(".client_insurance").css('filter','');
+    						$("#id_hidden").val($('#local_id').val());
+    					}
+    				}
+    	    	}
+    	    });
+		}
 	});
+    
+    $(document).on("click", "#check_monthly_pay", function () {
+		param 	  = new Object();
+		param.act = "check_monthly_pay";
 
+		param.loan_amount	      = $('#loan_amount').val();
+		param.month_percent	      = $("#month_percent").val();
+		param.loan_months	      = $('#loan_months').val();
+		param.loan_agreement_type = $('#loan_agreement_type').val();
+		if(param.loan_amount == ''){
+			alert('შეავსეთ "სესხის სრული მოცულობა"');
+		}else if(param.month_percent == ''){
+			alert('შეავსეთ "ყოველთვიური პროცენტი"');
+		}else if(param.loan_months == ''){
+			alert('შეავსეთ "სესხის სარგებლობის ვადა"');
+		}else if(param.loan_agreement_type==0){
+			alert('შეავსეთ "სესხის ტიპი"');
+		}else{
+    		$.ajax({
+    	        url: aJaxURL,
+    		    data: param,
+    	        success: function(data) {       
+    				if(typeof(data.error) != "undefined"){
+    					if(data.error != ""){
+    						alert(data.error);
+    					}else{
+    						$("#monthly_pay").val(data.monthly_pay);
+    					}
+    				}
+    	    	}
+    	   });
+		}
+	});
+	
     $(document).on("click", "#save-dialog-pers", function () {
 		param 			= new Object();
 		param.act		= "save_client_pers";
@@ -368,6 +646,89 @@
 	   });
 	});
 
+    $(document).on("click", "#save-driver", function () {
+		param 			= new Object();
+		param.act		= "save_car_drivers";
+
+		param.car_driver_hidde	= $('#car_driver_hidde').val();
+		param.local_id	        = $("#local_id").val();
+		
+		param.name	        = $('#name').val();
+		param.born	        = $('#born').val();
+		param.license_type	= $('#license_type').val();
+		param.license_born	= $('#license_born').val();
+		
+		$.ajax({
+	        url: aJaxURL_cl_car_driver,
+		    data: param,
+	        success: function(data) {       
+				if(typeof(data.error) != "undefined"){
+					if(data.error != ""){
+						alert(data.error);
+					}else{
+						LoadTable('cardrivers',5,main_act,"<'F'Cpl>",aJaxURL_cl_car_driver,'','local_id='+$("#local_id").val());
+						$("#table_cardrivers_length").css('top', '2px');
+					    CloseDialog("add-edit-form-car_driver");
+					}
+				}
+	    	}
+	   });
+	});
+
+    $(document).on("click", "#save_insurance_info", function () {
+		param 			= new Object();
+		param.act		= "save_insurance_info";
+
+		param.local_id 								= $("#local_id").val();
+		param.car_insurance_info_hidde	            = $("#car_insurance_info_hidde").val();
+		
+		param.lined_organization_yes_no	            = $('#lined_organization_yes_no').val();
+		param.any_person_Managed_yes_no	            = $('#any_person_Managed_yes_no').val();
+		param.encased_yes_no	                    = $('#encased_yes_no').val();
+		param.signaling_yes_no	                    = $('#signaling_yes_no').val();
+		param.autotransport_other_protection_yes_no	= $('#autotransport_other_protection_yes_no').val();
+		param.signaling_type	                    = $('#signaling_type').val();
+		param.driver_disabled_yes_no	            = $('#driver_disabled_yes_no').val();
+		param.driver_no_ins_yes_no	                = $('#driver_no_ins_yes_no').val();
+		param.car_accident_drivers_yes_no	        = $('#car_accident_drivers_yes_no').val();
+		param.guilt_drivers_yes_no	                = $('#guilt_drivers_yes_no').val();
+		param.injury_passion_ins_yes_no	            = $('#injury_passion_ins_yes_no').val();
+		param.responsible_ins_limit	                = $('#responsible_ins_limit').val();
+		param.driver_or_passenger_ins_limit	        = $('#driver_or_passenger_ins_limit').val();
+		param.public_private_yes_no	                = $('#public_private_yes_no').val();
+		param.trade_yes_no	                        = $('#trade_yes_no').val();
+		param.trade_yes_no1	                        = $('#trade_yes_no1').val();
+		param.trade_yes_no2	                        = $('#trade_yes_no2').val();
+		param.trade_yes_no3	                        = $('#trade_yes_no3').val();
+		param.trade_yes_no4	                        = $('#trade_yes_no4').val();
+		param.goods_or_ardware_yes_no	            = $('#goods_or_ardware_yes_no').val();
+		param.Insured_yes_no	                    = $('#Insured_yes_no').val();
+		param.insurance_company	                    = $('#insurance_company').val();
+		param.insurance_price_gel	                = $('#insurance_price_gel').val();
+		param.insurance_price_usd	                = $('#insurance_price_usd').val();
+		param.insurance_start_date	                = $('#insurance_start_date').val();
+		param.insurance_end_date	                = $('#insurance_end_date').val();
+		
+		$.ajax({
+	        url: aJaxURL,
+		    data: param,
+	        success: function(data) {       
+				if(typeof(data.error) != "undefined"){
+					if(data.error != ""){
+						alert(data.error);
+					}else{
+						alert('დაზღვევის მონაცემები წარმატებით შეინახა');
+						$("#print_insurance").button('enable');
+						$("#download_insurance").button('enable');
+						if(data.ins_hidde_id!=0){
+							$("#car_insurance_info_hidde").val(data.ins_hidde_id);
+						}
+					}
+				}
+	    	}
+	   });
+	});
+	
     $(document).on("click", ".callapp_refresh", function () {
     	LoadTable('index',colum_number,main_act,change_colum_main,aJaxURL);
     });
@@ -385,7 +746,6 @@
     });
 
     $(document).on("click", "#trust_pers_checkbox", function () {
-       
         if($(this).prop("checked") == false){
             $("#truste_table").css('display','none');
        	}else{
@@ -451,6 +811,15 @@
         }
     });
 
+    $(document).on("change", "#Insured_yes_no", function () {
+		if($(this).val() == 1){
+			$(".insurance_table").css('display', 'block');
+			$('#insurance_div').scrollTop(1000000);
+		}else{
+			$(".insurance_table").css('display', 'none');
+		}
+	});
+    
 	$(document).on("change", "#agreement_type_id", function () {
 
 		param 			          = new Object();
@@ -516,7 +885,7 @@
         }else{
         	$.ajax({
                 url: aJaxURL,
-                data: "act=show_document&file_type="+file_type+"&local_id="+$("#local_id").val()+"&id_hidden="+$("#id_hidden").val()+"&loan_amount="+$("#loan_amount").val()+"&month_percent="+$("#month_percent").val()+"&loan_months="+$("#loan_months").val()+"&loan_agreement_type="+$("#loan_agreement_type").val()+"&name="+$("#name").val()+"&surname="+$("#surname").val(),
+                data: "act=show_document&file_type="+file_type+"&local_id="+$("#local_id").val()+"&id_hidden="+$("#id_hidden").val()+"&loan_amount="+$("#loan_amount").val()+"&month_percent="+$("#month_percent").val()+"&loan_months="+$("#loan_months").val()+"&loan_agreement_type="+$("#loan_agreement_type").val()+"&name="+$("#name").val()+"&surname="+$("#surname").val()+"&agreement_date="+$("#agreement_date").val(),
                 success: function(data) {
                 	$("#payment_schedule_td").html(data.documets_page);
                 }
@@ -533,7 +902,7 @@
     function show_document(file_type,file_name){
     	$.ajax({
             url: aJaxURL,
-            data: "act=show_document&file_type="+file_type+"&local_id="+$("#local_id").val()+"&id_hidden="+$("#id_hidden").val(),
+            data: "act=show_document&file_type="+file_type+"&local_id="+$("#local_id").val()+"&id_hidden="+$("#id_hidden").val()+"&loan_agreement_type="+$("#loan_agreement_type").val(),
             success: function(data) {
             	$("#add-edit-form-document").html(data.documets_page);
 
@@ -556,10 +925,12 @@
         		            	URL="server-side/operations/subtables/download_doc.php?file_type="+file_type+"&local_id="+$("#local_id").val()+"&file_name="+file_name;
         		            	open(URL);
         		            }else{
-        		            	parame 			 = new Object();
-        		            	parame.local_id  = $("#local_id").val();
-
-        		            	$.ajax({
+            		            
+        		            	parame 			  = new Object();
+        		            	parame.local_id   = $("#local_id").val();
+        		            	parame.file_type  = file_type;
+        		            	
+								$.ajax({
         		                    url: 'server-side/operations/subtables/excel.php',
         		            	    data: parame,
         		                    success: function(data) {
@@ -581,13 +952,34 @@
     		            }
     		        }
     		    };
-               	GetDialog("add-edit-form-document", 790, "auto", buttons, 'left+43 top');
+               	GetDialog("add-edit-form-document", 1200, "auto", buttons, 'left+43 top');
     		}
         });
     }
 
-    //სურატები//
-
+    $(document).on("click", "#print_insurance", function () {
+    	params = "&local_id="+$("#local_id").val()+"&file_type=car_insurance"+"&id_hidden="+$("#id_hidden").val();
+		win = window.open("server-side/operations/subtables/print_documents.action.php?"+params, "" , "scrollbars=no,toolbar=no,screenx=0,screeny=0,location=no,titlebar=no,directories=no,status=no,menubar=no");
+	});
+	
+    $(document).on("click", "#download_insurance", function () {
+    	parame 			  = new Object();
+    	parame.local_id   = $("#local_id").val();
+    	parame.file_type  = 'download_insurance';
+    	
+		$.ajax({
+            url: 'server-side/operations/subtables/excel.php',
+    	    data: parame,
+            success: function(data) {
+    	        if(data == 1){
+    		        alert('ჩანაწერი არ მოიძებნა');
+    	        }else{
+            		SaveToDisk('server-side/operations/subtables/excel.xls', 'excel.xls');
+    	        }
+    	    }
+        });
+	});
+	//სურატები//
     $(document).on("click", "#choose_button", function () {
 	    $("#choose_file").click();
 	});
@@ -831,12 +1223,13 @@
                 <tr id="datatable_header">
                     <th>ID</th>
                     <th style="width: 46px;">№</th>
-                    <th style="width: 15%;">თარიღი</th>
-                    <th style="width: 25%;">სახელი გავარი</th>
-                    <th style="width: 15%;">პირადი ნომერი</th>            
-                    <th style="width: 15%;">ტელეფონი</th>
-                    <th style="width: 15%;">ხელშეკრულების ნომერი</th>
-                    <th style="width: 15%;">კოდი</th>
+                    <th style="width: 13%;">თარიღი</th>
+                    <th style="width: 23%;">სახელი გვარი</th>
+                    <th style="width: 13%;">პირადი ნომერი</th>            
+                    <th style="width: 13%;">ტელეფონი</th>
+                    <th style="width: 13%;">ხელშეკრულების ნომერი</th>
+                    <th style="width: 13%;">კოდი</th>
+                    <th style="width: 12%;">სტატუსი</th>
                     <th style="width: 25px;">#</th>
                 </tr>
             </thead>
@@ -866,7 +1259,10 @@
                     <th>
                         <input type="text" name="search_date" value="ფილტრი" class="search_init" />
                     </th>
-                    <th style="border-right: 1px solid #A3D0E4;">
+                    <th>
+                        <input type="text" name="search_date" value="ფილტრი" class="search_init" />
+                    </th>
+                    <th style="border-right: 1px solid #A3D0E4;" >
                         <div class="callapp_checkbox">
                             <input type="checkbox" id="check-all" name="check-all" />
                             <label for="check-all"></label>
@@ -879,6 +1275,7 @@
     <div  id="add-edit-form" class="form-dialog" title="ავტო ლომბარდი"></div>
     <div  id="add-edit-form-pers" class="form-dialog" title="საკონტაქტო პირი"></div>
     <div  id="add-edit-form-document" class="form-dialog" title="დოკუმენტი"></div>
+    <div  id="add-edit-form-car_driver" class="form-dialog" title="პირი, რომელიც მართავს მანქანას"></div>
     <div id="add-edit-form-img" class="form-dialog" title="ავტომობილის სურათი">
 	</div>
 </body>

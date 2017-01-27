@@ -829,21 +829,25 @@ function GetSelectedTab(tbname) {
 function GetDate(iname) {
     $("#" + iname).datepicker({
     	changeMonth: true,
-        changeYear: true
+        changeYear: true,
+        yearRange: '1900:+20'
     });
 
     var date = $("#" + iname).val();
 
     $("#" + iname).datepicker("option", $.datepicker.regional["ka"]);
     $("#" + iname).datepicker("option", "dateFormat", "yy-mm-dd");
+    //$("#" + iname).datepicker( "option", "yearRange", "1950:2019" );
     $("#" + iname).datepicker( "setDate", date );
+    
 }
 
 function GetDate1(iname) {
     $("#" + iname).datepicker({
     	dateFormat: "yy-mm-dd",
     	changeMonth: true,
-    	changeYear: true
+    	changeYear: true,
+    	yearRange: '1900:+20'
     });
 
     var date = $("#" + iname).val();
@@ -867,7 +871,8 @@ function GetDateTimes(iname) {
     $("#" + iname).datetimepicker({
     	dateFormat: "yy-mm-dd",
     		changeMonth: true,
-        	changeYear: true
+        	changeYear: true,
+        	yearRange: '1900:+20'
     });
 }
 

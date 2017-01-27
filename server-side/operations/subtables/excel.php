@@ -2,100 +2,84 @@
 require_once('../../../includes/classes/core.php');
 
 $local_id	= $_REQUEST['local_id'];
+$file_type	= $_REQUEST['file_type'];
 
-
-$res =mysql_query("SELECT    client.id,
-                             DATE_FORMAT(client.datetme,'%m') AS `month_id`,
-                		     DATE_FORMAT(client.datetme,'%Y') AS `year`,
-                             DATE_FORMAT(client.datetme,'%d') AS `day`,
+if ($file_type == 'payment_schedule') {
+    $res =mysql_query("SELECT    client.id,
             			     CONCAT(client.`name`, ' ', client.lastname) AS `name`,
+                             DATE_FORMAT(client_loan_agreement.datetime,'%m') AS `month_id`,
+                    		 DATE_FORMAT(client_loan_agreement.datetime,'%Y') AS `year`,
+                             DATE_FORMAT(client_loan_agreement.datetime,'%d') AS `day`,
                              client_loan_agreement.loan_amount,
                              client_loan_agreement.loan_months,
                              client_loan_agreement.percent,
                              client_loan_agreement.loan_type_id
                    FROM     `client`
-                   JOIN     `month` ON `month`.id = DATE_FORMAT(client.datetme,'%m')
                    LEFT JOIN client_loan_agreement ON client_loan_agreement.client_id = client.id
-                   WHERE     client.id = '$local_id'");
+                   LEFT JOIN `month` ON `month`.id = DATE_FORMAT(client_loan_agreement.datetime,'%m')
+                   WHERE     client.id = '$local_id' AND client.actived=1 LIMIT 1");
  	
 
-$row    = mysql_fetch_assoc($res);
-$number = $row[loan_months] +20;
+    $row1    = mysql_fetch_assoc($res);
 
-$sum_percent = 0;
-$sum_P       = 0;
-
-$loan_type   = $row[loan_type_id];
-
-$PV          = $row[loan_amount]; //სესხის მოცულობა
-$r           = $row[percent]/100; //პროცენტი თვეში
-$n           = $row[loan_months]; //სესხის ვადა თვეში
-$year_month  = $row[percent]*12;
-$hint        = 'წლ';
-
-if ($loan_type == 1) {
-    $P          = $PV*$r;
-    $ziri       = 0.00;
-    $percent    = $P;
-    $year_month = $res[percent];
-    $hint        = 'თვ';
-    $sum_percent = $n*$percent;
-    $sum_P       = $sum_percent+$PV;
-}else {
-    $P = ($PV*$r)/(1-(pow((1+$r),-$n))); //ყოველთვიური გადასახდელი
-}
-for ($i = 1; $i<=$n; $i++){
-    $month        = $row[month_id]+$i;
-    if ($loan_type == 1 && $i == $n) {
-        $P       = $P + $row[loan_amount];
-        $ziri    = $row[loan_amount];
-        $PV      = 0.00;
-        
-    }elseif ($loan_type != 1){
-        $percent      = $PV / $n * $r * $n; //ყოველთვიური გადასახდელი პროცენტი
-        $ziri         = $P - $percent; //ყოველთვიური გადასახდელი ძირი
-        $PV           = $PV - $ziri; //დარჩენილი ძირი
-        $sum_percent += $percent;
-        $sum_P        = $sum_P +$P;
-    }
-
-    if ($month<=12) {
-        if ($month<10) {
-            $month = '0'.$month;
-        }
-        $date = $row[day].'-'.$month.'-'.$row[year];
-    }else{
-        $month = $month - 12;
-        if ($month<10) {
-            $month = '0'.$month;
-        }
-        $year  = $row[year] +1;
-        $date = $row[day].'-'.$month.'-'.$year;
-    } 
+    $sum_percent   = 0;
+    $sum_P         = 0;
     
-	$dat .= '
-			<ss:Row>
-				<ss:Cell>
-					<ss:Data ss:Type="String">'.$i.'</ss:Data>
-				</ss:Cell>
-				<ss:Cell>
-					<ss:Data ss:Type="String">'.$date.'</ss:Data>
-				</ss:Cell>
-				<ss:Cell>
-					<ss:Data ss:Type="String">'.round($ziri,2).'</ss:Data>
-				</ss:Cell>
-				<ss:Cell>
-					<ss:Data ss:Type="String">'.round($percent,2).'</ss:Data>
-				</ss:Cell>							
-				<ss:Cell>
-					<ss:Data ss:Type="String">'.round($P,2).'</ss:Data>
-				</ss:Cell>
-				<ss:Cell>
-					<ss:Data ss:Type="String">'.round($PV,2).'</ss:Data>
-				</ss:Cell>
-			</ss:Row>';
-}
-$dat .= '   <ss:Row>
+    $loan_agreement_type   = $row1[loan_type_id];
+    $loan_amount           = $row1[loan_amount];
+    $n                     = $row1[loan_months];
+    $month_id              = $row1[month_id];
+    $day                   = $row1[day];
+    $year_start            = $row1[year];
+    $name                  = $row1[name];
+    $loan_type             = $loan_agreement_type;
+            
+    if ($loan_type == 2){
+        $year_month    = $row1[percent]*12;
+        $hint          = 'წლ';
+    }else{
+        $hint = 'თვ';
+        $year_month    = $row1[percent];
+    }
+            
+    $req = mysql_query("SELECT client_loan_schedule.number,
+                    			client_loan_schedule.schedule_date,
+                    			client_loan_schedule.root,
+                    			client_loan_schedule.percent,
+                    			client_loan_schedule.pay_amount,
+                    			client_loan_schedule.remaining_root
+                         FROM   client_loan_schedule
+                         JOIN   client_loan_agreement ON client_loan_schedule.client_loan_agreement_id = client_loan_agreement.id
+                         WHERE  client_loan_agreement.client_id = $local_id AND client_loan_schedule.actived=1");
+    
+    $number = mysql_num_rows($req)+25;        
+    while ($row = mysql_fetch_assoc($req)){
+        $sum_percent += $row[percent];
+        $sum_P       += $row[pay_amount];
+        
+        $dat .= '<ss:Row>
+    				<ss:Cell>
+    					<ss:Data ss:Type="String">'.$row[number].'</ss:Data>
+    				</ss:Cell>
+    				<ss:Cell>
+    					<ss:Data ss:Type="String">'.$row[schedule_date].'</ss:Data>
+    				</ss:Cell>
+    				<ss:Cell>
+    					<ss:Data ss:Type="String">'.$row[root].'</ss:Data>
+    				</ss:Cell>
+    				<ss:Cell>
+    					<ss:Data ss:Type="String">'.$row[percent].'</ss:Data>
+    				</ss:Cell>							
+    				<ss:Cell>
+    					<ss:Data ss:Type="String">'.$row[pay_amount].'</ss:Data>
+    				</ss:Cell>
+    				<ss:Cell>
+    					<ss:Data ss:Type="String">'.$row[remaining_root].'</ss:Data>
+    				</ss:Cell>
+    			</ss:Row>';
+    }
+    
+	$dat .= '   <ss:Row>
 				<ss:Cell>
 					<ss:Data ss:Type="String"></ss:Data>
 				</ss:Cell>
@@ -210,7 +194,7 @@ $data = '
 					<ss:NamedCell ss:Name="Print_Titles" />
 				</ss:Cell>
 				<ss:Cell ss:MergeAcross="4" ss:StyleID="headercell">
-					<ss:Data ss:Type="String">'.$row[name].'</ss:Data>
+					<ss:Data ss:Type="String">'.$row1[name].'</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles" />
 				</ss:Cell>
 			</ss:Row>
@@ -221,7 +205,7 @@ $data = '
 					<ss:NamedCell ss:Name="Print_Titles" />
 				</ss:Cell>
 				<ss:Cell ss:StyleID="headercell">
-					<ss:Data ss:Type="String">'.$row[loan_amount].'</ss:Data>
+					<ss:Data ss:Type="String">'.$row1[loan_amount].'</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles" />
 				</ss:Cell>
 				<ss:Cell ss:StyleID="headercell">
@@ -251,7 +235,7 @@ $data = '
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 			    <ss:Cell ss:StyleID="headercell">
-					<ss:Data ss:Type="String">'.$row[month_id].'</ss:Data>
+					<ss:Data ss:Type="String">'.$row1[month_id].'</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 			</ss:Row>
@@ -273,7 +257,7 @@ $data = '
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 			    <ss:Cell ss:StyleID="headercell">
-					<ss:Data ss:Type="String">'.$row[day].'</ss:Data>
+					<ss:Data ss:Type="String">'.$row1[day].'</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 			</ss:Row>
@@ -295,7 +279,7 @@ $data = '
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 			    <ss:Cell ss:StyleID="headercell">
-					<ss:Data ss:Type="String">'.$row[year].'</ss:Data>
+					<ss:Data ss:Type="String">'.$row1[year].'</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 			</ss:Row>
@@ -416,12 +400,449 @@ $data .='</ss:Table>
 </ss:Workbook>
 		';
 
-if($number == '2'){
-	$null= 1;
-	echo json_encode($null);
-}else{
-	echo json_encode($data);
+}elseif ($file_type == 'download_insurance'){
+    $res =mysql_query("SELECT    client.id,
+        CONCAT(client.`name`, ' ', client.lastname) AS `name`,
+        DATE_FORMAT(client_loan_agreement.datetime,'%m') AS `month_id`,
+        DATE_FORMAT(client_loan_agreement.datetime,'%Y') AS `year`,
+        DATE_FORMAT(client_loan_agreement.datetime,'%d') AS `day`,
+        client_loan_agreement.loan_amount,
+        client_loan_agreement.loan_months,
+        client_loan_agreement.percent,
+        client_loan_agreement.loan_type_id
+        FROM     `client`
+        LEFT JOIN client_loan_agreement ON client_loan_agreement.client_id = client.id
+        LEFT JOIN `month` ON `month`.id = DATE_FORMAT(client_loan_agreement.datetime,'%m')
+        WHERE     client.id = '$local_id' AND client.actived=1 LIMIT 1");
+    
+    
+    $row1    = mysql_fetch_assoc($res);
+    
+    $sum_percent   = 0;
+    $sum_P         = 0;
+    
+    $loan_agreement_type   = $row1[loan_type_id];
+    $loan_amount           = $row1[loan_amount];
+    $n                     = $row1[loan_months];
+    $month_id              = $row1[month_id];
+    $day                   = $row1[day];
+    $year_start            = $row1[year];
+    $name                  = $row1[name];
+    $loan_type             = $loan_agreement_type;
+    
+    if ($loan_type == 2){
+        $year_month    = $row1[percent]*12;
+        $hint          = 'წლ';
+    }else{
+        $hint = 'თვ';
+        $year_month    = $row1[percent];
+    }
+    
+    $req = mysql_query("SELECT client_loan_schedule.number,
+        client_loan_schedule.schedule_date,
+        client_loan_schedule.root,
+        client_loan_schedule.percent,
+        client_loan_schedule.pay_amount,
+        client_loan_schedule.remaining_root
+        FROM   client_loan_schedule
+        JOIN   client_loan_agreement ON client_loan_schedule.client_loan_agreement_id = client_loan_agreement.id
+        WHERE  client_loan_agreement.client_id = $local_id AND client_loan_schedule.actived=1");
+    
+    $number = 100;
+    while ($row = mysql_fetch_assoc($req)){
+        $sum_percent += $row[percent];
+        $sum_P       += $row[pay_amount];
+    
+        $dat .= '<ss:Row>
+    				<ss:Cell>
+    					<ss:Data ss:Type="String">345345</ss:Data>
+    				</ss:Cell>
+    				<ss:Cell>
+    					<ss:Data ss:Type="String">345</ss:Data>
+    				</ss:Cell>
+    				<ss:Cell>
+    					<ss:Data ss:Type="String">345</ss:Data>
+    				</ss:Cell>
+    				<ss:Cell>
+    					<ss:Data ss:Type="String">345</ss:Data>
+    				</ss:Cell>
+    				<ss:Cell>
+    					<ss:Data ss:Type="String">345</ss:Data>
+    				</ss:Cell>
+    				<ss:Cell>
+    					<ss:Data ss:Type="String">345345</ss:Data>
+    				</ss:Cell>
+    			</ss:Row>
+    			';
+    }
+    
+    $name = "დაზღვევა ალდაგი";
+    
+    
+    
+    $data = '
+<?xml version="1.0" encoding="utf-8"?><?mso-application progid="Excel.Sheet"?>
+<ss:Workbook xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns:o="urn:schemas-microsoft-com:office:office">
+	<o:DocumentProperties>
+		<o:Title>'.$name.'</o:Title>
+	</o:DocumentProperties>
+	<ss:ExcelWorkbook>
+		<ss:WindowHeight>9000</ss:WindowHeight>
+		<ss:WindowWidth>50000</ss:WindowWidth>
+		<ss:ProtectStructure>false</ss:ProtectStructure>
+		<ss:ProtectWindows>false</ss:ProtectWindows>
+	</ss:ExcelWorkbook>
+	<ss:Styles>
+		<ss:Style ss:ID="Default">
+			<ss:Alignment ss:Vertical="Center" ss:Horizontal="Center" ss:WrapText="1" />
+			<ss:Font ss:FontName="Sylfaen" ss:Size="12" />
+			<ss:Interior />
+			<ss:NumberFormat />
+			<ss:Protection />
+			<ss:Borders>
+				<ss:Border ss:Position="Top" ss:Color="#000000" ss:Weight="1" ss:LineStyle="Continuous" />
+				<ss:Border ss:Position="Bottom" ss:Color="#000000" ss:Weight="1" ss:LineStyle="Continuous" />
+				<ss:Border ss:Position="Left" ss:Color="#000000" ss:Weight="1" ss:LineStyle="Continuous" />
+				<ss:Border ss:Position="Right" ss:Color="#000000" ss:Weight="1" ss:LineStyle="Continuous" />
+			</ss:Borders>
+		</ss:Style>
+		<ss:Style ss:ID="title">
+			<ss:Borders />
+			<ss:NumberFormat ss:Format="@" />
+			<ss:Alignment ss:WrapText="1" ss:Horizontal="Center" ss:Vertical="Center" />
+		</ss:Style>
+		<ss:Style ss:ID="headercell">
+			<ss:Font ss:Bold="1" />
+			<ss:Interior ss:Pattern="Solid" />
+			<ss:Alignment ss:WrapText="1" ss:Horizontal="Center" ss:Vertical="Center" />
+		</ss:Style>
+		<ss:Style ss:ID="headercell1">
+			<ss:Font ss:Bold="1" />
+			<ss:Interior ss:Pattern="Solid" />
+			<ss:Alignment ss:WrapText="1" ss:Horizontal="Center" ss:Vertical="Center" />
+		</ss:Style>
+	</ss:Styles>
+	<ss:Worksheet ss:Name="'.$number.'">
+		<ss:Names>
+			<ss:NamedRange ss:Name="Print_Titles" ss:RefersTo="=\' '.$number.' \'!R1:R2" />
+		</ss:Names>
+    
+		<ss:Table x:FullRows="1" x:FullColumns="1" ss:ExpandedColumnCount="16" ss:ExpandedRowCount="'.$number.'">
+    
+			<ss:Column ss:AutoFitWidth="1" ss:Width="100" />
+			<ss:Column ss:AutoFitWidth="1" ss:Width="100" />
+			<ss:Column ss:AutoFitWidth="1" ss:Width="100" />
+			<ss:Column ss:AutoFitWidth="1" ss:Width="100" />
+			<ss:Column ss:AutoFitWidth="1" ss:Width="100" />
+			<ss:Column ss:AutoFitWidth="1" ss:Width="100" />
+		    
+			<ss:Row ss:AutoFitHeight="1" ss:Height="25">
+				<ss:Cell ss:MergeAcross="7" ss:StyleID="headercell">
+					<ss:Data ss:Type="String">სურათი</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+			</ss:Row>
+		    
+			<ss:Row ss:AutoFitHeight="1" ss:Height="25">
+				<ss:Cell ss:MergeAcross="7" ss:StyleID="headercell">
+					<ss:Data ss:Type="String">ავტოტრანსპორტის დაზღვევის განაცხადი</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+			</ss:Row>
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
+				<ss:Cell ss:MergeAcross="3" ss:StyleID="headercell">
+					<ss:Data ss:Type="String">ავტოტრანსპორტის დაზღვევის განაცხადი</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+		        <ss:Cell ss:MergeAcross="3" ss:StyleID="headercell">
+					<ss:Data ss:Type="String">ავტოტრანსპორტის დაზღვევის განაცხადი</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+			</ss:Row>
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
+				<ss:Cell ss:MergeAcross="3" ss:StyleID="headercell">
+					<ss:Data ss:Type="String">ავტოტრანსპორტის დაზღვევის განაცხადი</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+		        <ss:Cell ss:MergeAcross="3" ss:StyleID="headercell">
+					<ss:Data ss:Type="String">ავტოტრანსპორტის დაზღვევის განაცხადი</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+			</ss:Row>
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
+				<ss:Cell ss:MergeAcross="3" ss:StyleID="headercell">
+					<ss:Data ss:Type="String">ავტოტრანსპორტის დაზღვევის განაცხადი</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+		        <ss:Cell ss:MergeAcross="3" ss:StyleID="headercell">
+					<ss:Data ss:Type="String">ავტოტრანსპორტის დაზღვევის განაცხადი</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+			</ss:Row>
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
+				<ss:Cell ss:MergeAcross="3" ss:StyleID="headercell">
+					<ss:Data ss:Type="String">ავტოტრანსპორტის დაზღვევის განაცხადი</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+		        <ss:Cell ss:MergeAcross="3" ss:StyleID="headercell">
+					<ss:Data ss:Type="String">ავტოტრანსპორტის დაზღვევის განაცხადი</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+			</ss:Row>
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
+				<ss:Cell ss:MergeAcross="3" ss:StyleID="headercell">
+					<ss:Data ss:Type="String">ავტოტრანსპორტის დაზღვევის განაცხადი</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+		        <ss:Cell ss:MergeAcross="3" ss:StyleID="headercell">
+					<ss:Data ss:Type="String">ავტოტრანსპორტის დაზღვევის განაცხადი</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+			</ss:Row>
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
+				<ss:Cell ss:MergeAcross="3" ss:StyleID="headercell">
+					<ss:Data ss:Type="String">ავტოტრანსპორტის დაზღვევის განაცხადი</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+		        <ss:Cell ss:MergeAcross="3" ss:StyleID="headercell">
+					<ss:Data ss:Type="String">ავტოტრანსპორტის დაზღვევის განაცხადი</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+			</ss:Row>
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
+				<ss:Cell ss:MergeAcross="3" ss:StyleID="headercell">
+					<ss:Data ss:Type="String">ავტოტრანსპორტის დაზღვევის განაცხადი</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+		        <ss:Cell ss:MergeAcross="3" ss:StyleID="headercell">
+					<ss:Data ss:Type="String">ავტოტრანსპორტის დაზღვევის განაცხადი</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+			</ss:Row>
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
+				<ss:Cell ss:MergeAcross="3" ss:StyleID="headercell">
+					<ss:Data ss:Type="String">ავტოტრანსპორტის დაზღვევის განაცხადი</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+		        <ss:Cell ss:MergeAcross="3" ss:StyleID="headercell">
+					<ss:Data ss:Type="String">?</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+			</ss:Row>
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
+				<ss:Cell ss:MergeAcross="3" ss:StyleID="headercell">
+					<ss:Data ss:Type="String">ავტოტრანსპორტის დაზღვევის განაცხადი</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+		        <ss:Cell ss:MergeAcross="3" ss:StyleID="headercell">
+					<ss:Data ss:Type="String">?</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+			</ss:Row>
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
+				<ss:Cell ss:MergeAcross="7" ss:StyleID="headercell">
+					<ss:Data ss:Type="String">პიროვნებათა მონაცემები, რომლებიც მართავენ ავტოტრანსპორტს</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+			</ss:Row>
+		    
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
+				<ss:Cell ss:MergeAcross="7" ss:StyleID="headercell">
+					<ss:Data ss:Type="String">ინფორმაცია ავტოტრანსპორტის შესახებ</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+		    </ss:Row>
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
+				<ss:Cell ss:StyleID="headercell">
+					<ss:Data ss:Type="String">№</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+		        <ss:Cell ss:StyleID="headercell">
+					<ss:Data ss:Type="String">ავტოტრანსპორტის მარკა</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+		        <ss:Cell ss:StyleID="headercell">
+					<ss:Data ss:Type="String">ინფორმაცია ავტოტრანსპორტის შესახებ</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+		        <ss:Cell ss:StyleID="headercell">
+					<ss:Data ss:Type="String">ძრავის ტიპი</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+		        <ss:Cell ss:StyleID="headercell">
+					<ss:Data ss:Type="String">ადგილების რაოდენობა მძღოლის ჩათვლით</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+		        <ss:Cell ss:StyleID="headercell">
+					<ss:Data ss:Type="String">ინფორმაცია ავტოტრანსპორტის შესახებ</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+		        <ss:Cell ss:StyleID="headercell">
+					<ss:Data ss:Type="String">ძრავის მოცულობა</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+		    </ss:Row>
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
+				<ss:Cell ss:StyleID="headercell">
+					<ss:Data ss:Type="String">1</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+		        <ss:Cell ss:StyleID="headercell">
+					<ss:Data ss:Type="String">?</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+		        <ss:Cell ss:StyleID="headercell">
+					<ss:Data ss:Type="String">?</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+		        <ss:Cell ss:StyleID="headercell">
+					<ss:Data ss:Type="String">?</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+		        <ss:Cell ss:StyleID="headercell">
+					<ss:Data ss:Type="String">?</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+		        <ss:Cell ss:StyleID="headercell">
+					<ss:Data ss:Type="String">?</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+		        <ss:Cell ss:StyleID="headercell">
+					<ss:Data ss:Type="String">?</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+		    </ss:Row>
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
+				<ss:Cell ss:StyleID="headercell">
+					<ss:Data ss:Type="String">№</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+		        <ss:Cell ss:StyleID="headercell">
+					<ss:Data ss:Type="String">გამოშვების თარიღი	</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+		        <ss:Cell ss:StyleID="headercell">
+					<ss:Data ss:Type="String">ავტოტრასნპორტის დღევანდელი ღირებულება</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+		        <ss:Cell ss:MergeAcross="1" ss:StyleID="headercell">
+					<ss:Data ss:Type="String">ავტოტრანსპორტის სარეგსიტრაციო ნომერი</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+		        <ss:Cell ss:StyleID="headercell">
+					<ss:Data ss:Type="String">შეძენის თარიღი</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+		        <ss:Cell ss:StyleID="headercell">
+					<ss:Data ss:Type="String">სესხის ოდენობა</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+		    </ss:Row>
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
+				<ss:Cell ss:StyleID="headercell">
+					<ss:Data ss:Type="String">1</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+		        <ss:Cell ss:StyleID="headercell">
+					<ss:Data ss:Type="String">?</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+		        <ss:Cell ss:StyleID="headercell">
+					<ss:Data ss:Type="String">?</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+		        <ss:Cell ss:MergeAcross="1" ss:StyleID="headercell">
+					<ss:Data ss:Type="String">?</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+		        <ss:Cell ss:StyleID="headercell">
+					<ss:Data ss:Type="String">?</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+		        <ss:Cell ss:StyleID="headercell">
+					<ss:Data ss:Type="String">?</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+		    </ss:Row>
+		    
+		    
+		    
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
+				<ss:Cell ss:MergeAcross="7" ss:StyleID="headercell">
+					<ss:Data ss:Type="String">თუ აღნიშნული ცხრილი არ არის საკმარისი, გთხოვთ დაურთოთ განაცხადს დანართი შესაბამისი ორგანიზაციის ბეჭდითა და ხელმოწერით</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+		    </ss:Row>
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
+				<ss:Cell ss:MergeAcross="7" ss:StyleID="headercell">
+					<ss:Data ss:Type="String">დაზღვეული ავტომობილის აღწერა</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+		    </ss:Row>
+		    
+		    
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
+				<ss:Cell ss:MergeAcross="5" ss:StyleID="headercell">
+					<ss:Data ss:Type="String">ავტოტრანსპორტის დაზღვევის განაცხადი</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+		        <ss:Cell ss:MergeAcross="1" ss:StyleID="headercell">
+					<ss:Data ss:Type="String">ავტოტრანსპორტის დაზღვევის განაცხადი</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+			</ss:Row>
+		    
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
+				<ss:Cell ss:MergeAcross="5" ss:StyleID="headercell">
+					<ss:Data ss:Type="String">ავტოტრანსპორტის დაზღვევის განაცხადი</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+		        <ss:Cell ss:MergeAcross="1" ss:StyleID="headercell">
+					<ss:Data ss:Type="String">ავტოტრანსპორტის დაზღვევის განაცხადი</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+			</ss:Row>
+		    
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
+				<ss:Cell ss:MergeAcross="5" ss:StyleID="headercell">
+					<ss:Data ss:Type="String">ავტოტრანსპორტის დაზღვევის განაცხადი</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+		        <ss:Cell ss:MergeAcross="1" ss:StyleID="headercell">
+					<ss:Data ss:Type="String">ავტოტრანსპორტის დაზღვევის განაცხადი</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+			</ss:Row>
+		    ';
+     //$data .= $dat;
+    
+    
+    $data .='</ss:Table>
+		<x:WorksheetOptions>
+			<x:PageSetup>
+				<x:Layout x:CenterHorizontal="1" x:Orientation="Portrait" />
+				<x:Header x:Data="&amp;R&#10;&#10;&amp;D" />
+				<x:Footer x:Data="Page &amp;P of &amp;N" x:Margin="0.5" />
+				<x:PageMargins x:Top="0.5" x:Right="0.5" x:Left="0.5" x:Bottom="0.8" />
+			</x:PageSetup>
+			<x:FitToPage />
+			<x:Print>
+				<x:PrintErrors>Blank</x:PrintErrors>
+				<x:FitWidth>1</x:FitWidth>
+				<x:FitHeight>32767</x:FitHeight>
+				<x:ValidPrinterInfo />
+				<x:VerticalResolution>1000</x:VerticalResolution>
+			</x:Print>
+			<x:Selected />
+			<x:DoNotDisplayGridlines />
+			<x:ProtectObjects>False</x:ProtectObjects>
+			<x:ProtectScenarios>False</x:ProtectScenarios>
+		</x:WorksheetOptions>
+	</ss:Worksheet>
+</ss:Workbook>';
 }
+echo json_encode($data);
+
 file_put_contents('excel.xls', $data);
 
 

@@ -9,54 +9,264 @@ $user_id = $_SESSION['USERID'];
 $file_type  = $_REQUEST['file_type'];
 $local_id   = $_REQUEST['local_id'];
 
+function spellNumber($number) {
+
+    if ($number > 0 && $number <= 20) {
+
+        switch ($number){
+
+            case 1: $text = "ერთი"; break;
+            case 2: $text = "ორი"; break;
+            case 3: $text = "სამი"; break;
+            case 4: $text = "ოთხი"; break;
+            case 5: $text = "ხუთი"; break;
+            case 6: $text = "ექვსი"; break;
+            case 7: $text = "შვიდი"; break;
+            case 8: $text = "რვა"; break;
+            case 9: $text = "ცხრა"; break;
+            case 10: $text = "ათი"; break;
+            case 11: $text = "თერთმეტი"; break;
+            case 12: $text = "თორმეტი"; break;
+            case 13: $text = "ცამეტი"; break;
+            case 14: $text = "თოთხმეტი"; break;
+            case 15: $text = "თხუთმეტი"; break;
+            case 16: $text = "თექვსმეტი"; break;
+            case 17: $text = "ჩვიდმეტი"; break;
+            case 18: $text = "თვრამეტი"; break;
+            case 19: $text = "ცხრამეტი"; break;
+            case 20: $text = "ოცი"; break;
+
+        }
+
+    }elseif ($number > 20 && $number <= 100){
+
+        if ($number%10 == 0) {
+
+            switch (intval($number/10)){
+
+                case 3 : $mtelitext = "ოცდაათი"; break;
+                case 4 : $mtelitext = "ორმოცი"; break;
+                case 5 : $mtelitext = "ორმოცდაათი"; break;
+                case 6 : $mtelitext = "სამოცი"; break;
+                case 7 : $mtelitext = "სამოცდაათი"; break;
+                case 8 : $mtelitext = "ოთხმოცი"; break;
+                case 9 : $mtelitext = "ოთხმოცდაათი"; break;
+                case 10 : $mtelitext = "ასი"; break;
+
+            }
+
+            $text = $mtelitext;
+
+        }else{
+
+            $nawili = $number%20;
+            $mteli  = intval($number/10);
+
+            switch ($mteli){
+
+                case 2 :
+                case 3 : $mtelitext = "ოცდა"; break;
+                case 4 :
+                case 5 : $mtelitext = "ორმოცდა"; break;
+                case 6 :
+                case 7 : $mtelitext = "სამოცდა"; break;
+                case 8 :
+                case 9 : $mtelitext = "ოთხმოცდა"; break;
+
+            }
+
+            $text = $mtelitext.spellNumber($nawili);
+
+        }
+         
+
+    }elseif ($number > 100 && $number <= 1000){
+
+        if ($number%100 == 0) {
+
+            switch (intval($number/100)) {
+                case 1 : $mtelitext = "ასი"; break;
+                case 2 : $mtelitext = "ორასი"; break;
+                case 3 : $mtelitext = "სამასი"; break;
+                case 4 : $mtelitext = "ოთხასი"; break;
+                case 5 : $mtelitext = "ხუთასი"; break;
+                case 6 : $mtelitext = "ექვსასი"; break;
+                case 7 : $mtelitext = "შვიდასი"; break;
+                case 8 : $mtelitext = "რვაასი"; break;
+                case 9 : $mtelitext = "ცხრაასი"; break;
+                case 10 : $mtelitext = "ათასი"; break;
+            }
+
+            $text = $mtelitext;
+
+        }else{
+
+            $mteli  = intval($number/100);
+            $nawili = $number%100;
+
+            switch ($mteli) {
+                case 1 : $mtelitext = "ას"; break;
+                case 2 : $mtelitext = "ორას"; break;
+                case 3 : $mtelitext = "სამას"; break;
+                case 4 : $mtelitext = "ოთხას"; break;
+                case 5 : $mtelitext = "ხუთას"; break;
+                case 6 : $mtelitext = "ექვსას"; break;
+                case 7 : $mtelitext = "შვიდას"; break;
+                case 8 : $mtelitext = "რვაას"; break;
+                case 9 : $mtelitext = "ცხრაას"; break;
+            }
+
+            $text = $mtelitext.spellNumber($nawili);
+
+        }
+
+    }elseif ($number > 1000 && $number < 1000000){
+
+        $mteli = intval($number/1000);
+        $nawili = $number%1000;
+
+        if ($mteli == 1) {
+            $text = 'ათას'.spellNumber($nawili);
+        }else{
+            if ($nawili%1000 == 0) {
+                $text = spellNumber($mteli).'ათასი';
+            }else{
+                $text = spellNumber($mteli).'ათას'.spellNumber($nawili);
+            }
+
+        }
+
+    }
+
+    return $text;
+
+}
+
+function float_replase($number){
+    $intval       = spellNumber(intval($number));
+
+    $float_delta  = str_replace(intval($number),"",$number);
+    $float_delta1 = str_replace('.',"",$float_delta);
+
+
+    if ($float_delta1 != '') {
+        $string = spellNumber($float_delta1);
+        if ($string == '') {
+            $float_val = '';
+        }else {
+            $float_val = ' და '.$string;
+        }
+
+    }
+    $data = $intval.$float_val;
+    return $data;
+}
+
 $res = mysql_fetch_assoc(mysql_query("SELECT  client.id,
-                                                 `month`.`name` AS `month`,
-                                                 `month`.`name1` AS `month1`,
-                                                 `month`.`name2` AS `month2`,
-                                                  DATE_FORMAT(client.datetme,'%m') AS `month_id`,
-                                        		  DATE_FORMAT(client.datetme,'%Y') AS `year`,
-                                                  DATE_FORMAT(client.datetme,'%d') AS `day`,
-                                    			  CONCAT(client.`name`, ' ', client.lastname) AS `name`,
-                                    			  client.pid,
-                                    			  client.pid_date,
-                                    			  client.pid_number,
-                                    			  client.born_date,
-                                    			  client.actual_address,
-                                    			  client.juridical_address,
-                                    			  client.phone,
-                                                  client.email,
-                                    			  CONCAT(client_trusted_person.`name`,' ',client_trusted_person.lastname) AS trust_pers,
-                                    			  client_trusted_person.actual_address AS trusted_actual_address,
-                                    			  client_trusted_person.juridical_address AS trusted_juridical_address,
-                                                  client_trusted_person.pid AS trusted_pid,
-                                        		  client_trusted_person.phone AS trusted_phone,
-                                                  client_trusted_person.email AS trusted_email,
-                                                  client_loan_agreement.id AS agreement_id,
-			                                      client_loan_agreement.loan_amount,
-                                                  client_loan_agreement.loan_months,
-                                                  client_loan_agreement.percent,
-                                                  client_loan_agreement.monthly_pay,
-                                                  client_loan_agreement.id AS loan_agreement_id,
-                                                  client_loan_agreement.loan_type_id AS loan_type_id,
-                                                  client_loan_agreement.penalty_days AS penalty_days,
-                                                  client_loan_agreement.penalty_percent AS penalty_percent,
-                                                  client_loan_agreement.penalty_additional_percent AS penalty_additional_percent,
-                                                  client_car.model,
-                                    			  client_car.car_id,
-                                    			  client_car.manufacturing_date,
-                                    			  client_car.color,
-                                    			  client_car.registration_number,
-                                                  car_type.`name` AS car_type_name,
-                                                  client_car.engine_size,
-                                    			  client_car.certificate_id,
-                                                  GROUP_CONCAT(CONCAT(client_person.phone,' ',client_person.person)) AS client_person_person
+                                                month.name AS month,
+                                                month.name1 AS month1,
+                                                month.name2 AS month2,
+                                                CONCAT(client.name, ' ', client.lastname) AS name,
+                                                client.pid,
+                                                client.pid_date,
+                                                client.pid_number,
+                                                client.born_date,
+                                                client.actual_address,
+                                                client.juridical_address,
+                                                client.phone,
+                                                client.email,
+                                                client.ltd_id,
+                                                client.ltd_name,
+                                                CONCAT(client_trusted_person.name,' ',client_trusted_person.lastname) AS trust_pers,
+                                                client_trusted_person.actual_address AS trusted_actual_address,
+                                                client_trusted_person.juridical_address AS trusted_juridical_address,
+                                                client_trusted_person.pid AS trusted_pid,
+                                                client_trusted_person.phone AS trusted_phone,
+                                                client_trusted_person.email AS trusted_email,
+                                                client_trusted_person.trusting_number AS trusting_number,
+                                                client_trusted_person.trusting_notary AS trusting_notary,
+                                                DATE_FORMAT(client_trusted_person.trusting_date,'%m') AS trusting_month_id,
+                                                DATE_FORMAT(client_trusted_person.trusting_date,'%Y') AS trusting_year,
+                                                DATE_FORMAT(client_trusted_person.trusting_date,'%d') AS trusting_day,
+                                                client_trusted_person.trusting_notary_address AS trusting_notary_address,
+                                                client_trusted_person.trusting_notary_phone AS trusting_notary_phone,
+                                                DATE_FORMAT(client_loan_agreement.datetime,'%m') AS month_id,
+                                                DATE_FORMAT(client_loan_agreement.datetime,'%Y') AS year,
+                                                DATE_FORMAT(client_loan_agreement.datetime,'%d') AS day,
+                                                client_loan_agreement.id AS agreement_id,
+                                                client_loan_agreement.proceed_fee AS proceed_fee,
+                                                client_loan_agreement.proceed_percent AS proceed_percent,
+                                                client_loan_agreement.loan_amount,
+                                                client_loan_agreement.loan_months,
+                                                client_loan_agreement.percent AS month_percent,
+                                                client_loan_agreement.loan_fee,
+                                                client_loan_agreement.insurance_fee,
+                                                client_loan_agreement.pledge_fee,
+                                                client_loan_agreement.rs_message_number,
+                                                client_loan_agreement.monthly_pay,
+                                                client_loan_agreement.exchange_rate,
+                                                client_loan_agreement.id AS loan_agreement_id,
+                                                client_loan_agreement.loan_type_id AS loan_type_id,
+                                                client_loan_agreement.penalty_days AS penalty_days,
+                                                client_loan_agreement.penalty_percent AS penalty_percent,
+                                                client_loan_agreement.penalty_additional_percent AS penalty_additional_percent,
+                                                client_loan_agreement.loan_type_id,
+    
+                                                client_car.car_marc,
+                                                client_car.car_wheel,
+                                                client_car.car_seats,
+                                                client_car.car_price,
+                                                client_car.car_sale_date,
+                                                client_car.car_insurance_price,
+                                                client_car.car_ins_start,
+                                                client_car.car_ins_end,
+                                                client_car.model,
+                                                client_car.car_id,
+                                                client_car.manufacturing_date,
+                                                client_car.color,
+                                                client_car.registration_number,
+                                                car_type.name AS car_type_name,
+                                                client_car.engine_size,
+                                                client_car.certificate_id,
+                                                GROUP_CONCAT(CONCAT(client_person.phone,' ',client_person.person)) AS client_person_person,
+                                                
+                                                car_insurance_info.id AS car_insurance_info_id,
+                                                car_insurance_info.lined_organization_yes_no,
+                                                car_insurance_info.any_person_Managed_yes_no,
+                                                car_insurance_info.encased_yes_no,
+                                                car_insurance_info.signaling_yes_no,
+                                                car_insurance_info.autotransport_other_protection_yes_no,
+                                                car_insurance_info.signaling_type,
+                                                car_insurance_info.driver_disabled_yes_no,
+                                                car_insurance_info.driver_no_ins_yes_no,
+                                                car_insurance_info.car_accident_drivers_yes_no,
+                                                car_insurance_info.guilt_drivers_yes_no,
+                                                car_insurance_info.injury_passion_ins_yes_no,
+                                                car_insurance_info.responsible_ins_limit,
+                                                car_insurance_info.driver_or_passenger_ins_limit,
+                                                car_insurance_info.public_private_yes_no,
+                                                car_insurance_info.trade_yes_no,
+                                                car_insurance_info.trade_yes_no1,
+                                                car_insurance_info.trade_yes_no2,
+                                                car_insurance_info.trade_yes_no3,
+                                                car_insurance_info.trade_yes_no4,
+                                                car_insurance_info.goods_or_ardware_yes_no,
+                                                car_insurance_info.Insured_yes_no,
+                                                car_insurance_info.insurance_company,
+                                                car_insurance_info.insurance_price_gel,
+                                                car_insurance_info.insurance_price_usd,
+                                                car_insurance_info.insurance_start_date,
+                                                car_insurance_info.insurance_end_date
+    
                                          FROM    `client`
-                                         JOIN    `month` ON `month`.id = DATE_FORMAT(client.datetme,'%m')
+                                         
                                          LEFT JOIN client_trusted_person ON client_trusted_person.client_id = client.id
                                          LEFT JOIN client_loan_agreement ON client_loan_agreement.client_id = client.id
+                                         LEFT JOIN `month` ON `month`.id = DATE_FORMAT(client_loan_agreement.datetime,'%m')
                                          LEFT JOIN client_car ON client_car.client_id = client.id
                                          LEFT JOIN client_person ON client_person.client_id = client.id
                                          LEFT JOIN car_type ON car_type.id = client_car.type_id
+                                         LEFT JOIN car_insurance_info ON car_insurance_info.client_id = client.id
                                          WHERE client.id = '$local_id'"));
 
 if ($file_type == 'receipt') {
@@ -64,7 +274,7 @@ if ($file_type == 'receipt') {
                          <div style="width:100%; text-align: center; font-size: 18px;">ხელწერილი</div>
                          <div style="width:100%; text-align: center; font-size: 16px; margin-top: 20px;">შედგენილი '.$res[year].' წლის '.$res[day].'  '.$res[month].'</div>
                          <div style="width:100%; font-size: 12px; margin-top: 30px; text-align: left;">
-                                                                წინამდებარე ხელწერილით მე, '.$res[name].' (piradi # '.$res[pid].')  პირადობის მოწმობა No:
+                                                                წინამდებარე ხელწერილით მე, '.$res[name].' (პირადი # '.$res[pid].')  პირადობის მოწმობა No:
                            '.$res[pid_number].' გაცემული: იუსტიციის სამინისტროს მიერ; '.$res[pid_date].'  წელს; დაბადებული: '.$res[born_date].'  წელს.;
                                                                 მცხოვრები: '.$res[actual_address].'; '.$res[juridical_address].'
                                                                 საკონტაქტო ტელეფონის ნომერი :  '.$res[phone].') ვადასტურებ, რომ გავეცანი სს “სადაზღვევო კომპანია ალდაგი”-ს,
@@ -114,7 +324,7 @@ if ($file_type == 'receipt') {
                          <div style="width:100%; font-size: 12px; margin-top: 50px; text-align: left;">
                            <a style="margin-left: 25px;"> ჩვენ, </a>ქვემოთ ხელმომწერნი: ერთის მხვრივ, შპს ”თი ჯი მობაილი”-ი (ს/კ 205270277),მისი დირექტორი გიორგი კილაძე,
                                                                 წარმოდგენილი ვახტანგ ბახტაძის სახით (მინდობილობა #001 12.06.2012 წელი) „გამსესხებელი“
-                                                                და მეორეს მხვრივ ფიზიკუირი პირი '.$res[name].' (piradi # '.$res[pid].') „მსესხებელი“
+                                                                და მეორეს მხვრივ ფიზიკუირი პირი '.$res[name].' (პირადი # '.$res[pid].') „მსესხებელი“
                                                                 ვაწერთ ხელს შემდგომზე, რომ „მსესხებელს“ გადაეცა '.$res[year].' წლის '.$res[day].' '.$res[month1].'   დადებული
                                                                 სალომბარდო მომსახურების ხელშეკრულების # '.$res[loan_agreement_id].'  საფუძველძე გასესხებული  თანხა  161.11 (ასსამოცდაერთი და თერთმეტი) ლარის ოდენობით.
                         </div>
@@ -453,22 +663,25 @@ if ($file_type == 'receipt') {
                         </div>
                    </div>';
     }elseif ($file_type == 'Schedule_ltd_nocustoms'){
+        
+       
         $data  .= '<div style="size: 7in 9.25in; margin: 15mm 16mm 15mm 16mm;" id="dialog-form">
-                        <div style="width:100%; font-size: 16px; text-align: center">საკრედიტო ხელშეკრულება #1893</div>
+                        <div style="width:100%; font-size: 16px; text-align: center">საკრედიტო ხელშეკრულება #'.$res[loan_agreement_id].'</div>
                         <div style="width:100%; font-size: 12px; margin-top: 15px; text-align: right;">'.$res[day].'.'.$res[month_id].'.'.$res[year].'</div>
                         <div style="width:100%; font-size: 12px; text-align: left;">ქ. თბილისი</div>
                         <div style="width:100%; font-size: 12px; margin-top: 15px;">
-                                                                წინამდებარე ხელშეკრულების მონაწილე მხარეები, ერთის მხრივ შპს „თი ჯი მობაილ“ (საიდენტიფიკაციო № 205170177), - დირექტორი გიორგი კილაძე, 
-                                                                წარმომადგენელი ვახტანგ ბახტაძის სახით (მინდობილობა №001, 10.25.2012 წელი)  (შემდგომში გამსესხებელი), და მეორეს მხრივ, შპს „მანი“/“MANI“ 
-                           LTD (საიდენტიფიკაციო კ. № 445437965), დირექტორი აკაკი ელისაშვილი (პირადი# 01019068974) (შემდგომში მსესხებელი), 
+                            
+                                                                წინამდებარე ხელშეკრულების მონაწილე მხარეები, ერთის მხრივ შპს "თი ჯი მობაილ" (საიდენტიფიკაციო № 205170177), - დირექტორი გიორგი კილაძე, 
+                                                                წარმომადგენელი ვახტანგ ბახტაძის სახით (მინდობილობა №001, 10.25.2012 წელი)  (შემდგომში გამსესხებელი), და მეორეს მხრივ, შპს '.$res[ltd_name].' 
+                           (საიდენტიფიკაციო კ. № '.$res[ltd_id].'), დირექტორი '.$res[name].' (პირადი# '.$res[pid].') (შემდგომში მსესხებელი), 
                                                                 ჩვენს შორის მიღწეული შეთანხმების შედეგად, ვდებთ ხელშეკრულებას სასყიდლიანი სესხის გაცემის შესახებ.
                         </div>
                         <div style="width:100%; font-size: 12px; margin-top: 15px;">
                                                             ტერმინთა განმარტება:
                         </div>
                         <div style="width:100%; font-size: 12px;">
-                            <br>1.1.	გამსესხებელი- შპს  „თი ჯი მობაილ“
-                            <br>1.2.	მსესხებელი- შპს „მანი“/“MANI“ LTD (საიდენტიფიკაციო კ. № 445437965), დირექტორი აკაკი ელისაშვილი (პირადი# 01019068974), რომელიც სარგებლობს ამ ხელშეკრულების შესაბამისად სასყიდლიანი სესხის სახით გაცემული ფულადი თანხით;
+                            <br>1.1.	გამსესხებელი- შპს  "თი ჯი მობაილ"
+                            <br>1.2.	მსესხებელი- შპს '.$res[ltd_name].'(საიდენტიფიკაციო კ. № '.$res[ltd_id].'), დირექტორი '.$res[name].' (პირადი# '.$res[pid].'), რომელიც სარგებლობს ამ ხელშეკრულების შესაბამისად სასყიდლიანი სესხის სახით გაცემული ფულადი თანხით;
                             <br>1.3.	ხელშეკრულება- წინამდებარე ხელშეკრულება, რომელიც განსაზღვრავს ამ ხელშეკრულების მონაწილე მხარეთა შორის არსებულ უფლებებსა და ვალდებულებებს, ასევე არეგულირებს გამსესხებელსა და მსესხებელს შორის არსებული სამართალურთიერთობის ძირითად პირობებს და პარამეტრებს;
                             <br>1.4.	სესხი- მსესხებელზე წინამდებარე ხელშეკრულებით გათვალისწინებული წესით და ოდენობით პირადი მოხმარებისთვის გაცემული თანხა, საქართველოს მოქმედი კანონმდებლობის შესაბამისად;
                             <br>1.5.	სესხის თანხა- ამ ხელშეკრულების შესაბამისად დადგენილი ოდენობით მსესხებელზე გამსესხებლის მიერ გაცემული ფულადი თანხა;
@@ -480,22 +693,22 @@ if ($file_type == 'receipt') {
                             <br>2.	ხელშეკრულების საგანი
                             <br>2.1.	წინამდებარე ხელშეკრულების შესაბამისად, გამსესხებელი კისრულობს ვალდებულებას, გასცეს მსესხებელზე სესხი ამ ხელშეკრულებით გათვალისწინებულ ვადებში და ოდენობით, ხოლო მსესხებელი კისრულობს ვალდებულებას დააბრუნოს მიღებული სესხი, მასზე დარიცხული საპროცენტო სარგებელი, დაფაროს ყველა ფინანსური ხარჯი და სრულიად შეასრულოს ყველა ნაკისრი ვალდებულება.
                             <br>3.	სესხით სარგებლობის პირობები
-                            <br>3.1.	სესხის სრული მოცულობა (ოდენობა) – 2380 აშშ დოლარი (ექვივალენტი ლარში)
+                            <br>3.1.	სესხის სრული მოცულობა (ოდენობა) – '.$res[loan_amount].' აშშ დოლარი (ექვივალენტი ლარში)
                             <br>3.2.	გატანის პერიოდულობა- ერთჯერადი;
-                            <br>3.3.	სესხით სარგებლობის ვადა- 24 (ოცდაოთხი) თვე;
-                            <br>3.4.	სესხის გაცემის საკომისიო - 3% (აკისრია მსესხებელს)
-                            <br>3.5.	სადაზღვევო ხარჯი- 3 თვის დაზღვევის საფასური -110 (ასათი) აშშ დოლარი (ექვივალენტი ლარში). მსესხებელს ასევე ეკისრება ყოველ 3 თვეში დაზღვევის საფასურის დამატებით გადახდა იმ დროისთვის არსებული ოდენობით;
-                            <br>3.6.	გირავნობის ხარჯი - 225 (ორასორმოცდათხუთმეტი) ლარი; (აკისრია მსესხებელს)
-                            <br>3.7.	სარგებელი სესხით სარგებლობისთვის- ამ ხელშეკრულების მოქმედების მანძილზე ყოველთვიურად -3% პროცენტი;
-                            <br>3.8.	ყოველთვიურად მსესხებელი იხდის თანხას გრაფიკის მიხედვით,რომელიც თანდართულია ხელშეკრულებას,რაც შეადგენს 140.53 (ასორმოცი და ორმოცდაცამეტი) აშშ დოლარის ექვივალენტს ლარში;
-                            <br>3.9.	იმ შემთხვევაში თუ მსესხებელმა შემოსავლების სამსახურის შეტყობინება N 4035101 განსაზღვრულ                  ვადაში, არ განაბაჟა ავტომობილი, შსს-ს სსიპ მომსახურების სააგენტოს ავტომობილის საექსპორტო დათვალიერების აქტში ასახული თანხა მთლიანად დაემატა ამ ხელშეკრულების 3.1. პუნქტით განსაზღვრული სესხის ძირ თანხას და სრულად დაეკისრება მსესხებელს.
-                            <br>3.10.	მსესხებელი ვალდებულია ამ ხელშეკრულების  3.8 პუნქტში მითითებული თანხის გადახდები განახორციელოს ხელშეკრულების მოქმედების სრული პერიოდის განმავლობაში ყოველი თვის 12 რიცხვში (თუ გრაფიკში სხვა რამ არ არის გათვალისწინებული) .
+                            <br>3.3.	სესხით სარგებლობის ვადა- '.$res[loan_months].' ('.float_replase($res[loan_months]).') თვე;
+                            <br>3.4.	სესხის გაცემის საკომისიო - '.$res[loan_fee].'% (აკისრია მსესხებელს)
+                            <br>3.5.	სადაზღვევო ხარჯი- 3 თვის დაზღვევის საფასური -'.$res['insurance_fee'].' ('.float_replase($res['insurance_fee']).') აშშ დოლარი (ექვივალენტი ლარში). მსესხებელს ასევე ეკისრება ყოველ 3 თვეში დაზღვევის საფასურის დამატებით გადახდა იმ დროისთვის არსებული ოდენობით;
+                            <br>3.6.	გირავნობის ხარჯი - '.$res['pledge_fee'].' ('.float_replase($res['pledge_fee']).') ლარი; (აკისრია მსესხებელს)
+                            <br>3.7.	სარგებელი სესხით სარგებლობისთვის- ამ ხელშეკრულების მოქმედების მანძილზე ყოველთვიურად -'.$res['month_percent'].'% პროცენტი;
+                            <br>3.8.	ყოველთვიურად მსესხებელი იხდის თანხას გრაფიკის მიხედვით,რომელიც თანდართულია ხელშეკრულებას,რაც შეადგენს '.$res[monthly_pay].'  ('.float_replase($res[monthly_pay]).') აშშ დოლარის ექვივალენტს ლარში;
+                            <br>3.9.	იმ შემთხვევაში თუ მსესხებელმა შემოსავლების სამსახურის შეტყობინება N '.$res[rs_message_number].' განსაზღვრულ                  ვადაში, არ განაბაჟა ავტომობილი, შსს-ს სსიპ მომსახურების სააგენტოს ავტომობილის საექსპორტო დათვალიერების აქტში ასახული თანხა მთლიანად დაემატა ამ ხელშეკრულების 3.1. პუნქტით განსაზღვრული სესხის ძირ თანხას და სრულად დაეკისრება მსესხებელს.
+                            <br>3.10.	მსესხებელი ვალდებულია ამ ხელშეკრულების  3.8 პუნქტში მითითებული თანხის გადახდები განახორციელოს ხელშეკრულების მოქმედების სრული პერიოდის განმავლობაში ყოველი თვის '.$res['month_id'].' რიცხვში (თუ გრაფიკში სხვა რამ არ არის გათვალისწინებული) .
                             <br>3.11.	იმ შემთხვევაში, თუ მსესხებელი წინსწრებით დაფარავს ძირი თანხის ნაწილს, მაშინ სესხი უნდა გადაანგარიშდეს და შედგეს ახალი გადახდის გრაფიკი;
                             <br>3.12.	მსესხებელს წინასწრებით ძირი თანხის ნაწილის დაფარვა შეუძლია მხოლოდ იმ რიცხვებში, რომლებიც არის მითითებული გრაფიკში;
                             <br>3.13.	წინსწრებით დაფარვის საკომისიო დარჩენილი ძირი თანხის -  3 %
                             <br>3.14.   სესხის გაცემის ვადა – 01 (ერთი) დღე;
                             <br>3.15.	 საპროცენტო სარგებლის გადახის პერიოდულობა განისაზღვრება წინამდებარე ხელშეკრულებით;
-                                                                                             ვალუტის კურსი ხელშეკრულების ხელმოწერის დღისათვის – 1 აშშ დოლარი = 2.5887 ლარი;
+                                                                                             ვალუტის კურსი ხელშეკრულების ხელმოწერის დღისათვის – 1 აშშ დოლარი = '.$res['exchange_rate'].' ლარი;
                             <br>3.16.	სესხის ხელშეკრულებით გათვალისწინებული სესხის თანხის დადგენილ ვადაში დაუბრუნებლობის ან/და ამ ხელშეკრულებით დადგენილი პერიოდულობით გადაუხდელობის /ნაწილობრივ გადახდის შემთხვევაში, მსესხებელს დაერიცხება ამ ხელშეკრულებით გათვალისწინებული პირგასამტეხლო (საურავი), რომელიც დადგენილია გადახდის ვადის გადაცილებისათვის და რომელიც ანგარიშდება სესხის ძირი თანხიდან.
                             <br>3.17.	ფინანსური ხარჯები: ამ ხელშეკრულების მიზნებისათვის ფინანსურ ხარჯს წარმოადგენს ყველა ის ხარჯი, რომელიც აუცილებელია სესხის გაცემისა და მისი ამოღებისათვის (მათ შორის სადაზღვევო ხარჯი, სააღსრულებო ხარჯი, სესხის გაპრობლემების შემთხვევაში პრობლემური სამსახურის მომსახურების საფასური, აუდიტის მომსახურების საფასური. გირავნობის საფასური, ,სსიპ შსს მომსახურების სააგენტოში გაწეული ხარჯი და ნებისმიერი გადასახდელი, რომელიც გასწია გამსესხებელმა სესხის გასაცემად და დასაბრუნებლად);
                             <br>3.18.	წინამდებარე ხელშეკრულების მიზნებიდან გამომდინარე, ფინანსურ ხარჯად განიხილება ასევე ნებისმიერი გადასახდელი, რომელსაც მსესხებელი უხდის მესამე პირს, თუკი ეს გადასახდელი წარმოადგენს აუცილებლობას და მის გარეშე გამსესხებლის მიერ ნაკისრი ვალდებულების შესრულება იქნება შეუძლებელი ან არსებითად გართულდება;
@@ -570,7 +783,7 @@ if ($file_type == 'receipt') {
                             <br>9.1. წინამდებარე ხელშეკრულებით ნაკისრი ვალდებულებების შესრულების მოთხოვნის უზრუნველყოფის დამატებით საშუალებას წარმოადგენს პირგასამტეხლო;
                             <br>9.2. პირგასამტეხლოს გადახდის და მისი ოდენობის დაანგარიშების წესი განისაზღვრება ამ ხელშეკრულებით;
                             <br>9.3. ამ ხელშეკრულების მიზნებისათვის პირგასამტეხლოს გადახდევინება ხორციელდება ნაკისრი ვალდებულების შესრულების ვადის გადაცილებისათვის;
-                            <br>9.4. მსესხებელს, ამ ხელშეკრულებით გათვალსწინებული გადახდის ვადის გადაცილების შემთხვევაში, დაერიცხება პირგასამტეხლო სესხის ძირი თანხის 0.5%-ის ოდენობით ყოველ ვადაგადაცილებულ დღეზე, ვალდებულების დარღვევიდან 3 დღის განმავლობაში; ხოლო გადახდის ვადის გადაცილების 3 (სამი) დღეზე მეტი ვადით გაგრძელების შემთხვევაში მსესხებელს დაერიცხება პირგასამტეხლო სესხის ძირი თანხის 0.8% ყოველ ვადაგადაცილებულ დღეზე.
+                            <br>9.4. მსესხებელს, ამ ხელშეკრულებით გათვალსწინებული გადახდის ვადის გადაცილების შემთხვევაში, დაერიცხება პირგასამტეხლო სესხის ძირი თანხის '.$res[penalty_percent].'%-ის ოდენობით ყოველ ვადაგადაცილებულ დღეზე, ვალდებულების დარღვევიდან '.$res[penalty_days].' დღის განმავლობაში; ხოლო გადახდის ვადის გადაცილების '.$res[penalty_days].' ('.float_replase($res[penalty_days]).') დღეზე მეტი ვადით გაგრძელების შემთხვევაში მსესხებელს დაერიცხება პირგასამტეხლო სესხის ძირი თანხის '.$res[penalty_additional_percent].'% ყოველ ვადაგადაცილებულ დღეზე.
                             <br>9.5. ამ ხელშეკრულების 9.4 მუხლით გათვალისწინებული პირგასამტეხლოს ოდენობა დაანგარიშდება სესხის ძირი თანხიდან;
                             <br>9.6. პირგასამტეხლოს დაკისრება ხდება ყოველი კონკრეტული ვალდებულების დარღვევისთვის (ყოველთვიური სარგებლის, გრაფიკით გათვალისწინებული თანხის თუ სესხის ძირი თანხის გადახდის ვადაგადაცილების შემთხვევაში)  ცალკ-ცალკე, სესხის ძირი თანხიდან.
                             <br>9.7. სესხის სარგებლის (ან გრაფიკით გათვალისწინებული თანხის) გადახდის ვადის 2 ან მეტი თვით ვადა გადაცილების შემთხვევაში, თითოეული თვის ვადაგადაცილებისათვის მსესხებელს ცალკ-ცალკე ერიცხება პირგასამტეხლო. იმ შემთხვევაში, თუ მსესხებლის მიერ უკვე დარღვეულია სესხის სარგებლის ან გრაფიკით გათვალისწინებული თანხის გადახდის ვადა და მსესხებელმა მომდევნო თვის სარგებლის ან გრაფიკით გათვალისწინებული თანხის გადახდის ვადასაც გადააცილა, პირგასამტეხლოს დარიცხვა პირველი თვის სარგებლისთვის იმავე ფარგლებში გაგრძელდება და ამასთან, მეორე და მომდევნო თვის სარგებლის ან გრაფიკით გათვალისწინებული თანხის ვადაგადაცილებისთვის ცალკ-ცალკე, დამატებით მოხდება პირგასამტეხლოს დარიცხვა სესხის ძირი თანხის 0.5% -ის ოდენობით ყოველ ვადაგადაცილებულ დღეზე.
@@ -604,7 +817,7 @@ if ($file_type == 'receipt') {
                             <table style="width:100%;">
                                 <tr style="width:100%;">
                                     <td style="width:50%;"><label style="font-size: 12px; text-align: left;">გამსესხებელი: შპს "თი ჯი მობაილ" <br> მისამართი: ქ. თბილისი, დოლიძის ქ. 25/121<br>ს/კ 205270277<br>სს "საქართველოს ბანკი"<br>ბანკის კოდი: BAGAGE22<br>ა/ა GE12BG0000000523102000<br>ტელეფონის ნომერი: (ოფისი)<br>ტელეფონის ნომერი: 579796921<br>ტელეფონის ნომერი: 579131813 (ლერი)<br>ხელის მომწერის: ვახტანგ ბახტაძე,<br>პოზიცია: მენეჯერი<br>ელ.ფოსტა: tgmobail@mail.ru<br>s.qurdadze.1@gmail.com</label></td>
-                                    <td style="width:50%;"><label style="font-size: 12px; text-align: left;">მსესხებელი<br>სახელწოდება: შპს "მანი"/"MANI" LTD<br>(საიდენტიფიკაციო კ. № 445437965 )<br>დირექტორი: აკაკი ელისაშვილი<br>პირ № 01019068974<br>მისამართი:<br>ტელ.ნომერი:<br>ელ.ფოსტა:</label></td>
+                                    <td style="width:50%;"><label style="font-size: 12px; text-align: left;">მსესხებელი<br>სახელწოდება: შპს "'.$res[ltd_name].'"<br>(საიდენტიფიკაციო კ. № '.$res[ltd_id].' )<br>დირექტორი: '.$res['name'].'<br>პირ № '.$res['pid'].'<br>მისამართი:'.$res['actual_address'].'<br>'.$res['juridical_address'].'<br>ტელ.ნომერი:'.$res['phone'].' '.$res[client_person_person].'<br>ელ.ფოსტა:'.$res['email'].'</label></td>
                                 </tr>
                             </table>
                         </div>
@@ -618,18 +831,20 @@ if ($file_type == 'receipt') {
                         </div>
                      </div>
                </div';
+        
     }elseif ($file_type == 'Schedule_ltd_trusted'){
+        
         $data  .= '<div style="size: 7in 9.25in; margin: 15mm 16mm 15mm 16mm;" id="dialog-form">
-                        <div style="width:100%; font-size: 16px; text-align: center">საკრედიტო ხელშეკრულება #1893</div>
+                        <div style="width:100%; font-size: 16px; text-align: center">საკრედიტო ხელშეკრულება #'.$res[loan_agreement_id].'</div>
                         <div style="width:100%; font-size: 12px; margin-top: 15px; text-align: right;">'.$res[day].'.'.$res[month_id].'.'.$res[year].'</div>
                         <div style="width:100%; font-size: 12px; text-align: left;">ქ. თბილისი</div>
                         <div style="width:100%; font-size: 12px; margin-top: 15px;">
-                                                                წინამდებარე ხელშეკრულების მონაწილე მხარეები, ერთის მხრივ შპს „თი ჯი მობაილ“ (საიდენტიფიკაციო № 205170177), - დირექტორი გიორგი კილაძე,
+                                                                წინამდებარე ხელშეკრულების მონაწილე მხარეები, ერთის მხრივ შპს "თი ჯი მობაილ" (საიდენტიფიკაციო № 205170177), - დირექტორი გიორგი კილაძე,
                                                                 წარმომადგენილი ვახტანგ ბახტაძის სახით (მინდობილობა №001, 10.25.2012 წელი)  (შემდგომში გამსესხებელი), 
-                                                                და მეორეს მხრივ, შპს „მანი“/“MANI“ LTD (საიდენტიფიკაციო კ. № 445437965), დირექტორი აკაკი ელისაშვილი (პირადი# 01019068974) 
-                                                                და (შემდგომში მინდობილი პირი) აკაკი ელისაშვილი (პირადი# 01019068974), სანოტარო მოქმედების რეგისტრაციის ნომერი N140655779, 
-                                                                რეგისტრაციის თარიღი 25.06.2014 წელს, ნოტარიუსი : მარიამ ნავროზაშვილი, 
-                           (მისამართი ქ.თბილისი, თემქის 3მ/რ 4კვ კორ 57-ის მიმდებარედ ტელ: 598270730) (შემდგომში მსესხებელი), 
+                                                                და მეორეს მხრივ, შპს '.$res[ltd_name].'(საიდენტიფიკაციო კ. № '.$res[ltd_id].'), დირექტორი '.$res[name].' (პირადი# '.$res[pid].') 
+                                                                და (შემდგომში მინდობილი პირი) '.$res[trust_pers].' (პირადი# '.$res[trusted_pid].'), სანოტარო მოქმედების რეგისტრაციის ნომერი N'.$res[trusting_number].', 
+                                                                რეგისტრაციის თარიღი '.$res['trusting_day'].'.'.$res['trusting_month_id'].'.'.$res['trusting_year'].' წელს, ნოტარიუსი : '.$res['trusting_notary'].', 
+                           (მისამართი '.$res['trusting_notary_address'].' ტელ: '.$res['trusting_notary_phone'].') (შემდგომში მსესხებელი), 
                                                                  ჩვენს შორის მიღწეული შეთანხმების შედეგად, ვდებთ ხელშეკრულებას სასყიდლიანი სესხის გაცემის შესახებ.
                         </div>
                         <div style="width:100%; font-size: 12px; margin-top: 15px;">
@@ -637,7 +852,7 @@ if ($file_type == 'receipt') {
                         </div>
                         <div style="width:100%; font-size: 12px;">
                             <br>1.1.	გამსესხებელი- შპს  "თი ჯი მობაილ"
-                            <br>1.2.	მსესხებელი – შპს "მანი"/"MANI" LTD (საიდენტიფიკაციო კ. № 445437965), დირექტორი აკაკი ელისაშვილი (პირადი# 01019068974) და (შემდგომში მინდობილი პირი) აკაკი ელისაშვილი (პირადი# 01019068974) სანოტარო მოქმედების რეგისტრაციის ნომერი N140655779, რეგისტრაციის თარიღი 25.06.2014 წელს, ნოტარიუსი : მარიამ ნავროზაშვილი, (მისამართი ქ.თბილისი, თემქის 3მ/რ 4კვ კორ 57-ის მიმდებარედ ტელ: 598270730), რომელიც სარგებლობს ამ ხელშეკრულების შესაბამისად სასყიდლიანი სესხის სახით გაცემული ფულადი თანხით;
+                            <br>1.2.	მსესხებელი – შპს '.$res[ltd_name].' (საიდენტიფიკაციო კ. № '.$res[ltd_id].'), დირექტორი '.$res[name].' (პირადი# '.$res[pid].') და (შემდგომში მინდობილი პირი) '.$res[trust_pers].' (პირადი# '.$res[trusted_pid].') სანოტარო მოქმედების რეგისტრაციის ნომერი N'.$res[trusting_number].', რეგისტრაციის თარიღი '.$res['trusting_day'].'.'.$res['trusting_month_id'].'.'.$res['trusting_year'].' წელს, ნოტარიუსი : '.$res['trusting_notary'].', (მისამართი '.$res['trusting_notary_address'].' ტელ: '.$res['trusting_notary_phone'].'), რომელიც სარგებლობს ამ ხელშეკრულების შესაბამისად სასყიდლიანი სესხის სახით გაცემული ფულადი თანხით;
                             <br>1.3.	ხელშეკრულება- წინამდებარე ხელშეკრულება, რომელიც განსაზღვრავს ამ ხელშეკრულების მონაწილე მხარეთა შორის არსებულ უფლებებსა და ვალდებულებებს, ასევე არეგულირებს გამსესხებელსა და მსესხებელს შორის არსებული სამართალურთიერთობის ძირითად პირობებს და პარამეტრებს;
                             <br>1.4.	სესხი- მსესხებელზე წინამდებარე ხელშეკრულებით გათვალისწინებული წესით და ოდენობით პირადი მოხმარებისთვის გაცემული თანხა, საქართველოს მოქმედი კანონმდებლობის შესაბამისად;
                             <br>1.5.	სესხის თანხა- ამ ხელშეკრულების შესაბამისად დადგენილი ოდენობით მსესხებელზე გამსესხებლის მიერ გაცემული ფულადი თანხა;
@@ -649,21 +864,21 @@ if ($file_type == 'receipt') {
                             <br>2.	ხელშეკრულების საგანი
                             <br>2.1.	წინამდებარე ხელშეკრულების შესაბამისად, გამსესხებელი კისრულობს ვალდებულებას, გასცეს მსესხებელზე სესხი ამ ხელშეკრულებით გათვალისწინებულ ვადებში და ოდენობით, ხოლო მსესხებელი კისრულობს ვალდებულებას დააბრუნოს მიღებული სესხი, მასზე დარიცხული საპროცენტო სარგებელი, დაფაროს ყველა ფინანსური ხარჯი და სრულიად შეასრულოს ყველა ნაკისრი ვალდებულება.
                             <br>3.	სესხით სარგებლობის პირობები
-                            <br>3.1.	სესხის სრული მოცულობა (ოდენობა) – 2380 აშშ დოლარი (ექვივალენტი ლარში)
+                            <br>3.1.	სესხის სრული მოცულობა (ოდენობა) – '.$res[loan_amount].' აშშ დოლარი (ექვივალენტი ლარში)
                             <br>3.2.	გატანის პერიოდულობა- ერთჯერადი;
-                            <br>3.3.	სესხით სარგებლობის ვადა- 24 (ოცდაოთხი) თვე;
-                            <br>3.4.	სესხის გაცემის საკომისიო - 3% (აკისრია მსესხებელს)
-                            <br>3.5.	სადაზღვევო ხარჯი- 3 თვის დაზღვევის საფასური -110 (ასათი) აშშ დოლარი (ექვივალენტი ლარში). მსესხებელს ასევე ეკისრება ყოველ 3 თვეში დაზღვევის საფასურის დამატებით გადახდა იმ დროისთვის არსებული ოდენობით;
-                            <br>3.6.	გირავნობის ხარჯი - 225 (ორასორმოცდათხუთმეტი) ლარი; (აკისრია მსესხებელს)
-                            <br>3.7.	სარგებელი სესხით სარგებლობისთვის- ამ ხელშეკრულების მოქმედების მანძილზე ყოველთვიურად -3% პროცენტი;
-                            <br>3.8.	ყოველთვიურად მსესხებელი იხდის თანხას გრაფიკის მიხედვით,რომელიც თანდართულია ხელშეკრულებას,რაც შეადგენს 140.53 (ასორმოცი და ორმოცდაცამეტი) აშშ დოლარის ექვივალენტს ლარში;
-                            <br>3.9.	მსესხებელი ვალდებულია ამ ხელშეკრულების  3.8 პუნქტში მითითებული თანხის გადახდები განახორციელოს ხელშეკრულების მოქმედების სრული პერიოდის განმავლობაში ყოველი თვის 12 რიცხვში (თუ გრაფიკში სხვა რამ არ არის გათვალისწინებული) .
+                            <br>3.3.	სესხით სარგებლობის ვადა- '.$res[loan_months].' ('.float_replase($res[loan_months]).') თვე;
+                            <br>3.4.	სესხის გაცემის საკომისიო - '.$res[loan_fee].'% (აკისრია მსესხებელს)
+                            <br>3.5.	სადაზღვევო ხარჯი- 3 თვის დაზღვევის საფასური -'.$res['insurance_fee'].' ('.float_replase($res['insurance_fee']).') აშშ დოლარი (ექვივალენტი ლარში). მსესხებელს ასევე ეკისრება ყოველ 3 თვეში დაზღვევის საფასურის დამატებით გადახდა იმ დროისთვის არსებული ოდენობით;
+                            <br>3.6.	გირავნობის ხარჯი - '.$res['pledge_fee'].' ('.float_replase($res['pledge_fee']).') ლარი; (აკისრია მსესხებელს)
+                            <br>3.7.	სარგებელი სესხით სარგებლობისთვის- ამ ხელშეკრულების მოქმედების მანძილზე ყოველთვიურად -'.$res['month_percent'].'% პროცენტი;
+                            <br>3.8.	ყოველთვიურად მსესხებელი იხდის თანხას გრაფიკის მიხედვით,რომელიც თანდართულია ხელშეკრულებას,რაც შეადგენს '.$res[monthly_pay].' ('.float_replase($res['monthly_pay']).') აშშ დოლარის ექვივალენტს ლარში;
+                            <br>3.9.	მსესხებელი ვალდებულია ამ ხელშეკრულების  3.8 პუნქტში მითითებული თანხის გადახდები განახორციელოს ხელშეკრულების მოქმედების სრული პერიოდის განმავლობაში ყოველი თვის '.$res['month_id'].' რიცხვში (თუ გრაფიკში სხვა რამ არ არის გათვალისწინებული) .
                             <br>3.10.	იმ შემთხვევაში, თუ მსესხებელი წინსწრებით დაფარავს ძირი თანხის ნაწილს, მაშინ სესხი უნდა გადაანგარიშდეს და შედგეს ახალი გადახდის გრაფიკი;
                             <br>3.11.		მსესხებელს წინასწრებით ძირი თანხის ნაწილის დაფარვა შეუძლია მხოლოდ იმ რიცხვებში, რომლებიც არის მითითებული გრაფიკში;
-                            <br>3.12.		წინსწრებით დაფარვის საკომისიო დარჩენილი ძირი თანხის -  3 %
+                            <br>3.12.		წინსწრებით დაფარვის საკომისიო დარჩენილი ძირი თანხის -  ? %
                             <br>3.13.		სესხის გაცემის ვადა – 01 (ერთი) დღე;
                             <br>3.14.	        საპროცენტო სარგებლის გადახის პერიოდულობა განისაზღვრება წინამდებარე ხელშეკრულებით;
-                            ვალუტის კურსი ხელშეკრულების ხელმოწერის დღისათვის – 1 აშშ დოლარი = 2.5887 ლარი;
+                            ვალუტის კურსი ხელშეკრულების ხელმოწერის დღისათვის – 1 აშშ დოლარი = '.$res['exchange_rate'].' ლარი;
                             <br>3.15.	სესხის ხელშეკრულებით გათვალისწინებული სესხის თანხის დადგენილ ვადაში დაუბრუნებლობის ან/და ამ ხელშეკრულებით დადგენილი პერიოდულობით გადაუხდელობის /ნაწილობრივ გადახდის შემთხვევაში, მსესხებელს დაერიცხება ამ ხელშეკრულებით გათვალისწინებული პირგასამტეხლო (საურავი), რომელიც დადგენილია გადახდის ვადის გადაცილებისათვის და რომელიც ანგარიშდება სესხის ძირი თანხიდან.
                             <br>3.16.		ფინანსური ხარჯები: ამ ხელშეკრულების მიზნებისათვის ფინანსურ ხარჯს წარმოადგენს ყველა ის ხარჯი, რომელიც აუცილებელია სესხის გაცემისა და მისი ამოღებისათვის (მათ შორის სადაზღვევო ხარჯი, სააღსრულებო ხარჯი, სესხის გაპრობლემების შემთხვევაში პრობლემური სამსახურის მომსახურების საფასური, აუდიტის მომსახურების საფასური. გირავნობის საფასური, ,სსიპ შსს მომსახურების სააგენტოში გაწეული ხარჯი და ნებისმიერი გადასახდელი, რომელიც გასწია გამსესხებელმა სესხის გასაცემად და დასაბრუნებლად);
                             <br>3.17.		წინამდებარე ხელშეკრულების მიზნებიდან გამომდინარე, ფინანსურ ხარჯად განიხილება ასევე ნებისმიერი გადასახდელი, რომელსაც მსესხებელი უხდის მესამე პირს, თუკი ეს გადასახდელი წარმოადგენს აუცილებლობას და მის გარეშე გამსესხებლის მიერ ნაკისრი ვალდებულების შესრულება იქნება შეუძლებელი ან არსებითად გართულდება;
@@ -738,7 +953,7 @@ if ($file_type == 'receipt') {
                             <br>9.1. წინამდებარე ხელშეკრულებით ნაკისრი ვალდებულებების შესრულების მოთხოვნის უზრუნველყოფის დამატებით საშუალებას წარმოადგენს პირგასამტეხლო;
                             <br>9.2. პირგასამტეხლოს გადახდის და მისი ოდენობის დაანგარიშების წესი განისაზღვრება ამ ხელშეკრულებით;
                             <br>9.3. ამ ხელშეკრულების მიზნებისათვის პირგასამტეხლოს გადახდევინება ხორციელდება ნაკისრი ვალდებულების შესრულების ვადის გადაცილებისათვის;
-                            <br>9.4. მსესხებელს, ამ ხელშეკრულებით გათვალსწინებული გადახდის ვადის გადაცილების შემთხვევაში, დაერიცხება პირგასამტეხლო სესხის ძირი თანხის 0.5%-ის ოდენობით ყოველ ვადაგადაცილებულ დღეზე, ვალდებულების დარღვევიდან 3 დღის განმავლობაში; ხოლო გადახდის ვადის გადაცილების 3 (სამი) დღეზე მეტი ვადით გაგრძელების შემთხვევაში მსესხებელს დაერიცხება პირგასამტეხლო სესხის ძირი თანხის 0.8% ყოველ ვადაგადაცილებულ დღეზე.
+                            <br>9.4. მსესხებელს, ამ ხელშეკრულებით გათვალსწინებული გადახდის ვადის გადაცილების შემთხვევაში, დაერიცხება პირგასამტეხლო სესხის ძირი თანხის '.$res['penalty_percent'].'%-ის ოდენობით ყოველ ვადაგადაცილებულ დღეზე, ვალდებულების დარღვევიდან '.$res['penalty_days'].' დღის განმავლობაში; ხოლო გადახდის ვადის გადაცილების '.$res['penalty_days'].'('.float_replase($res['penalty_days']).') დღეზე მეტი ვადით გაგრძელების შემთხვევაში მსესხებელს დაერიცხება პირგასამტეხლო სესხის ძირი თანხის '.$res['penalty_additional_percent'].'% ყოველ ვადაგადაცილებულ დღეზე.
                             <br>9.5. ამ ხელშეკრულების 9.4 მუხლით გათვალისწინებული პირგასამტეხლოს ოდენობა დაანგარიშდება სესხის ძირი თანხიდან;
                             <br>9.6. პირგასამტეხლოს დაკისრება ხდება ყოველი კონკრეტული ვალდებულების დარღვევისთვის (ყოველთვიური სარგებლის, გრაფიკით გათვალისწინებული თანხის თუ სესხის ძირი თანხის გადახდის ვადაგადაცილების შემთხვევაში)  ცალკ-ცალკე, სესხის ძირი თანხიდან.
                             <br>9.7. სესხის სარგებლის (ან გრაფიკით გათვალისწინებული თანხის) გადახდის ვადის 2 ან მეტი თვით ვადა გადაცილების შემთხვევაში, თითოეული თვის ვადაგადაცილებისათვის მსესხებელს ცალკ-ცალკე ერიცხება პირგასამტეხლო. იმ შემთხვევაში, თუ მსესხებლის მიერ უკვე დარღვეულია სესხის სარგებლის ან გრაფიკით გათვალისწინებული თანხის გადახდის ვადა და მსესხებელმა მომდევნო თვის სარგებლის ან გრაფიკით გათვალისწინებული თანხის გადახდის ვადასაც გადააცილა, პირგასამტეხლოს დარიცხვა პირველი თვის სარგებლისთვის იმავე ფარგლებში გაგრძელდება და ამასთან, მეორე და მომდევნო თვის სარგებლის ან გრაფიკით გათვალისწინებული თანხის ვადაგადაცილებისთვის ცალკ-ცალკე, დამატებით მოხდება პირგასამტეხლოს დარიცხვა სესხის ძირი თანხის 0.5% -ის ოდენობით ყოველ ვადაგადაცილებულ დღეზე.
@@ -772,7 +987,7 @@ if ($file_type == 'receipt') {
                                 <table style="width:100%;">
                                     <tr style="width:100%;">
                                         <td style="width:50%;"><label style="font-size: 12px; text-align: left;">გამსესხებელი: შპს "თი ჯი მობაილ" <br> მისამართი: ქ. თბილისი, დოლიძის ქ. 25/121<br>ს/კ 205270277<br>სს "საქართველოს ბანკი"<br>ბანკის კოდი: BAGAGE22<br>ა/ა GE12BG0000000523102000<br>ტელეფონის ნომერი: (ოფისი)<br>ტელეფონის ნომერი: 579796921<br>ტელეფონის ნომერი: 579131813 (ლერი)<br>ხელის მომწერის: ვახტანგ ბახტაძე,<br>პოზიცია: მენეჯერი<br>ელ.ფოსტა: tgmobail@mail.ru<br>s.qurdadze.1@gmail.com</label></td>
-                                        <td style="width:50%;"><label style="font-size: 12px; text-align: left;">მსესხებელი<br>სახელწოდება: შპს "მანი"/"MANI" LTD<br>(საიდენტიფიკაციო კ. № 445437965 )<br>დირექტორი:<br>პირ ნომერი:<br>მინდობილი პირი: აკაკი ელისაშვილი<br>პირ № 01019068974<br>მისამართი:<br>ტელ.ნომერი:<br>ელ.ფოსტა:</label></td>
+                                        <td style="width:50%;"><label style="font-size: 12px; text-align: left;">მსესხებელი<br>სახელწოდება: შპს '.$res[ltd_name].' LTD<br>(საიდენტიფიკაციო კ. № '.$res[ltd_id].' )<br>დირექტორი:'.$res[name].'<br>პირ ნომერი:'.$res[pid].'<br>მინდობილი პირი: '.$res[trust_pers].'<br>პირ № '.$res[trusted_pid].'<br>მისამართი:'.$res[actual_address].'<br>'.$res[juridical_address].'<br>ტელ.ნომერი:'.$res[trusted_phone].' '.$res[client_person_person].'<br>ელ.ფოსტა:'.$res[juridical_email].'</label></td>
                                     </tr>
                                 </table>
                             </div>
@@ -786,25 +1001,27 @@ if ($file_type == 'receipt') {
                             </div>
                          </div>
                    </div';
+//            
     }elseif ($file_type == 'Schedule_trusted_nocustoms'){
-        $data  .= '<div style="size: 7in 9.25in; margin: 15mm 16mm 15mm 16mm;" id="dialog-form">
-                        <div style="width:100%; font-size: 16px; text-align: center">საკრედიტო ხელშეკრულება #1893</div>
+        
+        $data  .= '<div style="size: 7in 9.25in; margin: 5mm 16mm 15mm 16mm;" id="dialog-form">
+                        <div style="width:100%; font-size: 16px; text-align: center">საკრედიტო ხელშეკრულება #'.$res[loan_agreement_id].'</div>
                         <div style="width:100%; font-size: 12px; margin-top: 15px; text-align: right;">'.$res[day].'.'.$res[month_id].'.'.$res[year].'</div>
                         <div style="width:100%; font-size: 12px; text-align: left;">ქ. თბილისი</div>
                         <div style="width:100%; font-size: 12px; margin-top: 15px;">
-                                                               წინამდებარე ხელშეკრულების მონაწილე მხარეები, ერთის მხრივ შპს „თი ჯი მობაილ“ (საიდენტიფიკაციო № 205170177), - დირექტორი გიორგი კილაძე, 
+                                                               წინამდებარე ხელშეკრულების მონაწილე მხარეები, ერთის მხრივ შპს "თი ჯი მობაილ" (საიდენტიფიკაციო № 205170177), - დირექტორი გიორგი კილაძე, 
                                                                 წარმომადგენელი ვახტანგ ბახტაძის სახით (მინდობილობა №001, 10.25.2012 წელი)  (შემდგომში გამსესხებელი), და მეორეს მხრივ, 
-                                                                ბონდო ახვლედიანი (პირადი №01003003149) (შემდგომში მსესხებელი) და (შემდგომში მინდობილი პირი) აკაკი ელისაშვილი (პირადი № 01019068974),
-                                                                სანოტარო მოქმედების რეგისტრაციის ნომერი N140655779, რეგისტრაციის თარიღი 25.06.2014 წელს, ნოტარიუსი: მარიამ ნავროზაშვილი, 
-                            (მისამართი ქ.თბილისი, თემქის 3მ/რ 4კვ კორ 57-ის მიმდებარედ ტელ:598270730) 
+                           '.$res['name'].' (პირადი №'.$res['pid'].') (შემდგომში მსესხებელი) და (შემდგომში მინდობილი პირი) '.$res['trust_pers'].' (პირადი № '.$res['trusted_pid'].'),
+                                                                სანოტარო მოქმედების რეგისტრაციის ნომერი N'.$res['trusting_number'].', რეგისტრაციის თარიღი '.$res['trusting_day'].'.'.$res['trusting_month_id'].'.'.$res['trusting_year'].' წელს, ნოტარიუსი: '.$res['trusting_notary'].', 
+                            (მისამართი '.$res['trusting_notary_address'].' ტელ:'.$res['trusting_notary_phone'].') 
                             (შემდგომში მსესხებელი), ჩვენს შორის მიღწეული შეთანხმების შედეგად, ვდებთ ხელშეკრულებას სასყიდლიანი სესხის გაცემის შესახებ.
                         </div>
                         <div style="width:100%; font-size: 12px; margin-top: 15px;">
                                                             ტერმინთა განმარტება:
                         </div>
                         <div style="width:100%; font-size: 12px;">
-                            <br>1.1.	გამსესხებელი- შპს  „თი ჯი მობაილ“
-                            <br>1.2.	მსესხებელი- ბონდო ახვლედიანი (პირადი №01003003149) (შემდგომში მსესხებელი) და (შემდგომში მინდობილი პირი) აკაკი ელისაშვილი (პირადი № 01019068974), სანოტარო მოქმედების რეგისტრაციის ნომერი N140655779, რეგისტრაციის თარიღი 25.06.2014 წელს, ნოტარიუსი: მარიამ ნავროზაშვილი, (მისამართი ქ.თბილისი, თემქის 3მ/რ 4კვ კორ 57-ის მიმდებარედ ტელ:598270730), რომელიც სარგებლობს ამ ხელშეკრულების შესაბამისად სასყიდლიანი სესხის სახით გაცემული ფულადი თანხით;
+                            <br>1.1.	გამსესხებელი- შპს  "თი ჯი მობაილ"
+                            <br>1.2.	მსესხებელი- '.$res['name'].' (პირადი №'.$res['name'].') (შემდგომში მსესხებელი) და (შემდგომში მინდობილი პირი) '.$res['trust_pers'].' (პირადი № '.$res['trusted_pid'].'), სანოტარო მოქმედების რეგისტრაციის ნომერი N'.$res['trusting_number'].', რეგისტრაციის თარიღი '.$res['trusting_day'].'.'.$res['trusting_month_id'].'.'.$res['trusting_year'].' წელს, ნოტარიუსი: '.$res['trusting_notary'].', (მისამართი '.$res['trusting_notary_address'].' ტელ:'.$res['trusting_notary_phone'].'), რომელიც სარგებლობს ამ ხელშეკრულების შესაბამისად სასყიდლიანი სესხის სახით გაცემული ფულადი თანხით;
                             <br>1.3.	ხელშეკრულება- წინამდებარე ხელშეკრულება, რომელიც განსაზღვრავს ამ ხელშეკრულების მონაწილე მხარეთა შორის არსებულ უფლებებსა და ვალდებულებებს, ასევე არეგულირებს გამსესხებელსა და მსესხებელს შორის არსებული სამართალურთიერთობის ძირითად პირობებს და პარამეტრებს;
                             <br>1.4.	სესხი- მსესხებელზე წინამდებარე ხელშეკრულებით გათვალისწინებული წესით და ოდენობით პირადი მოხმარებისთვის გაცემული თანხა, საქართველოს მოქმედი კანონმდებლობის შესაბამისად;
                             <br>1.5.	სესხის თანხა- ამ ხელშეკრულების შესაბამისად დადგენილი ოდენობით მსესხებელზე გამსესხებლის მიერ გაცემული ფულადი თანხა;
@@ -816,22 +1033,22 @@ if ($file_type == 'receipt') {
                             <br>2.	ხელშეკრულების საგანი
                             <br>2.1.	წინამდებარე ხელშეკრულების შესაბამისად, გამსესხებელი კისრულობს ვალდებულებას, გასცეს მსესხებელზე სესხი ამ ხელშეკრულებით გათვალისწინებულ ვადებში და ოდენობით, ხოლო მსესხებელი კისრულობს ვალდებულებას დააბრუნოს მიღებული სესხი, მასზე დარიცხული საპროცენტო სარგებელი, დაფაროს ყველა ფინანსური ხარჯი და სრულიად შეასრულოს ყველა ნაკისრი ვალდებულება.
                             <br>3.	სესხით სარგებლობის პირობები
-                            <br>3.1.	სესხის სრული მოცულობა (ოდენობა) – 2380 აშშ დოლარი (ექვივალენტი ლარში)
+                            <br>3.1.	სესხის სრული მოცულობა (ოდენობა) – '.$res['loan_amount'].' აშშ დოლარი (ექვივალენტი ლარში)
                             <br>3.2.	გატანის პერიოდულობა- ერთჯერადი;
-                            <br>3.3.	სესხით სარგებლობის ვადა- 24 (ოცდაოთხი) თვე;
-                            <br>3.4.	სესხის გაცემის საკომისიო - 3% (აკისრია მსესხებელს)
-                            <br>3.5.	სადაზღვევო ხარჯი- 3 თვის დაზღვევის საფასური -110 (ასათი) აშშ დოლარი (ექვივალენტი ლარში). მსესხებელს ასევე ეკისრება ყოველ 3 თვეში დაზღვევის საფასურის დამატებით გადახდა იმ დროისთვის არსებული ოდენობით;
-                            <br>3.6.	გირავნობის ხარჯი - 225 (ორასორმოცდათხუთმეტი) ლარი; (აკისრია მსესხებელს)
-                            <br>3.7.	სარგებელი სესხით სარგებლობისთვის- ამ ხელშეკრულების მოქმედების მანძილზე ყოველთვიურად -3% პროცენტი;
-                            <br>3.8.	ყოველთვიურად მსესხებელი იხდის თანხას გრაფიკის მიხედვით,რომელიც თანდართულია ხელშეკრულებას,რაც შეადგენს 140.53 (ასორმოცი და ორმოცდაცამეტი) აშშ დოლარის ექვივალენტს ლარში;
-                            <br>3.9.	იმ შემთხვევაში თუ მსესხებელმა შემოსავლების სამსახურის შეტყობინება N 4035101 განსაზღვრულ                  ვადაში, არ განაბაჟა ავტომობილი, შსს-ს სსიპ მომსახურების სააგენტოს ავტომობილის საექსპორტო დათვალიერების აქტში ასახული თანხა მთლიანად დაემატა ამ ხელშეკრულების 3.1. პუნქტით განსაზღვრული სესხის ძირ თანხას და სრულად დაეკისრება მსესხებელს.
-                            <br>3.10.	მსესხებელი ვალდებულია ამ ხელშეკრულების  3.8 პუნქტში მითითებული თანხის გადახდები განახორციელოს ხელშეკრულების მოქმედების სრული პერიოდის განმავლობაში ყოველი თვის 12 რიცხვში (თუ გრაფიკში სხვა რამ არ არის გათვალისწინებული) .
+                            <br>3.3.	სესხით სარგებლობის ვადა- '.$res['loan_months'].' ('.float_replase($res['loan_months']).') თვე;
+                            <br>3.4.	სესხის გაცემის საკომისიო - '.$res['loan_fee'].'% (აკისრია მსესხებელს)
+                            <br>3.5.	სადაზღვევო ხარჯი- 3 თვის დაზღვევის საფასური -'.$res['insurance_fee'].' ('.float_replase($res['insurance_fee']).') აშშ დოლარი (ექვივალენტი ლარში). მსესხებელს ასევე ეკისრება ყოველ 3 თვეში დაზღვევის საფასურის დამატებით გადახდა იმ დროისთვის არსებული ოდენობით;
+                            <br>3.6.	გირავნობის ხარჯი - '.$res['pledge_fee'].' ('.float_replase($res['pledge_fee']).') ლარი; (აკისრია მსესხებელს)
+                            <br>3.7.	სარგებელი სესხით სარგებლობისთვის- ამ ხელშეკრულების მოქმედების მანძილზე ყოველთვიურად -'.$res['month_percent'].'% პროცენტი;
+                            <br>3.8.	ყოველთვიურად მსესხებელი იხდის თანხას გრაფიკის მიხედვით,რომელიც თანდართულია ხელშეკრულებას,რაც შეადგენს '.$res['monthly_pay'].' ('.float_replase($res['monthly_pay']).') აშშ დოლარის ექვივალენტს ლარში;
+                            <br>3.9.	იმ შემთხვევაში თუ მსესხებელმა შემოსავლების სამსახურის შეტყობინება N '.$res['rs_message_number'].' განსაზღვრულ                  ვადაში, არ განაბაჟა ავტომობილი, შსს-ს სსიპ მომსახურების სააგენტოს ავტომობილის საექსპორტო დათვალიერების აქტში ასახული თანხა მთლიანად დაემატა ამ ხელშეკრულების 3.1. პუნქტით განსაზღვრული სესხის ძირ თანხას და სრულად დაეკისრება მსესხებელს.
+                            <br>3.10.	მსესხებელი ვალდებულია ამ ხელშეკრულების  3.8 პუნქტში მითითებული თანხის გადახდები განახორციელოს ხელშეკრულების მოქმედების სრული პერიოდის განმავლობაში ყოველი თვის '.$res['month_id'].' რიცხვში (თუ გრაფიკში სხვა რამ არ არის გათვალისწინებული) .
                             <br>3.11.	იმ შემთხვევაში, თუ მსესხებელი წინსწრებით დაფარავს ძირი თანხის ნაწილს, მაშინ სესხი უნდა გადაანგარიშდეს და შედგეს ახალი გადახდის გრაფიკი;
                             <br>3.12.		მსესხებელს წინასწრებით ძირი თანხის ნაწილის დაფარვა შეუძლია მხოლოდ იმ რიცხვებში, რომლებიც არის მითითებული გრაფიკში;
-                            <br>3.13.		წინსწრებით დაფარვის საკომისიო დარჩენილი ძირი თანხის -  3 %
+                            <br>3.13.		წინსწრებით დაფარვის საკომისიო დარჩენილი ძირი თანხის -  ? %
                             <br>3.14.		სესხის გაცემის ვადა – 01 (ერთი) დღე;
                             <br>3.15.	        საპროცენტო სარგებლის გადახის პერიოდულობა განისაზღვრება წინამდებარე ხელშეკრულებით;
-                            ვალუტის კურსი ხელშეკრულების ხელმოწერის დღისათვის – 1 აშშ დოლარი = 2.5887 ლარი;
+                                                                                            ვალუტის კურსი ხელშეკრულების ხელმოწერის დღისათვის – 1 აშშ დოლარი = '.$res['exchange_rate'].' ლარი;
                             <br>3.16.	სესხის ხელშეკრულებით გათვალისწინებული სესხის თანხის დადგენილ ვადაში დაუბრუნებლობის ან/და ამ ხელშეკრულებით დადგენილი პერიოდულობით გადაუხდელობის /ნაწილობრივ გადახდის შემთხვევაში, მსესხებელს დაერიცხება ამ ხელშეკრულებით გათვალისწინებული პირგასამტეხლო (საურავი), რომელიც დადგენილია გადახდის ვადის გადაცილებისათვის და რომელიც ანგარიშდება სესხის ძირი თანხიდან.
                             <br>3.17.		ფინანსური ხარჯები: ამ ხელშეკრულების მიზნებისათვის ფინანსურ ხარჯს წარმოადგენს ყველა ის ხარჯი, რომელიც აუცილებელია სესხის გაცემისა და მისი ამოღებისათვის (მათ შორის სადაზღვევო ხარჯი, სააღსრულებო ხარჯი, სესხის გაპრობლემების შემთხვევაში პრობლემური სამსახურის მომსახურების საფასური, აუდიტის მომსახურების საფასური. გირავნობის საფასური, ,სსიპ შსს მომსახურების სააგენტოში გაწეული ხარჯი და ნებისმიერი გადასახდელი, რომელიც გასწია გამსესხებელმა სესხის გასაცემად და დასაბრუნებლად);
                             <br>3.18.		წინამდებარე ხელშეკრულების მიზნებიდან გამომდინარე, ფინანსურ ხარჯად განიხილება ასევე ნებისმიერი გადასახდელი, რომელსაც მსესხებელი უხდის მესამე პირს, თუკი ეს გადასახდელი წარმოადგენს აუცილებლობას და მის გარეშე გამსესხებლის მიერ ნაკისრი ვალდებულების შესრულება იქნება შეუძლებელი ან არსებითად გართულდება;
@@ -906,7 +1123,7 @@ if ($file_type == 'receipt') {
                             <br>9.1. წინამდებარე ხელშეკრულებით ნაკისრი ვალდებულებების შესრულების მოთხოვნის უზრუნველყოფის დამატებით საშუალებას წარმოადგენს პირგასამტეხლო;
                             <br>9.2. პირგასამტეხლოს გადახდის და მისი ოდენობის დაანგარიშების წესი განისაზღვრება ამ ხელშეკრულებით;
                             <br>9.3. ამ ხელშეკრულების მიზნებისათვის პირგასამტეხლოს გადახდევინება ხორციელდება ნაკისრი ვალდებულების შესრულების ვადის გადაცილებისათვის;
-                            <br>9.4. მსესხებელს, ამ ხელშეკრულებით გათვალსწინებული გადახდის ვადის გადაცილების შემთხვევაში, დაერიცხება პირგასამტეხლო სესხის ძირი თანხის 0.5%-ის ოდენობით ყოველ ვადაგადაცილებულ დღეზე, ვალდებულების დარღვევიდან 3 დღის განმავლობაში; ხოლო გადახდის ვადის გადაცილების 3 (სამი) დღეზე მეტი ვადით გაგრძელების შემთხვევაში მსესხებელს დაერიცხება პირგასამტეხლო სესხის ძირი თანხის 0.8% ყოველ ვადაგადაცილებულ დღეზე.
+                            <br>9.4. მსესხებელს, ამ ხელშეკრულებით გათვალსწინებული გადახდის ვადის გადაცილების შემთხვევაში, დაერიცხება პირგასამტეხლო სესხის ძირი თანხის '.$res['penalty_percent'].'%-ის ოდენობით ყოველ ვადაგადაცილებულ დღეზე, ვალდებულების დარღვევიდან '.$res['penalty_days'].' დღის განმავლობაში; ხოლო გადახდის ვადის გადაცილების '.$res['penalty_days'].' ('.float_replase($res['penalty_days']).') დღეზე მეტი ვადით გაგრძელების შემთხვევაში მსესხებელს დაერიცხება პირგასამტეხლო სესხის ძირი თანხის '.$res['penalty_additional_percent'].'% ყოველ ვადაგადაცილებულ დღეზე.
                             <br>9.5. ამ ხელშეკრულების 9.4 მუხლით გათვალისწინებული პირგასამტეხლოს ოდენობა დაანგარიშდება სესხის ძირი თანხიდან;
                             <br>9.6. პირგასამტეხლოს დაკისრება ხდება ყოველი კონკრეტული ვალდებულების დარღვევისთვის (ყოველთვიური სარგებლის, გრაფიკით გათვალისწინებული თანხის თუ სესხის ძირი თანხის გადახდის ვადაგადაცილების შემთხვევაში)  ცალკ-ცალკე, სესხის ძირი თანხიდან.
                             <br>9.7. სესხის სარგებლის (ან გრაფიკით გათვალისწინებული თანხის) გადახდის ვადის 2 ან მეტი თვით ვადა გადაცილების შემთხვევაში, თითოეული თვის ვადაგადაცილებისათვის მსესხებელს ცალკ-ცალკე ერიცხება პირგასამტეხლო. იმ შემთხვევაში, თუ მსესხებლის მიერ უკვე დარღვეულია სესხის სარგებლის ან გრაფიკით გათვალისწინებული თანხის გადახდის ვადა და მსესხებელმა მომდევნო თვის სარგებლის ან გრაფიკით გათვალისწინებული თანხის გადახდის ვადასაც გადააცილა, პირგასამტეხლოს დარიცხვა პირველი თვის სარგებლისთვის იმავე ფარგლებში გაგრძელდება და ამასთან, მეორე და მომდევნო თვის სარგებლის ან გრაფიკით გათვალისწინებული თანხის ვადაგადაცილებისთვის ცალკ-ცალკე, დამატებით მოხდება პირგასამტეხლოს დარიცხვა სესხის ძირი თანხის 0.5% -ის ოდენობით ყოველ ვადაგადაცილებულ დღეზე.
@@ -941,7 +1158,7 @@ if ($file_type == 'receipt') {
                                 <table style="width:100%;">
                                     <tr style="width:100%;">
                                         <td style="width:50%;"><label style="font-size: 12px; text-align: left;">გამსესხებელი: შპს "თი ჯი მობაილ" <br> მისამართი: ქ. თბილისი, დოლიძის ქ. 25/121<br>ს/კ 205270277<br>სს "საქართველოს ბანკი"<br>ბანკის კოდი: BAGAGE22<br>ა/ა GE12BG0000000523102000<br>ტელეფონის ნომერი: (ოფისი)<br>ტელეფონის ნომერი: 579796921<br>ტელეფონის ნომერი: 579131813 (ლერი)<br>ხელის მომწერის: ვახტანგ ბახტაძე,<br>პოზიცია: მენეჯერი<br>ელ.ფოსტა: tgmobail@mail.ru<br>s.qurdadze.1@gmail.com</label></td>
-                                        <td style="width:50%;"><label style="font-size: 12px; text-align: left;">მსესხებელი<br>მინდობილი პირი: აკაკი ელისაშვილი<br>პირ № 01019068974<br>მისამართი:<br>ტელ.ნომერი:<br>ელ.ფოსტა:</label></td>
+                                        <td style="width:50%;"><label style="font-size: 12px; text-align: left;">მსესხებელი<br>მინდობილი პირი: '.$res['trust_pers'].'<br>პირ № '.$res['trusted_pid'].'<br>მისამართი:'.$res['trusted_actual_address'].'<br>'.$res['trusted_juridical_address'].'<br>ტელ.ნომერი:'.$res['trusted_phone'].' '.$res[client_person_person].'<br>ელ.ფოსტა:'.$res['trusted_email'].'</label></td>
                                     </tr>
                                 </table>
                             </div>
@@ -956,22 +1173,23 @@ if ($file_type == 'receipt') {
                          </div>
                    </div';
     }elseif ($file_type == 'Schedule_ltd'){
+        
         $data  .= '<div style="size: 7in 9.25in; margin: 15mm 16mm 15mm 16mm;" id="dialog-form">
-                        <div style="width:100%; font-size: 16px; text-align: center">საკრედიტო ხელშეკრულება #1893</div>
+                        <div style="width:100%; font-size: 16px; text-align: center">საკრედიტო ხელშეკრულება #'.$res[loan_agreement_id].'</div>
                         <div style="width:100%; font-size: 12px; margin-top: 15px; text-align: right;">'.$res[day].'.'.$res[month_id].'.'.$res[year].'</div>
                         <div style="width:100%; font-size: 12px; text-align: left;">ქ. თბილისი</div>
                         <div style="width:100%; font-size: 12px; margin-top: 15px;">
-                                                               წინამდებარე ხელშეკრულების მონაწილე მხარეები, ერთის მხრივ შპს „თი ჯი მობაილ“ (საიდენტიფიკაციო № 205170177), - 
+                                                               წინამდებარე ხელშეკრულების მონაწილე მხარეები, ერთის მხრივ შპს "თი ჯი მობაილ" (საიდენტიფიკაციო № 205170177), - 
                                                                 დირექტორი გიორგი კილაძე, წარმომადგენელი ვახტანგ ბახტაძის სახით (მინდობილობა №001, 10.25.2012 წელი)  (შემდგომში გამსესხებელი), 
-                                                                და მეორეს მხრივ, შპს „მანი“/“MANI“ LTD (საიდენტიფიკაციო კ. № 445437965), დირექტორი აკაკი ელისაშვილი (პირადი# 01019068974) (შემდგომში მსესხებელი),
+                                                                და მეორეს მხრივ, შპს '.$res['ltd_name'].' (საიდენტიფიკაციო კ. № '.$res['ltd_id'].'), დირექტორი '.$res['name'].' (პირადი# '.$res['pid'].') (შემდგომში მსესხებელი),
                                                                 ჩვენს შორის მიღწეული შეთანხმების შედეგად, ვდებთ ხელშეკრულებას სასყიდლიანი სესხის გაცემის შესახებ.
                         </div>
                         <div style="width:100%; font-size: 12px; margin-top: 15px;">
                                                             ტერმინთა განმარტება:
                         </div>
                         <div style="width:100%; font-size: 12px;">
-                            <br>1.1.	გამსესხებელი- შპს  „თი ჯი მობაილ“
-                            <br>1.2.	მსესხებელი- შპს „მანი“/“MANI“ LTD (საიდენტიფიკაციო კ. № 445437965), დირექტორი აკაკი ელისაშვილი (პირადი# 01019068974), რომელიც სარგებლობს ამ ხელშეკრულების შესაბამისად სასყიდლიანი სესხის სახით გაცემული ფულადი თანხით;
+                            <br>1.1.	გამსესხებელი- შპს  "თი ჯი მობაილ"
+                            <br>1.2.	მსესხებელი- შპს '.$res['ltd_name'].' (საიდენტიფიკაციო კ. № '.$res['ltd_id'].'), დირექტორი '.$res['name'].' (პირადი# '.$res['pid'].'), რომელიც სარგებლობს ამ ხელშეკრულების შესაბამისად სასყიდლიანი სესხის სახით გაცემული ფულადი თანხით;
                             <br>1.3.	ხელშეკრულება- წინამდებარე ხელშეკრულება, რომელიც განსაზღვრავს ამ ხელშეკრულების მონაწილე მხარეთა შორის არსებულ უფლებებსა და ვალდებულებებს, ასევე არეგულირებს გამსესხებელსა და მსესხებელს შორის არსებული სამართალურთიერთობის ძირითად პირობებს და პარამეტრებს;
                             <br>1.4.	სესხი- მსესხებელზე წინამდებარე ხელშეკრულებით გათვალისწინებული წესით და ოდენობით პირადი მოხმარებისთვის გაცემული თანხა, საქართველოს მოქმედი კანონმდებლობის შესაბამისად;
                             <br>1.5.	სესხის თანხა- ამ ხელშეკრულების შესაბამისად დადგენილი ოდენობით მსესხებელზე გამსესხებლის მიერ გაცემული ფულადი თანხა;
@@ -983,21 +1201,21 @@ if ($file_type == 'receipt') {
                             <br>2.	ხელშეკრულების საგანი
                             <br>2.1.	წინამდებარე ხელშეკრულების შესაბამისად, გამსესხებელი კისრულობს ვალდებულებას, გასცეს მსესხებელზე სესხი ამ ხელშეკრულებით გათვალისწინებულ ვადებში და ოდენობით, ხოლო მსესხებელი კისრულობს ვალდებულებას დააბრუნოს მიღებული სესხი, მასზე დარიცხული საპროცენტო სარგებელი, დაფაროს ყველა ფინანსური ხარჯი და სრულიად შეასრულოს ყველა ნაკისრი ვალდებულება.
                             <br>3.	სესხით სარგებლობის პირობები
-                            <br>3.1.	სესხის სრული მოცულობა (ოდენობა) – 2380 აშშ დოლარი (ექვივალენტი ლარში)
+                            <br>3.1.	სესხის სრული მოცულობა (ოდენობა) – '.$res['loan_amount'].' აშშ დოლარი (ექვივალენტი ლარში)
                             <br>3.2.	გატანის პერიოდულობა- ერთჯერადი;
-                            <br>3.3.	სესხით სარგებლობის ვადა- 24 (ოცდაოთხი) თვე;
-                            <br>3.4.	სესხის გაცემის საკომისიო - 3% (აკისრია მსესხებელს)
-                            <br>3.5.	სადაზღვევო ხარჯი- 3 თვის დაზღვევის საფასური -110 (ასათი) აშშ დოლარი (ექვივალენტი ლარში). მსესხებელს ასევე ეკისრება ყოველ 3 თვეში დაზღვევის საფასურის დამატებით გადახდა იმ დროისთვის არსებული ოდენობით;
-                            <br>3.6.	გირავნობის ხარჯი - 225 (ორასორმოცდათხუთმეტი) ლარი; (აკისრია მსესხებელს)
-                            <br>3.7.	სარგებელი სესხით სარგებლობისთვის- ამ ხელშეკრულების მოქმედების მანძილზე ყოველთვიურად -3% პროცენტი;
-                            <br>3.8.	ყოველთვიურად მსესხებელი იხდის თანხას გრაფიკის მიხედვით,რომელიც თანდართულია ხელშეკრულებას,რაც შეადგენს 140.53 (ასორმოცი და ორმოცდაცამეტი) აშშ დოლარის ექვივალენტს ლარში;
-                            <br>3.9.	მსესხებელი ვალდებულია ამ ხელშეკრულების  3.8 პუნქტში მითითებული თანხის გადახდები განახორციელოს ხელშეკრულების მოქმედების სრული პერიოდის განმავლობაში ყოველი თვის 12 რიცხვში (თუ გრაფიკში სხვა რამ არ არის გათვალისწინებული) .
+                            <br>3.3.	სესხით სარგებლობის ვადა- '.$res['loan_months'].' ('.float_replase($res['loan_months']).') თვე;
+                            <br>3.4.	სესხის გაცემის საკომისიო - '.$res['loan_fee'].'% (აკისრია მსესხებელს)
+                            <br>3.5.	სადაზღვევო ხარჯი- 3 თვის დაზღვევის საფასური -'.$res['insurance_fee'].' ('.float_replase($res['insurance_fee']).') აშშ დოლარი (ექვივალენტი ლარში). მსესხებელს ასევე ეკისრება ყოველ 3 თვეში დაზღვევის საფასურის დამატებით გადახდა იმ დროისთვის არსებული ოდენობით;
+                            <br>3.6.	გირავნობის ხარჯი - '.$res['pledge_fee'].' ('.float_replase($res['pledge_fee']).') ლარი; (აკისრია მსესხებელს)
+                            <br>3.7.	სარგებელი სესხით სარგებლობისთვის- ამ ხელშეკრულების მოქმედების მანძილზე ყოველთვიურად -'.$res['month_percent'].'% პროცენტი;
+                            <br>3.8.	ყოველთვიურად მსესხებელი იხდის თანხას გრაფიკის მიხედვით,რომელიც თანდართულია ხელშეკრულებას,რაც შეადგენს '.$res['monthly_pay'].' ('.float_replase($res['monthly_pay']).') აშშ დოლარის ექვივალენტს ლარში;
+                            <br>3.9.	მსესხებელი ვალდებულია ამ ხელშეკრულების  3.8 პუნქტში მითითებული თანხის გადახდები განახორციელოს ხელშეკრულების მოქმედების სრული პერიოდის განმავლობაში ყოველი თვის '.$res['month_id'].' რიცხვში (თუ გრაფიკში სხვა რამ არ არის გათვალისწინებული) .
                             <br>3.10.	იმ შემთხვევაში, თუ მსესხებელი წინსწრებით დაფარავს ძირი თანხის ნაწილს, მაშინ სესხი უნდა გადაანგარიშდეს და შედგეს ახალი გადახდის გრაფიკი;
                             <br>3.11.		მსესხებელს წინასწრებით ძირი თანხის ნაწილის დაფარვა შეუძლია მხოლოდ იმ რიცხვებში, რომლებიც არის მითითებული გრაფიკში;
-                            <br>3.12.		წინსწრებით დაფარვის საკომისიო დარჩენილი ძირი თანხის -  3 %
+                            <br>3.12.		წინსწრებით დაფარვის საკომისიო დარჩენილი ძირი თანხის -  ? %
                             <br>3.13.		სესხის გაცემის ვადა – 01 (ერთი) დღე;
                             <br>3.14.	        საპროცენტო სარგებლის გადახის პერიოდულობა განისაზღვრება წინამდებარე ხელშეკრულებით;
-                            ვალუტის კურსი ხელშეკრულების ხელმოწერის დღისათვის – 1 აშშ დოლარი = 2.5887 ლარი;
+                                                                                            ვალუტის კურსი ხელშეკრულების ხელმოწერის დღისათვის – 1 აშშ დოლარი = '.$res['exchange_rate'].' ლარი;
                             <br>3.15.	სესხის ხელშეკრულებით გათვალისწინებული სესხის თანხის დადგენილ ვადაში დაუბრუნებლობის ან/და ამ ხელშეკრულებით დადგენილი პერიოდულობით გადაუხდელობის /ნაწილობრივ გადახდის შემთხვევაში, მსესხებელს დაერიცხება ამ ხელშეკრულებით გათვალისწინებული პირგასამტეხლო (საურავი), რომელიც დადგენილია გადახდის ვადის გადაცილებისათვის და რომელიც ანგარიშდება სესხის ძირი თანხიდან.
                             <br>3.16.		ფინანსური ხარჯები: ამ ხელშეკრულების მიზნებისათვის ფინანსურ ხარჯს წარმოადგენს ყველა ის ხარჯი, რომელიც აუცილებელია სესხის გაცემისა და მისი ამოღებისათვის (მათ შორის სადაზღვევო ხარჯი, სააღსრულებო ხარჯი, სესხის გაპრობლემების შემთხვევაში პრობლემური სამსახურის მომსახურების საფასური, აუდიტის მომსახურების საფასური. გირავნობის საფასური, ,სსიპ შსს მომსახურების სააგენტოში გაწეული ხარჯი და ნებისმიერი გადასახდელი, რომელიც გასწია გამსესხებელმა სესხის გასაცემად და დასაბრუნებლად);
                             <br>3.17.		წინამდებარე ხელშეკრულების მიზნებიდან გამომდინარე, ფინანსურ ხარჯად განიხილება ასევე ნებისმიერი გადასახდელი, რომელსაც მსესხებელი უხდის მესამე პირს, თუკი ეს გადასახდელი წარმოადგენს აუცილებლობას და მის გარეშე გამსესხებლის მიერ ნაკისრი ვალდებულების შესრულება იქნება შეუძლებელი ან არსებითად გართულდება;
@@ -1072,7 +1290,7 @@ if ($file_type == 'receipt') {
                             <br>9.1. წინამდებარე ხელშეკრულებით ნაკისრი ვალდებულებების შესრულების მოთხოვნის უზრუნველყოფის დამატებით საშუალებას წარმოადგენს პირგასამტეხლო;
                             <br>9.2. პირგასამტეხლოს გადახდის და მისი ოდენობის დაანგარიშების წესი განისაზღვრება ამ ხელშეკრულებით;
                             <br>9.3. ამ ხელშეკრულების მიზნებისათვის პირგასამტეხლოს გადახდევინება ხორციელდება ნაკისრი ვალდებულების შესრულების ვადის გადაცილებისათვის;
-                            <br>9.4. მსესხებელს, ამ ხელშეკრულებით გათვალსწინებული გადახდის ვადის გადაცილების შემთხვევაში, დაერიცხება პირგასამტეხლო სესხის ძირი თანხის 0.5%-ის ოდენობით ყოველ ვადაგადაცილებულ დღეზე, ვალდებულების დარღვევიდან 3 დღის განმავლობაში; ხოლო გადახდის ვადის გადაცილების 3 (სამი) დღეზე მეტი ვადით გაგრძელების შემთხვევაში მსესხებელს დაერიცხება პირგასამტეხლო სესხის ძირი თანხის 0.8% ყოველ ვადაგადაცილებულ დღეზე.
+                            <br>9.4. მსესხებელს, ამ ხელშეკრულებით გათვალსწინებული გადახდის ვადის გადაცილების შემთხვევაში, დაერიცხება პირგასამტეხლო სესხის ძირი თანხის '.$res['penalty_percent'].'%-ის ოდენობით ყოველ ვადაგადაცილებულ დღეზე, ვალდებულების დარღვევიდან '.$res['penalty_days'].' დღის განმავლობაში; ხოლო გადახდის ვადის გადაცილების '.$res['penalty_days'].'('.float_replase($res['penalty_days']).') დღეზე მეტი ვადით გაგრძელების შემთხვევაში მსესხებელს დაერიცხება პირგასამტეხლო სესხის ძირი თანხის '.$res['penalty_additional_percent'].'% ყოველ ვადაგადაცილებულ დღეზე.
                             <br>9.5. ამ ხელშეკრულების 9.4 მუხლით გათვალისწინებული პირგასამტეხლოს ოდენობა დაანგარიშდება სესხის ძირი თანხიდან;
                             <br>9.6. პირგასამტეხლოს დაკისრება ხდება ყოველი კონკრეტული ვალდებულების დარღვევისთვის (ყოველთვიური სარგებლის, გრაფიკით გათვალისწინებული თანხის თუ სესხის ძირი თანხის გადახდის ვადაგადაცილების შემთხვევაში)  ცალკ-ცალკე, სესხის ძირი თანხიდან.
                             <br>9.7. სესხის სარგებლის (ან გრაფიკით გათვალისწინებული თანხის) გადახდის ვადის 2 ან მეტი თვით ვადა გადაცილების შემთხვევაში, თითოეული თვის ვადაგადაცილებისათვის მსესხებელს ცალკ-ცალკე ერიცხება პირგასამტეხლო. იმ შემთხვევაში, თუ მსესხებლის მიერ უკვე დარღვეულია სესხის სარგებლის ან გრაფიკით გათვალისწინებული თანხის გადახდის ვადა და მსესხებელმა მომდევნო თვის სარგებლის ან გრაფიკით გათვალისწინებული თანხის გადახდის ვადასაც გადააცილა, პირგასამტეხლოს დარიცხვა პირველი თვის სარგებლისთვის იმავე ფარგლებში გაგრძელდება და ამასთან, მეორე და მომდევნო თვის სარგებლის ან გრაფიკით გათვალისწინებული თანხის ვადაგადაცილებისთვის ცალკ-ცალკე, დამატებით მოხდება პირგასამტეხლოს დარიცხვა სესხის ძირი თანხის 0.5% -ის ოდენობით ყოველ ვადაგადაცილებულ დღეზე.
@@ -1104,11 +1322,11 @@ if ($file_type == 'receipt') {
                             
                             
                             </div>
-                            <div style="width:100%; margin-top: 60px;">
+                            <div style="width:100%; margin-top: 100px;">
                                 <table style="width:100%;">
                                     <tr style="width:100%;">
                                         <td style="width:50%;"><label style="font-size: 12px; text-align: left;">გამსესხებელი: შპს "თი ჯი მობაილ" <br> მისამართი: ქ. თბილისი, დოლიძის ქ. 25/121<br>ს/კ 205270277<br>სს "საქართველოს ბანკი"<br>ბანკის კოდი: BAGAGE22<br>ა/ა GE12BG0000000523102000<br>ტელეფონის ნომერი: (ოფისი)<br>ტელეფონის ნომერი: 579796921<br>ტელეფონის ნომერი: 579131813 (ლერი)<br>ხელის მომწერის: ვახტანგ ბახტაძე,<br>პოზიცია: მენეჯერი<br>ელ.ფოსტა: tgmobail@mail.ru<br>s.qurdadze.1@gmail.com</label></td>
-                                        <td style="width:50%;"><label style="font-size: 12px; text-align: left;">მსესხებელი<br>სახელწოდება: შპს "მანი"/"MANI" LTD<br>(საიდენტიფიკაციო კ. № 445437965 )<br>დირექტორი: აკაკი ელისაშვილი<br>პირ № 01019068974<br>მისამართი:<br>ტელ.ნომერი:<br>ელ.ფოსტა:</label></td>
+                                        <td style="width:50%;"><label style="font-size: 12px; text-align: left;">მსესხებელი<br>სახელწოდება: '.$res['ltd_name'].'<br>(საიდენტიფიკაციო კ. № '.$res['ltd_id'].' )<br>დირექტორი: '.$res['name'].'<br>პირ № '.$res['pid'].'<br>მისამართი:'.$res['actual_address'].'<br>'.$res['juridical_address'].'<br>ტელ.ნომერი:<br>'.$res['phone'].' '.$res[client_person_person].'<br>ელ.ფოსტა:'.$res['email'].'</label></td>
                                     </tr>
                                 </table>
                             </div>
@@ -1128,19 +1346,19 @@ if ($file_type == 'receipt') {
                         <div style="width:100%; font-size: 12px; margin-top: 15px; text-align: right;">'.$res[day].'.'.$res[month_id].'.'.$res[year].'</div>
                         <div style="width:100%; font-size: 12px; text-align: left;">ქ. თბილისი</div>
                         <div style="width:100%; font-size: 12px; margin-top: 15px;">
-                                                              წინამდებარე ხელშეკრულების მონაწილე მხარეები, ერთის მხრივ შპს „თი ჯი მობაილ“ (საიდენტიფიკაციო № 205170177), - დირექტორი გიორგი კილაძე,
+                                                              წინამდებარე ხელშეკრულების მონაწილე მხარეები, ერთის მხრივ შპს "თი ჯი მობაილ" (საიდენტიფიკაციო № 205170177), - დირექტორი გიორგი კილაძე,
                                                                 წარმომადგენელი ვახტანგ ბახტაძის სახით (მინდობილობა №001, 10.25.2012 წელი)  (შემდგომში გამსესხებელი), 
-                                                                და მეორეს მხრივ, ბონდო ახვლედიანი (პირადი №01003003149) (შემდგომში მსესხებელი) და (შემდგომში მინდობილი პირი)
-                                                                აკაკი ელისაშვილი (პირადი № 01019068974), სანოტარო მოქმედების რეგისტრაციის ნომერი N140655779, 
-                                                                რეგისტრაციის თარიღი 25.06.2014 წელს, ნოტარიუსი: მარიამ ნავროზაშვილი, (მისამართი ქ.თბილისი, თემქის 3მ/რ 4კვ კორ 57-ის მიმდებარედ ტელ:598270730)
+                                                                და მეორეს მხრივ, '.$res['name'].' (პირადი №'.$res['pid'].') (შემდგომში მსესხებელი) და (შემდგომში მინდობილი პირი)
+                            '.$res['trust_pers'].' (პირადი № '.$res['trusted_pid'].'), სანოტარო მოქმედების რეგისტრაციის ნომერი N'.$res['trusting_number'].', 
+                                                                რეგისტრაციის თარიღი '.$res['trusting_day'].'.'.$res['trusting_month_id'].'.'.$res['trusting_year'].' წელს, ნოტარიუსი: '.$res['trusting_notary'].', (მისამართი '.$res['trusting_notary_address'].' ტელ:'.$res['trusting_notary_phone'].')
                             (შემდგომში მსესხებელი), ჩვენს შორის მიღწეული შეთანხმების შედეგად, ვდებთ ხელშეკრულებას სასყიდლიანი სესხის გაცემის შესახებ.
                         </div>
                         <div style="width:100%; font-size: 12px; margin-top: 15px;">
                                                             ტერმინთა განმარტება:
                         </div>
                         <div style="width:100%; font-size: 12px;">
-                            <br>1.1.	გამსესხებელი- შპს  „თი ჯი მობაილ“
-                            <br>1.2.	მსესხებელი- ბონდო ახვლედიანი (პირადი №01003003149) (შემდგომში მსესხებელი) და (შემდგომში მინდობილი პირი) აკაკი ელისაშვილი (პირადი № 01019068974), სანოტარო მოქმედების რეგისტრაციის ნომერი N140655779, რეგისტრაციის თარიღი 25.06.2014 წელს, ნოტარიუსი: მარიამ ნავროზაშვილი, (მისამართი ქ.თბილისი, თემქის 3მ/რ 4კვ კორ 57-ის მიმდებარედ ტელ:598270730), რომელიც სარგებლობს ამ ხელშეკრულების შესაბამისად სასყიდლიანი სესხის სახით გაცემული ფულადი თანხით;
+                            <br>1.1.	გამსესხებელი- შპს  "თი ჯი მობაილ"
+                            <br>1.2.	მსესხებელი- '.$res['name'].' (პირადი №'.$res['pid'].') (შემდგომში მსესხებელი) და (შემდგომში მინდობილი პირი) '.$res['trust_pers'].' (პირადი № '.$res['trusted_pid'].'), სანოტარო მოქმედების რეგისტრაციის ნომერი N'.$res['trusting_number'].', რეგისტრაციის თარიღი '.$res['trusting_day'].'.'.$res['trusting_month_id'].'.'.$res['trusting_year'].' წელს, ნოტარიუსი: '.$res['trusting_notary'].', (მისამართი '.$res['trusting_notary_address'].' ტელ:'.$res['trusting_notary_phone'].'), რომელიც სარგებლობს ამ ხელშეკრულების შესაბამისად სასყიდლიანი სესხის სახით გაცემული ფულადი თანხით;
                             <br>1.3.	ხელშეკრულება- წინამდებარე ხელშეკრულება, რომელიც განსაზღვრავს ამ ხელშეკრულების მონაწილე მხარეთა შორის არსებულ უფლებებსა და ვალდებულებებს, ასევე არეგულირებს გამსესხებელსა და მსესხებელს შორის არსებული სამართალურთიერთობის ძირითად პირობებს და პარამეტრებს;
                             <br>1.4.	სესხი- მსესხებელზე წინამდებარე ხელშეკრულებით გათვალისწინებული წესით და ოდენობით პირადი მოხმარებისთვის გაცემული თანხა, საქართველოს მოქმედი კანონმდებლობის შესაბამისად;
                             <br>1.5.	სესხის თანხა- ამ ხელშეკრულების შესაბამისად დადგენილი ოდენობით მსესხებელზე გამსესხებლის მიერ გაცემული ფულადი თანხა;
@@ -1152,21 +1370,21 @@ if ($file_type == 'receipt') {
                             <br>2.	ხელშეკრულების საგანი
                             <br>2.1.	წინამდებარე ხელშეკრულების შესაბამისად, გამსესხებელი კისრულობს ვალდებულებას, გასცეს მსესხებელზე სესხი ამ ხელშეკრულებით გათვალისწინებულ ვადებში და ოდენობით, ხოლო მსესხებელი კისრულობს ვალდებულებას დააბრუნოს მიღებული სესხი, მასზე დარიცხული საპროცენტო სარგებელი, დაფაროს ყველა ფინანსური ხარჯი და სრულიად შეასრულოს ყველა ნაკისრი ვალდებულება.
                             <br>3.	სესხით სარგებლობის პირობები
-                            <br>3.1.	სესხის სრული მოცულობა (ოდენობა) – 2380 აშშ დოლარი (ექვივალენტი ლარში)
+                            <br>3.1.	სესხის სრული მოცულობა (ოდენობა) – '.$res['loan_amount'].' აშშ დოლარი (ექვივალენტი ლარში)
                             <br>3.2.	გატანის პერიოდულობა- ერთჯერადი;
-                            <br>3.3.	სესხით სარგებლობის ვადა- 24 (ოცდაოთხი) თვე;
-                            <br>3.4.	სესხის გაცემის საკომისიო - 3% (აკისრია მსესხებელს)
-                            <br>3.5.	სადაზღვევო ხარჯი- 3 თვის დაზღვევის საფასური -110 (ასათი) აშშ დოლარი (ექვივალენტი ლარში). მსესხებელს ასევე ეკისრება ყოველ 3 თვეში დაზღვევის საფასურის დამატებით გადახდა იმ დროისთვის არსებული ოდენობით;
-                            <br>3.6.	გირავნობის ხარჯი - 225 (ორასორმოცდათხუთმეტი) ლარი; (აკისრია მსესხებელს)
-                            <br>3.7.	სარგებელი სესხით სარგებლობისთვის- ამ ხელშეკრულების მოქმედების მანძილზე ყოველთვიურად -3% პროცენტი;
-                            <br>3.8.	ყოველთვიურად მსესხებელი იხდის თანხას გრაფიკის მიხედვით,რომელიც თანდართულია ხელშეკრულებას,რაც შეადგენს 140.53 (ასორმოცი და ორმოცდაცამეტი) აშშ დოლარის ექვივალენტს ლარში;
-                            <br>3.9.	მსესხებელი ვალდებულია ამ ხელშეკრულების  3.8 პუნქტში მითითებული თანხის გადახდები განახორციელოს ხელშეკრულების მოქმედების სრული პერიოდის განმავლობაში ყოველი თვის 12 რიცხვში (თუ გრაფიკში სხვა რამ არ არის გათვალისწინებული) .
+                            <br>3.3.	სესხით სარგებლობის ვადა- '.$res['loan_months'].' ('.float_replase($res['loan_months']).') თვე;
+                            <br>3.4.	სესხის გაცემის საკომისიო - '.$res['loan_fee'].'% (აკისრია მსესხებელს)
+                            <br>3.5.	სადაზღვევო ხარჯი- 3 თვის დაზღვევის საფასური -'.$res['insurance_fee'].' ('.float_replase($res['insurance_fee']).') აშშ დოლარი (ექვივალენტი ლარში). მსესხებელს ასევე ეკისრება ყოველ 3 თვეში დაზღვევის საფასურის დამატებით გადახდა იმ დროისთვის არსებული ოდენობით;
+                            <br>3.6.	გირავნობის ხარჯი - '.$res['pledge_fee'].' ('.float_replase($res['pledge_fee']).') ლარი; (აკისრია მსესხებელს)
+                            <br>3.7.	სარგებელი სესხით სარგებლობისთვის- ამ ხელშეკრულების მოქმედების მანძილზე ყოველთვიურად -'.$res['month_percent'].'% პროცენტი;
+                            <br>3.8.	ყოველთვიურად მსესხებელი იხდის თანხას გრაფიკის მიხედვით,რომელიც თანდართულია ხელშეკრულებას,რაც შეადგენს '.$res['loan_months'].' ('.float_replase($res['loan_months']).') აშშ დოლარის ექვივალენტს ლარში;
+                            <br>3.9.	მსესხებელი ვალდებულია ამ ხელშეკრულების  3.8 პუნქტში მითითებული თანხის გადახდები განახორციელოს ხელშეკრულების მოქმედების სრული პერიოდის განმავლობაში ყოველი თვის '.$res['month_id'].' რიცხვში (თუ გრაფიკში სხვა რამ არ არის გათვალისწინებული) .
                             <br>3.10.	იმ შემთხვევაში, თუ მსესხებელი წინსწრებით დაფარავს ძირი თანხის ნაწილს, მაშინ სესხი უნდა გადაანგარიშდეს და შედგეს ახალი გადახდის გრაფიკი;
                             <br>3.11.		მსესხებელს წინასწრებით ძირი თანხის ნაწილის დაფარვა შეუძლია მხოლოდ იმ რიცხვებში, რომლებიც არის მითითებული გრაფიკში;
-                            <br>3.12.		წინსწრებით დაფარვის საკომისიო დარჩენილი ძირი თანხის -  3 %
+                            <br>3.12.		წინსწრებით დაფარვის საკომისიო დარჩენილი ძირი თანხის -  ? %
                             <br>3.13.		სესხის გაცემის ვადა – 01 (ერთი) დღე;
                             <br>3.14.	        საპროცენტო სარგებლის გადახის პერიოდულობა განისაზღვრება წინამდებარე ხელშეკრულებით;
-                                                                                            ვალუტის კურსი ხელშეკრულების ხელმოწერის დღისათვის – 1 აშშ დოლარი = 2.5887 ლარი;
+                                                                                            ვალუტის კურსი ხელშეკრულების ხელმოწერის დღისათვის – 1 აშშ დოლარი = '.$res['exchange_rate'].' ლარი;
                             <br>3.15.	სესხის ხელშეკრულებით გათვალისწინებული სესხის თანხის დადგენილ ვადაში დაუბრუნებლობის ან/და ამ ხელშეკრულებით დადგენილი პერიოდულობით გადაუხდელობის /ნაწილობრივ გადახდის შემთხვევაში, მსესხებელს დაერიცხება ამ ხელშეკრულებით გათვალისწინებული პირგასამტეხლო (საურავი), რომელიც დადგენილია გადახდის ვადის გადაცილებისათვის და რომელიც ანგარიშდება სესხის ძირი თანხიდან.
                             <br>3.16.		ფინანსური ხარჯები: ამ ხელშეკრულების მიზნებისათვის ფინანსურ ხარჯს წარმოადგენს ყველა ის ხარჯი, რომელიც აუცილებელია სესხის გაცემისა და მისი ამოღებისათვის (მათ შორის სადაზღვევო ხარჯი, სააღსრულებო ხარჯი, სესხის გაპრობლემების შემთხვევაში პრობლემური სამსახურის მომსახურების საფასური, აუდიტის მომსახურების საფასური. გირავნობის საფასური, ,სსიპ შსს მომსახურების სააგენტოში გაწეული ხარჯი და ნებისმიერი გადასახდელი, რომელიც გასწია გამსესხებელმა სესხის გასაცემად და დასაბრუნებლად);
                             <br>3.17.		წინამდებარე ხელშეკრულების მიზნებიდან გამომდინარე, ფინანსურ ხარჯად განიხილება ასევე ნებისმიერი გადასახდელი, რომელსაც მსესხებელი უხდის მესამე პირს, თუკი ეს გადასახდელი წარმოადგენს აუცილებლობას და მის გარეშე გამსესხებლის მიერ ნაკისრი ვალდებულების შესრულება იქნება შეუძლებელი ან არსებითად გართულდება;
@@ -1241,7 +1459,7 @@ if ($file_type == 'receipt') {
                             <br>9.1. წინამდებარე ხელშეკრულებით ნაკისრი ვალდებულებების შესრულების მოთხოვნის უზრუნველყოფის დამატებით საშუალებას წარმოადგენს პირგასამტეხლო;
                             <br>9.2. პირგასამტეხლოს გადახდის და მისი ოდენობის დაანგარიშების წესი განისაზღვრება ამ ხელშეკრულებით;
                             <br>9.3. ამ ხელშეკრულების მიზნებისათვის პირგასამტეხლოს გადახდევინება ხორციელდება ნაკისრი ვალდებულების შესრულების ვადის გადაცილებისათვის;
-                            <br>9.4. მსესხებელს, ამ ხელშეკრულებით გათვალსწინებული გადახდის ვადის გადაცილების შემთხვევაში, დაერიცხება პირგასამტეხლო სესხის ძირი თანხის 0.5%-ის ოდენობით ყოველ ვადაგადაცილებულ დღეზე, ვალდებულების დარღვევიდან 3 დღის განმავლობაში; ხოლო გადახდის ვადის გადაცილების 3 (სამი) დღეზე მეტი ვადით გაგრძელების შემთხვევაში მსესხებელს დაერიცხება პირგასამტეხლო სესხის ძირი თანხის 0.8% ყოველ ვადაგადაცილებულ დღეზე.
+                            <br>9.4. მსესხებელს, ამ ხელშეკრულებით გათვალსწინებული გადახდის ვადის გადაცილების შემთხვევაში, დაერიცხება პირგასამტეხლო სესხის ძირი თანხის '.$res['penalty_percent'].'%-ის ოდენობით ყოველ ვადაგადაცილებულ დღეზე, ვალდებულების დარღვევიდან '.$res['penalty_days'].' დღის განმავლობაში; ხოლო გადახდის ვადის გადაცილების '.$res['penalty_days'].' ('.float_replase($res['penalty_days']).') დღეზე მეტი ვადით გაგრძელების შემთხვევაში მსესხებელს დაერიცხება პირგასამტეხლო სესხის ძირი თანხის '.$res['penalty_additional_percent'].'% ყოველ ვადაგადაცილებულ დღეზე.
                             <br>9.5. ამ ხელშეკრულების 9.4 მუხლით გათვალისწინებული პირგასამტეხლოს ოდენობა დაანგარიშდება სესხის ძირი თანხიდან;
                             <br>9.6. პირგასამტეხლოს დაკისრება ხდება ყოველი კონკრეტული ვალდებულების დარღვევისთვის (ყოველთვიური სარგებლის, გრაფიკით გათვალისწინებული თანხის თუ სესხის ძირი თანხის გადახდის ვადაგადაცილების შემთხვევაში)  ცალკ-ცალკე, სესხის ძირი თანხიდან.
                             <br>9.7. სესხის სარგებლის (ან გრაფიკით გათვალისწინებული თანხის) გადახდის ვადის 2 ან მეტი თვით ვადა გადაცილების შემთხვევაში, თითოეული თვის ვადაგადაცილებისათვის მსესხებელს ცალკ-ცალკე ერიცხება პირგასამტეხლო. იმ შემთხვევაში, თუ მსესხებლის მიერ უკვე დარღვეულია სესხის სარგებლის ან გრაფიკით გათვალისწინებული თანხის გადახდის ვადა და მსესხებელმა მომდევნო თვის სარგებლის ან გრაფიკით გათვალისწინებული თანხის გადახდის ვადასაც გადააცილა, პირგასამტეხლოს დარიცხვა პირველი თვის სარგებლისთვის იმავე ფარგლებში გაგრძელდება და ამასთან, მეორე და მომდევნო თვის სარგებლის ან გრაფიკით გათვალისწინებული თანხის ვადაგადაცილებისთვის ცალკ-ცალკე, დამატებით მოხდება პირგასამტეხლოს დარიცხვა სესხის ძირი თანხის 0.5% -ის ოდენობით ყოველ ვადაგადაცილებულ დღეზე.
@@ -1277,7 +1495,7 @@ if ($file_type == 'receipt') {
                                 <table style="width:100%;">
                                     <tr style="width:100%;">
                                         <td style="width:50%;"><label style="font-size: 12px; text-align: left;">გამსესხებელი: შპს "თი ჯი მობაილ" <br> მისამართი: ქ. თბილისი, დოლიძის ქ. 25/121<br>ს/კ 205270277<br>სს "საქართველოს ბანკი"<br>ბანკის კოდი: BAGAGE22<br>ა/ა GE12BG0000000523102000<br>ტელეფონის ნომერი: (ოფისი)<br>ტელეფონის ნომერი: 579796921<br>ტელეფონის ნომერი: 579131813 (ლერი)<br>ხელის მომწერის: ვახტანგ ბახტაძე,<br>პოზიცია: მენეჯერი<br>ელ.ფოსტა: tgmobail@mail.ru<br>s.qurdadze.1@gmail.com</label></td>
-                                        <td style="width:50%;"><label style="font-size: 12px; text-align: left;">მსესხებელი<br>მინდობილი პირი: აკაკი ელისაშვილი<br>პირ № 01019068974<br>მისამართი:<br>ტელ.ნომერი:<br>ელ.ფოსტა:</label></td>
+                                        <td style="width:50%;"><label style="font-size: 12px; text-align: left;">მსესხებელი<br>მინდობილი პირი: '.$res['trust_pers'].'<br>პირ № '.$res['trusted_pid'].'<br>მისამართი:'.$res['trusted_actual_address'].'<br>'.$res['trusted_juridical_address'].'<br>ტელ.ნომერი:'.$res['trusted_phone'].' '.$res[client_person_person].'<br>ელ.ფოსტა:'.$res['trusted_email'].'</label></td>
                                     </tr>
                                 </table>
                             </div>
@@ -1293,21 +1511,21 @@ if ($file_type == 'receipt') {
                    </div';
     }elseif ($file_type == 'Schedule_nocustoms'){
         $data  .= '<div style="size: 7in 9.25in; margin: 15mm 16mm 15mm 16mm;" id="dialog-form">
-                        <div style="width:100%; font-size: 16px; text-align: center">საკრედიტო ხელშეკრულება #1893</div>
+                        <div style="width:100%; font-size: 16px; text-align: center">საკრედიტო ხელშეკრულება #'.$res[loan_agreement_id].'</div>
                         <div style="width:100%; font-size: 12px; margin-top: 15px; text-align: right;">'.$res[day].'.'.$res[month_id].'.'.$res[year].'</div>
                         <div style="width:100%; font-size: 12px; text-align: left;">ქ. თბილისი</div>
                         <div style="width:100%; font-size: 12px; margin-top: 15px;">
-                                                             წინამდებარე ხელშეკრულების მონაწილე მხარეები, ერთის მხრივ შპს „თი ჯი მობაილ“ (საიდენტიფიკაციო № 205170177), 
+                                                             წინამდებარე ხელშეკრულების მონაწილე მხარეები, ერთის მხრივ შპს "თი ჯი მობაილ" (საიდენტიფიკაციო № 205170177), 
                             - დირექტორი გიორგი კილაძე, წარმომადგენელი ვახტანგ ბახტაძის სახით (მინდობილობა №001, 10.25.2012 წელი)  
-                            (შემდგომში გამსესხებელი), და მეორეს მხრივ, აკაკი ელისაშვილი (პირადი № 01019068974), (შემდგომში მსესხებელი),
+                            (შემდგომში გამსესხებელი), და მეორეს მხრივ, '.$res['name'].' (პირადი № '.$res['pid'].'), (შემდგომში მსესხებელი),
                                                                 ჩვენს შორის მიღწეული შეთანხმების შედეგად, ვდებთ ხელშეკრულებას სასყიდლიანი სესხის გაცემის შესახებ.
                         </div>
                         <div style="width:100%; font-size: 12px; margin-top: 15px;">
                                                             ტერმინთა განმარტება:
                         </div>
                         <div style="width:100%; font-size: 12px;">
-                            <br>1.1.	გამსესხებელი- შპს  „თი ჯი მობაილ“
-                            <br>1.2.	მსესხებელი- აკაკი ელისაშვილი, რომელიც სარგებლობს ამ ხელშეკრულების შესაბამისად სასყიდლიანი სესხის სახით გაცემული ფულადი თანხით;
+                            <br>1.1.	გამსესხებელი- შპს  "თი ჯი მობაილ"
+                            <br>1.2.	მსესხებელი- '.$res['name'].', რომელიც სარგებლობს ამ ხელშეკრულების შესაბამისად სასყიდლიანი სესხის სახით გაცემული ფულადი თანხით;
                             <br>1.3.	ხელშეკრულება- წინამდებარე ხელშეკრულება, რომელიც განსაზღვრავს ამ ხელშეკრულების მონაწილე მხარეთა შორის არსებულ უფლებებსა და ვალდებულებებს, ასევე არეგულირებს გამსესხებელსა და მსესხებელს შორის არსებული სამართალურთიერთობის ძირითად პირობებს და პარამეტრებს;
                             <br>1.4.	სესხი- მსესხებელზე წინამდებარე ხელშეკრულებით გათვალისწინებული წესით და ოდენობით პირადი მოხმარებისთვის გაცემული თანხა, საქართველოს მოქმედი კანონმდებლობის შესაბამისად;
                             <br>1.5.	სესხის თანხა- ამ ხელშეკრულების შესაბამისად დადგენილი ოდენობით მსესხებელზე გამსესხებლის მიერ გაცემული ფულადი თანხა;
@@ -1319,22 +1537,22 @@ if ($file_type == 'receipt') {
                             <br>2.	ხელშეკრულების საგანი
                             <br>2.1.	წინამდებარე ხელშეკრულების შესაბამისად, გამსესხებელი კისრულობს ვალდებულებას, გასცეს მსესხებელზე სესხი ამ ხელშეკრულებით გათვალისწინებულ ვადებში და ოდენობით, ხოლო მსესხებელი კისრულობს ვალდებულებას დააბრუნოს მიღებული სესხი, მასზე დარიცხული საპროცენტო სარგებელი, დაფაროს ყველა ფინანსური ხარჯი და სრულიად შეასრულოს ყველა ნაკისრი ვალდებულება.
                             <br>3.	სესხით სარგებლობის პირობები
-                            <br>3.1.	სესხის სრული მოცულობა (ოდენობა) – 2380 აშშ დოლარი (ექვივალენტი ლარში)
+                            <br>3.1.	სესხის სრული მოცულობა (ოდენობა) – '.$res['loan_amount'].' აშშ დოლარი (ექვივალენტი ლარში)
                             <br>3.2.	გატანის პერიოდულობა- ერთჯერადი;
-                            <br>3.3.	სესხით სარგებლობის ვადა- 24 (ოცდაოთხი) თვე;
-                            <br>3.4.	სესხის გაცემის საკომისიო - 3% (აკისრია მსესხებელს)
-                            <br>3.5.	სადაზღვევო ხარჯი- 3 თვის დაზღვევის საფასური -110 (ასათი) აშშ დოლარი (ექვივალენტი ლარში). მსესხებელს ასევე ეკისრება ყოველ 3 თვეში დაზღვევის საფასურის დამატებით გადახდა იმ დროისთვის არსებული ოდენობით;
-                            <br>3.6.	გირავნობის ხარჯი - 225 (ორასორმოცდათხუთმეტი) ლარი; (აკისრია მსესხებელს)
-                            <br>3.7.	სარგებელი სესხით სარგებლობისთვის- ამ ხელშეკრულების მოქმედების მანძილზე ყოველთვიურად -3% პროცენტი;
-                            <br>3.8.	ყოველთვიურად მსესხებელი იხდის თანხას გრაფიკის მიხედვით,რომელიც თანდართულია ხელშეკრულებას,რაც შეადგენს 140.53 (ასორმოცი და ორმოცდაცამეტი) აშშ დოლარის ექვივალენტს ლარში;
-                            <br>3.9.	იმ შემთხვევაში თუ მსესხებელმა შემოსავლების სამსახურის შეტყობინება N 4035101 განსაზღვრულ                  ვადაში, არ განაბაჟა ავტომობილი, შსს-ს სსიპ მომსახურების სააგენტოს ავტომობილის საექსპორტო დათვალიერების აქტში ასახული თანხა მთლიანად დაემატა ამ ხელშეკრულების 3.1. პუნქტით განსაზღვრული სესხის ძირ თანხას და სრულად დაეკისრება მსესხებელს.
+                            <br>3.3.	სესხით სარგებლობის ვადა- '.$res['loan_months'].' ('.float_replase($res['loan_months']).') თვე;
+                            <br>3.4.	სესხის გაცემის საკომისიო - '.$res['loan_fee'].'% (აკისრია მსესხებელს)
+                            <br>3.5.	სადაზღვევო ხარჯი- 3 თვის დაზღვევის საფასური -'.$res['insurance_fee'].' ('.float_replase($res['loan_fee']).') აშშ დოლარი (ექვივალენტი ლარში). მსესხებელს ასევე ეკისრება ყოველ 3 თვეში დაზღვევის საფასურის დამატებით გადახდა იმ დროისთვის არსებული ოდენობით;
+                            <br>3.6.	გირავნობის ხარჯი - '.$res['pledge_fee'].' ('.float_replase($res['pledge_fee']).') ლარი; (აკისრია მსესხებელს)
+                            <br>3.7.	სარგებელი სესხით სარგებლობისთვის- ამ ხელშეკრულების მოქმედების მანძილზე ყოველთვიურად -'.$res['month_percent'].'% პროცენტი;
+                            <br>3.8.	ყოველთვიურად მსესხებელი იხდის თანხას გრაფიკის მიხედვით,რომელიც თანდართულია ხელშეკრულებას,რაც შეადგენს '.$res['monthly_pay'].' ('.float_replase($res['monthly_pay']).') აშშ დოლარის ექვივალენტს ლარში;
+                            <br>3.9.	იმ შემთხვევაში თუ მსესხებელმა შემოსავლების სამსახურის შეტყობინება N '.$res['rs_message_number'].' განსაზღვრულ                  ვადაში, არ განაბაჟა ავტომობილი, შსს-ს სსიპ მომსახურების სააგენტოს ავტომობილის საექსპორტო დათვალიერების აქტში ასახული თანხა მთლიანად დაემატა ამ ხელშეკრულების 3.1. პუნქტით განსაზღვრული სესხის ძირ თანხას და სრულად დაეკისრება მსესხებელს.
                             <br>3.10.	მსესხებელი ვალდებულია ამ ხელშეკრულების  3.8 პუნქტში მითითებული თანხის გადახდები განახორციელოს ხელშეკრულების მოქმედების სრული პერიოდის განმავლობაში ყოველი თვის 12 რიცხვში (თუ გრაფიკში სხვა რამ არ არის გათვალისწინებული) .
                             <br>3.11.	იმ შემთხვევაში, თუ მსესხებელი წინსწრებით დაფარავს ძირი თანხის ნაწილს, მაშინ სესხი უნდა გადაანგარიშდეს და შედგეს ახალი გადახდის გრაფიკი;
                             <br>3.12.		მსესხებელს წინასწრებით ძირი თანხის ნაწილის დაფარვა შეუძლია მხოლოდ იმ რიცხვებში, რომლებიც არის მითითებული გრაფიკში;
-                            <br>3.13.		წინსწრებით დაფარვის საკომისიო დარჩენილი ძირი თანხის -  3 %
+                            <br>3.13.		წინსწრებით დაფარვის საკომისიო დარჩენილი ძირი თანხის -  ? %
                             <br>3.14.		სესხის გაცემის ვადა – 01 (ერთი) დღე;
                             <br>3.15.	        საპროცენტო სარგებლის გადახის პერიოდულობა განისაზღვრება წინამდებარე ხელშეკრულებით;
-                            ვალუტის კურსი ხელშეკრულების ხელმოწერის დღისათვის – 1 აშშ დოლარი = 2.5887 ლარი;
+                            ვალუტის კურსი ხელშეკრულების ხელმოწერის დღისათვის – 1 აშშ დოლარი = '.$res['exchange_rate'].' ლარი;
                             <br>3.16.	სესხის ხელშეკრულებით გათვალისწინებული სესხის თანხის დადგენილ ვადაში დაუბრუნებლობის ან/და ამ ხელშეკრულებით დადგენილი პერიოდულობით გადაუხდელობის /ნაწილობრივ გადახდის შემთხვევაში, მსესხებელს დაერიცხება ამ ხელშეკრულებით გათვალისწინებული პირგასამტეხლო (საურავი), რომელიც დადგენილია გადახდის ვადის გადაცილებისათვის და რომელიც ანგარიშდება სესხის ძირი თანხიდან.
                             <br>3.17.		ფინანსური ხარჯები: ამ ხელშეკრულების მიზნებისათვის ფინანსურ ხარჯს წარმოადგენს ყველა ის ხარჯი, რომელიც აუცილებელია სესხის გაცემისა და მისი ამოღებისათვის (მათ შორის სადაზღვევო ხარჯი, სააღსრულებო ხარჯი, სესხის გაპრობლემების შემთხვევაში პრობლემური სამსახურის მომსახურების საფასური, აუდიტის მომსახურების საფასური. გირავნობის საფასური, ,სსიპ შსს მომსახურების სააგენტოში გაწეული ხარჯი და ნებისმიერი გადასახდელი, რომელიც გასწია გამსესხებელმა სესხის გასაცემად და დასაბრუნებლად);
                             <br>3.18.		წინამდებარე ხელშეკრულების მიზნებიდან გამომდინარე, ფინანსურ ხარჯად განიხილება ასევე ნებისმიერი გადასახდელი, რომელსაც მსესხებელი უხდის მესამე პირს, თუკი ეს გადასახდელი წარმოადგენს აუცილებლობას და მის გარეშე გამსესხებლის მიერ ნაკისრი ვალდებულების შესრულება იქნება შეუძლებელი ან არსებითად გართულდება;
@@ -1409,7 +1627,7 @@ if ($file_type == 'receipt') {
                             <br>9.1. წინამდებარე ხელშეკრულებით ნაკისრი ვალდებულებების შესრულების მოთხოვნის უზრუნველყოფის დამატებით საშუალებას წარმოადგენს პირგასამტეხლო;
                             <br>9.2. პირგასამტეხლოს გადახდის და მისი ოდენობის დაანგარიშების წესი განისაზღვრება ამ ხელშეკრულებით;
                             <br>9.3. ამ ხელშეკრულების მიზნებისათვის პირგასამტეხლოს გადახდევინება ხორციელდება ნაკისრი ვალდებულების შესრულების ვადის გადაცილებისათვის;
-                            <br>9.4. მსესხებელს, ამ ხელშეკრულებით გათვალსწინებული გადახდის ვადის გადაცილების შემთხვევაში, დაერიცხება პირგასამტეხლო სესხის ძირი თანხის 0.5%-ის ოდენობით ყოველ ვადაგადაცილებულ დღეზე, ვალდებულების დარღვევიდან 3 დღის განმავლობაში; ხოლო გადახდის ვადის გადაცილების 3 (სამი) დღეზე მეტი ვადით გაგრძელების შემთხვევაში მსესხებელს დაერიცხება პირგასამტეხლო სესხის ძირი თანხის 0.8% ყოველ ვადაგადაცილებულ დღეზე.
+                            <br>9.4. მსესხებელს, ამ ხელშეკრულებით გათვალსწინებული გადახდის ვადის გადაცილების შემთხვევაში, დაერიცხება პირგასამტეხლო სესხის ძირი თანხის '.$res['penalty_percent'].'%-ის ოდენობით ყოველ ვადაგადაცილებულ დღეზე, ვალდებულების დარღვევიდან '.$res['penalty_days'].' დღის განმავლობაში; ხოლო გადახდის ვადის გადაცილების '.$res['penalty_days'].'('.float_replase($res['penalty_days']).') დღეზე მეტი ვადით გაგრძელების შემთხვევაში მსესხებელს დაერიცხება პირგასამტეხლო სესხის ძირი თანხის '.$res['penalty_additional_percent'].'% ყოველ ვადაგადაცილებულ დღეზე.
                             <br>9.5. ამ ხელშეკრულების 9.4 მუხლით გათვალისწინებული პირგასამტეხლოს ოდენობა დაანგარიშდება სესხის ძირი თანხიდან;
                             <br>9.6. პირგასამტეხლოს დაკისრება ხდება ყოველი კონკრეტული ვალდებულების დარღვევისთვის (ყოველთვიური სარგებლის, გრაფიკით გათვალისწინებული თანხის თუ სესხის ძირი თანხის გადახდის ვადაგადაცილების შემთხვევაში)  ცალკ-ცალკე, სესხის ძირი თანხიდან.
                             <br>9.7. სესხის სარგებლის (ან გრაფიკით გათვალისწინებული თანხის) გადახდის ვადის 2 ან მეტი თვით ვადა გადაცილების შემთხვევაში, თითოეული თვის ვადაგადაცილებისათვის მსესხებელს ცალკ-ცალკე ერიცხება პირგასამტეხლო. იმ შემთხვევაში, თუ მსესხებლის მიერ უკვე დარღვეულია სესხის სარგებლის ან გრაფიკით გათვალისწინებული თანხის გადახდის ვადა და მსესხებელმა მომდევნო თვის სარგებლის ან გრაფიკით გათვალისწინებული თანხის გადახდის ვადასაც გადააცილა, პირგასამტეხლოს დარიცხვა პირველი თვის სარგებლისთვის იმავე ფარგლებში გაგრძელდება და ამასთან, მეორე და მომდევნო თვის სარგებლის ან გრაფიკით გათვალისწინებული თანხის ვადაგადაცილებისთვის ცალკ-ცალკე, დამატებით მოხდება პირგასამტეხლოს დარიცხვა სესხის ძირი თანხის 0.5% -ის ოდენობით ყოველ ვადაგადაცილებულ დღეზე.
@@ -1446,7 +1664,7 @@ if ($file_type == 'receipt') {
                                 <table style="width:100%;">
                                     <tr style="width:100%;">
                                         <td style="width:50%;"><label style="font-size: 12px; text-align: left;">გამსესხებელი: შპს "თი ჯი მობაილ" <br> მისამართი: ქ. თბილისი, დოლიძის ქ. 25/121<br>ს/კ 205270277<br>სს "საქართველოს ბანკი"<br>ბანკის კოდი: BAGAGE22<br>ა/ა GE12BG0000000523102000<br>ტელეფონის ნომერი: (ოფისი)<br>ტელეფონის ნომერი: 579796921<br>ტელეფონის ნომერი: 579131813 (ლერი)<br>ხელის მომწერის: ვახტანგ ბახტაძე,<br>პოზიცია: მენეჯერი<br>ელ.ფოსტა: tgmobail@mail.ru<br>s.qurdadze.1@gmail.com</label></td>
-                                        <td style="width:50%;"><label style="font-size: 12px; text-align: left;">მსესხებელი: აკაკი ელისაშვილი<br>პირ № 01019068974<br>მისამართი:<br>ტელ.ნომერი:<br>ელ.ფოსტა:</label></td>
+                                        <td style="width:50%;"><label style="font-size: 12px; text-align: left;">მსესხებელი: '.$res['name'].'<br>პირ № '.$res['pid'].'<br>მისამართი:'.$res['actual_address'].'<br>'.$res['juridical_address'].'<br>ტელ.ნომერი:'.$res['phone'].' '.$res[client_person_person].'<br>ელ.ფოსტა:'.$res['email'].'</label></td>
                                     </tr>
                                 </table>
                             </div>
@@ -1462,22 +1680,22 @@ if ($file_type == 'receipt') {
                    </div';
     }elseif ($file_type == 'Schedule'){
         $data  .= '<div style="size: 7in 9.25in; margin: 15mm 16mm 15mm 16mm;" id="dialog-form">
-                        <div style="width:100%; font-size: 16px; text-align: center">საკრედიტო ხელშეკრულება #1893</div>
+                        <div style="width:100%; font-size: 16px; text-align: center">საკრედიტო ხელშეკრულება #'.$res[loan_agreement_id].'</div>
                         <div style="width:100%; font-size: 12px; margin-top: 15px; text-align: right;">'.$res[day].'.'.$res[month_id].'.'.$res[year].'</div>
                         <div style="width:100%; font-size: 12px; text-align: left;">ქ. თბილისი</div>
                         <div style="width:100%; font-size: 12px; margin-top: 15px;">
-                                                            წინამდებარე ხელშეკრულების მონაწილე მხარეები, ერთის მხრივ შპს „თი ჯი მობაილ“ 
+                                                            წინამდებარე ხელშეკრულების მონაწილე მხარეები, ერთის მხრივ შპს "თი ჯი მობაილ" 
                          (საიდენტიფიკაციო № 205170177), - დირექტორი გიორგი კილაძე, წარმომადგენელი
                                                             ვახტანგ ბახტაძის სახით (მინდობილობა №001, 10.25.2012 წელი)  (შემდგომში გამსესხებელი), და მეორეს მხრივ,
-                                                            აკაკი ელისაშვილი (პირადი № 01019068974), (შემდგომში მსესხებელი), 
+                          '.$res['name'].' (პირადი № '.$res['pid'].'), (შემდგომში მსესხებელი), 
                                                             ჩვენს შორის მიღწეული შეთანხმების შედეგად, ვდებთ ხელშეკრულებას სასყიდლიანი სესხის გაცემის შესახებ.
                         </div>
                         <div style="width:100%; font-size: 12px; margin-top: 15px;">
                                                             ტერმინთა განმარტება:
                         </div>
                         <div style="width:100%; font-size: 12px;">
-                            <br>1.1.	გამსესხებელი- შპს  „თი ჯი მობაილ“
-                            <br>1.2.	მსესხებელი- აკაკი ელისაშვილი, რომელიც სარგებლობს ამ ხელშეკრულების შესაბამისად სასყიდლიანი სესხის სახით გაცემული ფულადი თანხით;
+                            <br>1.1.	გამსესხებელი- შპს  "თი ჯი მობაილ"
+                            <br>1.2.	მსესხებელი- '.$res['name'].', რომელიც სარგებლობს ამ ხელშეკრულების შესაბამისად სასყიდლიანი სესხის სახით გაცემული ფულადი თანხით;
                             <br>1.3.	ხელშეკრულება- წინამდებარე ხელშეკრულება, რომელიც განსაზღვრავს ამ ხელშეკრულების მონაწილე მხარეთა შორის არსებულ უფლებებსა და ვალდებულებებს, ასევე არეგულირებს გამსესხებელსა და მსესხებელს შორის არსებული სამართალურთიერთობის ძირითად პირობებს და პარამეტრებს;
                             <br>1.4.	სესხი- მსესხებელზე წინამდებარე ხელშეკრულებით გათვალისწინებული წესით და ოდენობით პირადი მოხმარებისთვის გაცემული თანხა, საქართველოს მოქმედი კანონმდებლობის შესაბამისად;
                             <br>1.5.	სესხის თანხა- ამ ხელშეკრულების შესაბამისად დადგენილი ოდენობით მსესხებელზე გამსესხებლის მიერ გაცემული ფულადი თანხა;
@@ -1489,21 +1707,21 @@ if ($file_type == 'receipt') {
                             <br>2.	ხელშეკრულების საგანი
                             <br>2.1.	წინამდებარე ხელშეკრულების შესაბამისად, გამსესხებელი კისრულობს ვალდებულებას, გასცეს მსესხებელზე სესხი ამ ხელშეკრულებით გათვალისწინებულ ვადებში და ოდენობით, ხოლო მსესხებელი კისრულობს ვალდებულებას დააბრუნოს მიღებული სესხი, მასზე დარიცხული საპროცენტო სარგებელი, დაფაროს ყველა ფინანსური ხარჯი და სრულიად შეასრულოს ყველა ნაკისრი ვალდებულება.
                             <br>3.	სესხით სარგებლობის პირობები
-                            <br>3.1.	სესხის სრული მოცულობა (ოდენობა) – 2380 აშშ დოლარი (ექვივალენტი ლარში)
+                            <br>3.1.	სესხის სრული მოცულობა (ოდენობა) – '.$res['loan_amount'].' აშშ დოლარი (ექვივალენტი ლარში)
                             <br>3.2.	გატანის პერიოდულობა- ერთჯერადი;
-                            <br>3.3.	სესხით სარგებლობის ვადა- 24 (ოცდაოთხი) თვე;
-                            <br>3.4.	სესხის გაცემის საკომისიო - 3% (აკისრია მსესხებელს)
-                            <br>3.5.	სადაზღვევო ხარჯი- 3 თვის დაზღვევის საფასური -110 (ასათი) აშშ დოლარი (ექვივალენტი ლარში). მსესხებელს ასევე ეკისრება ყოველ 3 თვეში დაზღვევის საფასურის დამატებით გადახდა იმ დროისთვის არსებული ოდენობით;
-                            <br>3.6.	გირავნობის ხარჯი - 225 (ორასორმოცდათხუთმეტი) ლარი; (აკისრია მსესხებელს)
-                            <br>3.7.	სარგებელი სესხით სარგებლობისთვის- ამ ხელშეკრულების მოქმედების მანძილზე ყოველთვიურად -3% პროცენტი;
-                            <br>3.8.	ყოველთვიურად მსესხებელი იხდის თანხას გრაფიკის მიხედვით,რომელიც თანდართულია ხელშეკრულებას,რაც შეადგენს 140.53 (ასორმოცი და ორმოცდაცამეტი) აშშ დოლარის ექვივალენტს ლარში;
-                            <br>3.9.	მსესხებელი ვალდებულია ამ ხელშეკრულების  3.8 პუნქტში მითითებული თანხის გადახდები განახორციელოს ხელშეკრულების მოქმედების სრული პერიოდის განმავლობაში ყოველი თვის 12 რიცხვში (თუ გრაფიკში სხვა რამ არ არის გათვალისწინებული) .
+                            <br>3.3.	სესხით სარგებლობის ვადა- '.$res['loan_months'].' ('.float_replase($res['loan_amount']).') თვე;
+                            <br>3.4.	სესხის გაცემის საკომისიო - '.$res['loan_fee'].'% (აკისრია მსესხებელს)
+                            <br>3.5.	სადაზღვევო ხარჯი- 3 თვის დაზღვევის საფასური -'.$res['insurance_fee'].' ('.float_replase($res['insurance_fee']).') აშშ დოლარი (ექვივალენტი ლარში). მსესხებელს ასევე ეკისრება ყოველ 3 თვეში დაზღვევის საფასურის დამატებით გადახდა იმ დროისთვის არსებული ოდენობით;
+                            <br>3.6.	გირავნობის ხარჯი - '.$res['pledge_fee'].' ('.float_replase($res['pledge_fee']).') ლარი; (აკისრია მსესხებელს)
+                            <br>3.7.	სარგებელი სესხით სარგებლობისთვის- ამ ხელშეკრულების მოქმედების მანძილზე ყოველთვიურად -'.$res['month_percent'].'% პროცენტი;
+                            <br>3.8.	ყოველთვიურად მსესხებელი იხდის თანხას გრაფიკის მიხედვით,რომელიც თანდართულია ხელშეკრულებას,რაც შეადგენს '.$res['monthly_pay'].' ('.float_replase($res['monthly_pay']).') აშშ დოლარის ექვივალენტს ლარში;
+                            <br>3.9.	მსესხებელი ვალდებულია ამ ხელშეკრულების  3.8 პუნქტში მითითებული თანხის გადახდები განახორციელოს ხელშეკრულების მოქმედების სრული პერიოდის განმავლობაში ყოველი თვის '.$res['month_id'].' რიცხვში (თუ გრაფიკში სხვა რამ არ არის გათვალისწინებული) .
                             <br>3.10.	იმ შემთხვევაში, თუ მსესხებელი წინსწრებით დაფარავს ძირი თანხის ნაწილს, მაშინ სესხი უნდა გადაანგარიშდეს და შედგეს ახალი გადახდის გრაფიკი;
                             <br>3.11.		მსესხებელს წინასწრებით ძირი თანხის ნაწილის დაფარვა შეუძლია მხოლოდ იმ რიცხვებში, რომლებიც არის მითითებული გრაფიკში;
-                            <br>3.12.		წინსწრებით დაფარვის საკომისიო დარჩენილი ძირი თანხის -  3 %
+                            <br>3.12.		წინსწრებით დაფარვის საკომისიო დარჩენილი ძირი თანხის -  ? %
                             <br>3.13.		სესხის გაცემის ვადა – 01 (ერთი) დღე;
                             <br>3.14.	        საპროცენტო სარგებლის გადახის პერიოდულობა განისაზღვრება წინამდებარე ხელშეკრულებით;
-                            ვალუტის კურსი ხელშეკრულების ხელმოწერის დღისათვის – 1 აშშ დოლარი = 2.5887 ლარი;
+                            ვალუტის კურსი ხელშეკრულების ხელმოწერის დღისათვის – 1 აშშ დოლარი = '.$res['exchange_rate'].' ლარი;
                             <br>3.15.	სესხის ხელშეკრულებით გათვალისწინებული სესხის თანხის დადგენილ ვადაში დაუბრუნებლობის ან/და ამ ხელშეკრულებით დადგენილი პერიოდულობით გადაუხდელობის /ნაწილობრივ გადახდის შემთხვევაში, მსესხებელს დაერიცხება ამ ხელშეკრულებით გათვალისწინებული პირგასამტეხლო (საურავი), რომელიც დადგენილია გადახდის ვადის გადაცილებისათვის და რომელიც ანგარიშდება სესხის ძირი თანხიდან.
                             <br>3.16.		ფინანსური ხარჯები: ამ ხელშეკრულების მიზნებისათვის ფინანსურ ხარჯს წარმოადგენს ყველა ის ხარჯი, რომელიც აუცილებელია სესხის გაცემისა და მისი ამოღებისათვის (მათ შორის სადაზღვევო ხარჯი, სააღსრულებო ხარჯი, სესხის გაპრობლემების შემთხვევაში პრობლემური სამსახურის მომსახურების საფასური, აუდიტის მომსახურების საფასური. გირავნობის საფასური, ,სსიპ შსს მომსახურების სააგენტოში გაწეული ხარჯი და ნებისმიერი გადასახდელი, რომელიც გასწია გამსესხებელმა სესხის გასაცემად და დასაბრუნებლად);
                             <br>3.17.		წინამდებარე ხელშეკრულების მიზნებიდან გამომდინარე, ფინანსურ ხარჯად განიხილება ასევე ნებისმიერი გადასახდელი, რომელსაც მსესხებელი უხდის მესამე პირს, თუკი ეს გადასახდელი წარმოადგენს აუცილებლობას და მის გარეშე გამსესხებლის მიერ ნაკისრი ვალდებულების შესრულება იქნება შეუძლებელი ან არსებითად გართულდება;
@@ -1578,7 +1796,7 @@ if ($file_type == 'receipt') {
                             <br>9.1. წინამდებარე ხელშეკრულებით ნაკისრი ვალდებულებების შესრულების მოთხოვნის უზრუნველყოფის დამატებით საშუალებას წარმოადგენს პირგასამტეხლო;
                             <br>9.2. პირგასამტეხლოს გადახდის და მისი ოდენობის დაანგარიშების წესი განისაზღვრება ამ ხელშეკრულებით;
                             <br>9.3. ამ ხელშეკრულების მიზნებისათვის პირგასამტეხლოს გადახდევინება ხორციელდება ნაკისრი ვალდებულების შესრულების ვადის გადაცილებისათვის;
-                            <br>9.4. მსესხებელს, ამ ხელშეკრულებით გათვალსწინებული გადახდის ვადის გადაცილების შემთხვევაში, დაერიცხება პირგასამტეხლო სესხის ძირი თანხის 0.5%-ის ოდენობით ყოველ ვადაგადაცილებულ დღეზე, ვალდებულების დარღვევიდან 3 დღის განმავლობაში; ხოლო გადახდის ვადის გადაცილების 3 (სამი) დღეზე მეტი ვადით გაგრძელების შემთხვევაში მსესხებელს დაერიცხება პირგასამტეხლო სესხის ძირი თანხის 0.8% ყოველ ვადაგადაცილებულ დღეზე.
+                            <br>9.4. მსესხებელს, ამ ხელშეკრულებით გათვალსწინებული გადახდის ვადის გადაცილების შემთხვევაში, დაერიცხება პირგასამტეხლო სესხის ძირი თანხის '.$res['penalty_percent'].'%-ის ოდენობით ყოველ ვადაგადაცილებულ დღეზე, ვალდებულების დარღვევიდან '.$res['penalty_days'].' დღის განმავლობაში; ხოლო გადახდის ვადის გადაცილების '.$res['penalty_days'].' ('.float_replase($res['penalty_days']).') დღეზე მეტი ვადით გაგრძელების შემთხვევაში მსესხებელს დაერიცხება პირგასამტეხლო სესხის ძირი თანხის '.$res['penalty_additional_percent'].'% ყოველ ვადაგადაცილებულ დღეზე.
                             <br>9.5. ამ ხელშეკრულების 9.4 მუხლით გათვალისწინებული პირგასამტეხლოს ოდენობა დაანგარიშდება სესხის ძირი თანხიდან;
                             <br>9.6. პირგასამტეხლოს დაკისრება ხდება ყოველი კონკრეტული ვალდებულების დარღვევისთვის (ყოველთვიური სარგებლის, გრაფიკით გათვალისწინებული თანხის თუ სესხის ძირი თანხის გადახდის ვადაგადაცილების შემთხვევაში)  ცალკ-ცალკე, სესხის ძირი თანხიდან.
                             <br>9.7. სესხის სარგებლის (ან გრაფიკით გათვალისწინებული თანხის) გადახდის ვადის 2 ან მეტი თვით ვადა გადაცილების შემთხვევაში, თითოეული თვის ვადაგადაცილებისათვის მსესხებელს ცალკ-ცალკე ერიცხება პირგასამტეხლო. იმ შემთხვევაში, თუ მსესხებლის მიერ უკვე დარღვეულია სესხის სარგებლის ან გრაფიკით გათვალისწინებული თანხის გადახდის ვადა და მსესხებელმა მომდევნო თვის სარგებლის ან გრაფიკით გათვალისწინებული თანხის გადახდის ვადასაც გადააცილა, პირგასამტეხლოს დარიცხვა პირველი თვის სარგებლისთვის იმავე ფარგლებში გაგრძელდება და ამასთან, მეორე და მომდევნო თვის სარგებლის ან გრაფიკით გათვალისწინებული თანხის ვადაგადაცილებისთვის ცალკ-ცალკე, დამატებით მოხდება პირგასამტეხლოს დარიცხვა სესხის ძირი თანხის 0.5% -ის ოდენობით ყოველ ვადაგადაცილებულ დღეზე.
@@ -1609,11 +1827,11 @@ if ($file_type == 'receipt') {
                             <br>13.7. ხელშეკრულება შედგენილია ქართულ ენაზე, თანაბარი იურიდიული ძალის მქონე 02 (ორ) ეგზემპლარად, ხელმოწერილია და ინახება მხარეებთან.
                             
                             </div>
-                            <div style="width:100%; margin-top: 60px;">
+                            <div style="width:100%; margin-top: 100px;">
                                 <table style="width:100%;">
                                     <tr style="width:100%;">
                                         <td style="width:50%;"><label style="font-size: 12px; text-align: left;">გამსესხებელი: შპს "თი ჯი მობაილ" <br> მისამართი: ქ. თბილისი, დოლიძის ქ. 25/121<br>ს/კ 205270277<br>სს "საქართველოს ბანკი"<br>ბანკის კოდი: BAGAGE22<br>ა/ა GE12BG0000000523102000<br>ტელეფონის ნომერი: (ოფისი)<br>ტელეფონის ნომერი: 579796921<br>ტელეფონის ნომერი: 579131813 (ლერი)<br>ხელის მომწერის: ვახტანგ ბახტაძე,<br>პოზიცია: მენეჯერი<br>ელ.ფოსტა: tgmobail@mail.ru<br>s.qurdadze.1@gmail.com</label></td>
-                                        <td style="width:50%;"><label style="font-size: 12px; text-align: left;"><br>მსესხებელი: აკაკი ელისაშვილი<br>პირ № 01019068974<br>მისამართი:<br>ტელ.ნომერი:<br>ელ.ფოსტა:</label></td>
+                                        <td style="width:50%;"><label style="font-size: 12px; text-align: left;"><br>მსესხებელი: '.$res['name'].'<br>პირ № '.$res['pid'].'<br>მისამართი:'.$res['actual_address'].'<br>'.$res['juridical_address'].'<br>ტელ.ნომერი:'.$res['phone'].' '.$res[client_person_person].'<br>ელ.ფოსტა:'.$res['email'].'</label></td>
                                     </tr>
                                 </table>
                             </div>
@@ -1629,23 +1847,23 @@ if ($file_type == 'receipt') {
                    </div';
     }elseif ($file_type == 'agreement_nocustoms_trusted'){
         $data  .= '<div style="size: 7in 9.25in; margin: 15mm 16mm 15mm 16mm;" id="dialog-form">
-                        <div style="width:100%; font-size: 16px; text-align: center">საკრედიტო ხელშეკრულება #1893</div>
+                        <div style="width:100%; font-size: 16px; text-align: center">საკრედიტო ხელშეკრულება #'.$res[loan_agreement_id].'</div>
                         <div style="width:100%; font-size: 12px; margin-top: 15px; text-align: right;">'.$res[day].'.'.$res[month_id].'.'.$res[year].'</div>
                         <div style="width:100%; font-size: 12px; text-align: left;">ქ. თბილისი</div>
                         <div style="width:100%; font-size: 12px; margin-top: 15px;">
-                                                                წინამდებარე ხელშეკრულების მონაწილე მხარეები, ერთის მხრივ შპს „თი ჯი მობაილ“ (საიდენტიფიკაციო № 205170177), - დირექტორი გიორგი კილაძე, 
+                                                                წინამდებარე ხელშეკრულების მონაწილე მხარეები, ერთის მხრივ შპს "თი ჯი მობაილ" (საიდენტიფიკაციო № 205170177), - დირექტორი გიორგი კილაძე, 
                                                                 წარმომადგენელი ვახტანგ ბახტაძის სახით (მინდობილობა №001, 10.25.2012 წელი)  (შემდგომში გამსესხებელი), და მეორეს მხრივ, 
-                                                                ბონდო ახვლედიანი (პირადი №01003003149) (შემდგომში მსესხებელი) და (შემდგომში მინდობილი პირი) აკაკი ელისაშვილი 
-                            (პირადი № 01019068974), სანოტარო მოქმედების რეგისტრაციის ნომერი N140655779, რეგისტრაციის თარიღი 25.06.2014 წელს, 
-                                                                ნოტარიუსი: მარიამ ნავროზაშვილი, (მისამართი ქ.თბილისი, თემქის 3მ/რ 4კვ კორ 57-ის მიმდებარედ ტელ:598270730) 
+                           '.$res['name'].' (პირადი №'.$res['pid'].') (შემდგომში მსესხებელი) და (შემდგომში მინდობილი პირი) '.$res['trust_pers'].' 
+                            (პირადი № '.$res['trusted_pid'].'), სანოტარო მოქმედების რეგისტრაციის ნომერი N'.$res['trusting_number'].', რეგისტრაციის თარიღი '.$res['trusting_day'].'.'.$res['trusting_month_id'].'.'.$res['trusting_year'].' წელს, 
+                                                                ნოტარიუსი: '.$res['trusting_notary'].', (მისამართი '.$res['trusting_notary_address'].' ტელ:'.$res['trusting_notary_phone'].') 
                             (შემდგომში მსესხებელი), ჩვენს შორის მიღწეული შეთანხმების შედეგად, ვდებთ ხელშეკრულებას სასყიდლიანი სესხის გაცემის შესახებ.
                         </div>
                         <div style="width:100%; font-size: 12px; margin-top: 15px;">
                                                             ტერმინთა განმარტება:
                         </div>
                         <div style="width:100%; font-size: 12px;">
-                            <br>1.1.	გამსესხებელი- შპს  „თი ჯი მობაილ“
-                            <br>1.2.	მსესხებელი- ბონდო ახვლედიანი (პირადი №01003003149) (შემდგომში მსესხებელი) და (შემდგომში მინდობილი პირი) აკაკი ელისაშვილი (პირადი № 01019068974), სანოტარო მოქმედების რეგისტრაციის ნომერი N140655779, რეგისტრაციის თარიღი 25.06.2014 წელს, ნოტარიუსი: მარიამ ნავროზაშვილი, (მისამართი ქ.თბილისი, თემქის 3მ/რ 4კვ კორ 57-ის მიმდებარედ ტელ:598270730), რომელიც სარგებლობს ამ ხელშეკრულების შესაბამისად სასყიდლიანი სესხის სახით გაცემული ფულადი თანხით;
+                            <br>1.1.	გამსესხებელი- შპს  "თი ჯი მობაილ"
+                            <br>1.2.	მსესხებელი- '.$res['name'].' (პირადი №'.$res['pid'].') (შემდგომში მსესხებელი) და (შემდგომში მინდობილი პირი) '.$res['trust_pers'].' (პირადი № '.$res['trusted_pid'].'), სანოტარო მოქმედების რეგისტრაციის ნომერი N'.$res['trusting_number'].', რეგისტრაციის თარიღი '.$res['trusting_day'].'.'.$res['trusting_month_id'].'.'.$res['trusting_year'].' წელს, ნოტარიუსი: '.$res['trusting_notary'].', (მისამართი '.$res['trusting_notary_address'].' ტელ:'.$res['trusting_notary_phone'].'), რომელიც სარგებლობს ამ ხელშეკრულების შესაბამისად სასყიდლიანი სესხის სახით გაცემული ფულადი თანხით;
                             <br>1.3.	ხელშეკრულება- წინამდებარე ხელშეკრულება, რომელიც განსაზღვრავს ამ ხელშეკრულების მონაწილე მხარეთა შორის არსებულ უფლებებსა და ვალდებულებებს, ასევე არეგულირებს გამსესხებელსა და მსესხებელს შორის არსებული სამართალურთიერთობის ძირითად პირობებს და პარამეტრებს;
                             <br>1.4.	სესხი- მსესხებელზე წინამდებარე ხელშეკრულებით გათვალისწინებული წესით და ოდენობით პირადი მოხმარებისთვის გაცემული თანხა, საქართველოს მოქმედი კანონმდებლობის შესაბამისად;
                             <br>1.5.	სესხის თანხა- ამ ხელშეკრულების შესაბამისად დადგენილი ოდენობით მსესხებელზე გამსესხებლის მიერ გაცემული ფულადი თანხა;
@@ -1657,20 +1875,20 @@ if ($file_type == 'receipt') {
                             <br>2.	ხელშეკრულების საგანი
                             <br>2.1.	წინამდებარე ხელშეკრულების შესაბამისად, გამსესხებელი კისრულობს ვალდებულებას, გასცეს მსესხებელზე სესხი ამ ხელშეკრულებით გათვალისწინებულ ვადებში და ოდენობით, ხოლო მსესხებელი კისრულობს ვალდებულებას დააბრუნოს მიღებული სესხი, მასზე დარიცხული საპროცენტო სარგებელი, დაფაროს ყველა ფინანსური ხარჯი და სრულიად შეასრულოს ყველა ნაკისრი ვალდებულება.
                             <br>3.	სესხით სარგებლობის პირობები
-                            <br>3.1.	სესხის სრული მოცულობა (ოდენობა) – 2380 აშშ დოლარი (ექვივალენტი ლარში)
+                            <br>3.1.	სესხის სრული მოცულობა (ოდენობა) – '.$res['loan_amount'].' აშშ დოლარი (ექვივალენტი ლარში)
                             <br>3.2.	გატანის პერიოდულობა- ერთჯერადი;
-                            <br>3.3.	სესხით სარგებლობის ვადა- 24 (ოცდაოთხი) თვე;
-                            <br>3.4.	სესხის გაცემის საკომისიო - 3% (აკისრია მსესხებელს)
-                            <br>3.5.	საკრედიტო ხელშეკრულების გაგრძელების საფასური (საჭიროების შემთხვევაში, იხდის მსესხებელი)- 70 ლარი.
-                            <br>3.6.	საკრედიტო ხელშეკრულების გაგრძელების შემთხვევაში, მსესხებელი ვალდებულია დაფაროს ძირი თანხის 15 %;
-                            <br>3.7.	 სადაზღვევო ხარჯი- 3 თვის დაზღვევის საფასური -110 (ასათი) აშშ დოლარი (ექვივალენტი ლარში). მსესხებელს ასევე ეკისრება ყოველ 3 თვეში დაზღვევის საფასურის დამატებით გადახდა იმ დროისთვის არსებული ოდენობით;
-                            <br>3.8.	გირავნობის ხარჯი - 225 (ორასორმოცდათხუთმეტი) ლარი; (აკისრია მსესხებელს)
-                            <br>3.9.	სარგებელი სესხით სარგებლობისთვის- ამ ხელშეკრულების მოქმედების მანძილზე ყოველთვიურად -3% პროცენტი, რაც შეადგენს 140.53 (ასორმოცი და ორმოცდაცამეტი) აშშ დოლარის ექვივალენტს ლარში.
-                            <br>3.10.	იმ შემთხვევაში თუ მსესხებელმა შემოსავლების სამსახურის შეტყობინება N 4035101 განსაზღვრულ                  ვადაში, არ განაბაჟა ავტომობილი, შსს-ს სსიპ მომსახურების სააგენტოს ავტომობილის საექსპორტო დათვალიერების აქტში ასახული თანხა მთლიანად დაემატა ამ ხელშეკრულების 3.1. პუნქტით განსაზღვრული სესხის ძირ თანხას და სრულად დაეკისრება მსესხებელს.
+                            <br>3.3.	სესხით სარგებლობის ვადა- '.$res['loan_months'].' ('.float_replase($res['loan_months']).') თვე;
+                            <br>3.4.	სესხის გაცემის საკომისიო - '.$res['loan_fee'].'% (აკისრია მსესხებელს)
+                            <br>3.5.	საკრედიტო ხელშეკრულების გაგრძელების საფასური (საჭიროების შემთხვევაში, იხდის მსესხებელი)- '.$res['proceed_fee'].' ლარი.
+                            <br>3.6.	საკრედიტო ხელშეკრულების გაგრძელების შემთხვევაში, მსესხებელი ვალდებულია დაფაროს ძირი თანხის '.$res['proceed_percent'].' %;
+                            <br>3.7.	 სადაზღვევო ხარჯი- 3 თვის დაზღვევის საფასური -'.$res['insurance_fee'].' ('.float_replase($res['insurance_fee']).') აშშ დოლარი (ექვივალენტი ლარში). მსესხებელს ასევე ეკისრება ყოველ 3 თვეში დაზღვევის საფასურის დამატებით გადახდა იმ დროისთვის არსებული ოდენობით;
+                            <br>3.8.	გირავნობის ხარჯი - '.$res['pledge_fee'].' ('.float_replase($res['pledge_fee']).') ლარი; (აკისრია მსესხებელს)
+                            <br>3.9.	სარგებელი სესხით სარგებლობისთვის- ამ ხელშეკრულების მოქმედების მანძილზე ყოველთვიურად -'.$res['month_percent'].'% პროცენტი, რაც შეადგენს '.$res['monthly_pay'].' ('.float_replase($res['month_percent']).') აშშ დოლარის ექვივალენტს ლარში.
+                            <br>3.10.	იმ შემთხვევაში თუ მსესხებელმა შემოსავლების სამსახურის შეტყობინება N '.$res['rs_message_number'].' განსაზღვრულ                  ვადაში, არ განაბაჟა ავტომობილი, შსს-ს სსიპ მომსახურების სააგენტოს ავტომობილის საექსპორტო დათვალიერების აქტში ასახული თანხა მთლიანად დაემატა ამ ხელშეკრულების 3.1. პუნქტით განსაზღვრული სესხის ძირ თანხას და სრულად დაეკისრება მსესხებელს.
                             <br>3.11.	მსესხებელი ვალდებულია ამ ხელშეკრულების  3.8 პუნქტში მითითებული თანხის გადახდები განახორციელოს ხელშეკრულების მოქმედების სრული პერიოდის განმავლობაში ყოველი თვის 12 რიცხვში .
                             <br>3.12.		სესხის გაცემის ვადა – 01 (ერთი) დღე;
                             <br>3.13.	        საპროცენტო სარგებლის გადახის პერიოდულობა განისაზღვრება წინამდებარე ხელშეკრულებით;
-                            ვალუტის კურსი ხელშეკრულების ხელმოწერის დღისათვის – 1 აშშ დოლარი = 2.5887 ლარი;
+                            ვალუტის კურსი ხელშეკრულების ხელმოწერის დღისათვის – 1 აშშ დოლარი = '.$res['exchange_rate'].' ლარი;
                             <br>3.14.	სესხის ხელშეკრულებით გათვალისწინებული სესხის თანხის დადგენილ ვადაში დაუბრუნებლობის ან/და ამ ხელშეკრულებით დადგენილი პერიოდულობით გადაუხდელობის /ნაწილობრივ გადახდის შემთხვევაში, მსესხებელს დაერიცხება ამ ხელშეკრულებით გათვალისწინებული პირგასამტეხლო (საურავი), რომელიც დადგენილია გადახდის ვადის გადაცილებისათვის და რომელიც ანგარიშდება სესხის ძირი თანხიდან.
                             <br>3.15.		ფინანსური ხარჯები: ამ ხელშეკრულების მიზნებისათვის ფინანსურ ხარჯს წარმოადგენს ყველა ის ხარჯი, რომელიც აუცილებელია სესხის გაცემისა და მისი ამოღებისათვის (მათ შორის სადაზღვევო ხარჯი, სააღსრულებო ხარჯი, სესხის გაპრობლემების შემთხვევაში პრობლემური სამსახურის მომსახურების საფასური, აუდიტის მომსახურების საფასური. გირავნობის საფასური, ,სსიპ შსს მომსახურების სააგენტოში გაწეული ხარჯი და ნებისმიერი გადასახდელი, რომელიც გასწია გამსესხებელმა სესხის გასაცემად და დასაბრუნებლად);
                             <br>3.16.		წინამდებარე ხელშეკრულების მიზნებიდან გამომდინარე, ფინანსურ ხარჯად განიხილება ასევე ნებისმიერი გადასახდელი, რომელსაც მსესხებელი უხდის მესამე პირს, თუკი ეს გადასახდელი წარმოადგენს აუცილებლობას და მის გარეშე გამსესხებლის მიერ ნაკისრი ვალდებულების შესრულება იქნება შეუძლებელი ან არსებითად გართულდება;
@@ -1745,7 +1963,7 @@ if ($file_type == 'receipt') {
                             <br>9.1. წინამდებარე ხელშეკრულებით ნაკისრი ვალდებულებების შესრულების მოთხოვნის უზრუნველყოფის დამატებით საშუალებას წარმოადგენს პირგასამტეხლო;
                             <br>9.2. პირგასამტეხლოს გადახდის და მისი ოდენობის დაანგარიშების წესი განისაზღვრება ამ ხელშეკრულებით;
                             <br>9.3. ამ ხელშეკრულების მიზნებისათვის პირგასამტეხლოს გადახდევინება ხორციელდება ნაკისრი ვალდებულების შესრულების ვადის გადაცილებისათვის;
-                            <br>9.4. მსესხებელს, ამ ხელშეკრულებით გათვალსწინებული გადახდის ვადის გადაცილების შემთხვევაში, დაერიცხება პირგასამტეხლო სესხის ძირი თანხის 0.5%-ის ოდენობით ყოველ ვადაგადაცილებულ დღეზე, ვალდებულების დარღვევიდან 3 დღის განმავლობაში; ხოლო გადახდის ვადის გადაცილების 3 (სამი) დღეზე მეტი ვადით გაგრძელების შემთხვევაში მსესხებელს დაერიცხება პირგასამტეხლო სესხის ძირი თანხის 0.8% ყოველ ვადაგადაცილებულ დღეზე.
+                            <br>9.4. მსესხებელს, ამ ხელშეკრულებით გათვალსწინებული გადახდის ვადის გადაცილების შემთხვევაში, დაერიცხება პირგასამტეხლო სესხის ძირი თანხის '.$res['penalty_percent'].'%-ის ოდენობით ყოველ ვადაგადაცილებულ დღეზე, ვალდებულების დარღვევიდან '.$res['penalty_days'].' დღის განმავლობაში; ხოლო გადახდის ვადის გადაცილების '.$res['penalty_days'].'('.float_replase($res['penalty_days']).') დღეზე მეტი ვადით გაგრძელების შემთხვევაში მსესხებელს დაერიცხება პირგასამტეხლო სესხის ძირი თანხის '.$res['penalty_additional_percent'].'% ყოველ ვადაგადაცილებულ დღეზე.
                             <br>9.5. ამ ხელშეკრულების 9.4 მუხლით გათვალისწინებული პირგასამტეხლოს ოდენობა დაანგარიშდება სესხის ძირი თანხიდან;
                             <br>9.6. პირგასამტეხლოს დაკისრება ხდება ყოველი კონკრეტული ვალდებულების დარღვევისთვის (ყოველთვიური სარგებლის, გრაფიკით გათვალისწინებული თანხის თუ სესხის ძირი თანხის გადახდის ვადაგადაცილების შემთხვევაში)  ცალკ-ცალკე, სესხის ძირი თანხიდან.
                             <br>9.7. სესხის სარგებლის (ან გრაფიკით გათვალისწინებული თანხის) გადახდის ვადის 2 ან მეტი თვით ვადა გადაცილების შემთხვევაში, თითოეული თვის ვადაგადაცილებისათვის მსესხებელს ცალკ-ცალკე ერიცხება პირგასამტეხლო. იმ შემთხვევაში, თუ მსესხებლის მიერ უკვე დარღვეულია სესხის სარგებლის ან გრაფიკით გათვალისწინებული თანხის გადახდის ვადა და მსესხებელმა მომდევნო თვის სარგებლის ან გრაფიკით გათვალისწინებული თანხის გადახდის ვადასაც გადააცილა, პირგასამტეხლოს დარიცხვა პირველი თვის სარგებლისთვის იმავე ფარგლებში გაგრძელდება და ამასთან, მეორე და მომდევნო თვის სარგებლის ან გრაფიკით გათვალისწინებული თანხის ვადაგადაცილებისთვის ცალკ-ცალკე, დამატებით მოხდება პირგასამტეხლოს დარიცხვა სესხის ძირი თანხის 0.5% -ის ოდენობით ყოველ ვადაგადაცილებულ დღეზე.
@@ -1781,7 +1999,7 @@ if ($file_type == 'receipt') {
                                 <table style="width:100%;">
                                     <tr style="width:100%;">
                                         <td style="width:50%;"><label style="font-size: 12px; text-align: left;">გამსესხებელი: შპს "თი ჯი მობაილ" <br> მისამართი: ქ. თბილისი, დოლიძის ქ. 25/121<br>ს/კ 205270277<br>სს "საქართველოს ბანკი"<br>ბანკის კოდი: BAGAGE22<br>ა/ა GE12BG0000000523102000<br>ტელეფონის ნომერი: (ოფისი)<br>ტელეფონის ნომერი: 579796921<br>ტელეფონის ნომერი: 579131813 (ლერი)<br>ხელის მომწერის: ვახტანგ ბახტაძე,<br>პოზიცია: მენეჯერი<br>ელ.ფოსტა: tgmobail@mail.ru<br>s.qurdadze.1@gmail.com</label></td>
-                                        <td style="width:50%;"><label style="font-size: 12px; text-align: left;">მსესხებელი<br>მინდობილი პირი: აკაკი ელისაშვილი<br>პირ № 01019068974<br>მისამართი:<br>ტელ.ნომერი:<br>ელ.ფოსტა:</label></td>
+                                        <td style="width:50%;"><label style="font-size: 12px; text-align: left;">მსესხებელი<br>მინდობილი პირი: '.$res['trust_pers'].'<br>პირ № '.$res['trusted_pid'].'<br>მისამართი:'.$res['trusted_actual_address'].'<br>'.$res['trusted_juridical_address'].'<br>ტელ.ნომერი:'.$res['trusted_phone'].' '.$res[client_person_person].'<br>ელ.ფოსტა:'.$res['trusted_email'].'</label></td>
                                     </tr>
                                 </table>
                             </div>
@@ -1801,17 +2019,17 @@ if ($file_type == 'receipt') {
                         <div style="width:100%; font-size: 12px; margin-top: 15px; text-align: right;">'.$res[day].'.'.$res[month_id].'.'.$res[year].'</div>
                         <div style="width:100%; font-size: 12px; text-align: left;">ქ. თბილისი</div>
                         <div style="width:100%; font-size: 12px; margin-top: 15px;">
-                                                               წინამდებარე ხელშეკრულების მონაწილე მხარეები, ერთის მხრივ შპს „თი ჯი მობაილ“ (საიდენტიფიკაციო № 205170177), - 
+                                                               წინამდებარე ხელშეკრულების მონაწილე მხარეები, ერთის მხრივ შპს "თი ჯი მობაილ" (საიდენტიფიკაციო № 205170177), - 
                                                                 დირექტორი გიორგი კილაძე, წარმომადგენელი ვახტანგ ბახტაძის სახით (მინდობილობა №001, 10.25.2012 წელი)  (შემდგომში გამსესხებელი), 
-                                                                და მეორეს მხრივ, აკაკი ელისაშვილი (პირადი № 01019068974), 
+                                                                და მეორეს მხრივ, '.$res['name'].'(პირადი № '.$res['pid'].'), 
                             (შემდგომში მსესხებელი), ჩვენს შორის მიღწეული შეთანხმების შედეგად, ვდებთ ხელშეკრულებას სასყიდლიანი სესხის გაცემის შესახებ.
                         </div>
                         <div style="width:100%; font-size: 12px; margin-top: 15px;">
                                                             ტერმინთა განმარტება:
                         </div>
                         <div style="width:100%; font-size: 12px;">
-                            <br>1.1.	გამსესხებელი- შპს  „თი ჯი მობაილ“
-                            <br>1.2.	მსესხებელი- აკაკი ელისაშვილი, რომელიც სარგებლობს ამ ხელშეკრულების შესაბამისად სასყიდლიანი სესხის სახით გაცემული ფულადი თანხით;
+                            <br>1.1.	გამსესხებელი- შპს  "თი ჯი მობაილ"
+                            <br>1.2.	მსესხებელი- '.$res['name'].', რომელიც სარგებლობს ამ ხელშეკრულების შესაბამისად სასყიდლიანი სესხის სახით გაცემული ფულადი თანხით;
                             <br>1.3.	ხელშეკრულება- წინამდებარე ხელშეკრულება, რომელიც განსაზღვრავს ამ ხელშეკრულების მონაწილე მხარეთა შორის არსებულ უფლებებსა და ვალდებულებებს, ასევე არეგულირებს გამსესხებელსა და მსესხებელს შორის არსებული სამართალურთიერთობის ძირითად პირობებს და პარამეტრებს;
                             <br>1.4.	სესხი- მსესხებელზე წინამდებარე ხელშეკრულებით გათვალისწინებული წესით და ოდენობით პირადი მოხმარებისთვის გაცემული თანხა, საქართველოს მოქმედი კანონმდებლობის შესაბამისად;
                             <br>1.5.	სესხის თანხა- ამ ხელშეკრულების შესაბამისად დადგენილი ოდენობით მსესხებელზე გამსესხებლის მიერ გაცემული ფულადი თანხა;
@@ -1820,28 +2038,28 @@ if ($file_type == 'receipt') {
                             <br>1.8.	საპროცენტო სარგებელი- მსესხებლის მიერ გამსესხებლისთვის გადასახდელი ფულადი თანხა, რომელიც წარმოადგენს სარგებელს მსესხებლის მიერ გამსესხებლის მხრიდან მიღებული ფულადი სახსრებით სარგებლობისთვის;
                             <br>1.9.	ფინანსური ხარჯი- ნებისმიერი ხარჯი, რომელიც პირდაპირ ან არაპირდაპირ გასწია ან/და მომავალში გასწევს გამსესხებელი და წარმოადგენს მსესხებლის მიერ სესხის მიღებასა და მისი ამოღებისთვის საჭირო ხარჯს;
                             <br>1.10.	მხარეები- გამსესხებელი და მსესხებელი ერთად. 
-                            <br>2.	ხელშეკრულების საგანი
+                            <br>2.	         ხელშეკრულების საგანი
                             <br>2.1.	წინამდებარე ხელშეკრულების შესაბამისად, გამსესხებელი კისრულობს ვალდებულებას, გასცეს მსესხებელზე სესხი ამ ხელშეკრულებით გათვალისწინებულ ვადებში და ოდენობით, ხოლო მსესხებელი კისრულობს ვალდებულებას დააბრუნოს მიღებული სესხი, მასზე დარიცხული საპროცენტო სარგებელი, დაფაროს ყველა ფინანსური ხარჯი და სრულიად შეასრულოს ყველა ნაკისრი ვალდებულება.
-                            <br>3.	სესხით სარგებლობის პირობები
-                            <br>3.1.	სესხის სრული მოცულობა (ოდენობა) – 2380 აშშ დოლარი (ექვივალენტი ლარში)
+                            <br>3.	         სესხით სარგებლობის პირობები
+                            <br>3.1.	სესხის სრული მოცულობა (ოდენობა) – '.$res['loan_amount'].' აშშ დოლარი (ექვივალენტი ლარში)
                             <br>3.2.	გატანის პერიოდულობა- ერთჯერადი;
-                            <br>3.3.	სესხით სარგებლობის ვადა- 24 (ოცდაოთხი) თვე;
-                            <br>3.4.	სესხის გაცემის საკომისიო - 3% (აკისრია მსესხებელს)
-                            <br>3.5.	საკრედიტო ხელშეკრულების გაგრძელების საფასური (საჭიროების შემთხვევაში, იხდის მსესხებელი)- 70 ლარი.
-                            <br>3.6.	საკრედიტო ხელშეკრულების გაგრძელების შემთხვევაში, მსესხებელი ვალდებულია დაფაროს ძირი თანხის 15 %;
-                            <br>3.7.	 სადაზღვევო ხარჯი- 3 თვის დაზღვევის საფასური -110 (ასათი) აშშ დოლარი (ექვივალენტი ლარში). მსესხებელს ასევე ეკისრება ყოველ 3 თვეში დაზღვევის საფასურის დამატებით გადახდა იმ დროისთვის არსებული ოდენობით;
-                            <br>3.8.	გირავნობის ხარჯი - 225 (ორასორმოცდათხუთმეტი) ლარი; (აკისრია მსესხებელს)
-                            <br>3.9.	სარგებელი სესხით სარგებლობისთვის- ამ ხელშეკრულების მოქმედების მანძილზე ყოველთვიურად -3% პროცენტი, რაც შეადგენს 140.53 (ასორმოცი და ორმოცდაცამეტი) აშშ დოლარის ექვივალენტს ლარში.
-                            <br>3.10.	იმ შემთხვევაში თუ მსესხებელმა შემოსავლების სამსახურის შეტყობინება N 4035101 განსაზღვრულ                  ვადაში, არ განაბაჟა ავტომობილი, შსს-ს სსიპ მომსახურების სააგენტოს ავტომობილის საექსპორტო დათვალიერების აქტში ასახული თანხა მთლიანად დაემატა ამ ხელშეკრულების 3.1. პუნქტით განსაზღვრული სესხის ძირ თანხას და სრულად დაეკისრება მსესხებელს.
-                            <br>3.11.	მსესხებელი ვალდებულია ამ ხელშეკრულების  3.8 პუნქტში მითითებული თანხის გადახდები განახორციელოს ხელშეკრულების მოქმედების სრული პერიოდის განმავლობაში ყოველი თვის 12 რიცხვში .
-                            <br>3.12.		სესხის გაცემის ვადა – 01 (ერთი) დღე;
-                            <br>3.13.	        საპროცენტო სარგებლის გადახის პერიოდულობა განისაზღვრება წინამდებარე ხელშეკრულებით;
-                            ვალუტის კურსი ხელშეკრულების ხელმოწერის დღისათვის – 1 აშშ დოლარი = 2.5887 ლარი;
+                            <br>3.3.	სესხით სარგებლობის ვადა- '.$res['loan_months'].' ('.float_replase($res['loan_months']).') თვე;
+                            <br>3.4.	სესხის გაცემის საკომისიო - '.$res['loan_fee'].'% (აკისრია მსესხებელს)
+                            <br>3.5.	საკრედიტო ხელშეკრულების გაგრძელების საფასური (საჭიროების შემთხვევაში, იხდის მსესხებელი)- '.$res['proceed_fee'].' ლარი.
+                            <br>3.6.	საკრედიტო ხელშეკრულების გაგრძელების შემთხვევაში, მსესხებელი ვალდებულია დაფაროს ძირი თანხის '.$res['proceed_percent'].' %;
+                            <br>3.7.	 სადაზღვევო ხარჯი- 3 თვის დაზღვევის საფასური -'.$res['insurance_fee'].' ('.float_replase($res['insurance_fee']).') აშშ დოლარი (ექვივალენტი ლარში). მსესხებელს ასევე ეკისრება ყოველ 3 თვეში დაზღვევის საფასურის დამატებით გადახდა იმ დროისთვის არსებული ოდენობით;
+                            <br>3.8.	გირავნობის ხარჯი - '.$res['pledge_fee'].' ('.float_replase($res['pledge_fee']).') ლარი; (აკისრია მსესხებელს)
+                            <br>3.9.	სარგებელი სესხით სარგებლობისთვის- ამ ხელშეკრულების მოქმედების მანძილზე ყოველთვიურად -'.$res['month_percent'].'% პროცენტი, რაც შეადგენს '.$res['monthly_pay'].' ('.float_replase($res['monthly_pay']).') აშშ დოლარის ექვივალენტს ლარში.
+                            <br>3.10.	იმ შემთხვევაში თუ მსესხებელმა შემოსავლების სამსახურის შეტყობინება N '.$res['rs_message_number'].' განსაზღვრულ                  ვადაში, არ განაბაჟა ავტომობილი, შსს-ს სსიპ მომსახურების სააგენტოს ავტომობილის საექსპორტო დათვალიერების აქტში ასახული თანხა მთლიანად დაემატა ამ ხელშეკრულების 3.1. პუნქტით განსაზღვრული სესხის ძირ თანხას და სრულად დაეკისრება მსესხებელს.
+                            <br>3.11.	მსესხებელი ვალდებულია ამ ხელშეკრულების  3.8 პუნქტში მითითებული თანხის გადახდები განახორციელოს ხელშეკრულების მოქმედების სრული პერიოდის განმავლობაში ყოველი თვის '.$res['month_id'].' რიცხვში .
+                            <br>3.12.	სესხის გაცემის ვადა – 01 (ერთი) დღე;
+                            <br>3.13.	საპროცენტო სარგებლის გადახის პერიოდულობა განისაზღვრება წინამდებარე ხელშეკრულებით;
+                                                                                             ვალუტის კურსი ხელშეკრულების ხელმოწერის დღისათვის – 1 აშშ დოლარი = '.$res['exchange_rate'].' ლარი;
                             <br>3.14.	სესხის ხელშეკრულებით გათვალისწინებული სესხის თანხის დადგენილ ვადაში დაუბრუნებლობის ან/და ამ ხელშეკრულებით დადგენილი პერიოდულობით გადაუხდელობის /ნაწილობრივ გადახდის შემთხვევაში, მსესხებელს დაერიცხება ამ ხელშეკრულებით გათვალისწინებული პირგასამტეხლო (საურავი), რომელიც დადგენილია გადახდის ვადის გადაცილებისათვის და რომელიც ანგარიშდება სესხის ძირი თანხიდან.
-                            <br>3.15.		ფინანსური ხარჯები: ამ ხელშეკრულების მიზნებისათვის ფინანსურ ხარჯს წარმოადგენს ყველა ის ხარჯი, რომელიც აუცილებელია სესხის გაცემისა და მისი ამოღებისათვის (მათ შორის სადაზღვევო ხარჯი, სააღსრულებო ხარჯი, სესხის გაპრობლემების შემთხვევაში პრობლემური სამსახურის მომსახურების საფასური, აუდიტის მომსახურების საფასური. გირავნობის საფასური, ,სსიპ შსს მომსახურების სააგენტოში გაწეული ხარჯი და ნებისმიერი გადასახდელი, რომელიც გასწია გამსესხებელმა სესხის გასაცემად და დასაბრუნებლად);
-                            <br>3.16.		წინამდებარე ხელშეკრულების მიზნებიდან გამომდინარე, ფინანსურ ხარჯად განიხილება ასევე ნებისმიერი გადასახდელი, რომელსაც მსესხებელი უხდის მესამე პირს, თუკი ეს გადასახდელი წარმოადგენს აუცილებლობას და მის გარეშე გამსესხებლის მიერ ნაკისრი ვალდებულების შესრულება იქნება შეუძლებელი ან არსებითად გართულდება;
+                            <br>3.15.	ფინანსური ხარჯები: ამ ხელშეკრულების მიზნებისათვის ფინანსურ ხარჯს წარმოადგენს ყველა ის ხარჯი, რომელიც აუცილებელია სესხის გაცემისა და მისი ამოღებისათვის (მათ შორის სადაზღვევო ხარჯი, სააღსრულებო ხარჯი, სესხის გაპრობლემების შემთხვევაში პრობლემური სამსახურის მომსახურების საფასური, აუდიტის მომსახურების საფასური. გირავნობის საფასური, ,სსიპ შსს მომსახურების სააგენტოში გაწეული ხარჯი და ნებისმიერი გადასახდელი, რომელიც გასწია გამსესხებელმა სესხის გასაცემად და დასაბრუნებლად);
+                            <br>3.16.	წინამდებარე ხელშეკრულების მიზნებიდან გამომდინარე, ფინანსურ ხარჯად განიხილება ასევე ნებისმიერი გადასახდელი, რომელსაც მსესხებელი უხდის მესამე პირს, თუკი ეს გადასახდელი წარმოადგენს აუცილებლობას და მის გარეშე გამსესხებლის მიერ ნაკისრი ვალდებულების შესრულება იქნება შეუძლებელი ან არსებითად გართულდება;
                             <br>3.17.	ფინანასურ ხარჯად არ განიხილება ის ხარჯები, რომლების გაღებაც მსესხებლის მიერ იქნებოდა აუცილებელი სესხის მიღების გარეშეც. ასეთი ტიპის ხარჯები არ წარმოადგენს წინამდებარე ხელშეკრულების რეგულირების სფეროს და სრულად ეკისრება მსესხებელს.
-                            <br>4.	სესხის უზრუნველყოფა
+                            <br>4.	         სესხის უზრუნველყოფა
                             <br>4.1.	სესხი უზრუნველყოფილია გირავნობით, ასევე მსესხებლის მთელი ქონებით;
                             <br>4.2.	უზრუნველყოფიდან გამომდინარე მხარეთა უფლებები და ვალდებულებები დეტალურად რეგულირდება ზემოაღნიშნული სესხის უზრუნველსაყოფად მხარეთა (ან მესამე პირსა და გამსესხებელს შორის) შორის დადებული გირავნობის ხელშეკრულებით;
                             <br>4.3.	იმ შემთხვევაში, თუ მსესხებლის მიერ ამ ხელშეკრულებით ნაკისრი ვალდებულება იქნება დარღვეული, ხოლო გირავნობის საგნის რეალიზაციის შედეგად მიღებული ამონაგები არ იქნება საკმარისი გამსესხებლის მოთხოვნების სრულად დასაკმაყოფილებლად, გამსესხებელი უფლებამოსილია მოითხოვოს მსესხებლის ან/და მესამე პირის (ასეთის არსებობის შემთხვევაში) საკუთრებაში არსებული უძრავ-მოძრავი ქონების რეალიზაცია საკუთარი მოთხოვნის დაკმაყოფილების მიზნით;
@@ -1852,17 +2070,17 @@ if ($file_type == 'receipt') {
                             <br>4.7.	ამ ხელშეკრულების 4.6 პუნქტით გათვალისწინებული შემთხვევის დადგომისას გამსესხებელი უფლებამოსილია მოსთხოვოს მსესხებელს დამატებითი უზურნველყოფის საშუალების წარდგენა, ხოლო მსესხებელი ვალდებულია წარმოუდგინოს გამსესხებელს ასეთი უზურნველყოფა;
                             <br>4.8.	მსესხებლის მიერ ამ ხელშეკრულების 4.7 პუნქტით გათვალისწინებული უზრუნველყოფის საშუალების წარმოდგენის შეუძლებლობის შემთხვევაში გამსესხებელი უფლებამოსილია დაუყოვნებლივ შეწყიტოს სესხის ხელშეკრულება და მოითხოვოს მსესხებლისაგან სესხის ძირი თანხის და მასზე დარიცხული პროცენტისა თუ პირგასამტეხლოს გადახდა;
                             <br>4.9.	მსესხებლის მხრიდან ამ ხელშეკრულების 4.6 პუნქტით გათვალისწინებული ინფორმაციის მიწოდების ვალდებულების დარღვევა გამსესხებელს აძლევს უფლებას, ვადაზე ადრე შეწყვიტოს ხელშეკრულება და მოითხოვოს მსესხებლისაგან ნაკისრი ვალდებულების დაუყოვნებლივ სრულად შესრულება.
-                            <br>5. მხარეთა უფლებები და ვალდებულებები
-                            <br>5.1. მხარეები კისრულობენ ვალდებულებას, რომ შეასრულებენ წინამდებარე ხელშეკრულებით ნაკისრ ვალდებულებებს ჯეროვნად, კეთისინდისიერად, დათქმულ დროსა და ადგილას;
-                            <br>5.2. გამსესხებელი უფლებამოსილია:
-                            <br>5.2.1. მოითხოვოს მსესხებლისაგან ხელშეკრულებით ნაკისრი ვალდებულებების განუხრელად დაცვა და შესრულება;
-                            <br>5.2.2. მოითხოვოს მსესხებლისგან სრული ინფომრაციის წარმოდგენა მისი ფინანსური მდგომარეობის შესახებ, როგორც ხელშეკრულების დადებამდე, ასევე ხელშეკრულების მოქმედების სრული პერიოდის განმავლობაში; 
-                            <br>5.2.3. ვადაზე ადრე შეწყვიტოს ხელშეკრულება, თუკი მსესხებლის ქონებრივი მდგომარეობა იმდენად გაუარესდება, რომ შესაძლოა საფრთხე შეექმნება სესხის დაბრუნებას;
-                            <br>5.3. გამსესხებელი ვალდებულია:
-                            <br>5.3.1. გასცეს სესხის თანხა ამ ხელშეკრულებით გათვალისწინებული ოდენობით და ვადებში;
-                            <br>5.3.2. მიაწოდოს მსესხებელს სრული ინფორმაცია სესხის პირობებთან დაკავშირებით;
-                            <br>5.3.3. მიაწოდოს მსესხებელს სრული ინფორმაცია სესხის უზრუნველყოფის პირობებთან დაკავშირებით;
-                            <br>5.3.4. დაუყოვნებლივ აცნობოს მსესხებელს ნებისმიერი ისეთი გარემოების ცვლილების შესახებ, რამაც შეიძლება გავლენა მოახდინოს მხარეთა უფლებებსა და ვალდებულებებზე;
+                            <br>5.      მხარეთა უფლებები და ვალდებულებები
+                            <br>5.1.    მხარეები კისრულობენ ვალდებულებას, რომ შეასრულებენ წინამდებარე ხელშეკრულებით ნაკისრ ვალდებულებებს ჯეროვნად, კეთისინდისიერად, დათქმულ დროსა და ადგილას;
+                            <br>5.2.    გამსესხებელი უფლებამოსილია:
+                            <br>5.2.1.  მოითხოვოს მსესხებლისაგან ხელშეკრულებით ნაკისრი ვალდებულებების განუხრელად დაცვა და შესრულება;
+                            <br>5.2.2.  მოითხოვოს მსესხებლისგან სრული ინფომრაციის წარმოდგენა მისი ფინანსური მდგომარეობის შესახებ, როგორც ხელშეკრულების დადებამდე, ასევე ხელშეკრულების მოქმედების სრული პერიოდის განმავლობაში; 
+                            <br>5.2.3.  ვადაზე ადრე შეწყვიტოს ხელშეკრულება, თუკი მსესხებლის ქონებრივი მდგომარეობა იმდენად გაუარესდება, რომ შესაძლოა საფრთხე შეექმნება სესხის დაბრუნებას;
+                            <br>5.3.    გამსესხებელი ვალდებულია:
+                            <br>5.3.1.  გასცეს სესხის თანხა ამ ხელშეკრულებით გათვალისწინებული ოდენობით და ვადებში;
+                            <br>5.3.2.  მიაწოდოს მსესხებელს სრული ინფორმაცია სესხის პირობებთან დაკავშირებით;
+                            <br>5.3.3.  მიაწოდოს მსესხებელს სრული ინფორმაცია სესხის უზრუნველყოფის პირობებთან დაკავშირებით;
+                            <br>5.3.4.  დაუყოვნებლივ აცნობოს მსესხებელს ნებისმიერი ისეთი გარემოების ცვლილების შესახებ, რამაც შეიძლება გავლენა მოახდინოს მხარეთა უფლებებსა და ვალდებულებებზე;
                             <br>5.3.5. საკუთარი შესაძლებლობის და ვალდებულების ფარგლებში ყველანაირად შეუწყოს ხელი ხელშეკრულების შესრულებას;
                             <br>5.4. მსესხებელი უფლებამოსილია:
                             <br>5.4.1. მოსთხოვოს გამსესხებელს სესხის თანხის გადაცემა ამ ხელშეკრულებით გათვალისწინებული პირობებით, ოდენობით და ვადებში;
@@ -1897,7 +2115,7 @@ if ($file_type == 'receipt') {
                             <br>7.1. წინამდებარე ხელშეკრულება წყდება  ვალდებულების სრულად შესრულებით;
                             <br>7.2. წინამდებარე ხელშეკრულება შესრულებით შეწყვეტილად ჩაითვლება მსესხებლის მიერ ნაკისრი ვალდებულების სრულად შესრულებით, ანუ სესხის ძირი თანხის, მასზე დარიცხული სარგებლის (პროცენტის), პირგასამტეხლოს და ხელშეკრულების შეწყვეტისათვის აუცილებელი ხარჯების (ასეთის არსებობის შემთხვევაში) სრულად გადახდის შემდგომ;
                             <br>7.3. ხელშეკრულების მოქმედების ვადის ამოწურვის შემდგომ ხელშეკრულება გაგრძელდება, თუ ორივე მხარე წერილობით დააფიქსირებს პოზიციას ხელშეკრულების გაგრძელების თაობაზე.
-                            <br>7.4..  მსესხებელი ცნობად იღებს იმ გარემოებას, რომ ხელშეკრულების მოქმედების ვადის  წინამდებარე ხელშეკრულების  7.3 პუნქტით გათვალისწინებული პირობებით გაგრძელების შემთხვევაში მსესხებელი ვალდებულია ხელშეკრულების გაგრძელებისათვის გადაიხადოს სადაზღვევო ხარჯი ამ ხელშეკრულებაში მითითებული ოდენობით.
+                            <br>7.4. მსესხებელი ცნობად იღებს იმ გარემოებას, რომ ხელშეკრულების მოქმედების ვადის  წინამდებარე ხელშეკრულების  7.3 პუნქტით გათვალისწინებული პირობებით გაგრძელების შემთხვევაში მსესხებელი ვალდებულია ხელშეკრულების გაგრძელებისათვის გადაიხადოს სადაზღვევო ხარჯი ამ ხელშეკრულებაში მითითებული ოდენობით.
                             <br>7.5. მხარეთა შეთანხმებით, ხელშეკრულება შეიძლება გაგრძელდეს ამ ხელშეკრულებით გათვალსწინებული პირობებისაგან განსხვავებული პირობებით .  
                             <br>7.6 ხელშეკრულების  გაგრძელება დასაშვებია მხოლოდ ამ ხელშეკრულების ფორმის  (წერილობითი) დაცვით . ამ წესის დარღვევით დადებული შეთანხმება არის ბათილი და იურიდიული მნიშვნელობის მქონე შედეგებს არ წარმოშობს .
                             <br>8. ხელშეკრულების ვადაზე ადრე შეწყვეტა
@@ -1911,7 +2129,7 @@ if ($file_type == 'receipt') {
                             <br>9.1. წინამდებარე ხელშეკრულებით ნაკისრი ვალდებულებების შესრულების მოთხოვნის უზრუნველყოფის დამატებით საშუალებას წარმოადგენს პირგასამტეხლო;
                             <br>9.2. პირგასამტეხლოს გადახდის და მისი ოდენობის დაანგარიშების წესი განისაზღვრება ამ ხელშეკრულებით;
                             <br>9.3. ამ ხელშეკრულების მიზნებისათვის პირგასამტეხლოს გადახდევინება ხორციელდება ნაკისრი ვალდებულების შესრულების ვადის გადაცილებისათვის;
-                            <br>9.4. მსესხებელს, ამ ხელშეკრულებით გათვალსწინებული გადახდის ვადის გადაცილების შემთხვევაში, დაერიცხება პირგასამტეხლო სესხის ძირი თანხის 0.5%-ის ოდენობით ყოველ ვადაგადაცილებულ დღეზე, ვალდებულების დარღვევიდან 3 დღის განმავლობაში; ხოლო გადახდის ვადის გადაცილების 3 (სამი) დღეზე მეტი ვადით გაგრძელების შემთხვევაში მსესხებელს დაერიცხება პირგასამტეხლო სესხის ძირი თანხის 0.8% ყოველ ვადაგადაცილებულ დღეზე.
+                            <br>9.4. მსესხებელს, ამ ხელშეკრულებით გათვალსწინებული გადახდის ვადის გადაცილების შემთხვევაში, დაერიცხება პირგასამტეხლო სესხის ძირი თანხის '.$res['penalty_percent'].'%-ის ოდენობით ყოველ ვადაგადაცილებულ დღეზე, ვალდებულების დარღვევიდან '.$res['penalty_days'].' დღის განმავლობაში; ხოლო გადახდის ვადის გადაცილების '.$res['penalty_days'].'('.float_replase($res['penalty_days']).') დღეზე მეტი ვადით გაგრძელების შემთხვევაში მსესხებელს დაერიცხება პირგასამტეხლო სესხის ძირი თანხის '.$res['penalty_additional_percent'].'% ყოველ ვადაგადაცილებულ დღეზე.
                             <br>9.5. ამ ხელშეკრულების 9.4 მუხლით გათვალისწინებული პირგასამტეხლოს ოდენობა დაანგარიშდება სესხის ძირი თანხიდან;
                             <br>9.6. პირგასამტეხლოს დაკისრება ხდება ყოველი კონკრეტული ვალდებულების დარღვევისთვის (ყოველთვიური სარგებლის, გრაფიკით გათვალისწინებული თანხის თუ სესხის ძირი თანხის გადახდის ვადაგადაცილების შემთხვევაში)  ცალკ-ცალკე, სესხის ძირი თანხიდან.
                             <br>9.7. სესხის სარგებლის (ან გრაფიკით გათვალისწინებული თანხის) გადახდის ვადის 2 ან მეტი თვით ვადა გადაცილების შემთხვევაში, თითოეული თვის ვადაგადაცილებისათვის მსესხებელს ცალკ-ცალკე ერიცხება პირგასამტეხლო. იმ შემთხვევაში, თუ მსესხებლის მიერ უკვე დარღვეულია სესხის სარგებლის ან გრაფიკით გათვალისწინებული თანხის გადახდის ვადა და მსესხებელმა მომდევნო თვის სარგებლის ან გრაფიკით გათვალისწინებული თანხის გადახდის ვადასაც გადააცილა, პირგასამტეხლოს დარიცხვა პირველი თვის სარგებლისთვის იმავე ფარგლებში გაგრძელდება და ამასთან, მეორე და მომდევნო თვის სარგებლის ან გრაფიკით გათვალისწინებული თანხის ვადაგადაცილებისთვის ცალკ-ცალკე, დამატებით მოხდება პირგასამტეხლოს დარიცხვა სესხის ძირი თანხის 0.5% -ის ოდენობით ყოველ ვადაგადაცილებულ დღეზე.
@@ -1940,14 +2158,12 @@ if ($file_type == 'receipt') {
                             <br>13.5. წინამდებარე ხელშეკრულებაში შეტანილი ცვლილებები ან/და დამატებები ძალაშია მხოლოდ იმ შემთხვევაში, თუ ისინი შესრულებულია ამ ხელშეკრულების ფორმის დაცვით და ხელმოწერილია მხარეთა მიერ. ამ წესის დარღვევით შეტანილი ნებისმიერი ცვლილება ან/და დამატება ბათილია მისი შეტანის მომენტიდან და არ წარმოშობს იურიდიული მნიშნველობის მქონე შედეგებს;
                             <br>13.6. ამ ხელშეკრულების საფუძველზე ან/და მისგან გამომდინარე ყველა ხელშეკრულება ან/და შეთანხმება და მათი დანართები წარმოადგენენ ამ ხელშეკრულების განუყოფელ ნაწილს და მათზე სრულად ვრცელდება ამ ხელშეკრულების წესები.
                             <br>13.7. ხელშეკრულება შედგენილია ქართულ ენაზე, თანაბარი იურიდიული ძალის მქონე 02 (ორ) ეგზემპლარად, ხელმოწერილია და ინახება მხარეებთან.
-                                                        
-                            
                             </div>
-                            <div style="width:100%; margin-top: 60px;">
+                            <div style="width:100%; margin-top: 100px;">
                                 <table style="width:100%;">
                                     <tr style="width:100%;">
                                         <td style="width:50%;"><label style="font-size: 12px; text-align: left;">გამსესხებელი: შპს "თი ჯი მობაილ" <br> მისამართი: ქ. თბილისი, დოლიძის ქ. 25/121<br>ს/კ 205270277<br>სს "საქართველოს ბანკი"<br>ბანკის კოდი: BAGAGE22<br>ა/ა GE12BG0000000523102000<br>ტელეფონის ნომერი: (ოფისი)<br>ტელეფონის ნომერი: 579796921<br>ტელეფონის ნომერი: 579131813 (ლერი)<br>ხელის მომწერის: ვახტანგ ბახტაძე,<br>პოზიცია: მენეჯერი<br>ელ.ფოსტა: tgmobail@mail.ru<br>s.qurdadze.1@gmail.com</label></td>
-                                        <td style="width:50%;"><label style="font-size: 12px; text-align: left;">მსესხებელი<br><br>მსესხებელი: აკაკი ელისაშვილი<br>პირ № 01019068974<br>მისამართი:<br>ტელ.ნომერი:<br>ელ.ფოსტა:</label></td>
+                                        <td style="width:50%;"><label style="font-size: 12px; text-align: left;"><br>მსესხებელი: '.$res['name'].'<br>პირ № '.$res['pid'].'<br>მისამართი:'.$res['actual_address'].'<br>'.$res['juridical_address'].'<br>ტელ.ნომერი:'.$res['phone'].' '.$res[client_person_person].'<br>ელ.ფოსტა:'.$res['email'].'</label></td>
                                     </tr>
                                 </table>
                             </div>
@@ -1963,22 +2179,22 @@ if ($file_type == 'receipt') {
                    </div';
     }elseif ($file_type == 'agreement_fee_ltd_nocustoms'){
         $data  .= '<div style="size: 7in 9.25in; margin: 15mm 16mm 15mm 16mm;" id="dialog-form">
-                        <div style="width:100%; font-size: 16px; text-align: center">საკრედიტო ხელშეკრულება #1893</div>
+                        <div style="width:100%; font-size: 16px; text-align: center">საკრედიტო ხელშეკრულება #'.$res[loan_agreement_id].'</div>
                         <div style="width:100%; font-size: 12px; margin-top: 15px; text-align: right;">'.$res[day].'.'.$res[month_id].'.'.$res[year].'</div>
                         <div style="width:100%; font-size: 12px; text-align: left;">ქ. თბილისი</div>
                         <div style="width:100%; font-size: 12px; margin-top: 15px;">
-                                                             წინამდებარე ხელშეკრულების მონაწილე მხარეები, ერთის მხრივ შპს „თი ჯი მობაილ“ (საიდენტიფიკაციო № 205170177), - 
+                                                             წინამდებარე ხელშეკრულების მონაწილე მხარეები, ერთის მხრივ შპს "თი ჯი მობაილ" (საიდენტიფიკაციო № 205170177), - 
                                                             დირექტორი გიორგი კილაძე, წარმომადგენელი ვახტანგ ბახტაძის სახით (მინდობილობა №001, 10.25.2012 წელი)  
-                            (შემდგომში გამსესხებელი), და მეორეს მხრივ, შპს „მანი“/“MANI“ LTD (საიდენტიფიკაციო კ. № 445437965),
-                                                            დირექტორი აკაკი ელისაშვილი (პირადი# 01019068974) (შემდგომში მსესხებელი), 
+                            (შემდგომში გამსესხებელი), და მეორეს მხრივ, შპს  '.$res['ltd_name'].' (საიდენტიფიკაციო კ. № '.$res['ltd_id'].'),
+                                                            დირექტორი '.$res['name'].' (პირადი# '.$res['pid'].') (შემდგომში მსესხებელი), 
                                                             ჩვენს შორის მიღწეული შეთანხმების შედეგად, ვდებთ ხელშეკრულებას სასყიდლიანი სესხის გაცემის შესახებ.
                         </div>
                         <div style="width:100%; font-size: 12px; margin-top: 15px;">
                                                             ტერმინთა განმარტება:
                         </div>
                         <div style="width:100%; font-size: 12px;">
-                            <br>1.1.	გამსესხებელი- შპს  „თი ჯი მობაილ“
-                            <br>1.2.	მსესხებელი- შპს „მანი“/“MANI“ LTD (საიდენტიფიკაციო კ. № 445437965), დირექტორი აკაკი ელისაშვილი (პირადი# 01019068974), რომელიც სარგებლობს ამ ხელშეკრულების შესაბამისად სასყიდლიანი სესხის სახით გაცემული ფულადი თანხით;
+                            <br>1.1.	გამსესხებელი- შპს  "თი ჯი მობაილ"
+                            <br>1.2.	მსესხებელი- შპს '.$res['ltd_name'].' (საიდენტიფიკაციო კ. № '.$res['ltd_id'].'), დირექტორი '.$res['name'].'(პირადი# '.$res['pid'].'), რომელიც სარგებლობს ამ ხელშეკრულების შესაბამისად სასყიდლიანი სესხის სახით გაცემული ფულადი თანხით;
                             <br>1.3.	ხელშეკრულება- წინამდებარე ხელშეკრულება, რომელიც განსაზღვრავს ამ ხელშეკრულების მონაწილე მხარეთა შორის არსებულ უფლებებსა და ვალდებულებებს, ასევე არეგულირებს გამსესხებელსა და მსესხებელს შორის არსებული სამართალურთიერთობის ძირითად პირობებს და პარამეტრებს;
                             <br>1.4.	სესხი- მსესხებელზე წინამდებარე ხელშეკრულებით გათვალისწინებული წესით და ოდენობით პირადი მოხმარებისთვის გაცემული თანხა, საქართველოს მოქმედი კანონმდებლობის შესაბამისად;
                             <br>1.5.	სესხის თანხა- ამ ხელშეკრულების შესაბამისად დადგენილი ოდენობით მსესხებელზე გამსესხებლის მიერ გაცემული ფულადი თანხა;
@@ -1990,20 +2206,20 @@ if ($file_type == 'receipt') {
                             <br>2.	ხელშეკრულების საგანი
                             <br>2.1.	წინამდებარე ხელშეკრულების შესაბამისად, გამსესხებელი კისრულობს ვალდებულებას, გასცეს მსესხებელზე სესხი ამ ხელშეკრულებით გათვალისწინებულ ვადებში და ოდენობით, ხოლო მსესხებელი კისრულობს ვალდებულებას დააბრუნოს მიღებული სესხი, მასზე დარიცხული საპროცენტო სარგებელი, დაფაროს ყველა ფინანსური ხარჯი და სრულიად შეასრულოს ყველა ნაკისრი ვალდებულება.
                             <br>3.	სესხით სარგებლობის პირობები
-                            <br>3.1.	სესხის სრული მოცულობა (ოდენობა) – 2380 აშშ დოლარი (ექვივალენტი ლარში)
+                            <br>3.1.	სესხის სრული მოცულობა (ოდენობა) – '.$res['loan_amount'].' აშშ დოლარი (ექვივალენტი ლარში)
                             <br>3.2.	გატანის პერიოდულობა- ერთჯერადი;
-                            <br>3.3.	სესხით სარგებლობის ვადა- 24 (ოცდაოთხი) თვე;
-                            <br>3.4.	სესხის გაცემის საკომისიო - 3% (აკისრია მსესხებელს)
-                            <br>3.5.	საკრედიტო ხელშეკრულების გაგრძელების საფასური (საჭიროების შემთხვევაში, იხდის მსესხებელი)- 70 ლარი.
-                            <br>3.6.	საკრედიტო ხელშეკრულების გაგრძელების შემთხვევაში, მსესხებელი ვალდებულია დაფაროს ძირი თანხის 15 %;
-                            <br>3.7.	 სადაზღვევო ხარჯი- 3 თვის დაზღვევის საფასური -110 (ასათი) აშშ დოლარი (ექვივალენტი ლარში). მსესხებელს ასევე ეკისრება ყოველ 3 თვეში დაზღვევის საფასურის დამატებით გადახდა იმ დროისთვის არსებული ოდენობით;
-                            <br>3.8.	გირავნობის ხარჯი - 225 (ორასორმოცდათხუთმეტი) ლარი; (აკისრია მსესხებელს)
-                            <br>3.9.	სარგებელი სესხით სარგებლობისთვის- ამ ხელშეკრულების მოქმედების მანძილზე ყოველთვიურად -3% პროცენტი, რაც შეადგენს 140.53 (ასორმოცი და ორმოცდაცამეტი) აშშ დოლარის ექვივალენტს ლარში.
-                            <br>3.10.	იმ შემთხვევაში თუ მსესხებელმა შემოსავლების სამსახურის შეტყობინება N 4035101 განსაზღვრულ                  ვადაში, არ განაბაჟა ავტომობილი, შსს-ს სსიპ მომსახურების სააგენტოს ავტომობილის საექსპორტო დათვალიერების აქტში ასახული თანხა მთლიანად დაემატა ამ ხელშეკრულების 3.1. პუნქტით განსაზღვრული სესხის ძირ თანხას და სრულად დაეკისრება მსესხებელს.
-                            <br>3.11.	მსესხებელი ვალდებულია ამ ხელშეკრულების  3.8 პუნქტში მითითებული თანხის გადახდები განახორციელოს ხელშეკრულების მოქმედების სრული პერიოდის განმავლობაში ყოველი თვის 12 რიცხვში .
+                            <br>3.3.	სესხით სარგებლობის ვადა- '.$res['loan_months'].' ('.float_replase($res['loan_months']).') თვე;
+                            <br>3.4.	სესხის გაცემის საკომისიო - '.$res['loan_fee'].'% (აკისრია მსესხებელს)
+                            <br>3.5.	საკრედიტო ხელშეკრულების გაგრძელების საფასური (საჭიროების შემთხვევაში, იხდის მსესხებელი)- '.$res['proceed_fee'].' ლარი.
+                            <br>3.6.	საკრედიტო ხელშეკრულების გაგრძელების შემთხვევაში, მსესხებელი ვალდებულია დაფაროს ძირი თანხის '.$res['proceed_percent'].' %;
+                            <br>3.7.	 სადაზღვევო ხარჯი- 3 თვის დაზღვევის საფასური -'.$res['insurance_fee'].' ('.float_replase($res['insurance_fee']).') აშშ დოლარი (ექვივალენტი ლარში). მსესხებელს ასევე ეკისრება ყოველ 3 თვეში დაზღვევის საფასურის დამატებით გადახდა იმ დროისთვის არსებული ოდენობით;
+                            <br>3.8.	გირავნობის ხარჯი - '.$res['pledge_fee'].' ('.float_replase($res['pledge_fee']).') ლარი; (აკისრია მსესხებელს)
+                            <br>3.9.	სარგებელი სესხით სარგებლობისთვის- ამ ხელშეკრულების მოქმედების მანძილზე ყოველთვიურად -'.$res['month_percent'].'% პროცენტი, რაც შეადგენს '.$res['monthly_pay'].' (ასორმოცი და ორმოცდაცამეტი) აშშ დოლარის ექვივალენტს ლარში.
+                            <br>3.10.	იმ შემთხვევაში თუ მსესხებელმა შემოსავლების სამსახურის შეტყობინება N '.$res['rs_message_number'].' განსაზღვრულ                  ვადაში, არ განაბაჟა ავტომობილი, შსს-ს სსიპ მომსახურების სააგენტოს ავტომობილის საექსპორტო დათვალიერების აქტში ასახული თანხა მთლიანად დაემატა ამ ხელშეკრულების 3.1. პუნქტით განსაზღვრული სესხის ძირ თანხას და სრულად დაეკისრება მსესხებელს.
+                            <br>3.11.	მსესხებელი ვალდებულია ამ ხელშეკრულების  3.8 პუნქტში მითითებული თანხის გადახდები განახორციელოს ხელშეკრულების მოქმედების სრული პერიოდის განმავლობაში ყოველი თვის '.$res['month_id'].' რიცხვში .
                             <br>3.12.		სესხის გაცემის ვადა – 01 (ერთი) დღე;
                             <br>3.13.	        საპროცენტო სარგებლის გადახის პერიოდულობა განისაზღვრება წინამდებარე ხელშეკრულებით;
-                            ვალუტის კურსი ხელშეკრულების ხელმოწერის დღისათვის – 1 აშშ დოლარი = 2.5887 ლარი;
+                            ვალუტის კურსი ხელშეკრულების ხელმოწერის დღისათვის – 1 აშშ დოლარი = '.$res['exchange_rate'].' ლარი;
                             <br>3.14.	სესხის ხელშეკრულებით გათვალისწინებული სესხის თანხის დადგენილ ვადაში დაუბრუნებლობის ან/და ამ ხელშეკრულებით დადგენილი პერიოდულობით გადაუხდელობის /ნაწილობრივ გადახდის შემთხვევაში, მსესხებელს დაერიცხება ამ ხელშეკრულებით გათვალისწინებული პირგასამტეხლო (საურავი), რომელიც დადგენილია გადახდის ვადის გადაცილებისათვის და რომელიც ანგარიშდება სესხის ძირი თანხიდან.
                             <br>3.15.		ფინანსური ხარჯები: ამ ხელშეკრულების მიზნებისათვის ფინანსურ ხარჯს წარმოადგენს ყველა ის ხარჯი, რომელიც აუცილებელია სესხის გაცემისა და მისი ამოღებისათვის (მათ შორის სადაზღვევო ხარჯი, სააღსრულებო ხარჯი, სესხის გაპრობლემების შემთხვევაში პრობლემური სამსახურის მომსახურების საფასური, აუდიტის მომსახურების საფასური. გირავნობის საფასური, ,სსიპ შსს მომსახურების სააგენტოში გაწეული ხარჯი და ნებისმიერი გადასახდელი, რომელიც გასწია გამსესხებელმა სესხის გასაცემად და დასაბრუნებლად);
                             <br>3.16.		წინამდებარე ხელშეკრულების მიზნებიდან გამომდინარე, ფინანსურ ხარჯად განიხილება ასევე ნებისმიერი გადასახდელი, რომელსაც მსესხებელი უხდის მესამე პირს, თუკი ეს გადასახდელი წარმოადგენს აუცილებლობას და მის გარეშე გამსესხებლის მიერ ნაკისრი ვალდებულების შესრულება იქნება შეუძლებელი ან არსებითად გართულდება;
@@ -2078,7 +2294,7 @@ if ($file_type == 'receipt') {
                             <br>9.1. წინამდებარე ხელშეკრულებით ნაკისრი ვალდებულებების შესრულების მოთხოვნის უზრუნველყოფის დამატებით საშუალებას წარმოადგენს პირგასამტეხლო;
                             <br>9.2. პირგასამტეხლოს გადახდის და მისი ოდენობის დაანგარიშების წესი განისაზღვრება ამ ხელშეკრულებით;
                             <br>9.3. ამ ხელშეკრულების მიზნებისათვის პირგასამტეხლოს გადახდევინება ხორციელდება ნაკისრი ვალდებულების შესრულების ვადის გადაცილებისათვის;
-                            <br>9.4. მსესხებელს, ამ ხელშეკრულებით გათვალსწინებული გადახდის ვადის გადაცილების შემთხვევაში, დაერიცხება პირგასამტეხლო სესხის ძირი თანხის 0.5%-ის ოდენობით ყოველ ვადაგადაცილებულ დღეზე, ვალდებულების დარღვევიდან 3 დღის განმავლობაში; ხოლო გადახდის ვადის გადაცილების 3 (სამი) დღეზე მეტი ვადით გაგრძელების შემთხვევაში მსესხებელს დაერიცხება პირგასამტეხლო სესხის ძირი თანხის 0.8% ყოველ ვადაგადაცილებულ დღეზე.
+                            <br>9.4. მსესხებელს, ამ ხელშეკრულებით გათვალსწინებული გადახდის ვადის გადაცილების შემთხვევაში, დაერიცხება პირგასამტეხლო სესხის ძირი თანხის '.$res['penalty_percent'].'%-ის ოდენობით ყოველ ვადაგადაცილებულ დღეზე, ვალდებულების დარღვევიდან '.$res['penalty_days'].' დღის განმავლობაში; ხოლო გადახდის ვადის გადაცილების '.$res['penalty_days'].' ('.float_replase($res['penalty_days']).') დღეზე მეტი ვადით გაგრძელების შემთხვევაში მსესხებელს დაერიცხება პირგასამტეხლო სესხის ძირი თანხის '.$res['penalty_additional_percent'].'% ყოველ ვადაგადაცილებულ დღეზე.
                             <br>9.5. ამ ხელშეკრულების 9.4 მუხლით გათვალისწინებული პირგასამტეხლოს ოდენობა დაანგარიშდება სესხის ძირი თანხიდან;
                             <br>9.6. პირგასამტეხლოს დაკისრება ხდება ყოველი კონკრეტული ვალდებულების დარღვევისთვის (ყოველთვიური სარგებლის, გრაფიკით გათვალისწინებული თანხის თუ სესხის ძირი თანხის გადახდის ვადაგადაცილების შემთხვევაში)  ცალკ-ცალკე, სესხის ძირი თანხიდან.
                             <br>9.7. სესხის სარგებლის (ან გრაფიკით გათვალისწინებული თანხის) გადახდის ვადის 2 ან მეტი თვით ვადა გადაცილების შემთხვევაში, თითოეული თვის ვადაგადაცილებისათვის მსესხებელს ცალკ-ცალკე ერიცხება პირგასამტეხლო. იმ შემთხვევაში, თუ მსესხებლის მიერ უკვე დარღვეულია სესხის სარგებლის ან გრაფიკით გათვალისწინებული თანხის გადახდის ვადა და მსესხებელმა მომდევნო თვის სარგებლის ან გრაფიკით გათვალისწინებული თანხის გადახდის ვადასაც გადააცილა, პირგასამტეხლოს დარიცხვა პირველი თვის სარგებლისთვის იმავე ფარგლებში გაგრძელდება და ამასთან, მეორე და მომდევნო თვის სარგებლის ან გრაფიკით გათვალისწინებული თანხის ვადაგადაცილებისთვის ცალკ-ცალკე, დამატებით მოხდება პირგასამტეხლოს დარიცხვა სესხის ძირი თანხის 0.5% -ის ოდენობით ყოველ ვადაგადაცილებულ დღეზე.
@@ -2111,11 +2327,11 @@ if ($file_type == 'receipt') {
                                                         
                             
                             </div>
-                            <div style="width:100%; margin-top: 60px;">
+                            <div style="width:100%; margin-top: 100px;">
                                 <table style="width:100%;">
                                     <tr style="width:100%;">
                                         <td style="width:50%;"><label style="font-size: 12px; text-align: left;">გამსესხებელი: შპს "თი ჯი მობაილ" <br> მისამართი: ქ. თბილისი, დოლიძის ქ. 25/121<br>ს/კ 205270277<br>სს "საქართველოს ბანკი"<br>ბანკის კოდი: BAGAGE22<br>ა/ა GE12BG0000000523102000<br>ტელეფონის ნომერი: (ოფისი)<br>ტელეფონის ნომერი: 579796921<br>ტელეფონის ნომერი: 579131813 (ლერი)<br>ხელის მომწერის: ვახტანგ ბახტაძე,<br>პოზიცია: მენეჯერი<br>ელ.ფოსტა: tgmobail@mail.ru<br>s.qurdadze.1@gmail.com</label></td>
-                                        <td style="width:50%;"><label style="font-size: 12px; text-align: left;">მსესხებელი<br>სახელწოდება: შპს „მანი“/“MANI“ LTD<br>(საიდენტიფიკაციო კ. № 445437965 ) <br>დირექტორი: აკაკი ელისაშვილი<br>პირ № 01019068974<br>მისამართი:<br>ტელ.ნომერი:<br>ელ.ფოსტა:</label></td>
+                                        <td style="width:50%;"><label style="font-size: 12px; text-align: left;">მსესხებელი<br>სახელწოდება: შპს '.$res['ltd_name'].'<br>(საიდენტიფიკაციო კ. № '.$res['ltd_id'].' ) <br>დირექტორი: '.$res['name'].'<br>პირ № '.$res['pid'].'<br>მისამართი:'.$res['actual_address'].'<br>'.$res['juridical_address'].'<br>ტელ.ნომერი:'.$res['phone'].' '.$res[client_person_person].'<br>ელ.ფოსტა:'.$res['email'].'</label></td>
                                     </tr>
                                 </table>
                             </div>
@@ -2129,25 +2345,26 @@ if ($file_type == 'receipt') {
                             </div>
                          </div>
                    </div';
-    }elseif ($file_type == 'agreement_fee_trusted'){
+    }elseif ($file_type == 'agreement_fee_ltd_trusted'){
         $data  .= '<div style="size: 7in 9.25in; margin: 15mm 16mm 15mm 16mm;" id="dialog-form">
-                        <div style="width:100%; font-size: 16px; text-align: center">საკრედიტო ხელშეკრულება #1893</div>
+                        <div style="width:100%; font-size: 16px; text-align: center">საკრედიტო ხელშეკრულება #'.$res[loan_agreement_id].'</div>
                         <div style="width:100%; font-size: 12px; margin-top: 15px; text-align: right;">'.$res[day].'.'.$res[month_id].'.'.$res[year].'</div>
                         <div style="width:100%; font-size: 12px; text-align: left;">ქ. თბილისი</div>
                         <div style="width:100%; font-size: 12px; margin-top: 15px;">
-                                                            წინამდებარე ხელშეკრულების მონაწილე მხარეები, ერთის მხრივ შპს „თი ჯი მობაილ“ (საიდენტიფიკაციო № 205170177), - დირექტორი გიორგი კილაძე, 
-                                                            წარმომადგენელი ვახტანგ ბახტაძის სახით (მინდობილობა №001, 10.25.2012 წელი)  (შემდგომში გამსესხებელი), და მეორეს მხრივ, 
-                                                            ბონდო ახვლედიანი (პირადი №01003003149) (შემდგომში მსესხებელი) და (შემდგომში მინდობილი პირი) აკაკი ელისაშვილი (პირადი № 01019068974), 
-                                                            სანოტარო მოქმედების რეგისტრაციის ნომერი N140655779, რეგისტრაციის თარიღი 25.06.2014 წელს, ნოტარიუსი: მარიამ ნავროზაშვილი, 
-                            (მისამართი ქ.თბილისი, თემქის 3მ/რ 4კვ კორ 57-ის მიმდებარედ ტელ:598270730)
-                            (შემდგომში მსესხებელი), ჩვენს შორის მიღწეული შეთანხმების შედეგად, ვდებთ ხელშეკრულებას სასყიდლიანი სესხის გაცემის შესახებ.
+                                                           წინამდებარე ხელშეკრულების მონაწილე მხარეები, ერთის მხრივ შპს „თი ჯი მობაილ“ 
+                            (საიდენტიფიკაციო № 205170177), - დირექტორი გიორგი კილაძე, წარმომადგენილი ვახტანგ ბახტაძის სახით 
+                            (მინდობილობა №001, 10.25.2012 წელი)  (შემდგომში გამსესხებელი), და მეორეს მხრივ, შპს '.$res['ltd_name'].'
+                            (საიდენტიფიკაციო კ. № '.$res['ltd_id'].'), დირექტორი '.$res['name'].' (პირადი# '.$res['pid'].') და (შემდგომში მინდობილი პირი) 
+                            '.$res['trust_pers'].' (პირადი# '.$res['trusted_pid'].'), სანოტარო მოქმედების რეგისტრაციის ნომერი N'.$res['trusting_number'].', რეგისტრაციის თარიღი '.$res['trusting_day'].'.'.$res['trusting_month_id'].'.'.$res['trusting_year'].' წელს, 
+                                                                 ნოტარიუსი : '.$res['trusting_notary'].', (მისამართი '.$res['trusting_notary_address'].' ტელ: '.$res['trusting_notary_phone'].') (შემდგომში მსესხებელი), 
+                                                                 ჩვენს შორის მიღწეული შეთანხმების შედეგად, ვდებთ ხელშეკრულებას სასყიდლიანი სესხის გაცემის შესახებ.
                         </div>
                         <div style="width:100%; font-size: 12px; margin-top: 15px;">
                                                             ტერმინთა განმარტება:
                         </div>
                         <div style="width:100%; font-size: 12px;">
                             <br>1.1.	გამსესხებელი- შპს  „თი ჯი მობაილ“
-                            <br>1.2.	მსესხებელი- ბონდო ახვლედიანი (პირადი №01003003149) (შემდგომში მსესხებელი) და (შემდგომში მინდობილი პირი) აკაკი ელისაშვილი (პირადი № 01019068974), სანოტარო მოქმედების რეგისტრაციის ნომერი N140655779, რეგისტრაციის თარიღი 25.06.2014 წელს, ნოტარიუსი: მარიამ ნავროზაშვილი, (მისამართი ქ.თბილისი, თემქის 3მ/რ 4კვ კორ 57-ის მიმდებარედ ტელ:598270730), რომელიც სარგებლობს ამ ხელშეკრულების შესაბამისად სასყიდლიანი სესხის სახით გაცემული ფულადი თანხით;
+                            <br>1.2.	მსესხებელი – შპს "'.$res['ltd_name'].'" (საიდენტიფიკაციო კ. № '.$res['ltd_id'].'), დირექტორი '.$res['name'].' (პირადი# '.$res['pid'].') და (შემდგომში მინდობილი პირი) '.$res['trust_pers'].' (პირადი# '.$res['trusted_pid'].') სანოტარო მოქმედების რეგისტრაციის ნომერი N'.$res['trusting_number'].', რეგისტრაციის თარიღი '.$res['trusting_day'].'.'.$res['trusting_month_id'].'.'.$res['trusting_year'].' წელს, ნოტარიუსი : '.$res['trusting_notary'].', (მისამართი '.$res['trusting_notary_address'].' ტელ: '.$res['trusting_notary_phone'].'), რომელიც სარგებლობს ამ ხელშეკრულების შესაბამისად სასყიდლიანი სესხის სახით გაცემული ფულადი თანხით;
                             <br>1.3.	ხელშეკრულება- წინამდებარე ხელშეკრულება, რომელიც განსაზღვრავს ამ ხელშეკრულების მონაწილე მხარეთა შორის არსებულ უფლებებსა და ვალდებულებებს, ასევე არეგულირებს გამსესხებელსა და მსესხებელს შორის არსებული სამართალურთიერთობის ძირითად პირობებს და პარამეტრებს;
                             <br>1.4.	სესხი- მსესხებელზე წინამდებარე ხელშეკრულებით გათვალისწინებული წესით და ოდენობით პირადი მოხმარებისთვის გაცემული თანხა, საქართველოს მოქმედი კანონმდებლობის შესაბამისად;
                             <br>1.5.	სესხის თანხა- ამ ხელშეკრულების შესაბამისად დადგენილი ოდენობით მსესხებელზე გამსესხებლის მიერ გაცემული ფულადი თანხა;
@@ -2159,513 +2376,19 @@ if ($file_type == 'receipt') {
                             <br>2.	ხელშეკრულების საგანი
                             <br>2.1.	წინამდებარე ხელშეკრულების შესაბამისად, გამსესხებელი კისრულობს ვალდებულებას, გასცეს მსესხებელზე სესხი ამ ხელშეკრულებით გათვალისწინებულ ვადებში და ოდენობით, ხოლო მსესხებელი კისრულობს ვალდებულებას დააბრუნოს მიღებული სესხი, მასზე დარიცხული საპროცენტო სარგებელი, დაფაროს ყველა ფინანსური ხარჯი და სრულიად შეასრულოს ყველა ნაკისრი ვალდებულება.
                             <br>3.	სესხით სარგებლობის პირობები
-                            <br>3.1.	სესხის სრული მოცულობა (ოდენობა) – 2380 აშშ დოლარი (ექვივალენტი ლარში)
+                            <br>3.1.	სესხის სრული მოცულობა (ოდენობა) – '.$res['loan_amount'].' აშშ დოლარი (ექვივალენტი ლარში)
                             <br>3.2.	გატანის პერიოდულობა- ერთჯერადი;
-                            <br>3.3.	სესხით სარგებლობის ვადა- 24 (ოცდაოთხი) თვე;
-                            <br>3.4.	სესხის გაცემის საკომისიო - 3% (აკისრია მსესხებელს)
-                            <br>3.5.	საკრედიტო ხელშეკრულების გაგრძელების საფასური (საჭიროების შემთხვევაში, იხდის მსესხებელი)- 70 ლარი.
-                            <br>3.6.	საკრედიტო ხელშეკრულების გაგრძელების შემთხვევაში, მსესხებელი ვალდებულია დაფაროს ძირი თანხის 15 %;
-                            <br>3.7.	 სადაზღვევო ხარჯი- 3 თვის დაზღვევის საფასური -110 (ასათი) აშშ დოლარი (ექვივალენტი ლარში). მსესხებელს ასევე ეკისრება ყოველ 3 თვეში დაზღვევის საფასურის დამატებით გადახდა იმ დროისთვის არსებული ოდენობით;
-                            <br>3.8.	გირავნობის ხარჯი - 225 (ორასორმოცდათხუთმეტი) ლარი; (აკისრია მსესხებელს)
-                            <br>3.9.	სარგებელი სესხით სარგებლობისთვის- ამ ხელშეკრულების მოქმედების მანძილზე ყოველთვიურად -3% პროცენტი, რაც შეადგენს 140.53 (ასორმოცი და ორმოცდაცამეტი) აშშ დოლარის ექვივალენტს ლარში.
-                            <br>3.10.	მსესხებელი ვალდებულია ამ ხელშეკრულების  3.8 პუნქტში მითითებული თანხის გადახდები განახორციელოს ხელშეკრულების მოქმედების სრული პერიოდის განმავლობაში ყოველი თვის 12 რიცხვში .
+                            <br>3.3.	სესხით სარგებლობის ვადა- '.$res['loan_months'].' ('.float_replase($res['loan_months']).') თვე;
+                            <br>3.4.	სესხის გაცემის საკომისიო - '.$res['loan_fee'].'% (აკისრია მსესხებელს)
+                            <br>3.5.	საკრედიტო ხელშეკრულების გაგრძელების საფასური (საჭიროების შემთხვევაში, იხდის მსესხებელი)- '.$res['proceed_fee'].' ლარი.
+                            <br>3.6.	საკრედიტო ხელშეკრულების გაგრძელების შემთხვევაში, მსესხებელი ვალდებულია დაფაროს ძირი თანხის '.$res['proceed_percent'].' %;
+                            <br>3.7.	 სადაზღვევო ხარჯი- 3 თვის დაზღვევის საფასური -'.$res['insurance_fee'].' ('.float_replase($res['insurance_fee']).') აშშ დოლარი (ექვივალენტი ლარში). მსესხებელს ასევე ეკისრება ყოველ 3 თვეში დაზღვევის საფასურის დამატებით გადახდა იმ დროისთვის არსებული ოდენობით;
+                            <br>3.8.	გირავნობის ხარჯი - '.$res['pledge_fee'].' ('.float_replase($res['pledge_fee']).') ლარი; (აკისრია მსესხებელს)
+                            <br>3.9.	სარგებელი სესხით სარგებლობისთვის- ამ ხელშეკრულების მოქმედების მანძილზე ყოველთვიურად -'.$res['month_percent'].'% პროცენტი, რაც შეადგენს '.$res['monthly_pay'].' ('.float_replase($res['monthly_pay']).') აშშ დოლარის ექვივალენტს ლარში.
+                            <br>3.10.	მსესხებელი ვალდებულია ამ ხელშეკრულების  3.8 პუნქტში მითითებული თანხის გადახდები განახორციელოს ხელშეკრულების მოქმედების სრული პერიოდის განმავლობაში ყოველი თვის '.$res['month_id'].' რიცხვში .
                             <br>3.11.		სესხის გაცემის ვადა – 01 (ერთი) დღე;
                             <br>3.12.	        საპროცენტო სარგებლის გადახის პერიოდულობა განისაზღვრება წინამდებარე ხელშეკრულებით;
-                            ვალუტის კურსი ხელშეკრულების ხელმოწერის დღისათვის – 1 აშშ დოლარი = 2.5887 ლარი;
-                            <br>3.13.	სესხის ხელშეკრულებით გათვალისწინებული სესხის თანხის დადგენილ ვადაში დაუბრუნებლობის ან/და ამ ხელშეკრულებით დადგენილი პერიოდულობით გადაუხდელობის /ნაწილობრივ გადახდის შემთხვევაში, მსესხებელს დაერიცხება ამ ხელშეკრულებით გათვალისწინებული პირგასამტეხლო (საურავი), რომელიც დადგენილია გადახდის ვადის გადაცილებისათვის და რომელიც ანგარიშდება სესხის ძირი თანხიდან.
-                            <br>3.14.		ფინანსური ხარჯები: ამ ხელშეკრულების მიზნებისათვის ფინანსურ ხარჯს წარმოადგენს ყველა ის ხარჯი, რომელიც აუცილებელია სესხის გაცემისა და მისი ამოღებისათვის (მათ შორის სადაზღვევო ხარჯი, სააღსრულებო ხარჯი, სესხის გაპრობლემების შემთხვევაში პრობლემური სამსახურის მომსახურების საფასური, აუდიტის მომსახურების საფასური. გირავნობის საფასური, ,სსიპ შსს მომსახურების სააგენტოში გაწეული ხარჯი და ნებისმიერი გადასახდელი, რომელიც გასწია გამსესხებელმა სესხის გასაცემად და დასაბრუნებლად);
-                            <br>3.15.		წინამდებარე ხელშეკრულების მიზნებიდან გამომდინარე, ფინანსურ ხარჯად განიხილება ასევე ნებისმიერი გადასახდელი, რომელსაც მსესხებელი უხდის მესამე პირს, თუკი ეს გადასახდელი წარმოადგენს აუცილებლობას და მის გარეშე გამსესხებლის მიერ ნაკისრი ვალდებულების შესრულება იქნება შეუძლებელი ან არსებითად გართულდება;
-                            <br>3.16.	ფინანასურ ხარჯად არ განიხილება ის ხარჯები, რომლების გაღებაც მსესხებლის მიერ იქნებოდა აუცილებელი სესხის მიღების გარეშეც. ასეთი ტიპის ხარჯები არ წარმოადგენს წინამდებარე ხელშეკრულების რეგულირების სფეროს და სრულად ეკისრება მსესხებელს.
-                            <br>4.	სესხის უზრუნველყოფა
-                            <br>4.1.	სესხი უზრუნველყოფილია გირავნობით, ასევე მსესხებლის მთელი ქონებით;
-                            <br>4.2.	უზრუნველყოფიდან გამომდინარე მხარეთა უფლებები და ვალდებულებები დეტალურად რეგულირდება ზემოაღნიშნული სესხის უზრუნველსაყოფად მხარეთა (ან მესამე პირსა და გამსესხებელს შორის) შორის დადებული გირავნობის ხელშეკრულებით;
-                            <br>4.3.	იმ შემთხვევაში, თუ მსესხებლის მიერ ამ ხელშეკრულებით ნაკისრი ვალდებულება იქნება დარღვეული, ხოლო გირავნობის საგნის რეალიზაციის შედეგად მიღებული ამონაგები არ იქნება საკმარისი გამსესხებლის მოთხოვნების სრულად დასაკმაყოფილებლად, გამსესხებელი უფლებამოსილია მოითხოვოს მსესხებლის ან/და მესამე პირის (ასეთის არსებობის შემთხვევაში) საკუთრებაში არსებული უძრავ-მოძრავი ქონების რეალიზაცია საკუთარი მოთხოვნის დაკმაყოფილების მიზნით;
-                            <br>4.4.	მსესხებლის მიერ ნაკისრ ვალდებულებათა ნებისმიერი დარღვევა იძლევა საფუძველს გამოყენებულ იქნას უზრუნველყოფის ხელშეკრულებით გათვალისწინებული აქტივები მათი რეალიზაციის უფლებით;
-                            <br>4.5.	დარღვევად განიხილება მსესხებლის მიერ ნაკისრი ვალდებულების შეუსრულებლობა ან/და ნაწილობრივი შესრულება, რომელიც არ მოდის შესაბამისობაში მსესხებლის მიერ ნაკისრ ვალდებულებებთან და ეწინააღმდეგება ვალდებულების შესრულების ძირითად პრინციპებს.
-                            
-                            <br>4.6.	იმ შემთხვევაში, თუკი უზრუნველყოფის საგნად გამოყენებული ნივთის მდგომარეობა გაუარესდება, განადგურდება, ღირებულება შემცირდება ან/და ადგილი ექნება რაიმე ისეთ გარემოებას, რომლიდან გამომდინარეც რეალური საფრთხე ექმნება სესხის უზრუნველყოფას, მსესხებელი ვალდებულია ამის თაობაზე აცნობოს გამსესხებელს ასეთი ფაქტის დადგომის მომენტიდან 48 (ორმოცდარვა) საათის განმავლობაში;
-                            <br>4.7.	ამ ხელშეკრულების 4.6 პუნქტით გათვალისწინებული შემთხვევის დადგომისას გამსესხებელი უფლებამოსილია მოსთხოვოს მსესხებელს დამატებითი უზურნველყოფის საშუალების წარდგენა, ხოლო მსესხებელი ვალდებულია წარმოუდგინოს გამსესხებელს ასეთი უზურნველყოფა;
-                            <br>4.8.	მსესხებლის მიერ ამ ხელშეკრულების 4.7 პუნქტით გათვალისწინებული უზრუნველყოფის საშუალების წარმოდგენის შეუძლებლობის შემთხვევაში გამსესხებელი უფლებამოსილია დაუყოვნებლივ შეწყიტოს სესხის ხელშეკრულება და მოითხოვოს მსესხებლისაგან სესხის ძირი თანხის და მასზე დარიცხული პროცენტისა თუ პირგასამტეხლოს გადახდა;
-                            <br>4.9.	მსესხებლის მხრიდან ამ ხელშეკრულების 4.6 პუნქტით გათვალისწინებული ინფორმაციის მიწოდების ვალდებულების დარღვევა გამსესხებელს აძლევს უფლებას, ვადაზე ადრე შეწყვიტოს ხელშეკრულება და მოითხოვოს მსესხებლისაგან ნაკისრი ვალდებულების დაუყოვნებლივ სრულად შესრულება.
-                            <br>5. მხარეთა უფლებები და ვალდებულებები
-                            <br>5.1. მხარეები კისრულობენ ვალდებულებას, რომ შეასრულებენ წინამდებარე ხელშეკრულებით ნაკისრ ვალდებულებებს ჯეროვნად, კეთისინდისიერად, დათქმულ დროსა და ადგილას;
-                            <br>5.2. გამსესხებელი უფლებამოსილია:
-                            <br>5.2.1. მოითხოვოს მსესხებლისაგან ხელშეკრულებით ნაკისრი ვალდებულებების განუხრელად დაცვა და შესრულება;
-                            <br>5.2.2. მოითხოვოს მსესხებლისგან სრული ინფომრაციის წარმოდგენა მისი ფინანსური მდგომარეობის შესახებ, როგორც ხელშეკრულების დადებამდე, ასევე ხელშეკრულების მოქმედების სრული პერიოდის განმავლობაში; 
-                            <br>5.2.3. ვადაზე ადრე შეწყვიტოს ხელშეკრულება, თუკი მსესხებლის ქონებრივი მდგომარეობა იმდენად გაუარესდება, რომ შესაძლოა საფრთხე შეექმნება სესხის დაბრუნებას;
-                            <br>5.3. გამსესხებელი ვალდებულია:
-                            <br>5.3.1. გასცეს სესხის თანხა ამ ხელშეკრულებით გათვალისწინებული ოდენობით და ვადებში;
-                            <br>5.3.2. მიაწოდოს მსესხებელს სრული ინფორმაცია სესხის პირობებთან დაკავშირებით;
-                            <br>5.3.3. მიაწოდოს მსესხებელს სრული ინფორმაცია სესხის უზრუნველყოფის პირობებთან დაკავშირებით;
-                            <br>5.3.4. დაუყოვნებლივ აცნობოს მსესხებელს ნებისმიერი ისეთი გარემოების ცვლილების შესახებ, რამაც შეიძლება გავლენა მოახდინოს მხარეთა უფლებებსა და ვალდებულებებზე;
-                            <br>5.3.5. საკუთარი შესაძლებლობის და ვალდებულების ფარგლებში ყველანაირად შეუწყოს ხელი ხელშეკრულების შესრულებას;
-                            <br>5.4. მსესხებელი უფლებამოსილია:
-                            <br>5.4.1. მოსთხოვოს გამსესხებელს სესხის თანხის გადაცემა ამ ხელშეკრულებით გათვალისწინებული პირობებით, ოდენობით და ვადებში;
-                            <br>5.4.2. მიიღოს სრული ინფორმაცია სესხის პირობებზე;
-                            <br>5.4.3. მიიღოს სრული ინფორმაცია მოთხოვნის უზრუნველყოფის პირობებზე;
-                            <br>5.4.4. ვალდებულების სრულად შესრულების შემდგომ მოსთხოვოს გამსესხებელს ვალდებულების შესრულების და შეწყვეტის დამადასტურებელი დოკუმენტის შედგენა და მისთვის გადაცემა;
-                            <br>5.4.5. ამ ხელშეკრულებით გათვალსწინებული წესით და პირობებით ვადაზე ადრე შეასრულოს ნაკისრი ვალდებულება.
-                            <br>5.5. მსესხებელი ვალდებულია:
-                            <br>5.5.1. დააბრუნოს სესხის თანხა სარგებელთან (პროცენტთან) ერთად ამ ხელშეკრულებით გათვალისწინებული ოდენობით, პირობებით და ამ ხელშეკრულებით გათვალისწინებულ ვადებში.
-                            <br>5.5.2. მსესხებელი ვალდებულია დააბრუნოს სესხის თანხა სესხის დაბრუნების დღისთვის არსებული ეროვნული ბანკის კურსით ლარში.
-                            <br>5.5.3. მიაწოდოს გამსესხებელს სრული ინფორმაცია მისი ქონებრივი და ფინანსური მდგომარეობის შესახებ;
-                            <br>5.5.4 დაუყოვნებლიც აცნობოს გამსესხებელს მისი ფინანსური/ქონებრივი მდგომარეობის ისეთი გაუარესების შესახებ, რამაც შეიძლება საფრთხე შეუქმნას მის მიერ ნაკისრი ვალდებულების შესრულებას;
-                            <br>5.5.6 არ იკისროს რაიმე სახის ფინანსური (საკრედიტო, სასესხო და ა.შ.) ვალდებულებები ფიზიკური/იურიდიული პირების წინაშე გამსესხებელთან წინასწარი წერილობითი შეთანხმების გარეშე;
-                            <br>5.5.6 არ გამოიყენოს ამ ხელშეკრულებით გათვალისწინებული ვალდებულების შესრულების უზრუნველსაყოფად გამოყენებული ქონება საკუთარი ან/და მესამე პირების მიერ ნაკისრი ვალდებულების უზრუნველსაყოფად გამსესხებელთან წინასწარი წერილობითი შეთანხმების გარეშე;
-                            <br>5.5.7 აუნაზღაუროს გამსესხებელს ყველა ის დანახარჯი, რომელიც ამ უკანასკნელმა გასწია მსესხებლის მიერ ნაკისრი ვალდებულების იძულებით შესრულებისათვის (ასეთის არსებობის შემთხვევაში- კერძოდ: აღსრულების ეროვნულ ბიუროს მომსახურების საფასური, ,აუდიტის მომსახურებისსაფასური ,სსიპ შსს მომსახურების სააგენტოში გაწეული ხარჯი და ამ სახის სხვა ხარჯები, რომელიც გამსხებელმა გასწია)
-                            <br>5.6. მსესხებელი უფლებამოსილია ვადაზე ადრე შეასრულოს მის მიერ ნაკისრი ვალდებულება;
-                            <br>5.7. მსესხებლის მიერ ნაკისრი ვალდებულების ვადაზე ადრე შესრულებად ჩაითვლება მის მიერ ამ ხელშეკრულების მოქმედების ვადის გასვლამდე სესხის დაფარვა
-                            <br>5.8. გამსესხებელი ვალდებულია მიიღოს მსესხებლისაგან ვადაზე ადრე განხორციელებული შესრულება მხოლოდ იმ პირობით, თუ მსესხებლის მიერ დაფარული იქნება როგორც სესხის ძირი თანხა, ასევე ვადამოსული სარგებელი (პროცენტი) იმ ოდენობით, რა ოდენობითაც ის დაანგარიშდება ანგარიშსწორების დღისათვის;
-                            <br>5.9. ხელშეკრულების მონაწილე მხარეები საკუთარი ვალდებულების ფარგლებში ვალდებული არიან შეასრულონ ყველა ის მოქმედება ან თავი შეიკავონ ყველა იმ მოქმედებისაგან, რომელიც პირდაპირ არ არის გათვალისწინებული ამ ხელშეკრულებით, მაგრამ გამომდინარეობს ვალდებულების არსიდან, ამ ხელშეკრულების მიზნებიდან, კეთილსინდისიერების პრინციპიდან და აუცილებელია მხარეთა ვალდებულებების სრულყოფილად შესასრულებლად.
-                            <br>5.10. მსესხებელს ეკრძალება ა/მანქანის მართვა ნასვამ, ნარკოტიკულ და კანონით აკრძალული ყველანაირი საშუალებების ზემოქმედების ქვეშ. დამგირავებელს ასევე ეკრძალება ა/მანქანის გადაცემა მართვის უფლების არმქონე, არასრულწლოვან, სადაზღვეო პოლისში არ მითითებულ და ზემოთ აღნიშნული კანონით აკრძალული ნივთიერებების და საშუალებების ზემოქმედების ქვეშ მყოფი პირებისადმი.
-                            <br>5.11. მსესხებელს ეკისრება ყველა  ხარჯი, რომელიც გამსესხებელმა გასწია და ყველა სახის ზიანი, რომელიც გამსესხებელს მიადგა მსესხებლის მიერ ამ ხელშეკრულების 5.10 პუნქტის დარღვევის გამო.
-                            <br>6. ვალდებულების დარღვევა
-                            <br>6.1. ამ ხელშეკრულებით გათვალისწინებული ვალდებულების დარღვევად ჩაითვლება მისი მონაწილე რომელიმე მხარის მიერ ნაკისრი ვალდებულების შეუსრულებლობა ან/და არაჯეროვანი შესრულება;
-                            <br>6.2. ვალდებულების შეუსრულებლობად ითვლება ხელშეკრულების მონაწილე რომელიმე მხარის მიერ ნაკისრი ვალდებულების შესრულებაზე უარის გაცხადება ან/და რაიმე ისეთი მოქმედება/უმოქმედობა, რომლიდან გამომდინარეც ნათელია ან არსებობს საფუძვლიანი ეჭვი იმის თაობაზე, რომ ვალდებულება არ იქნება შესრულებული სრულად;
-                            <br>6.3. ვალდებულების არაჯეროვან შესრულებად ითვლება შეთანხმების რომელიმე მხარის მიერ ნაკისრი ვალდებულების არასრულფასოვან ან/და არასრულყოფილი შესრულება;
-                            <br>6.4. ვალდებულების შეუსრულებლობას ან არაჯეროვან შესრულებას უთანაბრდება ამ ხელშეკრულებით გათვალისწინებული ინფორმაციის მიწოდების ვალდებულების დარღვევა, არასწორი ან არასრულფასოვანი ინფორმაციის მიწოდება;
-                            <br>6.5. მსესხებლის მიერ ვალდებულების შეუსრულებლობის/არაჯეროვანი შესრულების შემთხვევაში გამსესხებელი უფლებამოსილია ვადაზე ადრე შეწყვიტოს ხელშეკრულება და მოითხოვოს სესხის ძირი თანხის, მასზე დარიცხული სარგებლის (პროცენტის) და პირგასამტეხლოს გადახდა;
-                            <br>6.6. თითოეული მხარე უფლებამოსილია მოითხოვოს იმ ზიანის ანაზღაურება, რომელიც მას მიადგა ვალდებულების დარღვევის შედეგად;
-                            <br>6.7. ზიანის ანაზღაურება არ ათავისუფლებს ვალდებულების დამრღვევ მხარეს ძირითადი ვალდებულებების შესრულებისაგან
-                            <br>6.8.  5.10. პუნქტით დადგენილი ვალდებულებების შეუსრულებლობის შემთხვევაში ხელშეკრულება ჩაითვლება დარღვეულად და სესხის უზრუნველყოფის საგანი გაჩერდება გამსესხებლის მიერ შერჩეულ ავტოსადგომზე ვალდებულების სრულად შესრულებამდე.
-                            <br>7. ხელშეკრულების შეწყვეტა
-                            <br>7.1. წინამდებარე ხელშეკრულება წყდება  ვალდებულების სრულად შესრულებით;
-                            <br>7.2. წინამდებარე ხელშეკრულება შესრულებით შეწყვეტილად ჩაითვლება მსესხებლის მიერ ნაკისრი ვალდებულების სრულად შესრულებით, ანუ სესხის ძირი თანხის, მასზე დარიცხული სარგებლის (პროცენტის), პირგასამტეხლოს და ხელშეკრულების შეწყვეტისათვის აუცილებელი ხარჯების (ასეთის არსებობის შემთხვევაში) სრულად გადახდის შემდგომ;
-                            <br>7.3. ხელშეკრულების მოქმედების ვადის ამოწურვის შემდგომ ხელშეკრულება გაგრძელდება, თუ ორივე მხარე წერილობით დააფიქსირებს პოზიციას ხელშეკრულების გაგრძელების თაობაზე.
-                            <br>7.4..  მსესხებელი ცნობად იღებს იმ გარემოებას, რომ ხელშეკრულების მოქმედების ვადის  წინამდებარე ხელშეკრულების  7.3 პუნქტით გათვალისწინებული პირობებით გაგრძელების შემთხვევაში მსესხებელი ვალდებულია ხელშეკრულების გაგრძელებისათვის გადაიხადოს სადაზღვევო ხარჯი ამ ხელშეკრულებაში მითითებული ოდენობით.
-                            <br>7.5. მხარეთა შეთანხმებით, ხელშეკრულება შეიძლება გაგრძელდეს ამ ხელშეკრულებით გათვალსწინებული პირობებისაგან განსხვავებული პირობებით .  
-                            <br>7.6 ხელშეკრულების  გაგრძელება დასაშვებია მხოლოდ ამ ხელშეკრულების ფორმის  (წერილობითი) დაცვით . ამ წესის დარღვევით დადებული შეთანხმება არის ბათილი და იურიდიული მნიშვნელობის მქონე შედეგებს არ წარმოშობს .
-                            <br>8. ხელშეკრულების ვადაზე ადრე შეწყვეტა
-                            <br>8.1. ხელშეკრულება შეიძლება ვადაზე ადრე შეწყდეს რომელიმე მხარის მიერ ნაკისრი ვალდებულების დარღვევის შემთხვევაში;
-                            <br>8.2. მსესხებლის მიერ ამ ხელშეკრულებით ნაკისრი  ვალდებულებების დარღვევის შემთხვევაში გამსესხებელი უგზავნის მსესხებელს წერილობით შეტყობინებას ვალდებულების შესრულების მოთხოვნით და განუსაზღვრავს მას ვალდებულების შესრულების ვადას.
-                            <br>8.3. გაფრთხილების მიუხედავად, მსესხებლის მიერ ვალდებულების შეუსრულებლბა ან არაჯეროვანი შესრულება აძლევს გამსესხებელს უფლებას ცალმხრივად, ვადაზე ადრე შეწყვიტოს ხელშეკრულება და მოითხოვოს სესხის თანხის, მასზე დარიცხული სარგებლის (პროცენტის) და პირგასამტეხლოს ერთიანად გადახდა, ასევე ყველა იმ დამატებითი დანახარჯის ანაზღაურება, რომელიც მას წარმოეშვა ხელშეკრულების ვადაზე ადრე შეწყვეტის შედეგად;
-                            <br>8.4. იმ შემთხვევაში, თუ მსესხებელი გაფრთხილების მიღებიდან განსაზღვრულ ვადაში დაფარავს დავალიანებას, ხელშეკრულების მოქმედება გაგრძელდება იმავე პირობებით, რაც გათვალისწინებულია ამ ხელშეკრულებით. 
-                            <br>8.5. ამ ხელშეკრულებით ნაკისრი ვალდებულების  განმეორებით დარღვევის შემთხვევაში გამსესხებელი უფლებამოსილია ცალმხრივად და უპირობოდ შეწყვიტოს ხელშეკრულება და მოითხოვოს სესხის თანხის, მასზე დარიცხული სარგებლის (პროცენტის) და პირგასამტეხლოს ერთიანად გადახდა, ასევე ყველა იმ დამატებითი დანახარჯის ანაზღაურება, რომელიც მას წარმოეშვა ხელშეკრულების ვადაზე ადრე შეწყვეტის შედეგად;
-                            <br>8.6. ამ ხელშეკრულებით  გათვალსიწინებული თანხის ნაწილობრივ გადახდა არ ჩაითვლება ხელშეკრულების პირობის შესრულებად.
-                            <br>9.პირგასამტეხლო
-                            <br>9.1. წინამდებარე ხელშეკრულებით ნაკისრი ვალდებულებების შესრულების მოთხოვნის უზრუნველყოფის დამატებით საშუალებას წარმოადგენს პირგასამტეხლო;
-                            <br>9.2. პირგასამტეხლოს გადახდის და მისი ოდენობის დაანგარიშების წესი განისაზღვრება ამ ხელშეკრულებით;
-                            <br>9.3. ამ ხელშეკრულების მიზნებისათვის პირგასამტეხლოს გადახდევინება ხორციელდება ნაკისრი ვალდებულების შესრულების ვადის გადაცილებისათვის;
-                            <br>9.4. მსესხებელს, ამ ხელშეკრულებით გათვალსწინებული გადახდის ვადის გადაცილების შემთხვევაში, დაერიცხება პირგასამტეხლო სესხის ძირი თანხის 0.5%-ის ოდენობით ყოველ ვადაგადაცილებულ დღეზე, ვალდებულების დარღვევიდან 3 დღის განმავლობაში; ხოლო გადახდის ვადის გადაცილების 3 (სამი) დღეზე მეტი ვადით გაგრძელების შემთხვევაში მსესხებელს დაერიცხება პირგასამტეხლო სესხის ძირი თანხის 0.8% ყოველ ვადაგადაცილებულ დღეზე.
-                            <br>9.5. ამ ხელშეკრულების 9.4 მუხლით გათვალისწინებული პირგასამტეხლოს ოდენობა დაანგარიშდება სესხის ძირი თანხიდან;
-                            <br>9.6. პირგასამტეხლოს დაკისრება ხდება ყოველი კონკრეტული ვალდებულების დარღვევისთვის (ყოველთვიური სარგებლის, გრაფიკით გათვალისწინებული თანხის თუ სესხის ძირი თანხის გადახდის ვადაგადაცილების შემთხვევაში)  ცალკ-ცალკე, სესხის ძირი თანხიდან.
-                            <br>9.7. სესხის სარგებლის (ან გრაფიკით გათვალისწინებული თანხის) გადახდის ვადის 2 ან მეტი თვით ვადა გადაცილების შემთხვევაში, თითოეული თვის ვადაგადაცილებისათვის მსესხებელს ცალკ-ცალკე ერიცხება პირგასამტეხლო. იმ შემთხვევაში, თუ მსესხებლის მიერ უკვე დარღვეულია სესხის სარგებლის ან გრაფიკით გათვალისწინებული თანხის გადახდის ვადა და მსესხებელმა მომდევნო თვის სარგებლის ან გრაფიკით გათვალისწინებული თანხის გადახდის ვადასაც გადააცილა, პირგასამტეხლოს დარიცხვა პირველი თვის სარგებლისთვის იმავე ფარგლებში გაგრძელდება და ამასთან, მეორე და მომდევნო თვის სარგებლის ან გრაფიკით გათვალისწინებული თანხის ვადაგადაცილებისთვის ცალკ-ცალკე, დამატებით მოხდება პირგასამტეხლოს დარიცხვა სესხის ძირი თანხის 0.5% -ის ოდენობით ყოველ ვადაგადაცილებულ დღეზე.
-                            <br>9.8. მსესხებლის მიერ გადახდილი პირგასამტეხლო არ ჩაითვლება სესხის თანხის ანგარიშში და რაიმე ფორმით მისი უკან დაბრუნების მოთხოვნა არის დაუშვებელი;
-                            <br>9.10. პირგასამტეხლოს გადახდა არ ათავისუფლებს მის გადამხდელ მხარეს ძირითადი ვალდებულების შესრულების ვალდებულებისაგან
-                            <br>10. საკონტაქტო ინფორმაცია
-                            <br>10.1. მხარეთა შორის კონტაქტი ხორციელდება ამ ხელშეკრულებაში აღნიშნულ მისამართებზე, ტელეფონებზე და/ან ელ. ფოსტებზე;
-                            <br>10.2. მსესხებელი აცხადებს, რომ თანახმაა მიიღოს გამსესხებლის მიერ გამოგზავნილი ყველანაირი შეტყობინება ამ ხელშეკრულებაში მითითებულ მისამართზე ან ელ/ფოსტებზე;
-                            <br>10.3. მხარეები თანხმდებიან, რომ ყველა შეტყობინება, რომელიც გაიგზავნება ამ ხელშეკრულებაში მითითებულ მსესხებლის მისამართსა თუ ელ ფოსტაზე, მიუხედავად მისი ჩაბარებისა ან მიღებაზე უარის თქმისა, ჩაითვლება მსესხებლის მიერ მიღებულად;
-                            <br>10.4. იმ შემთხვევაში, თუ მსესხებელი შეიცვლის საკონტაქტო მონაცემს -ადგილსამყოფელს (მისამართს), ან ელ/ფოსტას- იგი ვალდებულია აღნიშნულის თაობაზე წერილობით აცნობოს გამსესხებელს;
-                            <br>10.5. ამ ხელშეკრულების 10.4 მუხლით გათვალისწინებულ შემთხვევაში, თუკი მსესხებელი წერილობით აცნობებს გამსესხებელს მის შეცვლილ საკონტაქტო მონაცემს -ადგილსამყოფელს (მისამართს), ან ელ/ფოსტას-საკონტაქტო მისამართად ჩაითვლება ახალი მისამართი და მასზე სრულად გავრცელდება ამ ხელშეკრულებით დადგენილი წესები;
-                            <br>10.6. ამ ხელშეკრულების 10.4 მუხლით გათვალისწინებულ შემთხვევაში, თუკი მსესხებელი წერილობით არ აცნობებს გამსესხებელს მის შეცვლილ საკონტაქტო მონაცემს -ადგილსამყოფელს (მისამართს), ან ელ/ფოსტას-საკონტაქტო მისამართად ჩაითვლება ამ ხელშეკრულებაში მითითებული მონაცემები და მასზე გავრცელდება ამ ხელშეკრულების  წესები;
-                            <br>10.7. მსესხებლის მიერ წინამდებარე ხელშეკრულების 10.4 მუხლით გათვალსწინებული წერილობითი შეტყობინებით გათვალისწინებული ვალდებულების დარღვევის შემთხვევაში, დაუშვებელია რაიმე სახის პრეტენზიის დაყენება გამსესხებლის მიმართ.
-                            <br>11. ფორს-მაჟორი
-                            <br>11.1. ხელშეკრულების მონაწილე მხარეები დროებით თავისუფლდებიან პასუხისმგებლობისაგან იმ შემთხვევაში, თუკი ვალდებულების შეუსრულებლობა გამოწვეულია დაუძლეველი ძალით (ფორს-მაჟორი);
-                            <br>11.2. დაუძლეველ ძალად განიხილება ბუნებრივი კატაკლიზმები ან/და სახელმწიფოს მიერ მიღებული აქტები, რაც დროებით შეუძლებელს ხდის ვალდებულების შესრულებას;
-                            <br>11.3. დაუძლეველი ძალის არსებობის შემთხვევაში ვალდებულების შესრულება გადაიწევა ამ გარემოების აღმოფხვრამდე
-                            <br>12. დავათა გადაჭრის წესი:
-                            <br>12.1.ამ ხელშეკრულებიდან გამომდინარე მხარეთა შორის წარმოშობილ ნებისმიერ დავას განიხილავს თბილისის საქალაქო სასამართლო.
-                            <br>12.2.მხარეები შეთანხმდნენ, რომ პირველი ინსტანციის სასამართლოს მიერ მიღებული გადაწყვეტილება დაუყონებლივ აღსასრულებლად მიექცევა საქართველოს სამოქალაქო საპროცესო კოდექსის 268-ე მუხლის I1 ნაწილის შესაბამისად;
-                            <br>13. დამატებითი დებულებები
-                            <br>13.1. წინამდებარე ხელშეკრულებაზე ხელის მოწერით მხარეები აცხადებენ, რომ ამ ხელშეკრულების ყველა პირობა წარმოადგენს მათი ნამდვილი ნების გამოვლენას, ისინი ეთანხმებიან ამ პირობებს და სურთ ხელშეკრულების დადება აღნიშნული პირობებით;
-                            <br>13.2 წინადებარე ხელშეკრულებაზე ხელის მოწერით მსესხებელი ადასტურებს მის მიერ ამ ხელშეკრულებით გათვალისწინებული ოდენობით სესხის თანხის მიღების ფაქტს.
-                            <br>13.3. წინამდებარე ხელშეკრულების რომელიმე მუხლის, პუნქტის, დათქმის, წინადადების და ა.შ. ბათლობა არ იწვევს მთელი ხელშეკრულების ბათილობას;
-                            <br>13.4. ხელშეკრულების მონაწილე რომელიმე მხარის მიერ უფლების გამოუყენებლობა არ განიხილება ამ უფლებაზე უარის თქმად;
-                            <br>13.5. წინამდებარე ხელშეკრულებაში შეტანილი ცვლილებები ან/და დამატებები ძალაშია მხოლოდ იმ შემთხვევაში, თუ ისინი შესრულებულია ამ ხელშეკრულების ფორმის დაცვით და ხელმოწერილია მხარეთა მიერ. ამ წესის დარღვევით შეტანილი ნებისმიერი ცვლილება ან/და დამატება ბათილია მისი შეტანის მომენტიდან და არ წარმოშობს იურიდიული მნიშნველობის მქონე შედეგებს;
-                            <br>13.6. ამ ხელშეკრულების საფუძველზე ან/და მისგან გამომდინარე ყველა ხელშეკრულება ან/და შეთანხმება და მათი დანართები წარმოადგენენ ამ ხელშეკრულების განუყოფელ ნაწილს და მათზე სრულად ვრცელდება ამ ხელშეკრულების წესები.
-                            <br>13.7. ხელშეკრულება შედგენილია ქართულ ენაზე, თანაბარი იურიდიული ძალის მქონე 02 (ორ) ეგზემპლარად, ხელმოწერილია და ინახება მხარეებთან.
-                                                        
-                             </div>
-                            <div style="width:100%; margin-top: 60px;">
-                                <table style="width:100%;">
-                                    <tr style="width:100%;">
-                                        <td style="width:50%;"><label style="font-size: 12px; text-align: left;">გამსესხებელი: შპს "თი ჯი მობაილ" <br> მისამართი: ქ. თბილისი, დოლიძის ქ. 25/121<br>ს/კ 205270277<br>სს "საქართველოს ბანკი"<br>ბანკის კოდი: BAGAGE22<br>ა/ა GE12BG0000000523102000<br>ტელეფონის ნომერი: (ოფისი)<br>ტელეფონის ნომერი: 579796921<br>ტელეფონის ნომერი: 579131813 (ლერი)<br>ხელის მომწერის: ვახტანგ ბახტაძე,<br>პოზიცია: მენეჯერი<br>ელ.ფოსტა: tgmobail@mail.ru<br>s.qurdadze.1@gmail.com</label></td>
-                                        <td style="width:50%;"><label style="font-size: 12px; text-align: left;">მსესხებელი<br>მინდობილი პირი:</br>პირ № 01019068974<br>მისამართი:<br>ტელ.ნომერი:<br>ელ.ფოსტა:</label></td>
-                                    </tr>
-                                </table>
-                            </div>
-                            <div style="width:100%; margin-top: 60px;">
-                                <table style="width:100%;">
-                                    <tr style="width:100%;">
-                                        <td style="width:50%;"><label style="font-size: 12px;">ხელმოწერა:</label></td>
-                                        <td style="width:50%;"><label style="font-size: 12px;">ხელმოწერა:</label></td>
-                                    </tr>
-                                </table>
-                            </div>
-                         </div>
-                   </div';
-    }elseif ($file_type == 'agreement_fee_trusted'){
-        $data  .= '<div style="size: 7in 9.25in; margin: 15mm 16mm 15mm 16mm;" id="dialog-form">
-                        <div style="width:100%; font-size: 16px; text-align: center">საკრედიტო ხელშეკრულება #1893</div>
-                        <div style="width:100%; font-size: 12px; margin-top: 15px; text-align: right;">'.$res[day].'.'.$res[month_id].'.'.$res[year].'</div>
-                        <div style="width:100%; font-size: 12px; text-align: left;">ქ. თბილისი</div>
-                        <div style="width:100%; font-size: 12px; margin-top: 15px;">
-                                                            წინამდებარე ხელშეკრულების მონაწილე მხარეები, ერთის მხრივ შპს „თი ჯი მობაილ“ (საიდენტიფიკაციო № 205170177), - დირექტორი გიორგი კილაძე, 
-                                                            წარმომადგენელი ვახტანგ ბახტაძის სახით (მინდობილობა №001, 10.25.2012 წელი)  (შემდგომში გამსესხებელი), და მეორეს მხრივ, 
-                                                            ბონდო ახვლედიანი (პირადი №01003003149) (შემდგომში მსესხებელი) და (შემდგომში მინდობილი პირი) აკაკი ელისაშვილი (პირადი № 01019068974), 
-                                                            სანოტარო მოქმედების რეგისტრაციის ნომერი N140655779, რეგისტრაციის თარიღი 25.06.2014 წელს, ნოტარიუსი: მარიამ ნავროზაშვილი, 
-                            (მისამართი ქ.თბილისი, თემქის 3მ/რ 4კვ კორ 57-ის მიმდებარედ ტელ:598270730)
-                            (შემდგომში მსესხებელი), ჩვენს შორის მიღწეული შეთანხმების შედეგად, ვდებთ ხელშეკრულებას სასყიდლიანი სესხის გაცემის შესახებ.
-                        </div>
-                        <div style="width:100%; font-size: 12px; margin-top: 15px;">
-                                                            ტერმინთა განმარტება:
-                        </div>
-                        <div style="width:100%; font-size: 12px;">
-                            <br>1.1.	გამსესხებელი- შპს  „თი ჯი მობაილ“
-                            <br>1.2.	მსესხებელი- ბონდო ახვლედიანი (პირადი №01003003149) (შემდგომში მსესხებელი) და (შემდგომში მინდობილი პირი) აკაკი ელისაშვილი (პირადი № 01019068974), სანოტარო მოქმედების რეგისტრაციის ნომერი N140655779, რეგისტრაციის თარიღი 25.06.2014 წელს, ნოტარიუსი: მარიამ ნავროზაშვილი, (მისამართი ქ.თბილისი, თემქის 3მ/რ 4კვ კორ 57-ის მიმდებარედ ტელ:598270730), რომელიც სარგებლობს ამ ხელშეკრულების შესაბამისად სასყიდლიანი სესხის სახით გაცემული ფულადი თანხით;
-                            <br>1.3.	ხელშეკრულება- წინამდებარე ხელშეკრულება, რომელიც განსაზღვრავს ამ ხელშეკრულების მონაწილე მხარეთა შორის არსებულ უფლებებსა და ვალდებულებებს, ასევე არეგულირებს გამსესხებელსა და მსესხებელს შორის არსებული სამართალურთიერთობის ძირითად პირობებს და პარამეტრებს;
-                            <br>1.4.	სესხი- მსესხებელზე წინამდებარე ხელშეკრულებით გათვალისწინებული წესით და ოდენობით პირადი მოხმარებისთვის გაცემული თანხა, საქართველოს მოქმედი კანონმდებლობის შესაბამისად;
-                            <br>1.5.	სესხის თანხა- ამ ხელშეკრულების შესაბამისად დადგენილი ოდენობით მსესხებელზე გამსესხებლის მიერ გაცემული ფულადი თანხა;
-                            <br>1.6.	საპროცენტო განაკვეთი- ამ ხელშეკრულებით გათვალისწინებული ფიქსირებული ან იდექსირებული საპროცენტო განაკვეთი ხელშეკრულების მოქმედების სრული პერიოდის მანძილზე;
-                            <br>1.7.	ფიქსირებული საპროცენტო განაკვეთი- საპროცენტო განაკვეთი, რომელიც დაფიქსირებულია ამ ხელშეკრულებაში და უცვლელია ხელშეკრულების მოქმედების სრული პერიოდის მანძილზე ან რომლის ცვლილებაც შესაძლებელია ხელშეკრულებით გათვალისწინებული ცალკეული გარემოებების დადგომის შემთხვევაში. საპროცენტო განაკვეთის ცვლილებად არ მიიჩნევა ხელშეკრულებაში წინასწარ განსაზღვრული პირობების შესაბამისად მსესხებლის ქმედებასთან დაკავშირებული გარემოებების დადგომიდან გამომდინარე საპროცენტო განაკვეთის ავტომატური ცვლილება;
-                            <br>1.8.	საპროცენტო სარგებელი- მსესხებლის მიერ გამსესხებლისთვის გადასახდელი ფულადი თანხა, რომელიც წარმოადგენს სარგებელს მსესხებლის მიერ გამსესხებლის მხრიდან მიღებული ფულადი სახსრებით სარგებლობისთვის;
-                            <br>1.9.	ფინანსური ხარჯი- ნებისმიერი ხარჯი, რომელიც პირდაპირ ან არაპირდაპირ გასწია ან/და მომავალში გასწევს გამსესხებელი და წარმოადგენს მსესხებლის მიერ სესხის მიღებასა და მისი ამოღებისთვის საჭირო ხარჯს;
-                            <br>1.10.	მხარეები- გამსესხებელი და მსესხებელი ერთად. 
-                            <br>2.	ხელშეკრულების საგანი
-                            <br>2.1.	წინამდებარე ხელშეკრულების შესაბამისად, გამსესხებელი კისრულობს ვალდებულებას, გასცეს მსესხებელზე სესხი ამ ხელშეკრულებით გათვალისწინებულ ვადებში და ოდენობით, ხოლო მსესხებელი კისრულობს ვალდებულებას დააბრუნოს მიღებული სესხი, მასზე დარიცხული საპროცენტო სარგებელი, დაფაროს ყველა ფინანსური ხარჯი და სრულიად შეასრულოს ყველა ნაკისრი ვალდებულება.
-                            <br>3.	სესხით სარგებლობის პირობები
-                            <br>3.1.	სესხის სრული მოცულობა (ოდენობა) – 2380 აშშ დოლარი (ექვივალენტი ლარში)
-                            <br>3.2.	გატანის პერიოდულობა- ერთჯერადი;
-                            <br>3.3.	სესხით სარგებლობის ვადა- 24 (ოცდაოთხი) თვე;
-                            <br>3.4.	სესხის გაცემის საკომისიო - 3% (აკისრია მსესხებელს)
-                            <br>3.5.	საკრედიტო ხელშეკრულების გაგრძელების საფასური (საჭიროების შემთხვევაში, იხდის მსესხებელი)- 70 ლარი.
-                            <br>3.6.	საკრედიტო ხელშეკრულების გაგრძელების შემთხვევაში, მსესხებელი ვალდებულია დაფაროს ძირი თანხის 15 %;
-                            <br>3.7.	 სადაზღვევო ხარჯი- 3 თვის დაზღვევის საფასური -110 (ასათი) აშშ დოლარი (ექვივალენტი ლარში). მსესხებელს ასევე ეკისრება ყოველ 3 თვეში დაზღვევის საფასურის დამატებით გადახდა იმ დროისთვის არსებული ოდენობით;
-                            <br>3.8.	გირავნობის ხარჯი - 225 (ორასორმოცდათხუთმეტი) ლარი; (აკისრია მსესხებელს)
-                            <br>3.9.	სარგებელი სესხით სარგებლობისთვის- ამ ხელშეკრულების მოქმედების მანძილზე ყოველთვიურად -3% პროცენტი, რაც შეადგენს 140.53 (ასორმოცი და ორმოცდაცამეტი) აშშ დოლარის ექვივალენტს ლარში.
-                            <br>3.10.	მსესხებელი ვალდებულია ამ ხელშეკრულების  3.8 პუნქტში მითითებული თანხის გადახდები განახორციელოს ხელშეკრულების მოქმედების სრული პერიოდის განმავლობაში ყოველი თვის 12 რიცხვში .
-                            <br>3.11.		სესხის გაცემის ვადა – 01 (ერთი) დღე;
-                            <br>3.12.	        საპროცენტო სარგებლის გადახის პერიოდულობა განისაზღვრება წინამდებარე ხელშეკრულებით;
-                            ვალუტის კურსი ხელშეკრულების ხელმოწერის დღისათვის – 1 აშშ დოლარი = 2.5887 ლარი;
-                            <br>3.13.	სესხის ხელშეკრულებით გათვალისწინებული სესხის თანხის დადგენილ ვადაში დაუბრუნებლობის ან/და ამ ხელშეკრულებით დადგენილი პერიოდულობით გადაუხდელობის /ნაწილობრივ გადახდის შემთხვევაში, მსესხებელს დაერიცხება ამ ხელშეკრულებით გათვალისწინებული პირგასამტეხლო (საურავი), რომელიც დადგენილია გადახდის ვადის გადაცილებისათვის და რომელიც ანგარიშდება სესხის ძირი თანხიდან.
-                            <br>3.14.		ფინანსური ხარჯები: ამ ხელშეკრულების მიზნებისათვის ფინანსურ ხარჯს წარმოადგენს ყველა ის ხარჯი, რომელიც აუცილებელია სესხის გაცემისა და მისი ამოღებისათვის (მათ შორის სადაზღვევო ხარჯი, სააღსრულებო ხარჯი, სესხის გაპრობლემების შემთხვევაში პრობლემური სამსახურის მომსახურების საფასური, აუდიტის მომსახურების საფასური. გირავნობის საფასური, ,სსიპ შსს მომსახურების სააგენტოში გაწეული ხარჯი და ნებისმიერი გადასახდელი, რომელიც გასწია გამსესხებელმა სესხის გასაცემად და დასაბრუნებლად);
-                            <br>3.15.		წინამდებარე ხელშეკრულების მიზნებიდან გამომდინარე, ფინანსურ ხარჯად განიხილება ასევე ნებისმიერი გადასახდელი, რომელსაც მსესხებელი უხდის მესამე პირს, თუკი ეს გადასახდელი წარმოადგენს აუცილებლობას და მის გარეშე გამსესხებლის მიერ ნაკისრი ვალდებულების შესრულება იქნება შეუძლებელი ან არსებითად გართულდება;
-                            <br>3.16.	ფინანასურ ხარჯად არ განიხილება ის ხარჯები, რომლების გაღებაც მსესხებლის მიერ იქნებოდა აუცილებელი სესხის მიღების გარეშეც. ასეთი ტიპის ხარჯები არ წარმოადგენს წინამდებარე ხელშეკრულების რეგულირების სფეროს და სრულად ეკისრება მსესხებელს.
-                            <br>4.	სესხის უზრუნველყოფა
-                            <br>4.1.	სესხი უზრუნველყოფილია გირავნობით, ასევე მსესხებლის მთელი ქონებით;
-                            <br>4.2.	უზრუნველყოფიდან გამომდინარე მხარეთა უფლებები და ვალდებულებები დეტალურად რეგულირდება ზემოაღნიშნული სესხის უზრუნველსაყოფად მხარეთა (ან მესამე პირსა და გამსესხებელს შორის) შორის დადებული გირავნობის ხელშეკრულებით;
-                            <br>4.3.	იმ შემთხვევაში, თუ მსესხებლის მიერ ამ ხელშეკრულებით ნაკისრი ვალდებულება იქნება დარღვეული, ხოლო გირავნობის საგნის რეალიზაციის შედეგად მიღებული ამონაგები არ იქნება საკმარისი გამსესხებლის მოთხოვნების სრულად დასაკმაყოფილებლად, გამსესხებელი უფლებამოსილია მოითხოვოს მსესხებლის ან/და მესამე პირის (ასეთის არსებობის შემთხვევაში) საკუთრებაში არსებული უძრავ-მოძრავი ქონების რეალიზაცია საკუთარი მოთხოვნის დაკმაყოფილების მიზნით;
-                            <br>4.4.	მსესხებლის მიერ ნაკისრ ვალდებულებათა ნებისმიერი დარღვევა იძლევა საფუძველს გამოყენებულ იქნას უზრუნველყოფის ხელშეკრულებით გათვალისწინებული აქტივები მათი რეალიზაციის უფლებით;
-                            <br>4.5.	დარღვევად განიხილება მსესხებლის მიერ ნაკისრი ვალდებულების შეუსრულებლობა ან/და ნაწილობრივი შესრულება, რომელიც არ მოდის შესაბამისობაში მსესხებლის მიერ ნაკისრ ვალდებულებებთან და ეწინააღმდეგება ვალდებულების შესრულების ძირითად პრინციპებს.
-                            
-                            <br>4.6.	იმ შემთხვევაში, თუკი უზრუნველყოფის საგნად გამოყენებული ნივთის მდგომარეობა გაუარესდება, განადგურდება, ღირებულება შემცირდება ან/და ადგილი ექნება რაიმე ისეთ გარემოებას, რომლიდან გამომდინარეც რეალური საფრთხე ექმნება სესხის უზრუნველყოფას, მსესხებელი ვალდებულია ამის თაობაზე აცნობოს გამსესხებელს ასეთი ფაქტის დადგომის მომენტიდან 48 (ორმოცდარვა) საათის განმავლობაში;
-                            <br>4.7.	ამ ხელშეკრულების 4.6 პუნქტით გათვალისწინებული შემთხვევის დადგომისას გამსესხებელი უფლებამოსილია მოსთხოვოს მსესხებელს დამატებითი უზურნველყოფის საშუალების წარდგენა, ხოლო მსესხებელი ვალდებულია წარმოუდგინოს გამსესხებელს ასეთი უზურნველყოფა;
-                            <br>4.8.	მსესხებლის მიერ ამ ხელშეკრულების 4.7 პუნქტით გათვალისწინებული უზრუნველყოფის საშუალების წარმოდგენის შეუძლებლობის შემთხვევაში გამსესხებელი უფლებამოსილია დაუყოვნებლივ შეწყიტოს სესხის ხელშეკრულება და მოითხოვოს მსესხებლისაგან სესხის ძირი თანხის და მასზე დარიცხული პროცენტისა თუ პირგასამტეხლოს გადახდა;
-                            <br>4.9.	მსესხებლის მხრიდან ამ ხელშეკრულების 4.6 პუნქტით გათვალისწინებული ინფორმაციის მიწოდების ვალდებულების დარღვევა გამსესხებელს აძლევს უფლებას, ვადაზე ადრე შეწყვიტოს ხელშეკრულება და მოითხოვოს მსესხებლისაგან ნაკისრი ვალდებულების დაუყოვნებლივ სრულად შესრულება.
-                            <br>5. მხარეთა უფლებები და ვალდებულებები
-                            <br>5.1. მხარეები კისრულობენ ვალდებულებას, რომ შეასრულებენ წინამდებარე ხელშეკრულებით ნაკისრ ვალდებულებებს ჯეროვნად, კეთისინდისიერად, დათქმულ დროსა და ადგილას;
-                            <br>5.2. გამსესხებელი უფლებამოსილია:
-                            <br>5.2.1. მოითხოვოს მსესხებლისაგან ხელშეკრულებით ნაკისრი ვალდებულებების განუხრელად დაცვა და შესრულება;
-                            <br>5.2.2. მოითხოვოს მსესხებლისგან სრული ინფომრაციის წარმოდგენა მისი ფინანსური მდგომარეობის შესახებ, როგორც ხელშეკრულების დადებამდე, ასევე ხელშეკრულების მოქმედების სრული პერიოდის განმავლობაში; 
-                            <br>5.2.3. ვადაზე ადრე შეწყვიტოს ხელშეკრულება, თუკი მსესხებლის ქონებრივი მდგომარეობა იმდენად გაუარესდება, რომ შესაძლოა საფრთხე შეექმნება სესხის დაბრუნებას;
-                            <br>5.3. გამსესხებელი ვალდებულია:
-                            <br>5.3.1. გასცეს სესხის თანხა ამ ხელშეკრულებით გათვალისწინებული ოდენობით და ვადებში;
-                            <br>5.3.2. მიაწოდოს მსესხებელს სრული ინფორმაცია სესხის პირობებთან დაკავშირებით;
-                            <br>5.3.3. მიაწოდოს მსესხებელს სრული ინფორმაცია სესხის უზრუნველყოფის პირობებთან დაკავშირებით;
-                            <br>5.3.4. დაუყოვნებლივ აცნობოს მსესხებელს ნებისმიერი ისეთი გარემოების ცვლილების შესახებ, რამაც შეიძლება გავლენა მოახდინოს მხარეთა უფლებებსა და ვალდებულებებზე;
-                            <br>5.3.5. საკუთარი შესაძლებლობის და ვალდებულების ფარგლებში ყველანაირად შეუწყოს ხელი ხელშეკრულების შესრულებას;
-                            <br>5.4. მსესხებელი უფლებამოსილია:
-                            <br>5.4.1. მოსთხოვოს გამსესხებელს სესხის თანხის გადაცემა ამ ხელშეკრულებით გათვალისწინებული პირობებით, ოდენობით და ვადებში;
-                            <br>5.4.2. მიიღოს სრული ინფორმაცია სესხის პირობებზე;
-                            <br>5.4.3. მიიღოს სრული ინფორმაცია მოთხოვნის უზრუნველყოფის პირობებზე;
-                            <br>5.4.4. ვალდებულების სრულად შესრულების შემდგომ მოსთხოვოს გამსესხებელს ვალდებულების შესრულების და შეწყვეტის დამადასტურებელი დოკუმენტის შედგენა და მისთვის გადაცემა;
-                            <br>5.4.5. ამ ხელშეკრულებით გათვალსწინებული წესით და პირობებით ვადაზე ადრე შეასრულოს ნაკისრი ვალდებულება.
-                            <br>5.5. მსესხებელი ვალდებულია:
-                            <br>5.5.1. დააბრუნოს სესხის თანხა სარგებელთან (პროცენტთან) ერთად ამ ხელშეკრულებით გათვალისწინებული ოდენობით, პირობებით და ამ ხელშეკრულებით გათვალისწინებულ ვადებში.
-                            <br>5.5.2. მსესხებელი ვალდებულია დააბრუნოს სესხის თანხა სესხის დაბრუნების დღისთვის არსებული ეროვნული ბანკის კურსით ლარში.
-                            <br>5.5.3. მიაწოდოს გამსესხებელს სრული ინფორმაცია მისი ქონებრივი და ფინანსური მდგომარეობის შესახებ;
-                            <br>5.5.4 დაუყოვნებლიც აცნობოს გამსესხებელს მისი ფინანსური/ქონებრივი მდგომარეობის ისეთი გაუარესების შესახებ, რამაც შეიძლება საფრთხე შეუქმნას მის მიერ ნაკისრი ვალდებულების შესრულებას;
-                            <br>5.5.6 არ იკისროს რაიმე სახის ფინანსური (საკრედიტო, სასესხო და ა.შ.) ვალდებულებები ფიზიკური/იურიდიული პირების წინაშე გამსესხებელთან წინასწარი წერილობითი შეთანხმების გარეშე;
-                            <br>5.5.6 არ გამოიყენოს ამ ხელშეკრულებით გათვალისწინებული ვალდებულების შესრულების უზრუნველსაყოფად გამოყენებული ქონება საკუთარი ან/და მესამე პირების მიერ ნაკისრი ვალდებულების უზრუნველსაყოფად გამსესხებელთან წინასწარი წერილობითი შეთანხმების გარეშე;
-                            <br>5.5.7 აუნაზღაუროს გამსესხებელს ყველა ის დანახარჯი, რომელიც ამ უკანასკნელმა გასწია მსესხებლის მიერ ნაკისრი ვალდებულების იძულებით შესრულებისათვის (ასეთის არსებობის შემთხვევაში- კერძოდ: აღსრულების ეროვნულ ბიუროს მომსახურების საფასური, ,აუდიტის მომსახურებისსაფასური ,სსიპ შსს მომსახურების სააგენტოში გაწეული ხარჯი და ამ სახის სხვა ხარჯები, რომელიც გამსხებელმა გასწია)
-                            <br>5.6. მსესხებელი უფლებამოსილია ვადაზე ადრე შეასრულოს მის მიერ ნაკისრი ვალდებულება;
-                            <br>5.7. მსესხებლის მიერ ნაკისრი ვალდებულების ვადაზე ადრე შესრულებად ჩაითვლება მის მიერ ამ ხელშეკრულების მოქმედების ვადის გასვლამდე სესხის დაფარვა
-                            <br>5.8. გამსესხებელი ვალდებულია მიიღოს მსესხებლისაგან ვადაზე ადრე განხორციელებული შესრულება მხოლოდ იმ პირობით, თუ მსესხებლის მიერ დაფარული იქნება როგორც სესხის ძირი თანხა, ასევე ვადამოსული სარგებელი (პროცენტი) იმ ოდენობით, რა ოდენობითაც ის დაანგარიშდება ანგარიშსწორების დღისათვის;
-                            <br>5.9. ხელშეკრულების მონაწილე მხარეები საკუთარი ვალდებულების ფარგლებში ვალდებული არიან შეასრულონ ყველა ის მოქმედება ან თავი შეიკავონ ყველა იმ მოქმედებისაგან, რომელიც პირდაპირ არ არის გათვალისწინებული ამ ხელშეკრულებით, მაგრამ გამომდინარეობს ვალდებულების არსიდან, ამ ხელშეკრულების მიზნებიდან, კეთილსინდისიერების პრინციპიდან და აუცილებელია მხარეთა ვალდებულებების სრულყოფილად შესასრულებლად.
-                            <br>5.10. მსესხებელს ეკრძალება ა/მანქანის მართვა ნასვამ, ნარკოტიკულ და კანონით აკრძალული ყველანაირი საშუალებების ზემოქმედების ქვეშ. დამგირავებელს ასევე ეკრძალება ა/მანქანის გადაცემა მართვის უფლების არმქონე, არასრულწლოვან, სადაზღვეო პოლისში არ მითითებულ და ზემოთ აღნიშნული კანონით აკრძალული ნივთიერებების და საშუალებების ზემოქმედების ქვეშ მყოფი პირებისადმი.
-                            <br>5.11. მსესხებელს ეკისრება ყველა  ხარჯი, რომელიც გამსესხებელმა გასწია და ყველა სახის ზიანი, რომელიც გამსესხებელს მიადგა მსესხებლის მიერ ამ ხელშეკრულების 5.10 პუნქტის დარღვევის გამო.
-                            <br>6. ვალდებულების დარღვევა
-                            <br>6.1. ამ ხელშეკრულებით გათვალისწინებული ვალდებულების დარღვევად ჩაითვლება მისი მონაწილე რომელიმე მხარის მიერ ნაკისრი ვალდებულების შეუსრულებლობა ან/და არაჯეროვანი შესრულება;
-                            <br>6.2. ვალდებულების შეუსრულებლობად ითვლება ხელშეკრულების მონაწილე რომელიმე მხარის მიერ ნაკისრი ვალდებულების შესრულებაზე უარის გაცხადება ან/და რაიმე ისეთი მოქმედება/უმოქმედობა, რომლიდან გამომდინარეც ნათელია ან არსებობს საფუძვლიანი ეჭვი იმის თაობაზე, რომ ვალდებულება არ იქნება შესრულებული სრულად;
-                            <br>6.3. ვალდებულების არაჯეროვან შესრულებად ითვლება შეთანხმების რომელიმე მხარის მიერ ნაკისრი ვალდებულების არასრულფასოვან ან/და არასრულყოფილი შესრულება;
-                            <br>6.4. ვალდებულების შეუსრულებლობას ან არაჯეროვან შესრულებას უთანაბრდება ამ ხელშეკრულებით გათვალისწინებული ინფორმაციის მიწოდების ვალდებულების დარღვევა, არასწორი ან არასრულფასოვანი ინფორმაციის მიწოდება;
-                            <br>6.5. მსესხებლის მიერ ვალდებულების შეუსრულებლობის/არაჯეროვანი შესრულების შემთხვევაში გამსესხებელი უფლებამოსილია ვადაზე ადრე შეწყვიტოს ხელშეკრულება და მოითხოვოს სესხის ძირი თანხის, მასზე დარიცხული სარგებლის (პროცენტის) და პირგასამტეხლოს გადახდა;
-                            <br>6.6. თითოეული მხარე უფლებამოსილია მოითხოვოს იმ ზიანის ანაზღაურება, რომელიც მას მიადგა ვალდებულების დარღვევის შედეგად;
-                            <br>6.7. ზიანის ანაზღაურება არ ათავისუფლებს ვალდებულების დამრღვევ მხარეს ძირითადი ვალდებულებების შესრულებისაგან
-                            <br>6.8.  5.10. პუნქტით დადგენილი ვალდებულებების შეუსრულებლობის შემთხვევაში ხელშეკრულება ჩაითვლება დარღვეულად და სესხის უზრუნველყოფის საგანი გაჩერდება გამსესხებლის მიერ შერჩეულ ავტოსადგომზე ვალდებულების სრულად შესრულებამდე.
-                            <br>7. ხელშეკრულების შეწყვეტა
-                            <br>7.1. წინამდებარე ხელშეკრულება წყდება  ვალდებულების სრულად შესრულებით;
-                            <br>7.2. წინამდებარე ხელშეკრულება შესრულებით შეწყვეტილად ჩაითვლება მსესხებლის მიერ ნაკისრი ვალდებულების სრულად შესრულებით, ანუ სესხის ძირი თანხის, მასზე დარიცხული სარგებლის (პროცენტის), პირგასამტეხლოს და ხელშეკრულების შეწყვეტისათვის აუცილებელი ხარჯების (ასეთის არსებობის შემთხვევაში) სრულად გადახდის შემდგომ;
-                            <br>7.3. ხელშეკრულების მოქმედების ვადის ამოწურვის შემდგომ ხელშეკრულება გაგრძელდება, თუ ორივე მხარე წერილობით დააფიქსირებს პოზიციას ხელშეკრულების გაგრძელების თაობაზე.
-                            <br>7.4..  მსესხებელი ცნობად იღებს იმ გარემოებას, რომ ხელშეკრულების მოქმედების ვადის  წინამდებარე ხელშეკრულების  7.3 პუნქტით გათვალისწინებული პირობებით გაგრძელების შემთხვევაში მსესხებელი ვალდებულია ხელშეკრულების გაგრძელებისათვის გადაიხადოს სადაზღვევო ხარჯი ამ ხელშეკრულებაში მითითებული ოდენობით.
-                            <br>7.5. მხარეთა შეთანხმებით, ხელშეკრულება შეიძლება გაგრძელდეს ამ ხელშეკრულებით გათვალსწინებული პირობებისაგან განსხვავებული პირობებით .  
-                            <br>7.6 ხელშეკრულების  გაგრძელება დასაშვებია მხოლოდ ამ ხელშეკრულების ფორმის  (წერილობითი) დაცვით . ამ წესის დარღვევით დადებული შეთანხმება არის ბათილი და იურიდიული მნიშვნელობის მქონე შედეგებს არ წარმოშობს .
-                            <br>8. ხელშეკრულების ვადაზე ადრე შეწყვეტა
-                            <br>8.1. ხელშეკრულება შეიძლება ვადაზე ადრე შეწყდეს რომელიმე მხარის მიერ ნაკისრი ვალდებულების დარღვევის შემთხვევაში;
-                            <br>8.2. მსესხებლის მიერ ამ ხელშეკრულებით ნაკისრი  ვალდებულებების დარღვევის შემთხვევაში გამსესხებელი უგზავნის მსესხებელს წერილობით შეტყობინებას ვალდებულების შესრულების მოთხოვნით და განუსაზღვრავს მას ვალდებულების შესრულების ვადას.
-                            <br>8.3. გაფრთხილების მიუხედავად, მსესხებლის მიერ ვალდებულების შეუსრულებლბა ან არაჯეროვანი შესრულება აძლევს გამსესხებელს უფლებას ცალმხრივად, ვადაზე ადრე შეწყვიტოს ხელშეკრულება და მოითხოვოს სესხის თანხის, მასზე დარიცხული სარგებლის (პროცენტის) და პირგასამტეხლოს ერთიანად გადახდა, ასევე ყველა იმ დამატებითი დანახარჯის ანაზღაურება, რომელიც მას წარმოეშვა ხელშეკრულების ვადაზე ადრე შეწყვეტის შედეგად;
-                            <br>8.4. იმ შემთხვევაში, თუ მსესხებელი გაფრთხილების მიღებიდან განსაზღვრულ ვადაში დაფარავს დავალიანებას, ხელშეკრულების მოქმედება გაგრძელდება იმავე პირობებით, რაც გათვალისწინებულია ამ ხელშეკრულებით. 
-                            <br>8.5. ამ ხელშეკრულებით ნაკისრი ვალდებულების  განმეორებით დარღვევის შემთხვევაში გამსესხებელი უფლებამოსილია ცალმხრივად და უპირობოდ შეწყვიტოს ხელშეკრულება და მოითხოვოს სესხის თანხის, მასზე დარიცხული სარგებლის (პროცენტის) და პირგასამტეხლოს ერთიანად გადახდა, ასევე ყველა იმ დამატებითი დანახარჯის ანაზღაურება, რომელიც მას წარმოეშვა ხელშეკრულების ვადაზე ადრე შეწყვეტის შედეგად;
-                            <br>8.6. ამ ხელშეკრულებით  გათვალსიწინებული თანხის ნაწილობრივ გადახდა არ ჩაითვლება ხელშეკრულების პირობის შესრულებად.
-                            <br>9.პირგასამტეხლო
-                            <br>9.1. წინამდებარე ხელშეკრულებით ნაკისრი ვალდებულებების შესრულების მოთხოვნის უზრუნველყოფის დამატებით საშუალებას წარმოადგენს პირგასამტეხლო;
-                            <br>9.2. პირგასამტეხლოს გადახდის და მისი ოდენობის დაანგარიშების წესი განისაზღვრება ამ ხელშეკრულებით;
-                            <br>9.3. ამ ხელშეკრულების მიზნებისათვის პირგასამტეხლოს გადახდევინება ხორციელდება ნაკისრი ვალდებულების შესრულების ვადის გადაცილებისათვის;
-                            <br>9.4. მსესხებელს, ამ ხელშეკრულებით გათვალსწინებული გადახდის ვადის გადაცილების შემთხვევაში, დაერიცხება პირგასამტეხლო სესხის ძირი თანხის 0.5%-ის ოდენობით ყოველ ვადაგადაცილებულ დღეზე, ვალდებულების დარღვევიდან 3 დღის განმავლობაში; ხოლო გადახდის ვადის გადაცილების 3 (სამი) დღეზე მეტი ვადით გაგრძელების შემთხვევაში მსესხებელს დაერიცხება პირგასამტეხლო სესხის ძირი თანხის 0.8% ყოველ ვადაგადაცილებულ დღეზე.
-                            <br>9.5. ამ ხელშეკრულების 9.4 მუხლით გათვალისწინებული პირგასამტეხლოს ოდენობა დაანგარიშდება სესხის ძირი თანხიდან;
-                            <br>9.6. პირგასამტეხლოს დაკისრება ხდება ყოველი კონკრეტული ვალდებულების დარღვევისთვის (ყოველთვიური სარგებლის, გრაფიკით გათვალისწინებული თანხის თუ სესხის ძირი თანხის გადახდის ვადაგადაცილების შემთხვევაში)  ცალკ-ცალკე, სესხის ძირი თანხიდან.
-                            <br>9.7. სესხის სარგებლის (ან გრაფიკით გათვალისწინებული თანხის) გადახდის ვადის 2 ან მეტი თვით ვადა გადაცილების შემთხვევაში, თითოეული თვის ვადაგადაცილებისათვის მსესხებელს ცალკ-ცალკე ერიცხება პირგასამტეხლო. იმ შემთხვევაში, თუ მსესხებლის მიერ უკვე დარღვეულია სესხის სარგებლის ან გრაფიკით გათვალისწინებული თანხის გადახდის ვადა და მსესხებელმა მომდევნო თვის სარგებლის ან გრაფიკით გათვალისწინებული თანხის გადახდის ვადასაც გადააცილა, პირგასამტეხლოს დარიცხვა პირველი თვის სარგებლისთვის იმავე ფარგლებში გაგრძელდება და ამასთან, მეორე და მომდევნო თვის სარგებლის ან გრაფიკით გათვალისწინებული თანხის ვადაგადაცილებისთვის ცალკ-ცალკე, დამატებით მოხდება პირგასამტეხლოს დარიცხვა სესხის ძირი თანხის 0.5% -ის ოდენობით ყოველ ვადაგადაცილებულ დღეზე.
-                            <br>9.8. მსესხებლის მიერ გადახდილი პირგასამტეხლო არ ჩაითვლება სესხის თანხის ანგარიშში და რაიმე ფორმით მისი უკან დაბრუნების მოთხოვნა არის დაუშვებელი;
-                            <br>9.10. პირგასამტეხლოს გადახდა არ ათავისუფლებს მის გადამხდელ მხარეს ძირითადი ვალდებულების შესრულების ვალდებულებისაგან
-                            <br>10. საკონტაქტო ინფორმაცია
-                            <br>10.1. მხარეთა შორის კონტაქტი ხორციელდება ამ ხელშეკრულებაში აღნიშნულ მისამართებზე, ტელეფონებზე და/ან ელ. ფოსტებზე;
-                            <br>10.2. მსესხებელი აცხადებს, რომ თანახმაა მიიღოს გამსესხებლის მიერ გამოგზავნილი ყველანაირი შეტყობინება ამ ხელშეკრულებაში მითითებულ მისამართზე ან ელ/ფოსტებზე;
-                            <br>10.3. მხარეები თანხმდებიან, რომ ყველა შეტყობინება, რომელიც გაიგზავნება ამ ხელშეკრულებაში მითითებულ მსესხებლის მისამართსა თუ ელ ფოსტაზე, მიუხედავად მისი ჩაბარებისა ან მიღებაზე უარის თქმისა, ჩაითვლება მსესხებლის მიერ მიღებულად;
-                            <br>10.4. იმ შემთხვევაში, თუ მსესხებელი შეიცვლის საკონტაქტო მონაცემს -ადგილსამყოფელს (მისამართს), ან ელ/ფოსტას- იგი ვალდებულია აღნიშნულის თაობაზე წერილობით აცნობოს გამსესხებელს;
-                            <br>10.5. ამ ხელშეკრულების 10.4 მუხლით გათვალისწინებულ შემთხვევაში, თუკი მსესხებელი წერილობით აცნობებს გამსესხებელს მის შეცვლილ საკონტაქტო მონაცემს -ადგილსამყოფელს (მისამართს), ან ელ/ფოსტას-საკონტაქტო მისამართად ჩაითვლება ახალი მისამართი და მასზე სრულად გავრცელდება ამ ხელშეკრულებით დადგენილი წესები;
-                            <br>10.6. ამ ხელშეკრულების 10.4 მუხლით გათვალისწინებულ შემთხვევაში, თუკი მსესხებელი წერილობით არ აცნობებს გამსესხებელს მის შეცვლილ საკონტაქტო მონაცემს -ადგილსამყოფელს (მისამართს), ან ელ/ფოსტას-საკონტაქტო მისამართად ჩაითვლება ამ ხელშეკრულებაში მითითებული მონაცემები და მასზე გავრცელდება ამ ხელშეკრულების  წესები;
-                            <br>10.7. მსესხებლის მიერ წინამდებარე ხელშეკრულების 10.4 მუხლით გათვალსწინებული წერილობითი შეტყობინებით გათვალისწინებული ვალდებულების დარღვევის შემთხვევაში, დაუშვებელია რაიმე სახის პრეტენზიის დაყენება გამსესხებლის მიმართ.
-                            <br>11. ფორს-მაჟორი
-                            <br>11.1. ხელშეკრულების მონაწილე მხარეები დროებით თავისუფლდებიან პასუხისმგებლობისაგან იმ შემთხვევაში, თუკი ვალდებულების შეუსრულებლობა გამოწვეულია დაუძლეველი ძალით (ფორს-მაჟორი);
-                            <br>11.2. დაუძლეველ ძალად განიხილება ბუნებრივი კატაკლიზმები ან/და სახელმწიფოს მიერ მიღებული აქტები, რაც დროებით შეუძლებელს ხდის ვალდებულების შესრულებას;
-                            <br>11.3. დაუძლეველი ძალის არსებობის შემთხვევაში ვალდებულების შესრულება გადაიწევა ამ გარემოების აღმოფხვრამდე
-                            <br>12. დავათა გადაჭრის წესი:
-                            <br>12.1.ამ ხელშეკრულებიდან გამომდინარე მხარეთა შორის წარმოშობილ ნებისმიერ დავას განიხილავს თბილისის საქალაქო სასამართლო.
-                            <br>12.2.მხარეები შეთანხმდნენ, რომ პირველი ინსტანციის სასამართლოს მიერ მიღებული გადაწყვეტილება დაუყონებლივ აღსასრულებლად მიექცევა საქართველოს სამოქალაქო საპროცესო კოდექსის 268-ე მუხლის I1 ნაწილის შესაბამისად;
-                            <br>13. დამატებითი დებულებები
-                            <br>13.1. წინამდებარე ხელშეკრულებაზე ხელის მოწერით მხარეები აცხადებენ, რომ ამ ხელშეკრულების ყველა პირობა წარმოადგენს მათი ნამდვილი ნების გამოვლენას, ისინი ეთანხმებიან ამ პირობებს და სურთ ხელშეკრულების დადება აღნიშნული პირობებით;
-                            <br>13.2 წინადებარე ხელშეკრულებაზე ხელის მოწერით მსესხებელი ადასტურებს მის მიერ ამ ხელშეკრულებით გათვალისწინებული ოდენობით სესხის თანხის მიღების ფაქტს.
-                            <br>13.3. წინამდებარე ხელშეკრულების რომელიმე მუხლის, პუნქტის, დათქმის, წინადადების და ა.შ. ბათლობა არ იწვევს მთელი ხელშეკრულების ბათილობას;
-                            <br>13.4. ხელშეკრულების მონაწილე რომელიმე მხარის მიერ უფლების გამოუყენებლობა არ განიხილება ამ უფლებაზე უარის თქმად;
-                            <br>13.5. წინამდებარე ხელშეკრულებაში შეტანილი ცვლილებები ან/და დამატებები ძალაშია მხოლოდ იმ შემთხვევაში, თუ ისინი შესრულებულია ამ ხელშეკრულების ფორმის დაცვით და ხელმოწერილია მხარეთა მიერ. ამ წესის დარღვევით შეტანილი ნებისმიერი ცვლილება ან/და დამატება ბათილია მისი შეტანის მომენტიდან და არ წარმოშობს იურიდიული მნიშნველობის მქონე შედეგებს;
-                            <br>13.6. ამ ხელშეკრულების საფუძველზე ან/და მისგან გამომდინარე ყველა ხელშეკრულება ან/და შეთანხმება და მათი დანართები წარმოადგენენ ამ ხელშეკრულების განუყოფელ ნაწილს და მათზე სრულად ვრცელდება ამ ხელშეკრულების წესები.
-                            <br>13.7. ხელშეკრულება შედგენილია ქართულ ენაზე, თანაბარი იურიდიული ძალის მქონე 02 (ორ) ეგზემპლარად, ხელმოწერილია და ინახება მხარეებთან.
-                                                        
-                             </div>
-                            <div style="width:100%; margin-top: 60px;">
-                                <table style="width:100%;">
-                                    <tr style="width:100%;">
-                                        <td style="width:50%;"><label style="font-size: 12px; text-align: left;">გამსესხებელი: შპს "თი ჯი მობაილ" <br> მისამართი: ქ. თბილისი, დოლიძის ქ. 25/121<br>ს/კ 205270277<br>სს "საქართველოს ბანკი"<br>ბანკის კოდი: BAGAGE22<br>ა/ა GE12BG0000000523102000<br>ტელეფონის ნომერი: (ოფისი)<br>ტელეფონის ნომერი: 579796921<br>ტელეფონის ნომერი: 579131813 (ლერი)<br>ხელის მომწერის: ვახტანგ ბახტაძე,<br>პოზიცია: მენეჯერი<br>ელ.ფოსტა: tgmobail@mail.ru<br>s.qurdadze.1@gmail.com</label></td>
-                                        <td style="width:50%;"><label style="font-size: 12px; text-align: left;">მსესხებელი<br>მინდობილი პირი:</br>პირ № 01019068974<br>მისამართი:<br>ტელ.ნომერი:<br>ელ.ფოსტა:</label></td>
-                                    </tr>
-                                </table>
-                            </div>
-                            <div style="width:100%; margin-top: 60px;">
-                                <table style="width:100%;">
-                                    <tr style="width:100%;">
-                                        <td style="width:50%;"><label style="font-size: 12px;">ხელმოწერა:</label></td>
-                                        <td style="width:50%;"><label style="font-size: 12px;">ხელმოწერა:</label></td>
-                                    </tr>
-                                </table>
-                            </div>
-                         </div>
-                   </div';
-    }elseif ($file_type == 'agreement_fee_'){
-        $data  .= '<div style="size: 7in 9.25in; margin: 15mm 16mm 15mm 16mm;" id="dialog-form">
-                        <div style="width:100%; font-size: 16px; text-align: center">საკრედიტო ხელშეკრულება #1893</div>
-                        <div style="width:100%; font-size: 12px; margin-top: 15px; text-align: right;">'.$res[day].'.'.$res[month_id].'.'.$res[year].'</div>
-                        <div style="width:100%; font-size: 12px; text-align: left;">ქ. თბილისი</div>
-                        <div style="width:100%; font-size: 12px; margin-top: 15px;">
-                                                            წინამდებარე ხელშეკრულების მონაწილე მხარეები, ერთის მხრივ შპს „თი ჯი მობაილ“ (საიდენტიფიკაციო № 205170177), -
-                                                            დირექტორი გიორგი კილაძე, წარმომადგენელი ვახტანგ ბახტაძის სახით (მინდობილობა №001, 10.25.2012 წელი)  (შემდგომში გამსესხებელი),
-                                                            და მეორეს მხრივ, აკაკი ელისაშვილი (პირადი № 01019068974), (შემდგომში მსესხებელი),
-                                                            ჩვენს შორის მიღწეული შეთანხმების შედეგად, ვდებთ ხელშეკრულებას სასყიდლიანი სესხის გაცემის შესახებ.
-                        </div>
-                        <div style="width:100%; font-size: 12px; margin-top: 15px;">
-                                                            ტერმინთა განმარტება:
-                        </div>
-                        <div style="width:100%; font-size: 12px;">
-                            <br>1.1.	გამსესხებელი- შპს  „თი ჯი მობაილ“
-                            <br>1.2.	მსესხებელი- აკაკი ელისაშვილი, რომელიც სარგებლობს ამ ხელშეკრულების შესაბამისად სასყიდლიანი სესხის სახით გაცემული ფულადი თანხით;
-                            <br>1.3.	ხელშეკრულება- წინამდებარე ხელშეკრულება, რომელიც განსაზღვრავს ამ ხელშეკრულების მონაწილე მხარეთა შორის არსებულ უფლებებსა და ვალდებულებებს, ასევე არეგულირებს გამსესხებელსა და მსესხებელს შორის არსებული სამართალურთიერთობის ძირითად პირობებს და პარამეტრებს;
-                            <br>1.4.	სესხი- მსესხებელზე წინამდებარე ხელშეკრულებით გათვალისწინებული წესით და ოდენობით პირადი მოხმარებისთვის გაცემული თანხა, საქართველოს მოქმედი კანონმდებლობის შესაბამისად;
-                            <br>1.5.	სესხის თანხა- ამ ხელშეკრულების შესაბამისად დადგენილი ოდენობით მსესხებელზე გამსესხებლის მიერ გაცემული ფულადი თანხა;
-                            <br>1.6.	საპროცენტო განაკვეთი- ამ ხელშეკრულებით გათვალისწინებული ფიქსირებული ან იდექსირებული საპროცენტო განაკვეთი ხელშეკრულების მოქმედების სრული პერიოდის მანძილზე;
-                            <br>1.7.	ფიქსირებული საპროცენტო განაკვეთი- საპროცენტო განაკვეთი, რომელიც დაფიქსირებულია ამ ხელშეკრულებაში და უცვლელია ხელშეკრულების მოქმედების სრული პერიოდის მანძილზე ან რომლის ცვლილებაც შესაძლებელია ხელშეკრულებით გათვალისწინებული ცალკეული გარემოებების დადგომის შემთხვევაში. საპროცენტო განაკვეთის ცვლილებად არ მიიჩნევა ხელშეკრულებაში წინასწარ განსაზღვრული პირობების შესაბამისად მსესხებლის ქმედებასთან დაკავშირებული გარემოებების დადგომიდან გამომდინარე საპროცენტო განაკვეთის ავტომატური ცვლილება;
-                            <br>1.8.	საპროცენტო სარგებელი- მსესხებლის მიერ გამსესხებლისთვის გადასახდელი ფულადი თანხა, რომელიც წარმოადგენს სარგებელს მსესხებლის მიერ გამსესხებლის მხრიდან მიღებული ფულადი სახსრებით სარგებლობისთვის;
-                            <br>1.9.	ფინანსური ხარჯი- ნებისმიერი ხარჯი, რომელიც პირდაპირ ან არაპირდაპირ გასწია ან/და მომავალში გასწევს გამსესხებელი და წარმოადგენს მსესხებლის მიერ სესხის მიღებასა და მისი ამოღებისთვის საჭირო ხარჯს;
-                            <br>1.10.	მხარეები- გამსესხებელი და მსესხებელი ერთად. 
-                            <br>2.	ხელშეკრულების საგანი
-                            <br>2.1.	წინამდებარე ხელშეკრულების შესაბამისად, გამსესხებელი კისრულობს ვალდებულებას, გასცეს მსესხებელზე სესხი ამ ხელშეკრულებით გათვალისწინებულ ვადებში და ოდენობით, ხოლო მსესხებელი კისრულობს ვალდებულებას დააბრუნოს მიღებული სესხი, მასზე დარიცხული საპროცენტო სარგებელი, დაფაროს ყველა ფინანსური ხარჯი და სრულიად შეასრულოს ყველა ნაკისრი ვალდებულება.
-                            <br>3.	სესხით სარგებლობის პირობები
-                            <br>3.1.	სესხის სრული მოცულობა (ოდენობა) – 2380 აშშ დოლარი (ექვივალენტი ლარში)
-                            <br>3.2.	გატანის პერიოდულობა- ერთჯერადი;
-                            <br>3.3.	სესხით სარგებლობის ვადა- 24 (ოცდაოთხი) თვე;
-                            <br>3.4.	სესხის გაცემის საკომისიო - 3% (აკისრია მსესხებელს)
-                            <br>3.5.	საკრედიტო ხელშეკრულების გაგრძელების საფასური (საჭიროების შემთხვევაში, იხდის მსესხებელი)- 70 ლარი.
-                            <br>3.6.	საკრედიტო ხელშეკრულების გაგრძელების შემთხვევაში, მსესხებელი ვალდებულია დაფაროს ძირი თანხის 15 %;
-                            <br>3.7.	 სადაზღვევო ხარჯი- 3 თვის დაზღვევის საფასური -110 (ასათი) აშშ დოლარი (ექვივალენტი ლარში). მსესხებელს ასევე ეკისრება ყოველ 3 თვეში დაზღვევის საფასურის დამატებით გადახდა იმ დროისთვის არსებული ოდენობით;
-                            <br>3.8.	გირავნობის ხარჯი - 225 (ორასორმოცდათხუთმეტი) ლარი; (აკისრია მსესხებელს)
-                            <br>3.9.	სარგებელი სესხით სარგებლობისთვის- ამ ხელშეკრულების მოქმედების მანძილზე ყოველთვიურად -3% პროცენტი, რაც შეადგენს 140.53 (ასორმოცი და ორმოცდაცამეტი) აშშ დოლარის ექვივალენტს ლარში.
-                            <br>3.10.	მსესხებელი ვალდებულია ამ ხელშეკრულების  3.8 პუნქტში მითითებული თანხის გადახდები განახორციელოს ხელშეკრულების მოქმედების სრული პერიოდის განმავლობაში ყოველი თვის 12 რიცხვში .
-                            <br>3.11.		სესხის გაცემის ვადა – 01 (ერთი) დღე;
-                            <br>3.12.	        საპროცენტო სარგებლის გადახის პერიოდულობა განისაზღვრება წინამდებარე ხელშეკრულებით;
-                            ვალუტის კურსი ხელშეკრულების ხელმოწერის დღისათვის – 1 აშშ დოლარი = 2.5887 ლარი;
-                            <br>3.13.	სესხის ხელშეკრულებით გათვალისწინებული სესხის თანხის დადგენილ ვადაში დაუბრუნებლობის ან/და ამ ხელშეკრულებით დადგენილი პერიოდულობით გადაუხდელობის /ნაწილობრივ გადახდის შემთხვევაში, მსესხებელს დაერიცხება ამ ხელშეკრულებით გათვალისწინებული პირგასამტეხლო (საურავი), რომელიც დადგენილია გადახდის ვადის გადაცილებისათვის და რომელიც ანგარიშდება სესხის ძირი თანხიდან.
-                            <br>3.14.		ფინანსური ხარჯები: ამ ხელშეკრულების მიზნებისათვის ფინანსურ ხარჯს წარმოადგენს ყველა ის ხარჯი, რომელიც აუცილებელია სესხის გაცემისა და მისი ამოღებისათვის (მათ შორის სადაზღვევო ხარჯი, სააღსრულებო ხარჯი, სესხის გაპრობლემების შემთხვევაში პრობლემური სამსახურის მომსახურების საფასური, აუდიტის მომსახურების საფასური. გირავნობის საფასური, ,სსიპ შსს მომსახურების სააგენტოში გაწეული ხარჯი და ნებისმიერი გადასახდელი, რომელიც გასწია გამსესხებელმა სესხის გასაცემად და დასაბრუნებლად);
-                            <br>3.15.		წინამდებარე ხელშეკრულების მიზნებიდან გამომდინარე, ფინანსურ ხარჯად განიხილება ასევე ნებისმიერი გადასახდელი, რომელსაც მსესხებელი უხდის მესამე პირს, თუკი ეს გადასახდელი წარმოადგენს აუცილებლობას და მის გარეშე გამსესხებლის მიერ ნაკისრი ვალდებულების შესრულება იქნება შეუძლებელი ან არსებითად გართულდება;
-                            <br>3.16.	ფინანასურ ხარჯად არ განიხილება ის ხარჯები, რომლების გაღებაც მსესხებლის მიერ იქნებოდა აუცილებელი სესხის მიღების გარეშეც. ასეთი ტიპის ხარჯები არ წარმოადგენს წინამდებარე ხელშეკრულების რეგულირების სფეროს და სრულად ეკისრება მსესხებელს.
-                            <br>4.	სესხის უზრუნველყოფა
-                            <br>4.1.	სესხი უზრუნველყოფილია გირავნობით, ასევე მსესხებლის მთელი ქონებით;
-                            <br>4.2.	უზრუნველყოფიდან გამომდინარე მხარეთა უფლებები და ვალდებულებები დეტალურად რეგულირდება ზემოაღნიშნული სესხის უზრუნველსაყოფად მხარეთა (ან მესამე პირსა და გამსესხებელს შორის) შორის დადებული გირავნობის ხელშეკრულებით;
-                            <br>4.3.	იმ შემთხვევაში, თუ მსესხებლის მიერ ამ ხელშეკრულებით ნაკისრი ვალდებულება იქნება დარღვეული, ხოლო გირავნობის საგნის რეალიზაციის შედეგად მიღებული ამონაგები არ იქნება საკმარისი გამსესხებლის მოთხოვნების სრულად დასაკმაყოფილებლად, გამსესხებელი უფლებამოსილია მოითხოვოს მსესხებლის ან/და მესამე პირის (ასეთის არსებობის შემთხვევაში) საკუთრებაში არსებული უძრავ-მოძრავი ქონების რეალიზაცია საკუთარი მოთხოვნის დაკმაყოფილების მიზნით;
-                            <br>4.4.	მსესხებლის მიერ ნაკისრ ვალდებულებათა ნებისმიერი დარღვევა იძლევა საფუძველს გამოყენებულ იქნას უზრუნველყოფის ხელშეკრულებით გათვალისწინებული აქტივები მათი რეალიზაციის უფლებით;
-                            <br>4.5.	დარღვევად განიხილება მსესხებლის მიერ ნაკისრი ვალდებულების შეუსრულებლობა ან/და ნაწილობრივი შესრულება, რომელიც არ მოდის შესაბამისობაში მსესხებლის მიერ ნაკისრ ვალდებულებებთან და ეწინააღმდეგება ვალდებულების შესრულების ძირითად პრინციპებს.
-                            
-                            <br>4.6.	იმ შემთხვევაში, თუკი უზრუნველყოფის საგნად გამოყენებული ნივთის მდგომარეობა გაუარესდება, განადგურდება, ღირებულება შემცირდება ან/და ადგილი ექნება რაიმე ისეთ გარემოებას, რომლიდან გამომდინარეც რეალური საფრთხე ექმნება სესხის უზრუნველყოფას, მსესხებელი ვალდებულია ამის თაობაზე აცნობოს გამსესხებელს ასეთი ფაქტის დადგომის მომენტიდან 48 (ორმოცდარვა) საათის განმავლობაში;
-                            <br>4.7.	ამ ხელშეკრულების 4.6 პუნქტით გათვალისწინებული შემთხვევის დადგომისას გამსესხებელი უფლებამოსილია მოსთხოვოს მსესხებელს დამატებითი უზურნველყოფის საშუალების წარდგენა, ხოლო მსესხებელი ვალდებულია წარმოუდგინოს გამსესხებელს ასეთი უზურნველყოფა;
-                            <br>4.8.	მსესხებლის მიერ ამ ხელშეკრულების 4.7 პუნქტით გათვალისწინებული უზრუნველყოფის საშუალების წარმოდგენის შეუძლებლობის შემთხვევაში გამსესხებელი უფლებამოსილია დაუყოვნებლივ შეწყიტოს სესხის ხელშეკრულება და მოითხოვოს მსესხებლისაგან სესხის ძირი თანხის და მასზე დარიცხული პროცენტისა თუ პირგასამტეხლოს გადახდა;
-                            <br>4.9.	მსესხებლის მხრიდან ამ ხელშეკრულების 4.6 პუნქტით გათვალისწინებული ინფორმაციის მიწოდების ვალდებულების დარღვევა გამსესხებელს აძლევს უფლებას, ვადაზე ადრე შეწყვიტოს ხელშეკრულება და მოითხოვოს მსესხებლისაგან ნაკისრი ვალდებულების დაუყოვნებლივ სრულად შესრულება.
-                            <br>5. მხარეთა უფლებები და ვალდებულებები
-                            <br>5.1. მხარეები კისრულობენ ვალდებულებას, რომ შეასრულებენ წინამდებარე ხელშეკრულებით ნაკისრ ვალდებულებებს ჯეროვნად, კეთისინდისიერად, დათქმულ დროსა და ადგილას;
-                            <br>5.2. გამსესხებელი უფლებამოსილია:
-                            <br>5.2.1. მოითხოვოს მსესხებლისაგან ხელშეკრულებით ნაკისრი ვალდებულებების განუხრელად დაცვა და შესრულება;
-                            <br>5.2.2. მოითხოვოს მსესხებლისგან სრული ინფომრაციის წარმოდგენა მისი ფინანსური მდგომარეობის შესახებ, როგორც ხელშეკრულების დადებამდე, ასევე ხელშეკრულების მოქმედების სრული პერიოდის განმავლობაში; 
-                            <br>5.2.3. ვადაზე ადრე შეწყვიტოს ხელშეკრულება, თუკი მსესხებლის ქონებრივი მდგომარეობა იმდენად გაუარესდება, რომ შესაძლოა საფრთხე შეექმნება სესხის დაბრუნებას;
-                            <br>5.3. გამსესხებელი ვალდებულია:
-                            <br>5.3.1. გასცეს სესხის თანხა ამ ხელშეკრულებით გათვალისწინებული ოდენობით და ვადებში;
-                            <br>5.3.2. მიაწოდოს მსესხებელს სრული ინფორმაცია სესხის პირობებთან დაკავშირებით;
-                            <br>5.3.3. მიაწოდოს მსესხებელს სრული ინფორმაცია სესხის უზრუნველყოფის პირობებთან დაკავშირებით;
-                            <br>5.3.4. დაუყოვნებლივ აცნობოს მსესხებელს ნებისმიერი ისეთი გარემოების ცვლილების შესახებ, რამაც შეიძლება გავლენა მოახდინოს მხარეთა უფლებებსა და ვალდებულებებზე;
-                            <br>5.3.5. საკუთარი შესაძლებლობის და ვალდებულების ფარგლებში ყველანაირად შეუწყოს ხელი ხელშეკრულების შესრულებას;
-                            <br>5.4. მსესხებელი უფლებამოსილია:
-                            <br>5.4.1. მოსთხოვოს გამსესხებელს სესხის თანხის გადაცემა ამ ხელშეკრულებით გათვალისწინებული პირობებით, ოდენობით და ვადებში;
-                            <br>5.4.2. მიიღოს სრული ინფორმაცია სესხის პირობებზე;
-                            <br>5.4.3. მიიღოს სრული ინფორმაცია მოთხოვნის უზრუნველყოფის პირობებზე;
-                            <br>5.4.4. ვალდებულების სრულად შესრულების შემდგომ მოსთხოვოს გამსესხებელს ვალდებულების შესრულების და შეწყვეტის დამადასტურებელი დოკუმენტის შედგენა და მისთვის გადაცემა;
-                            <br>5.4.5. ამ ხელშეკრულებით გათვალსწინებული წესით და პირობებით ვადაზე ადრე შეასრულოს ნაკისრი ვალდებულება.
-                            <br>5.5. მსესხებელი ვალდებულია:
-                            <br>5.5.1. დააბრუნოს სესხის თანხა სარგებელთან (პროცენტთან) ერთად ამ ხელშეკრულებით გათვალისწინებული ოდენობით, პირობებით და ამ ხელშეკრულებით გათვალისწინებულ ვადებში.
-                            <br>5.5.2. მსესხებელი ვალდებულია დააბრუნოს სესხის თანხა სესხის დაბრუნების დღისთვის არსებული ეროვნული ბანკის კურსით ლარში.
-                            <br>5.5.3. მიაწოდოს გამსესხებელს სრული ინფორმაცია მისი ქონებრივი და ფინანსური მდგომარეობის შესახებ;
-                            <br>5.5.4 დაუყოვნებლიც აცნობოს გამსესხებელს მისი ფინანსური/ქონებრივი მდგომარეობის ისეთი გაუარესების შესახებ, რამაც შეიძლება საფრთხე შეუქმნას მის მიერ ნაკისრი ვალდებულების შესრულებას;
-                            <br>5.5.6 არ იკისროს რაიმე სახის ფინანსური (საკრედიტო, სასესხო და ა.შ.) ვალდებულებები ფიზიკური/იურიდიული პირების წინაშე გამსესხებელთან წინასწარი წერილობითი შეთანხმების გარეშე;
-                            <br>5.5.6 არ გამოიყენოს ამ ხელშეკრულებით გათვალისწინებული ვალდებულების შესრულების უზრუნველსაყოფად გამოყენებული ქონება საკუთარი ან/და მესამე პირების მიერ ნაკისრი ვალდებულების უზრუნველსაყოფად გამსესხებელთან წინასწარი წერილობითი შეთანხმების გარეშე;
-                            <br>5.5.7 აუნაზღაუროს გამსესხებელს ყველა ის დანახარჯი, რომელიც ამ უკანასკნელმა გასწია მსესხებლის მიერ ნაკისრი ვალდებულების იძულებით შესრულებისათვის (ასეთის არსებობის შემთხვევაში- კერძოდ: აღსრულების ეროვნულ ბიუროს მომსახურების საფასური, ,აუდიტის მომსახურებისსაფასური ,სსიპ შსს მომსახურების სააგენტოში გაწეული ხარჯი და ამ სახის სხვა ხარჯები, რომელიც გამსხებელმა გასწია)
-                            <br>5.6. მსესხებელი უფლებამოსილია ვადაზე ადრე შეასრულოს მის მიერ ნაკისრი ვალდებულება;
-                            <br>5.7. მსესხებლის მიერ ნაკისრი ვალდებულების ვადაზე ადრე შესრულებად ჩაითვლება მის მიერ ამ ხელშეკრულების მოქმედების ვადის გასვლამდე სესხის დაფარვა
-                            <br>5.8. გამსესხებელი ვალდებულია მიიღოს მსესხებლისაგან ვადაზე ადრე განხორციელებული შესრულება მხოლოდ იმ პირობით, თუ მსესხებლის მიერ დაფარული იქნება როგორც სესხის ძირი თანხა, ასევე ვადამოსული სარგებელი (პროცენტი) იმ ოდენობით, რა ოდენობითაც ის დაანგარიშდება ანგარიშსწორების დღისათვის;
-                            <br>5.9. ხელშეკრულების მონაწილე მხარეები საკუთარი ვალდებულების ფარგლებში ვალდებული არიან შეასრულონ ყველა ის მოქმედება ან თავი შეიკავონ ყველა იმ მოქმედებისაგან, რომელიც პირდაპირ არ არის გათვალისწინებული ამ ხელშეკრულებით, მაგრამ გამომდინარეობს ვალდებულების არსიდან, ამ ხელშეკრულების მიზნებიდან, კეთილსინდისიერების პრინციპიდან და აუცილებელია მხარეთა ვალდებულებების სრულყოფილად შესასრულებლად.
-                            <br>5.10. მსესხებელს ეკრძალება ა/მანქანის მართვა ნასვამ, ნარკოტიკულ და კანონით აკრძალული ყველანაირი საშუალებების ზემოქმედების ქვეშ. დამგირავებელს ასევე ეკრძალება ა/მანქანის გადაცემა მართვის უფლების არმქონე, არასრულწლოვან, სადაზღვეო პოლისში არ მითითებულ და ზემოთ აღნიშნული კანონით აკრძალული ნივთიერებების და საშუალებების ზემოქმედების ქვეშ მყოფი პირებისადმი.
-                            <br>5.11. მსესხებელს ეკისრება ყველა  ხარჯი, რომელიც გამსესხებელმა გასწია და ყველა სახის ზიანი, რომელიც გამსესხებელს მიადგა მსესხებლის მიერ ამ ხელშეკრულების 5.10 პუნქტის დარღვევის გამო.
-                            <br>6. ვალდებულების დარღვევა
-                            <br>6.1. ამ ხელშეკრულებით გათვალისწინებული ვალდებულების დარღვევად ჩაითვლება მისი მონაწილე რომელიმე მხარის მიერ ნაკისრი ვალდებულების შეუსრულებლობა ან/და არაჯეროვანი შესრულება;
-                            <br>6.2. ვალდებულების შეუსრულებლობად ითვლება ხელშეკრულების მონაწილე რომელიმე მხარის მიერ ნაკისრი ვალდებულების შესრულებაზე უარის გაცხადება ან/და რაიმე ისეთი მოქმედება/უმოქმედობა, რომლიდან გამომდინარეც ნათელია ან არსებობს საფუძვლიანი ეჭვი იმის თაობაზე, რომ ვალდებულება არ იქნება შესრულებული სრულად;
-                            <br>6.3. ვალდებულების არაჯეროვან შესრულებად ითვლება შეთანხმების რომელიმე მხარის მიერ ნაკისრი ვალდებულების არასრულფასოვან ან/და არასრულყოფილი შესრულება;
-                            <br>6.4. ვალდებულების შეუსრულებლობას ან არაჯეროვან შესრულებას უთანაბრდება ამ ხელშეკრულებით გათვალისწინებული ინფორმაციის მიწოდების ვალდებულების დარღვევა, არასწორი ან არასრულფასოვანი ინფორმაციის მიწოდება;
-                            <br>6.5. მსესხებლის მიერ ვალდებულების შეუსრულებლობის/არაჯეროვანი შესრულების შემთხვევაში გამსესხებელი უფლებამოსილია ვადაზე ადრე შეწყვიტოს ხელშეკრულება და მოითხოვოს სესხის ძირი თანხის, მასზე დარიცხული სარგებლის (პროცენტის) და პირგასამტეხლოს გადახდა;
-                            <br>6.6. თითოეული მხარე უფლებამოსილია მოითხოვოს იმ ზიანის ანაზღაურება, რომელიც მას მიადგა ვალდებულების დარღვევის შედეგად;
-                            <br>6.7. ზიანის ანაზღაურება არ ათავისუფლებს ვალდებულების დამრღვევ მხარეს ძირითადი ვალდებულებების შესრულებისაგან
-                            <br>6.8.  5.10. პუნქტით დადგენილი ვალდებულებების შეუსრულებლობის შემთხვევაში ხელშეკრულება ჩაითვლება დარღვეულად და სესხის უზრუნველყოფის საგანი გაჩერდება გამსესხებლის მიერ შერჩეულ ავტოსადგომზე ვალდებულების სრულად შესრულებამდე.
-                            <br>7. ხელშეკრულების შეწყვეტა
-                            <br>7.1. წინამდებარე ხელშეკრულება წყდება  ვალდებულების სრულად შესრულებით;
-                            <br>7.2. წინამდებარე ხელშეკრულება შესრულებით შეწყვეტილად ჩაითვლება მსესხებლის მიერ ნაკისრი ვალდებულების სრულად შესრულებით, ანუ სესხის ძირი თანხის, მასზე დარიცხული სარგებლის (პროცენტის), პირგასამტეხლოს და ხელშეკრულების შეწყვეტისათვის აუცილებელი ხარჯების (ასეთის არსებობის შემთხვევაში) სრულად გადახდის შემდგომ;
-                            <br>7.3. ხელშეკრულების მოქმედების ვადის ამოწურვის შემდგომ ხელშეკრულება გაგრძელდება, თუ ორივე მხარე წერილობით დააფიქსირებს პოზიციას ხელშეკრულების გაგრძელების თაობაზე.
-                            <br>7.4..  მსესხებელი ცნობად იღებს იმ გარემოებას, რომ ხელშეკრულების მოქმედების ვადის  წინამდებარე ხელშეკრულების  7.3 პუნქტით გათვალისწინებული პირობებით გაგრძელების შემთხვევაში მსესხებელი ვალდებულია ხელშეკრულების გაგრძელებისათვის გადაიხადოს სადაზღვევო ხარჯი ამ ხელშეკრულებაში მითითებული ოდენობით.
-                            <br>7.5. მხარეთა შეთანხმებით, ხელშეკრულება შეიძლება გაგრძელდეს ამ ხელშეკრულებით გათვალსწინებული პირობებისაგან განსხვავებული პირობებით .  
-                            <br>7.6 ხელშეკრულების  გაგრძელება დასაშვებია მხოლოდ ამ ხელშეკრულების ფორმის  (წერილობითი) დაცვით . ამ წესის დარღვევით დადებული შეთანხმება არის ბათილი და იურიდიული მნიშვნელობის მქონე შედეგებს არ წარმოშობს .
-                            <br>8. ხელშეკრულების ვადაზე ადრე შეწყვეტა
-                            <br>8.1. ხელშეკრულება შეიძლება ვადაზე ადრე შეწყდეს რომელიმე მხარის მიერ ნაკისრი ვალდებულების დარღვევის შემთხვევაში;
-                            <br>8.2. მსესხებლის მიერ ამ ხელშეკრულებით ნაკისრი  ვალდებულებების დარღვევის შემთხვევაში გამსესხებელი უგზავნის მსესხებელს წერილობით შეტყობინებას ვალდებულების შესრულების მოთხოვნით და განუსაზღვრავს მას ვალდებულების შესრულების ვადას.
-                            <br>8.3. გაფრთხილების მიუხედავად, მსესხებლის მიერ ვალდებულების შეუსრულებლბა ან არაჯეროვანი შესრულება აძლევს გამსესხებელს უფლებას ცალმხრივად, ვადაზე ადრე შეწყვიტოს ხელშეკრულება და მოითხოვოს სესხის თანხის, მასზე დარიცხული სარგებლის (პროცენტის) და პირგასამტეხლოს ერთიანად გადახდა, ასევე ყველა იმ დამატებითი დანახარჯის ანაზღაურება, რომელიც მას წარმოეშვა ხელშეკრულების ვადაზე ადრე შეწყვეტის შედეგად;
-                            <br>8.4. იმ შემთხვევაში, თუ მსესხებელი გაფრთხილების მიღებიდან განსაზღვრულ ვადაში დაფარავს დავალიანებას, ხელშეკრულების მოქმედება გაგრძელდება იმავე პირობებით, რაც გათვალისწინებულია ამ ხელშეკრულებით. 
-                            <br>8.5. ამ ხელშეკრულებით ნაკისრი ვალდებულების  განმეორებით დარღვევის შემთხვევაში გამსესხებელი უფლებამოსილია ცალმხრივად და უპირობოდ შეწყვიტოს ხელშეკრულება და მოითხოვოს სესხის თანხის, მასზე დარიცხული სარგებლის (პროცენტის) და პირგასამტეხლოს ერთიანად გადახდა, ასევე ყველა იმ დამატებითი დანახარჯის ანაზღაურება, რომელიც მას წარმოეშვა ხელშეკრულების ვადაზე ადრე შეწყვეტის შედეგად;
-                            <br>8.6. ამ ხელშეკრულებით  გათვალსიწინებული თანხის ნაწილობრივ გადახდა არ ჩაითვლება ხელშეკრულების პირობის შესრულებად.
-                            <br>9.პირგასამტეხლო
-                            <br>9.1. წინამდებარე ხელშეკრულებით ნაკისრი ვალდებულებების შესრულების მოთხოვნის უზრუნველყოფის დამატებით საშუალებას წარმოადგენს პირგასამტეხლო;
-                            <br>9.2. პირგასამტეხლოს გადახდის და მისი ოდენობის დაანგარიშების წესი განისაზღვრება ამ ხელშეკრულებით;
-                            <br>9.3. ამ ხელშეკრულების მიზნებისათვის პირგასამტეხლოს გადახდევინება ხორციელდება ნაკისრი ვალდებულების შესრულების ვადის გადაცილებისათვის;
-                            <br>9.4. მსესხებელს, ამ ხელშეკრულებით გათვალსწინებული გადახდის ვადის გადაცილების შემთხვევაში, დაერიცხება პირგასამტეხლო სესხის ძირი თანხის 0.5%-ის ოდენობით ყოველ ვადაგადაცილებულ დღეზე, ვალდებულების დარღვევიდან 3 დღის განმავლობაში; ხოლო გადახდის ვადის გადაცილების 3 (სამი) დღეზე მეტი ვადით გაგრძელების შემთხვევაში მსესხებელს დაერიცხება პირგასამტეხლო სესხის ძირი თანხის 0.8% ყოველ ვადაგადაცილებულ დღეზე.
-                            <br>9.5. ამ ხელშეკრულების 9.4 მუხლით გათვალისწინებული პირგასამტეხლოს ოდენობა დაანგარიშდება სესხის ძირი თანხიდან;
-                            <br>9.6. პირგასამტეხლოს დაკისრება ხდება ყოველი კონკრეტული ვალდებულების დარღვევისთვის (ყოველთვიური სარგებლის, გრაფიკით გათვალისწინებული თანხის თუ სესხის ძირი თანხის გადახდის ვადაგადაცილების შემთხვევაში)  ცალკ-ცალკე, სესხის ძირი თანხიდან.
-                            <br>9.7. სესხის სარგებლის (ან გრაფიკით გათვალისწინებული თანხის) გადახდის ვადის 2 ან მეტი თვით ვადა გადაცილების შემთხვევაში, თითოეული თვის ვადაგადაცილებისათვის მსესხებელს ცალკ-ცალკე ერიცხება პირგასამტეხლო. იმ შემთხვევაში, თუ მსესხებლის მიერ უკვე დარღვეულია სესხის სარგებლის ან გრაფიკით გათვალისწინებული თანხის გადახდის ვადა და მსესხებელმა მომდევნო თვის სარგებლის ან გრაფიკით გათვალისწინებული თანხის გადახდის ვადასაც გადააცილა, პირგასამტეხლოს დარიცხვა პირველი თვის სარგებლისთვის იმავე ფარგლებში გაგრძელდება და ამასთან, მეორე და მომდევნო თვის სარგებლის ან გრაფიკით გათვალისწინებული თანხის ვადაგადაცილებისთვის ცალკ-ცალკე, დამატებით მოხდება პირგასამტეხლოს დარიცხვა სესხის ძირი თანხის 0.5% -ის ოდენობით ყოველ ვადაგადაცილებულ დღეზე.
-                            <br>9.8. მსესხებლის მიერ გადახდილი პირგასამტეხლო არ ჩაითვლება სესხის თანხის ანგარიშში და რაიმე ფორმით მისი უკან დაბრუნების მოთხოვნა არის დაუშვებელი;
-                            <br>9.10. პირგასამტეხლოს გადახდა არ ათავისუფლებს მის გადამხდელ მხარეს ძირითადი ვალდებულების შესრულების ვალდებულებისაგან
-                            <br>10. საკონტაქტო ინფორმაცია
-                            <br>10.1. მხარეთა შორის კონტაქტი ხორციელდება ამ ხელშეკრულებაში აღნიშნულ მისამართებზე, ტელეფონებზე და/ან ელ. ფოსტებზე;
-                            <br>10.2. მსესხებელი აცხადებს, რომ თანახმაა მიიღოს გამსესხებლის მიერ გამოგზავნილი ყველანაირი შეტყობინება ამ ხელშეკრულებაში მითითებულ მისამართზე ან ელ/ფოსტებზე;
-                            <br>10.3. მხარეები თანხმდებიან, რომ ყველა შეტყობინება, რომელიც გაიგზავნება ამ ხელშეკრულებაში მითითებულ მსესხებლის მისამართსა თუ ელ ფოსტაზე, მიუხედავად მისი ჩაბარებისა ან მიღებაზე უარის თქმისა, ჩაითვლება მსესხებლის მიერ მიღებულად;
-                            <br>10.4. იმ შემთხვევაში, თუ მსესხებელი შეიცვლის საკონტაქტო მონაცემს -ადგილსამყოფელს (მისამართს), ან ელ/ფოსტას- იგი ვალდებულია აღნიშნულის თაობაზე წერილობით აცნობოს გამსესხებელს;
-                            <br>10.5. ამ ხელშეკრულების 10.4 მუხლით გათვალისწინებულ შემთხვევაში, თუკი მსესხებელი წერილობით აცნობებს გამსესხებელს მის შეცვლილ საკონტაქტო მონაცემს -ადგილსამყოფელს (მისამართს), ან ელ/ფოსტას-საკონტაქტო მისამართად ჩაითვლება ახალი მისამართი და მასზე სრულად გავრცელდება ამ ხელშეკრულებით დადგენილი წესები;
-                            <br>10.6. ამ ხელშეკრულების 10.4 მუხლით გათვალისწინებულ შემთხვევაში, თუკი მსესხებელი წერილობით არ აცნობებს გამსესხებელს მის შეცვლილ საკონტაქტო მონაცემს -ადგილსამყოფელს (მისამართს), ან ელ/ფოსტას-საკონტაქტო მისამართად ჩაითვლება ამ ხელშეკრულებაში მითითებული მონაცემები და მასზე გავრცელდება ამ ხელშეკრულების  წესები;
-                            <br>10.7. მსესხებლის მიერ წინამდებარე ხელშეკრულების 10.4 მუხლით გათვალსწინებული წერილობითი შეტყობინებით გათვალისწინებული ვალდებულების დარღვევის შემთხვევაში, დაუშვებელია რაიმე სახის პრეტენზიის დაყენება გამსესხებლის მიმართ.
-                            <br>11. ფორს-მაჟორი
-                            <br>11.1. ხელშეკრულების მონაწილე მხარეები დროებით თავისუფლდებიან პასუხისმგებლობისაგან იმ შემთხვევაში, თუკი ვალდებულების შეუსრულებლობა გამოწვეულია დაუძლეველი ძალით (ფორს-მაჟორი);
-                            <br>11.2. დაუძლეველ ძალად განიხილება ბუნებრივი კატაკლიზმები ან/და სახელმწიფოს მიერ მიღებული აქტები, რაც დროებით შეუძლებელს ხდის ვალდებულების შესრულებას;
-                            <br>11.3. დაუძლეველი ძალის არსებობის შემთხვევაში ვალდებულების შესრულება გადაიწევა ამ გარემოების აღმოფხვრამდე
-                            <br>12. დავათა გადაჭრის წესი:
-                            <br>12.1.ამ ხელშეკრულებიდან გამომდინარე მხარეთა შორის წარმოშობილ ნებისმიერ დავას განიხილავს თბილისის საქალაქო სასამართლო.
-                            <br>12.2.მხარეები შეთანხმდნენ, რომ პირველი ინსტანციის სასამართლოს მიერ მიღებული გადაწყვეტილება დაუყონებლივ აღსასრულებლად მიექცევა საქართველოს სამოქალაქო საპროცესო კოდექსის 268-ე მუხლის I1 ნაწილის შესაბამისად;
-                            <br>13. დამატებითი დებულებები
-                            <br>13.1. წინამდებარე ხელშეკრულებაზე ხელის მოწერით მხარეები აცხადებენ, რომ ამ ხელშეკრულების ყველა პირობა წარმოადგენს მათი ნამდვილი ნების გამოვლენას, ისინი ეთანხმებიან ამ პირობებს და სურთ ხელშეკრულების დადება აღნიშნული პირობებით;
-                            <br>13.2 წინადებარე ხელშეკრულებაზე ხელის მოწერით მსესხებელი ადასტურებს მის მიერ ამ ხელშეკრულებით გათვალისწინებული ოდენობით სესხის თანხის მიღების ფაქტს.
-                            <br>13.3. წინამდებარე ხელშეკრულების რომელიმე მუხლის, პუნქტის, დათქმის, წინადადების და ა.შ. ბათლობა არ იწვევს მთელი ხელშეკრულების ბათილობას;
-                            <br>13.4. ხელშეკრულების მონაწილე რომელიმე მხარის მიერ უფლების გამოუყენებლობა არ განიხილება ამ უფლებაზე უარის თქმად;
-                            <br>13.5. წინამდებარე ხელშეკრულებაში შეტანილი ცვლილებები ან/და დამატებები ძალაშია მხოლოდ იმ შემთხვევაში, თუ ისინი შესრულებულია ამ ხელშეკრულების ფორმის დაცვით და ხელმოწერილია მხარეთა მიერ. ამ წესის დარღვევით შეტანილი ნებისმიერი ცვლილება ან/და დამატება ბათილია მისი შეტანის მომენტიდან და არ წარმოშობს იურიდიული მნიშნველობის მქონე შედეგებს;
-                            <br>13.6. ამ ხელშეკრულების საფუძველზე ან/და მისგან გამომდინარე ყველა ხელშეკრულება ან/და შეთანხმება და მათი დანართები წარმოადგენენ ამ ხელშეკრულების განუყოფელ ნაწილს და მათზე სრულად ვრცელდება ამ ხელშეკრულების წესები.
-                            <br>13.7. ხელშეკრულება შედგენილია ქართულ ენაზე, თანაბარი იურიდიული ძალის მქონე 02 (ორ) ეგზემპლარად, ხელმოწერილია და ინახება მხარეებთან.
-                            
-                            </div>
-                            <div style="width:100%; margin-top: 60px;">
-                                <table style="width:100%;">
-                                    <tr style="width:100%;">
-                                        <td style="width:50%;"><label style="font-size: 12px; text-align: left;">გამსესხებელი: შპს "თი ჯი მობაილ" <br> მისამართი: ქ. თბილისი, დოლიძის ქ. 25/121<br>ს/კ 205270277<br>სს "საქართველოს ბანკი"<br>ბანკის კოდი: BAGAGE22<br>ა/ა GE12BG0000000523102000<br>ტელეფონის ნომერი: (ოფისი)<br>ტელეფონის ნომერი: 579796921<br>ტელეფონის ნომერი: 579131813 (ლერი)<br>ხელის მომწერის: ვახტანგ ბახტაძე,<br>პოზიცია: მენეჯერი<br>ელ.ფოსტა: tgmobail@mail.ru<br>s.qurdadze.1@gmail.com</label></td>
-                                        <td style="width:50%;"><label style="font-size: 12px; text-align: left;">მსესხებელი: აკაკი ელისაშვილი<br>პირ № 01019068974<br>მინდობილი პირი:</br>პირ № 01019068974<br>მისამართი:<br>ტელ.ნომერი:<br>ელ.ფოსტა:</label></td>
-                                    </tr>
-                                </table>
-                            </div>
-                            <div style="width:100%; margin-top: 60px;">
-                                <table style="width:100%;">
-                                    <tr style="width:100%;">
-                                        <td style="width:50%;"><label style="font-size: 12px;">ხელმოწერა:</label></td>
-                                        <td style="width:50%;"><label style="font-size: 12px;">ხელმოწერა:</label></td>
-                                    </tr>
-                                </table>
-                            </div>
-                         </div>
-                   </div';
-    }elseif ($file_type == 'agreement_fee_ltd'){
-        $data  .= '<div style="size: 7in 9.25in; margin: 15mm 16mm 15mm 16mm;" id="dialog-form">
-                        <div style="width:100%; font-size: 16px; text-align: center">საკრედიტო ხელშეკრულება #1893</div>
-                        <div style="width:100%; font-size: 12px; margin-top: 15px; text-align: right;">'.$res[day].'.'.$res[month_id].'.'.$res[year].'</div>
-                        <div style="width:100%; font-size: 12px; text-align: left;">ქ. თბილისი</div>
-                        <div style="width:100%; font-size: 12px; margin-top: 15px;">
-                                                            წინამდებარე ხელშეკრულების მონაწილე მხარეები, ერთის მხრივ შპს „თი ჯი მობაილ“ (საიდენტიფიკაციო № 205170177), - 
-                                                            დირექტორი გიორგი კილაძე, წარმომადგენელი ვახტანგ ბახტაძის სახით (მინდობილობა №001, 10.25.2012 წელი)  (შემდგომში გამსესხებელი), 
-                                                            და მეორეს მხრივ, შპს „მანი“/“MANI“ LTD (საიდენტიფიკაციო კ. № 445437965), დირექტორი აკაკი ელისაშვილი (პირადი# 01019068974) (შემდგომში მსესხებელი), 
-                                                            ჩვენს შორის მიღწეული შეთანხმების შედეგად, ვდებთ ხელშეკრულებას სასყიდლიანი სესხის გაცემის შესახებ.
-                        </div>
-                        <div style="width:100%; font-size: 12px; margin-top: 15px;">
-                                                            ტერმინთა განმარტება:
-                        </div>
-                        <div style="width:100%; font-size: 12px;">
-                            <br>1.1.	გამსესხებელი- შპს  „თი ჯი მობაილ“
-                            <br>1.2.	მსესხებელი- შპს „მანი“/“MANI“ LTD (საიდენტიფიკაციო კ. № 445437965), დირექტორი აკაკი ელისაშვილი (პირადი# 01019068974), რომელიც სარგებლობს ამ ხელშეკრულების შესაბამისად სასყიდლიანი სესხის სახით გაცემული ფულადი თანხით;
-                            <br>1.3.	ხელშეკრულება- წინამდებარე ხელშეკრულება, რომელიც განსაზღვრავს ამ ხელშეკრულების მონაწილე მხარეთა შორის არსებულ უფლებებსა და ვალდებულებებს, ასევე არეგულირებს გამსესხებელსა და მსესხებელს შორის არსებული სამართალურთიერთობის ძირითად პირობებს და პარამეტრებს;
-                            <br>1.4.	სესხი- მსესხებელზე წინამდებარე ხელშეკრულებით გათვალისწინებული წესით და ოდენობით პირადი მოხმარებისთვის გაცემული თანხა, საქართველოს მოქმედი კანონმდებლობის შესაბამისად;
-                            <br>1.5.	სესხის თანხა- ამ ხელშეკრულების შესაბამისად დადგენილი ოდენობით მსესხებელზე გამსესხებლის მიერ გაცემული ფულადი თანხა;
-                            <br>1.6.	საპროცენტო განაკვეთი- ამ ხელშეკრულებით გათვალისწინებული ფიქსირებული ან იდექსირებული საპროცენტო განაკვეთი ხელშეკრულების მოქმედების სრული პერიოდის მანძილზე;
-                            <br>1.7.	ფიქსირებული საპროცენტო განაკვეთი- საპროცენტო განაკვეთი, რომელიც დაფიქსირებულია ამ ხელშეკრულებაში და უცვლელია ხელშეკრულების მოქმედების სრული პერიოდის მანძილზე ან რომლის ცვლილებაც შესაძლებელია ხელშეკრულებით გათვალისწინებული ცალკეული გარემოებების დადგომის შემთხვევაში. საპროცენტო განაკვეთის ცვლილებად არ მიიჩნევა ხელშეკრულებაში წინასწარ განსაზღვრული პირობების შესაბამისად მსესხებლის ქმედებასთან დაკავშირებული გარემოებების დადგომიდან გამომდინარე საპროცენტო განაკვეთის ავტომატური ცვლილება;
-                            <br>1.8.	საპროცენტო სარგებელი- მსესხებლის მიერ გამსესხებლისთვის გადასახდელი ფულადი თანხა, რომელიც წარმოადგენს სარგებელს მსესხებლის მიერ გამსესხებლის მხრიდან მიღებული ფულადი სახსრებით სარგებლობისთვის;
-                            <br>1.9.	ფინანსური ხარჯი- ნებისმიერი ხარჯი, რომელიც პირდაპირ ან არაპირდაპირ გასწია ან/და მომავალში გასწევს გამსესხებელი და წარმოადგენს მსესხებლის მიერ სესხის მიღებასა და მისი ამოღებისთვის საჭირო ხარჯს;
-                            <br>1.10.	მხარეები- გამსესხებელი და მსესხებელი ერთად. 
-                            <br>2.	ხელშეკრულების საგანი
-                            <br>2.1.	წინამდებარე ხელშეკრულების შესაბამისად, გამსესხებელი კისრულობს ვალდებულებას, გასცეს მსესხებელზე სესხი ამ ხელშეკრულებით გათვალისწინებულ ვადებში და ოდენობით, ხოლო მსესხებელი კისრულობს ვალდებულებას დააბრუნოს მიღებული სესხი, მასზე დარიცხული საპროცენტო სარგებელი, დაფაროს ყველა ფინანსური ხარჯი და სრულიად შეასრულოს ყველა ნაკისრი ვალდებულება.
-                            <br>3.	სესხით სარგებლობის პირობები
-                            <br>3.1.	სესხის სრული მოცულობა (ოდენობა) – 2380 აშშ დოლარი (ექვივალენტი ლარში)
-                            <br>3.2.	გატანის პერიოდულობა- ერთჯერადი;
-                            <br>3.3.	სესხით სარგებლობის ვადა- 24 (ოცდაოთხი) თვე;
-                            <br>3.4.	სესხის გაცემის საკომისიო - 3% (აკისრია მსესხებელს)
-                            <br>3.5.	საკრედიტო ხელშეკრულების გაგრძელების საფასური (საჭიროების შემთხვევაში, იხდის მსესხებელი)- 70 ლარი.
-                            <br>3.6.	საკრედიტო ხელშეკრულების გაგრძელების შემთხვევაში, მსესხებელი ვალდებულია დაფაროს ძირი თანხის 15 %;
-                            <br>3.7.	 სადაზღვევო ხარჯი- 3 თვის დაზღვევის საფასური -110 (ასათი) აშშ დოლარი (ექვივალენტი ლარში). მსესხებელს ასევე ეკისრება ყოველ 3 თვეში დაზღვევის საფასურის დამატებით გადახდა იმ დროისთვის არსებული ოდენობით;
-                            <br>3.8.	გირავნობის ხარჯი - 225 (ორასორმოცდათხუთმეტი) ლარი; (აკისრია მსესხებელს)
-                            <br>3.9.	სარგებელი სესხით სარგებლობისთვის- ამ ხელშეკრულების მოქმედების მანძილზე ყოველთვიურად -3% პროცენტი, რაც შეადგენს 140.53 (ასორმოცი და ორმოცდაცამეტი) აშშ დოლარის ექვივალენტს ლარში.
-                            <br>3.10.	მსესხებელი ვალდებულია ამ ხელშეკრულების  3.8 პუნქტში მითითებული თანხის გადახდები განახორციელოს ხელშეკრულების მოქმედების სრული პერიოდის განმავლობაში ყოველი თვის 12 რიცხვში .
-                            <br>3.11.		სესხის გაცემის ვადა – 01 (ერთი) დღე;
-                            <br>3.12.	        საპროცენტო სარგებლის გადახის პერიოდულობა განისაზღვრება წინამდებარე ხელშეკრულებით;
-                            ვალუტის კურსი ხელშეკრულების ხელმოწერის დღისათვის – 1 აშშ დოლარი = 2.5887 ლარი;
+                                                                                             ვალუტის კურსი ხელშეკრულების ხელმოწერის დღისათვის – 1 აშშ დოლარი = '.$res['exchange_rate'].' ლარი;
                             <br>3.13.	სესხის ხელშეკრულებით გათვალისწინებული სესხის თანხის დადგენილ ვადაში დაუბრუნებლობის ან/და ამ ხელშეკრულებით დადგენილი პერიოდულობით გადაუხდელობის /ნაწილობრივ გადახდის შემთხვევაში, მსესხებელს დაერიცხება ამ ხელშეკრულებით გათვალისწინებული პირგასამტეხლო (საურავი), რომელიც დადგენილია გადახდის ვადის გადაცილებისათვის და რომელიც ანგარიშდება სესხის ძირი თანხიდან.
                             <br>3.14.		ფინანსური ხარჯები: ამ ხელშეკრულების მიზნებისათვის ფინანსურ ხარჯს წარმოადგენს ყველა ის ხარჯი, რომელიც აუცილებელია სესხის გაცემისა და მისი ამოღებისათვის (მათ შორის სადაზღვევო ხარჯი, სააღსრულებო ხარჯი, სესხის გაპრობლემების შემთხვევაში პრობლემური სამსახურის მომსახურების საფასური, აუდიტის მომსახურების საფასური. გირავნობის საფასური, ,სსიპ შსს მომსახურების სააგენტოში გაწეული ხარჯი და ნებისმიერი გადასახდელი, რომელიც გასწია გამსესხებელმა სესხის გასაცემად და დასაბრუნებლად);
                             <br>3.15.		წინამდებარე ხელშეკრულების მიზნებიდან გამომდინარე, ფინანსურ ხარჯად განიხილება ასევე ნებისმიერი გადასახდელი, რომელსაც მსესხებელი უხდის მესამე პირს, თუკი ეს გადასახდელი წარმოადგენს აუცილებლობას და მის გარეშე გამსესხებლის მიერ ნაკისრი ვალდებულების შესრულება იქნება შეუძლებელი ან არსებითად გართულდება;
@@ -2740,7 +2463,502 @@ if ($file_type == 'receipt') {
                             <br>9.1. წინამდებარე ხელშეკრულებით ნაკისრი ვალდებულებების შესრულების მოთხოვნის უზრუნველყოფის დამატებით საშუალებას წარმოადგენს პირგასამტეხლო;
                             <br>9.2. პირგასამტეხლოს გადახდის და მისი ოდენობის დაანგარიშების წესი განისაზღვრება ამ ხელშეკრულებით;
                             <br>9.3. ამ ხელშეკრულების მიზნებისათვის პირგასამტეხლოს გადახდევინება ხორციელდება ნაკისრი ვალდებულების შესრულების ვადის გადაცილებისათვის;
-                            <br>9.4. მსესხებელს, ამ ხელშეკრულებით გათვალსწინებული გადახდის ვადის გადაცილების შემთხვევაში, დაერიცხება პირგასამტეხლო სესხის ძირი თანხის 0.5%-ის ოდენობით ყოველ ვადაგადაცილებულ დღეზე, ვალდებულების დარღვევიდან 3 დღის განმავლობაში; ხოლო გადახდის ვადის გადაცილების 3 (სამი) დღეზე მეტი ვადით გაგრძელების შემთხვევაში მსესხებელს დაერიცხება პირგასამტეხლო სესხის ძირი თანხის 0.8% ყოველ ვადაგადაცილებულ დღეზე.
+                            <br>9.4. მსესხებელს, ამ ხელშეკრულებით გათვალსწინებული გადახდის ვადის გადაცილების შემთხვევაში, დაერიცხება პირგასამტეხლო სესხის ძირი თანხის '.$res['penalty_percent'].'%-ის ოდენობით ყოველ ვადაგადაცილებულ დღეზე, ვალდებულების დარღვევიდან '.$res['penalty_days'].' დღის განმავლობაში; ხოლო გადახდის ვადის გადაცილების '.$res['penalty_days'].' ('.float_replase($res['penalty_days']).') დღეზე მეტი ვადით გაგრძელების შემთხვევაში მსესხებელს დაერიცხება პირგასამტეხლო სესხის ძირი თანხის '.$res['penalty_additional_percent'].'% ყოველ ვადაგადაცილებულ დღეზე.
+                            <br>9.5. ამ ხელშეკრულების 9.4 მუხლით გათვალისწინებული პირგასამტეხლოს ოდენობა დაანგარიშდება სესხის ძირი თანხიდან;
+                            <br>9.6. პირგასამტეხლოს დაკისრება ხდება ყოველი კონკრეტული ვალდებულების დარღვევისთვის (ყოველთვიური სარგებლის, გრაფიკით გათვალისწინებული თანხის თუ სესხის ძირი თანხის გადახდის ვადაგადაცილების შემთხვევაში)  ცალკ-ცალკე, სესხის ძირი თანხიდან.
+                            <br>9.7. სესხის სარგებლის (ან გრაფიკით გათვალისწინებული თანხის) გადახდის ვადის 2 ან მეტი თვით ვადა გადაცილების შემთხვევაში, თითოეული თვის ვადაგადაცილებისათვის მსესხებელს ცალკ-ცალკე ერიცხება პირგასამტეხლო. იმ შემთხვევაში, თუ მსესხებლის მიერ უკვე დარღვეულია სესხის სარგებლის ან გრაფიკით გათვალისწინებული თანხის გადახდის ვადა და მსესხებელმა მომდევნო თვის სარგებლის ან გრაფიკით გათვალისწინებული თანხის გადახდის ვადასაც გადააცილა, პირგასამტეხლოს დარიცხვა პირველი თვის სარგებლისთვის იმავე ფარგლებში გაგრძელდება და ამასთან, მეორე და მომდევნო თვის სარგებლის ან გრაფიკით გათვალისწინებული თანხის ვადაგადაცილებისთვის ცალკ-ცალკე, დამატებით მოხდება პირგასამტეხლოს დარიცხვა სესხის ძირი თანხის 0.5% -ის ოდენობით ყოველ ვადაგადაცილებულ დღეზე.
+                            <br>9.8. მსესხებლის მიერ გადახდილი პირგასამტეხლო არ ჩაითვლება სესხის თანხის ანგარიშში და რაიმე ფორმით მისი უკან დაბრუნების მოთხოვნა არის დაუშვებელი;
+                            <br>9.10. პირგასამტეხლოს გადახდა არ ათავისუფლებს მის გადამხდელ მხარეს ძირითადი ვალდებულების შესრულების ვალდებულებისაგან
+                            <br>10. საკონტაქტო ინფორმაცია
+                            <br>10.1. მხარეთა შორის კონტაქტი ხორციელდება ამ ხელშეკრულებაში აღნიშნულ მისამართებზე, ტელეფონებზე და/ან ელ. ფოსტებზე;
+                            <br>10.2. მსესხებელი აცხადებს, რომ თანახმაა მიიღოს გამსესხებლის მიერ გამოგზავნილი ყველანაირი შეტყობინება ამ ხელშეკრულებაში მითითებულ მისამართზე ან ელ/ფოსტებზე;
+                            <br>10.3. მხარეები თანხმდებიან, რომ ყველა შეტყობინება, რომელიც გაიგზავნება ამ ხელშეკრულებაში მითითებულ მსესხებლის მისამართსა თუ ელ ფოსტაზე, მიუხედავად მისი ჩაბარებისა ან მიღებაზე უარის თქმისა, ჩაითვლება მსესხებლის მიერ მიღებულად;
+                            <br>10.4. იმ შემთხვევაში, თუ მსესხებელი შეიცვლის საკონტაქტო მონაცემს -ადგილსამყოფელს (მისამართს), ან ელ/ფოსტას- იგი ვალდებულია აღნიშნულის თაობაზე წერილობით აცნობოს გამსესხებელს;
+                            <br>10.5. ამ ხელშეკრულების 10.4 მუხლით გათვალისწინებულ შემთხვევაში, თუკი მსესხებელი წერილობით აცნობებს გამსესხებელს მის შეცვლილ საკონტაქტო მონაცემს -ადგილსამყოფელს (მისამართს), ან ელ/ფოსტას-საკონტაქტო მისამართად ჩაითვლება ახალი მისამართი და მასზე სრულად გავრცელდება ამ ხელშეკრულებით დადგენილი წესები;
+                            <br>10.6. ამ ხელშეკრულების 10.4 მუხლით გათვალისწინებულ შემთხვევაში, თუკი მსესხებელი წერილობით არ აცნობებს გამსესხებელს მის შეცვლილ საკონტაქტო მონაცემს -ადგილსამყოფელს (მისამართს), ან ელ/ფოსტას-საკონტაქტო მისამართად ჩაითვლება ამ ხელშეკრულებაში მითითებული მონაცემები და მასზე გავრცელდება ამ ხელშეკრულების  წესები;
+                            <br>10.7. მსესხებლის მიერ წინამდებარე ხელშეკრულების 10.4 მუხლით გათვალსწინებული წერილობითი შეტყობინებით გათვალისწინებული ვალდებულების დარღვევის შემთხვევაში, დაუშვებელია რაიმე სახის პრეტენზიის დაყენება გამსესხებლის მიმართ.
+                            <br>11. ფორს-მაჟორი
+                            <br>11.1. ხელშეკრულების მონაწილე მხარეები დროებით თავისუფლდებიან პასუხისმგებლობისაგან იმ შემთხვევაში, თუკი ვალდებულების შეუსრულებლობა გამოწვეულია დაუძლეველი ძალით (ფორს-მაჟორი);
+                            <br>11.2. დაუძლეველ ძალად განიხილება ბუნებრივი კატაკლიზმები ან/და სახელმწიფოს მიერ მიღებული აქტები, რაც დროებით შეუძლებელს ხდის ვალდებულების შესრულებას;
+                            <br>11.3. დაუძლეველი ძალის არსებობის შემთხვევაში ვალდებულების შესრულება გადაიწევა ამ გარემოების აღმოფხვრამდე
+                            <br>12. დავათა გადაჭრის წესი:
+                            <br>12.1.ამ ხელშეკრულებიდან გამომდინარე მხარეთა შორის წარმოშობილ ნებისმიერ დავას განიხილავს თბილისის საქალაქო სასამართლო.
+                            <br>12.2.მხარეები შეთანხმდნენ, რომ პირველი ინსტანციის სასამართლოს მიერ მიღებული გადაწყვეტილება დაუყონებლივ აღსასრულებლად მიექცევა საქართველოს სამოქალაქო საპროცესო კოდექსის 268-ე მუხლის I1 ნაწილის შესაბამისად;
+                            <br>13. დამატებითი დებულებები
+                            <br>13.1. წინამდებარე ხელშეკრულებაზე ხელის მოწერით მხარეები აცხადებენ, რომ ამ ხელშეკრულების ყველა პირობა წარმოადგენს მათი ნამდვილი ნების გამოვლენას, ისინი ეთანხმებიან ამ პირობებს და სურთ ხელშეკრულების დადება აღნიშნული პირობებით;
+                            <br>13.2 წინადებარე ხელშეკრულებაზე ხელის მოწერით მსესხებელი ადასტურებს მის მიერ ამ ხელშეკრულებით გათვალისწინებული ოდენობით სესხის თანხის მიღების ფაქტს.
+                            <br>13.3. წინამდებარე ხელშეკრულების რომელიმე მუხლის, პუნქტის, დათქმის, წინადადების და ა.შ. ბათლობა არ იწვევს მთელი ხელშეკრულების ბათილობას;
+                            <br>13.4. ხელშეკრულების მონაწილე რომელიმე მხარის მიერ უფლების გამოუყენებლობა არ განიხილება ამ უფლებაზე უარის თქმად;
+                            <br>13.5. წინამდებარე ხელშეკრულებაში შეტანილი ცვლილებები ან/და დამატებები ძალაშია მხოლოდ იმ შემთხვევაში, თუ ისინი შესრულებულია ამ ხელშეკრულების ფორმის დაცვით და ხელმოწერილია მხარეთა მიერ. ამ წესის დარღვევით შეტანილი ნებისმიერი ცვლილება ან/და დამატება ბათილია მისი შეტანის მომენტიდან და არ წარმოშობს იურიდიული მნიშნველობის მქონე შედეგებს;
+                            <br>13.6. ამ ხელშეკრულების საფუძველზე ან/და მისგან გამომდინარე ყველა ხელშეკრულება ან/და შეთანხმება და მათი დანართები წარმოადგენენ ამ ხელშეკრულების განუყოფელ ნაწილს და მათზე სრულად ვრცელდება ამ ხელშეკრულების წესები.
+                            <br>13.7. ხელშეკრულება შედგენილია ქართულ ენაზე, თანაბარი იურიდიული ძალის მქონე 02 (ორ) ეგზემპლარად, ხელმოწერილია და ინახება მხარეებთან.
+                            
+                                                        
+                             </div>
+                            <div style="width:100%; margin-top: 100px;">
+                                <table style="width:100%;">
+                                    <tr style="width:100%;">
+                                        <td style="width:50%;"><label style="font-size: 12px; text-align: left;">გამსესხებელი: შპს "თი ჯი მობაილ" <br> მისამართი: ქ. თბილისი, დოლიძის ქ. 25/121<br>ს/კ 205270277<br>სს "საქართველოს ბანკი"<br>ბანკის კოდი: BAGAGE22<br>ა/ა GE12BG0000000523102000<br>ტელეფონის ნომერი: (ოფისი)<br>ტელეფონის ნომერი: 579796921<br>ტელეფონის ნომერი: 579131813 (ლერი)<br>ხელის მომწერის: ვახტანგ ბახტაძე,<br>პოზიცია: მენეჯერი<br>ელ.ფოსტა: tgmobail@mail.ru<br>s.qurdadze.1@gmail.com</label></td>
+                                        <td style="width:50%;"><label style="font-size: 12px; text-align: left;">მსესხებელი<br>სახელწოდება: შპს "'.$res['ltd_name'].'"<br>საიდენტიფიკაციო კოდი:'.$res['ltd_id'].'<br>დირექტორი: '.$res['name'].'  პირ ნომერი:'.$res['pid'].'<br>მინდობილი პირი:'.$res['trust_pers'].'</br>პირ № '.$res['trusted_pid'].'<br>მისამართი:'.$res['trusted_actual_address'].'<br>'.$res['trusted_juridical_address'].'<br>ტელ.ნომერი:'.$res['trusted_phone'].' '.$res[client_person_person].'<br>ელ.ფოსტა:'.$res['trusted_email'].'</label></td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div style="width:100%; margin-top: 60px;">
+                                <table style="width:100%;">
+                                    <tr style="width:100%;">
+                                        <td style="width:50%;"><label style="font-size: 12px;">ხელმოწერა:</label></td>
+                                        <td style="width:50%;"><label style="font-size: 12px;">ხელმოწერა:</label></td>
+                                    </tr>
+                                </table>
+                            </div>
+                         </div>
+                   </div';
+    }elseif ($file_type == 'agreement_fee_trusted'){
+        $data  .= '<div style="size: 7in 9.25in; margin: 15mm 16mm 15mm 16mm;" id="dialog-form">
+                        <div style="width:100%; font-size: 16px; text-align: center">საკრედიტო ხელშეკრულება #'.$res[loan_agreement_id].'</div>
+                        <div style="width:100%; font-size: 12px; margin-top: 15px; text-align: right;">'.$res[day].'.'.$res[month_id].'.'.$res[year].'</div>
+                        <div style="width:100%; font-size: 12px; text-align: left;">ქ. თბილისი</div>
+                        <div style="width:100%; font-size: 12px; margin-top: 15px;">
+                                                            წინამდებარე ხელშეკრულების მონაწილე მხარეები, ერთის მხრივ შპს "თი ჯი მობაილ" (საიდენტიფიკაციო № 205170177), - დირექტორი გიორგი კილაძე, 
+                                                            წარმომადგენელი ვახტანგ ბახტაძის სახით (მინდობილობა №001, 10.25.2012 წელი)  (შემდგომში გამსესხებელი), და მეორეს მხრივ, 
+                          '.$res['name'].' (პირადი №'.$res['pid'].') (შემდგომში მსესხებელი) და (შემდგომში მინდობილი პირი) '.$res['trust_pers'].' (პირადი № '.$res['trusted_pid'].'), 
+                                                            სანოტარო მოქმედების რეგისტრაციის ნომერი N'.$res['trusting_number'].', რეგისტრაციის თარიღი '.$res['trusting_day'].'.'.$res['trusting_month_id'].'.'.$res['trusting_year'].' წელს, ნოტარიუსი: '.$res['trusting_notary'].', 
+                            (მისამართი '.$res['trusting_notary_address'].' ტელ:'.$res['trusting_notary_phone'].')
+                            (შემდგომში მსესხებელი), ჩვენს შორის მიღწეული შეთანხმების შედეგად, ვდებთ ხელშეკრულებას სასყიდლიანი სესხის გაცემის შესახებ.
+                        </div>
+                        <div style="width:100%; font-size: 12px; margin-top: 15px;">
+                                                            ტერმინთა განმარტება:
+                        </div>
+                        <div style="width:100%; font-size: 12px;">
+                            <br>1.1.	გამსესხებელი- შპს  "თი ჯი მობაილ"
+                            <br>1.2.	მსესხებელი- '.$res['name'].'(პირადი №'.$res['pid'].') (შემდგომში მსესხებელი) და (შემდგომში მინდობილი პირი) '.$res['trust_pers'].' (პირადი № '.$res['trusted_pid'].'), სანოტარო მოქმედების რეგისტრაციის ნომერი N'.$res['trusting_number'].', რეგისტრაციის თარიღი '.$res['trusting_day'].'.'.$res['trusting_month_id'].'.'.$res['trusting_year'].' წელს, ნოტარიუსი: '.$res['trusting_notary'].', (მისამართი ქ.თბილისი, '.$res['trusting_notary_address'].' ტელ:'.$res['trusting_notary_phone'].'), რომელიც სარგებლობს ამ ხელშეკრულების შესაბამისად სასყიდლიანი სესხის სახით გაცემული ფულადი თანხით;
+                            <br>1.3.	ხელშეკრულება- წინამდებარე ხელშეკრულება, რომელიც განსაზღვრავს ამ ხელშეკრულების მონაწილე მხარეთა შორის არსებულ უფლებებსა და ვალდებულებებს, ასევე არეგულირებს გამსესხებელსა და მსესხებელს შორის არსებული სამართალურთიერთობის ძირითად პირობებს და პარამეტრებს;
+                            <br>1.4.	სესხი- მსესხებელზე წინამდებარე ხელშეკრულებით გათვალისწინებული წესით და ოდენობით პირადი მოხმარებისთვის გაცემული თანხა, საქართველოს მოქმედი კანონმდებლობის შესაბამისად;
+                            <br>1.5.	სესხის თანხა- ამ ხელშეკრულების შესაბამისად დადგენილი ოდენობით მსესხებელზე გამსესხებლის მიერ გაცემული ფულადი თანხა;
+                            <br>1.6.	საპროცენტო განაკვეთი- ამ ხელშეკრულებით გათვალისწინებული ფიქსირებული ან იდექსირებული საპროცენტო განაკვეთი ხელშეკრულების მოქმედების სრული პერიოდის მანძილზე;
+                            <br>1.7.	ფიქსირებული საპროცენტო განაკვეთი- საპროცენტო განაკვეთი, რომელიც დაფიქსირებულია ამ ხელშეკრულებაში და უცვლელია ხელშეკრულების მოქმედების სრული პერიოდის მანძილზე ან რომლის ცვლილებაც შესაძლებელია ხელშეკრულებით გათვალისწინებული ცალკეული გარემოებების დადგომის შემთხვევაში. საპროცენტო განაკვეთის ცვლილებად არ მიიჩნევა ხელშეკრულებაში წინასწარ განსაზღვრული პირობების შესაბამისად მსესხებლის ქმედებასთან დაკავშირებული გარემოებების დადგომიდან გამომდინარე საპროცენტო განაკვეთის ავტომატური ცვლილება;
+                            <br>1.8.	საპროცენტო სარგებელი- მსესხებლის მიერ გამსესხებლისთვის გადასახდელი ფულადი თანხა, რომელიც წარმოადგენს სარგებელს მსესხებლის მიერ გამსესხებლის მხრიდან მიღებული ფულადი სახსრებით სარგებლობისთვის;
+                            <br>1.9.	ფინანსური ხარჯი- ნებისმიერი ხარჯი, რომელიც პირდაპირ ან არაპირდაპირ გასწია ან/და მომავალში გასწევს გამსესხებელი და წარმოადგენს მსესხებლის მიერ სესხის მიღებასა და მისი ამოღებისთვის საჭირო ხარჯს;
+                            <br>1.10.	მხარეები- გამსესხებელი და მსესხებელი ერთად. 
+                            <br>2.	ხელშეკრულების საგანი
+                            <br>2.1.	წინამდებარე ხელშეკრულების შესაბამისად, გამსესხებელი კისრულობს ვალდებულებას, გასცეს მსესხებელზე სესხი ამ ხელშეკრულებით გათვალისწინებულ ვადებში და ოდენობით, ხოლო მსესხებელი კისრულობს ვალდებულებას დააბრუნოს მიღებული სესხი, მასზე დარიცხული საპროცენტო სარგებელი, დაფაროს ყველა ფინანსური ხარჯი და სრულიად შეასრულოს ყველა ნაკისრი ვალდებულება.
+                            <br>3.	სესხით სარგებლობის პირობები
+                            <br>3.1.	სესხის სრული მოცულობა (ოდენობა) – '.$res['loan_amount'].' აშშ დოლარი (ექვივალენტი ლარში)
+                            <br>3.2.	გატანის პერიოდულობა- ერთჯერადი;
+                            <br>3.3.	სესხით სარგებლობის ვადა- '.$res['loan_months'].' ('.float_replase($res['loan_months']).') თვე;
+                            <br>3.4.	სესხის გაცემის საკომისიო - '.$res['loan_fee'].'% (აკისრია მსესხებელს)
+                            <br>3.5.	საკრედიტო ხელშეკრულების გაგრძელების საფასური (საჭიროების შემთხვევაში, იხდის მსესხებელი)- '.$res['proceed_fee'].' ლარი.
+                            <br>3.6.	საკრედიტო ხელშეკრულების გაგრძელების შემთხვევაში, მსესხებელი ვალდებულია დაფაროს ძირი თანხის '.$res['proceed_percent'].' %;
+                            <br>3.7.	 სადაზღვევო ხარჯი- 3 თვის დაზღვევის საფასური -'.$res['insurance_fee'].' ('.float_replase($res['insurance_fee']).') აშშ დოლარი (ექვივალენტი ლარში). მსესხებელს ასევე ეკისრება ყოველ 3 თვეში დაზღვევის საფასურის დამატებით გადახდა იმ დროისთვის არსებული ოდენობით;
+                            <br>3.8.	გირავნობის ხარჯი - '.$res['pledge_fee'].' ('.float_replase($res['pledge_fee']).') ლარი; (აკისრია მსესხებელს)
+                            <br>3.9.	სარგებელი სესხით სარგებლობისთვის- ამ ხელშეკრულების მოქმედების მანძილზე ყოველთვიურად -'.$res['month_percent'].'% პროცენტი, რაც შეადგენს '.$res['monthly_pay'].' ('.float_replase($res['monthly_pay']).') აშშ დოლარის ექვივალენტს ლარში.
+                            <br>3.10.	მსესხებელი ვალდებულია ამ ხელშეკრულების  3.8 პუნქტში მითითებული თანხის გადახდები განახორციელოს ხელშეკრულების მოქმედების სრული პერიოდის განმავლობაში ყოველი თვის '.$res['month_id'].' რიცხვში .
+                            <br>3.11.		სესხის გაცემის ვადა – 01 (ერთი) დღე;
+                            <br>3.12.	        საპროცენტო სარგებლის გადახის პერიოდულობა განისაზღვრება წინამდებარე ხელშეკრულებით;
+                            ვალუტის კურსი ხელშეკრულების ხელმოწერის დღისათვის – 1 აშშ დოლარი = '.$res['exchange_rate'].' ლარი;
+                            <br>3.13.	სესხის ხელშეკრულებით გათვალისწინებული სესხის თანხის დადგენილ ვადაში დაუბრუნებლობის ან/და ამ ხელშეკრულებით დადგენილი პერიოდულობით გადაუხდელობის /ნაწილობრივ გადახდის შემთხვევაში, მსესხებელს დაერიცხება ამ ხელშეკრულებით გათვალისწინებული პირგასამტეხლო (საურავი), რომელიც დადგენილია გადახდის ვადის გადაცილებისათვის და რომელიც ანგარიშდება სესხის ძირი თანხიდან.
+                            <br>3.14.		ფინანსური ხარჯები: ამ ხელშეკრულების მიზნებისათვის ფინანსურ ხარჯს წარმოადგენს ყველა ის ხარჯი, რომელიც აუცილებელია სესხის გაცემისა და მისი ამოღებისათვის (მათ შორის სადაზღვევო ხარჯი, სააღსრულებო ხარჯი, სესხის გაპრობლემების შემთხვევაში პრობლემური სამსახურის მომსახურების საფასური, აუდიტის მომსახურების საფასური. გირავნობის საფასური, ,სსიპ შსს მომსახურების სააგენტოში გაწეული ხარჯი და ნებისმიერი გადასახდელი, რომელიც გასწია გამსესხებელმა სესხის გასაცემად და დასაბრუნებლად);
+                            <br>3.15.		წინამდებარე ხელშეკრულების მიზნებიდან გამომდინარე, ფინანსურ ხარჯად განიხილება ასევე ნებისმიერი გადასახდელი, რომელსაც მსესხებელი უხდის მესამე პირს, თუკი ეს გადასახდელი წარმოადგენს აუცილებლობას და მის გარეშე გამსესხებლის მიერ ნაკისრი ვალდებულების შესრულება იქნება შეუძლებელი ან არსებითად გართულდება;
+                            <br>3.16.	ფინანასურ ხარჯად არ განიხილება ის ხარჯები, რომლების გაღებაც მსესხებლის მიერ იქნებოდა აუცილებელი სესხის მიღების გარეშეც. ასეთი ტიპის ხარჯები არ წარმოადგენს წინამდებარე ხელშეკრულების რეგულირების სფეროს და სრულად ეკისრება მსესხებელს.
+                            <br>4.	სესხის უზრუნველყოფა
+                            <br>4.1.	სესხი უზრუნველყოფილია გირავნობით, ასევე მსესხებლის მთელი ქონებით;
+                            <br>4.2.	უზრუნველყოფიდან გამომდინარე მხარეთა უფლებები და ვალდებულებები დეტალურად რეგულირდება ზემოაღნიშნული სესხის უზრუნველსაყოფად მხარეთა (ან მესამე პირსა და გამსესხებელს შორის) შორის დადებული გირავნობის ხელშეკრულებით;
+                            <br>4.3.	იმ შემთხვევაში, თუ მსესხებლის მიერ ამ ხელშეკრულებით ნაკისრი ვალდებულება იქნება დარღვეული, ხოლო გირავნობის საგნის რეალიზაციის შედეგად მიღებული ამონაგები არ იქნება საკმარისი გამსესხებლის მოთხოვნების სრულად დასაკმაყოფილებლად, გამსესხებელი უფლებამოსილია მოითხოვოს მსესხებლის ან/და მესამე პირის (ასეთის არსებობის შემთხვევაში) საკუთრებაში არსებული უძრავ-მოძრავი ქონების რეალიზაცია საკუთარი მოთხოვნის დაკმაყოფილების მიზნით;
+                            <br>4.4.	მსესხებლის მიერ ნაკისრ ვალდებულებათა ნებისმიერი დარღვევა იძლევა საფუძველს გამოყენებულ იქნას უზრუნველყოფის ხელშეკრულებით გათვალისწინებული აქტივები მათი რეალიზაციის უფლებით;
+                            <br>4.5.	დარღვევად განიხილება მსესხებლის მიერ ნაკისრი ვალდებულების შეუსრულებლობა ან/და ნაწილობრივი შესრულება, რომელიც არ მოდის შესაბამისობაში მსესხებლის მიერ ნაკისრ ვალდებულებებთან და ეწინააღმდეგება ვალდებულების შესრულების ძირითად პრინციპებს.
+                            
+                            <br>4.6.	იმ შემთხვევაში, თუკი უზრუნველყოფის საგნად გამოყენებული ნივთის მდგომარეობა გაუარესდება, განადგურდება, ღირებულება შემცირდება ან/და ადგილი ექნება რაიმე ისეთ გარემოებას, რომლიდან გამომდინარეც რეალური საფრთხე ექმნება სესხის უზრუნველყოფას, მსესხებელი ვალდებულია ამის თაობაზე აცნობოს გამსესხებელს ასეთი ფაქტის დადგომის მომენტიდან 48 (ორმოცდარვა) საათის განმავლობაში;
+                            <br>4.7.	ამ ხელშეკრულების 4.6 პუნქტით გათვალისწინებული შემთხვევის დადგომისას გამსესხებელი უფლებამოსილია მოსთხოვოს მსესხებელს დამატებითი უზურნველყოფის საშუალების წარდგენა, ხოლო მსესხებელი ვალდებულია წარმოუდგინოს გამსესხებელს ასეთი უზურნველყოფა;
+                            <br>4.8.	მსესხებლის მიერ ამ ხელშეკრულების 4.7 პუნქტით გათვალისწინებული უზრუნველყოფის საშუალების წარმოდგენის შეუძლებლობის შემთხვევაში გამსესხებელი უფლებამოსილია დაუყოვნებლივ შეწყიტოს სესხის ხელშეკრულება და მოითხოვოს მსესხებლისაგან სესხის ძირი თანხის და მასზე დარიცხული პროცენტისა თუ პირგასამტეხლოს გადახდა;
+                            <br>4.9.	მსესხებლის მხრიდან ამ ხელშეკრულების 4.6 პუნქტით გათვალისწინებული ინფორმაციის მიწოდების ვალდებულების დარღვევა გამსესხებელს აძლევს უფლებას, ვადაზე ადრე შეწყვიტოს ხელშეკრულება და მოითხოვოს მსესხებლისაგან ნაკისრი ვალდებულების დაუყოვნებლივ სრულად შესრულება.
+                            <br>5. მხარეთა უფლებები და ვალდებულებები
+                            <br>5.1. მხარეები კისრულობენ ვალდებულებას, რომ შეასრულებენ წინამდებარე ხელშეკრულებით ნაკისრ ვალდებულებებს ჯეროვნად, კეთისინდისიერად, დათქმულ დროსა და ადგილას;
+                            <br>5.2. გამსესხებელი უფლებამოსილია:
+                            <br>5.2.1. მოითხოვოს მსესხებლისაგან ხელშეკრულებით ნაკისრი ვალდებულებების განუხრელად დაცვა და შესრულება;
+                            <br>5.2.2. მოითხოვოს მსესხებლისგან სრული ინფომრაციის წარმოდგენა მისი ფინანსური მდგომარეობის შესახებ, როგორც ხელშეკრულების დადებამდე, ასევე ხელშეკრულების მოქმედების სრული პერიოდის განმავლობაში; 
+                            <br>5.2.3. ვადაზე ადრე შეწყვიტოს ხელშეკრულება, თუკი მსესხებლის ქონებრივი მდგომარეობა იმდენად გაუარესდება, რომ შესაძლოა საფრთხე შეექმნება სესხის დაბრუნებას;
+                            <br>5.3. გამსესხებელი ვალდებულია:
+                            <br>5.3.1. გასცეს სესხის თანხა ამ ხელშეკრულებით გათვალისწინებული ოდენობით და ვადებში;
+                            <br>5.3.2. მიაწოდოს მსესხებელს სრული ინფორმაცია სესხის პირობებთან დაკავშირებით;
+                            <br>5.3.3. მიაწოდოს მსესხებელს სრული ინფორმაცია სესხის უზრუნველყოფის პირობებთან დაკავშირებით;
+                            <br>5.3.4. დაუყოვნებლივ აცნობოს მსესხებელს ნებისმიერი ისეთი გარემოების ცვლილების შესახებ, რამაც შეიძლება გავლენა მოახდინოს მხარეთა უფლებებსა და ვალდებულებებზე;
+                            <br>5.3.5. საკუთარი შესაძლებლობის და ვალდებულების ფარგლებში ყველანაირად შეუწყოს ხელი ხელშეკრულების შესრულებას;
+                            <br>5.4. მსესხებელი უფლებამოსილია:
+                            <br>5.4.1. მოსთხოვოს გამსესხებელს სესხის თანხის გადაცემა ამ ხელშეკრულებით გათვალისწინებული პირობებით, ოდენობით და ვადებში;
+                            <br>5.4.2. მიიღოს სრული ინფორმაცია სესხის პირობებზე;
+                            <br>5.4.3. მიიღოს სრული ინფორმაცია მოთხოვნის უზრუნველყოფის პირობებზე;
+                            <br>5.4.4. ვალდებულების სრულად შესრულების შემდგომ მოსთხოვოს გამსესხებელს ვალდებულების შესრულების და შეწყვეტის დამადასტურებელი დოკუმენტის შედგენა და მისთვის გადაცემა;
+                            <br>5.4.5. ამ ხელშეკრულებით გათვალსწინებული წესით და პირობებით ვადაზე ადრე შეასრულოს ნაკისრი ვალდებულება.
+                            <br>5.5. მსესხებელი ვალდებულია:
+                            <br>5.5.1. დააბრუნოს სესხის თანხა სარგებელთან (პროცენტთან) ერთად ამ ხელშეკრულებით გათვალისწინებული ოდენობით, პირობებით და ამ ხელშეკრულებით გათვალისწინებულ ვადებში.
+                            <br>5.5.2. მსესხებელი ვალდებულია დააბრუნოს სესხის თანხა სესხის დაბრუნების დღისთვის არსებული ეროვნული ბანკის კურსით ლარში.
+                            <br>5.5.3. მიაწოდოს გამსესხებელს სრული ინფორმაცია მისი ქონებრივი და ფინანსური მდგომარეობის შესახებ;
+                            <br>5.5.4 დაუყოვნებლიც აცნობოს გამსესხებელს მისი ფინანსური/ქონებრივი მდგომარეობის ისეთი გაუარესების შესახებ, რამაც შეიძლება საფრთხე შეუქმნას მის მიერ ნაკისრი ვალდებულების შესრულებას;
+                            <br>5.5.6 არ იკისროს რაიმე სახის ფინანსური (საკრედიტო, სასესხო და ა.შ.) ვალდებულებები ფიზიკური/იურიდიული პირების წინაშე გამსესხებელთან წინასწარი წერილობითი შეთანხმების გარეშე;
+                            <br>5.5.6 არ გამოიყენოს ამ ხელშეკრულებით გათვალისწინებული ვალდებულების შესრულების უზრუნველსაყოფად გამოყენებული ქონება საკუთარი ან/და მესამე პირების მიერ ნაკისრი ვალდებულების უზრუნველსაყოფად გამსესხებელთან წინასწარი წერილობითი შეთანხმების გარეშე;
+                            <br>5.5.7 აუნაზღაუროს გამსესხებელს ყველა ის დანახარჯი, რომელიც ამ უკანასკნელმა გასწია მსესხებლის მიერ ნაკისრი ვალდებულების იძულებით შესრულებისათვის (ასეთის არსებობის შემთხვევაში- კერძოდ: აღსრულების ეროვნულ ბიუროს მომსახურების საფასური, ,აუდიტის მომსახურებისსაფასური ,სსიპ შსს მომსახურების სააგენტოში გაწეული ხარჯი და ამ სახის სხვა ხარჯები, რომელიც გამსხებელმა გასწია)
+                            <br>5.6. მსესხებელი უფლებამოსილია ვადაზე ადრე შეასრულოს მის მიერ ნაკისრი ვალდებულება;
+                            <br>5.7. მსესხებლის მიერ ნაკისრი ვალდებულების ვადაზე ადრე შესრულებად ჩაითვლება მის მიერ ამ ხელშეკრულების მოქმედების ვადის გასვლამდე სესხის დაფარვა
+                            <br>5.8. გამსესხებელი ვალდებულია მიიღოს მსესხებლისაგან ვადაზე ადრე განხორციელებული შესრულება მხოლოდ იმ პირობით, თუ მსესხებლის მიერ დაფარული იქნება როგორც სესხის ძირი თანხა, ასევე ვადამოსული სარგებელი (პროცენტი) იმ ოდენობით, რა ოდენობითაც ის დაანგარიშდება ანგარიშსწორების დღისათვის;
+                            <br>5.9. ხელშეკრულების მონაწილე მხარეები საკუთარი ვალდებულების ფარგლებში ვალდებული არიან შეასრულონ ყველა ის მოქმედება ან თავი შეიკავონ ყველა იმ მოქმედებისაგან, რომელიც პირდაპირ არ არის გათვალისწინებული ამ ხელშეკრულებით, მაგრამ გამომდინარეობს ვალდებულების არსიდან, ამ ხელშეკრულების მიზნებიდან, კეთილსინდისიერების პრინციპიდან და აუცილებელია მხარეთა ვალდებულებების სრულყოფილად შესასრულებლად.
+                            <br>5.10. მსესხებელს ეკრძალება ა/მანქანის მართვა ნასვამ, ნარკოტიკულ და კანონით აკრძალული ყველანაირი საშუალებების ზემოქმედების ქვეშ. დამგირავებელს ასევე ეკრძალება ა/მანქანის გადაცემა მართვის უფლების არმქონე, არასრულწლოვან, სადაზღვეო პოლისში არ მითითებულ და ზემოთ აღნიშნული კანონით აკრძალული ნივთიერებების და საშუალებების ზემოქმედების ქვეშ მყოფი პირებისადმი.
+                            <br>5.11. მსესხებელს ეკისრება ყველა  ხარჯი, რომელიც გამსესხებელმა გასწია და ყველა სახის ზიანი, რომელიც გამსესხებელს მიადგა მსესხებლის მიერ ამ ხელშეკრულების 5.10 პუნქტის დარღვევის გამო.
+                            <br>6. ვალდებულების დარღვევა
+                            <br>6.1. ამ ხელშეკრულებით გათვალისწინებული ვალდებულების დარღვევად ჩაითვლება მისი მონაწილე რომელიმე მხარის მიერ ნაკისრი ვალდებულების შეუსრულებლობა ან/და არაჯეროვანი შესრულება;
+                            <br>6.2. ვალდებულების შეუსრულებლობად ითვლება ხელშეკრულების მონაწილე რომელიმე მხარის მიერ ნაკისრი ვალდებულების შესრულებაზე უარის გაცხადება ან/და რაიმე ისეთი მოქმედება/უმოქმედობა, რომლიდან გამომდინარეც ნათელია ან არსებობს საფუძვლიანი ეჭვი იმის თაობაზე, რომ ვალდებულება არ იქნება შესრულებული სრულად;
+                            <br>6.3. ვალდებულების არაჯეროვან შესრულებად ითვლება შეთანხმების რომელიმე მხარის მიერ ნაკისრი ვალდებულების არასრულფასოვან ან/და არასრულყოფილი შესრულება;
+                            <br>6.4. ვალდებულების შეუსრულებლობას ან არაჯეროვან შესრულებას უთანაბრდება ამ ხელშეკრულებით გათვალისწინებული ინფორმაციის მიწოდების ვალდებულების დარღვევა, არასწორი ან არასრულფასოვანი ინფორმაციის მიწოდება;
+                            <br>6.5. მსესხებლის მიერ ვალდებულების შეუსრულებლობის/არაჯეროვანი შესრულების შემთხვევაში გამსესხებელი უფლებამოსილია ვადაზე ადრე შეწყვიტოს ხელშეკრულება და მოითხოვოს სესხის ძირი თანხის, მასზე დარიცხული სარგებლის (პროცენტის) და პირგასამტეხლოს გადახდა;
+                            <br>6.6. თითოეული მხარე უფლებამოსილია მოითხოვოს იმ ზიანის ანაზღაურება, რომელიც მას მიადგა ვალდებულების დარღვევის შედეგად;
+                            <br>6.7. ზიანის ანაზღაურება არ ათავისუფლებს ვალდებულების დამრღვევ მხარეს ძირითადი ვალდებულებების შესრულებისაგან
+                            <br>6.8.  5.10. პუნქტით დადგენილი ვალდებულებების შეუსრულებლობის შემთხვევაში ხელშეკრულება ჩაითვლება დარღვეულად და სესხის უზრუნველყოფის საგანი გაჩერდება გამსესხებლის მიერ შერჩეულ ავტოსადგომზე ვალდებულების სრულად შესრულებამდე.
+                            <br>7. ხელშეკრულების შეწყვეტა
+                            <br>7.1. წინამდებარე ხელშეკრულება წყდება  ვალდებულების სრულად შესრულებით;
+                            <br>7.2. წინამდებარე ხელშეკრულება შესრულებით შეწყვეტილად ჩაითვლება მსესხებლის მიერ ნაკისრი ვალდებულების სრულად შესრულებით, ანუ სესხის ძირი თანხის, მასზე დარიცხული სარგებლის (პროცენტის), პირგასამტეხლოს და ხელშეკრულების შეწყვეტისათვის აუცილებელი ხარჯების (ასეთის არსებობის შემთხვევაში) სრულად გადახდის შემდგომ;
+                            <br>7.3. ხელშეკრულების მოქმედების ვადის ამოწურვის შემდგომ ხელშეკრულება გაგრძელდება, თუ ორივე მხარე წერილობით დააფიქსირებს პოზიციას ხელშეკრულების გაგრძელების თაობაზე.
+                            <br>7.4..  მსესხებელი ცნობად იღებს იმ გარემოებას, რომ ხელშეკრულების მოქმედების ვადის  წინამდებარე ხელშეკრულების  7.3 პუნქტით გათვალისწინებული პირობებით გაგრძელების შემთხვევაში მსესხებელი ვალდებულია ხელშეკრულების გაგრძელებისათვის გადაიხადოს სადაზღვევო ხარჯი ამ ხელშეკრულებაში მითითებული ოდენობით.
+                            <br>7.5. მხარეთა შეთანხმებით, ხელშეკრულება შეიძლება გაგრძელდეს ამ ხელშეკრულებით გათვალსწინებული პირობებისაგან განსხვავებული პირობებით .  
+                            <br>7.6 ხელშეკრულების  გაგრძელება დასაშვებია მხოლოდ ამ ხელშეკრულების ფორმის  (წერილობითი) დაცვით . ამ წესის დარღვევით დადებული შეთანხმება არის ბათილი და იურიდიული მნიშვნელობის მქონე შედეგებს არ წარმოშობს .
+                            <br>8. ხელშეკრულების ვადაზე ადრე შეწყვეტა
+                            <br>8.1. ხელშეკრულება შეიძლება ვადაზე ადრე შეწყდეს რომელიმე მხარის მიერ ნაკისრი ვალდებულების დარღვევის შემთხვევაში;
+                            <br>8.2. მსესხებლის მიერ ამ ხელშეკრულებით ნაკისრი  ვალდებულებების დარღვევის შემთხვევაში გამსესხებელი უგზავნის მსესხებელს წერილობით შეტყობინებას ვალდებულების შესრულების მოთხოვნით და განუსაზღვრავს მას ვალდებულების შესრულების ვადას.
+                            <br>8.3. გაფრთხილების მიუხედავად, მსესხებლის მიერ ვალდებულების შეუსრულებლბა ან არაჯეროვანი შესრულება აძლევს გამსესხებელს უფლებას ცალმხრივად, ვადაზე ადრე შეწყვიტოს ხელშეკრულება და მოითხოვოს სესხის თანხის, მასზე დარიცხული სარგებლის (პროცენტის) და პირგასამტეხლოს ერთიანად გადახდა, ასევე ყველა იმ დამატებითი დანახარჯის ანაზღაურება, რომელიც მას წარმოეშვა ხელშეკრულების ვადაზე ადრე შეწყვეტის შედეგად;
+                            <br>8.4. იმ შემთხვევაში, თუ მსესხებელი გაფრთხილების მიღებიდან განსაზღვრულ ვადაში დაფარავს დავალიანებას, ხელშეკრულების მოქმედება გაგრძელდება იმავე პირობებით, რაც გათვალისწინებულია ამ ხელშეკრულებით. 
+                            <br>8.5. ამ ხელშეკრულებით ნაკისრი ვალდებულების  განმეორებით დარღვევის შემთხვევაში გამსესხებელი უფლებამოსილია ცალმხრივად და უპირობოდ შეწყვიტოს ხელშეკრულება და მოითხოვოს სესხის თანხის, მასზე დარიცხული სარგებლის (პროცენტის) და პირგასამტეხლოს ერთიანად გადახდა, ასევე ყველა იმ დამატებითი დანახარჯის ანაზღაურება, რომელიც მას წარმოეშვა ხელშეკრულების ვადაზე ადრე შეწყვეტის შედეგად;
+                            <br>8.6. ამ ხელშეკრულებით  გათვალსიწინებული თანხის ნაწილობრივ გადახდა არ ჩაითვლება ხელშეკრულების პირობის შესრულებად.
+                            <br>9.პირგასამტეხლო
+                            <br>9.1. წინამდებარე ხელშეკრულებით ნაკისრი ვალდებულებების შესრულების მოთხოვნის უზრუნველყოფის დამატებით საშუალებას წარმოადგენს პირგასამტეხლო;
+                            <br>9.2. პირგასამტეხლოს გადახდის და მისი ოდენობის დაანგარიშების წესი განისაზღვრება ამ ხელშეკრულებით;
+                            <br>9.3. ამ ხელშეკრულების მიზნებისათვის პირგასამტეხლოს გადახდევინება ხორციელდება ნაკისრი ვალდებულების შესრულების ვადის გადაცილებისათვის;
+                            <br>9.4. მსესხებელს, ამ ხელშეკრულებით გათვალსწინებული გადახდის ვადის გადაცილების შემთხვევაში, დაერიცხება პირგასამტეხლო სესხის ძირი თანხის '.$res['penalty_percent'].'%-ის ოდენობით ყოველ ვადაგადაცილებულ დღეზე, ვალდებულების დარღვევიდან '.$res['penalty_days'].' დღის განმავლობაში; ხოლო გადახდის ვადის გადაცილების '.$res['penalty_days'].' ('.float_replase($res['penalty_days']).') დღეზე მეტი ვადით გაგრძელების შემთხვევაში მსესხებელს დაერიცხება პირგასამტეხლო სესხის ძირი თანხის '.$res['penalty_additional_percent'].'% ყოველ ვადაგადაცილებულ დღეზე.
+                            <br>9.5. ამ ხელშეკრულების 9.4 მუხლით გათვალისწინებული პირგასამტეხლოს ოდენობა დაანგარიშდება სესხის ძირი თანხიდან;
+                            <br>9.6. პირგასამტეხლოს დაკისრება ხდება ყოველი კონკრეტული ვალდებულების დარღვევისთვის (ყოველთვიური სარგებლის, გრაფიკით გათვალისწინებული თანხის თუ სესხის ძირი თანხის გადახდის ვადაგადაცილების შემთხვევაში)  ცალკ-ცალკე, სესხის ძირი თანხიდან.
+                            <br>9.7. სესხის სარგებლის (ან გრაფიკით გათვალისწინებული თანხის) გადახდის ვადის 2 ან მეტი თვით ვადა გადაცილების შემთხვევაში, თითოეული თვის ვადაგადაცილებისათვის მსესხებელს ცალკ-ცალკე ერიცხება პირგასამტეხლო. იმ შემთხვევაში, თუ მსესხებლის მიერ უკვე დარღვეულია სესხის სარგებლის ან გრაფიკით გათვალისწინებული თანხის გადახდის ვადა და მსესხებელმა მომდევნო თვის სარგებლის ან გრაფიკით გათვალისწინებული თანხის გადახდის ვადასაც გადააცილა, პირგასამტეხლოს დარიცხვა პირველი თვის სარგებლისთვის იმავე ფარგლებში გაგრძელდება და ამასთან, მეორე და მომდევნო თვის სარგებლის ან გრაფიკით გათვალისწინებული თანხის ვადაგადაცილებისთვის ცალკ-ცალკე, დამატებით მოხდება პირგასამტეხლოს დარიცხვა სესხის ძირი თანხის 0.5% -ის ოდენობით ყოველ ვადაგადაცილებულ დღეზე.
+                            <br>9.8. მსესხებლის მიერ გადახდილი პირგასამტეხლო არ ჩაითვლება სესხის თანხის ანგარიშში და რაიმე ფორმით მისი უკან დაბრუნების მოთხოვნა არის დაუშვებელი;
+                            <br>9.10. პირგასამტეხლოს გადახდა არ ათავისუფლებს მის გადამხდელ მხარეს ძირითადი ვალდებულების შესრულების ვალდებულებისაგან
+                            <br>10. საკონტაქტო ინფორმაცია
+                            <br>10.1. მხარეთა შორის კონტაქტი ხორციელდება ამ ხელშეკრულებაში აღნიშნულ მისამართებზე, ტელეფონებზე და/ან ელ. ფოსტებზე;
+                            <br>10.2. მსესხებელი აცხადებს, რომ თანახმაა მიიღოს გამსესხებლის მიერ გამოგზავნილი ყველანაირი შეტყობინება ამ ხელშეკრულებაში მითითებულ მისამართზე ან ელ/ფოსტებზე;
+                            <br>10.3. მხარეები თანხმდებიან, რომ ყველა შეტყობინება, რომელიც გაიგზავნება ამ ხელშეკრულებაში მითითებულ მსესხებლის მისამართსა თუ ელ ფოსტაზე, მიუხედავად მისი ჩაბარებისა ან მიღებაზე უარის თქმისა, ჩაითვლება მსესხებლის მიერ მიღებულად;
+                            <br>10.4. იმ შემთხვევაში, თუ მსესხებელი შეიცვლის საკონტაქტო მონაცემს -ადგილსამყოფელს (მისამართს), ან ელ/ფოსტას- იგი ვალდებულია აღნიშნულის თაობაზე წერილობით აცნობოს გამსესხებელს;
+                            <br>10.5. ამ ხელშეკრულების 10.4 მუხლით გათვალისწინებულ შემთხვევაში, თუკი მსესხებელი წერილობით აცნობებს გამსესხებელს მის შეცვლილ საკონტაქტო მონაცემს -ადგილსამყოფელს (მისამართს), ან ელ/ფოსტას-საკონტაქტო მისამართად ჩაითვლება ახალი მისამართი და მასზე სრულად გავრცელდება ამ ხელშეკრულებით დადგენილი წესები;
+                            <br>10.6. ამ ხელშეკრულების 10.4 მუხლით გათვალისწინებულ შემთხვევაში, თუკი მსესხებელი წერილობით არ აცნობებს გამსესხებელს მის შეცვლილ საკონტაქტო მონაცემს -ადგილსამყოფელს (მისამართს), ან ელ/ფოსტას-საკონტაქტო მისამართად ჩაითვლება ამ ხელშეკრულებაში მითითებული მონაცემები და მასზე გავრცელდება ამ ხელშეკრულების  წესები;
+                            <br>10.7. მსესხებლის მიერ წინამდებარე ხელშეკრულების 10.4 მუხლით გათვალსწინებული წერილობითი შეტყობინებით გათვალისწინებული ვალდებულების დარღვევის შემთხვევაში, დაუშვებელია რაიმე სახის პრეტენზიის დაყენება გამსესხებლის მიმართ.
+                            <br>11. ფორს-მაჟორი
+                            <br>11.1. ხელშეკრულების მონაწილე მხარეები დროებით თავისუფლდებიან პასუხისმგებლობისაგან იმ შემთხვევაში, თუკი ვალდებულების შეუსრულებლობა გამოწვეულია დაუძლეველი ძალით (ფორს-მაჟორი);
+                            <br>11.2. დაუძლეველ ძალად განიხილება ბუნებრივი კატაკლიზმები ან/და სახელმწიფოს მიერ მიღებული აქტები, რაც დროებით შეუძლებელს ხდის ვალდებულების შესრულებას;
+                            <br>11.3. დაუძლეველი ძალის არსებობის შემთხვევაში ვალდებულების შესრულება გადაიწევა ამ გარემოების აღმოფხვრამდე
+                            <br>12. დავათა გადაჭრის წესი:
+                            <br>12.1.ამ ხელშეკრულებიდან გამომდინარე მხარეთა შორის წარმოშობილ ნებისმიერ დავას განიხილავს თბილისის საქალაქო სასამართლო.
+                            <br>12.2.მხარეები შეთანხმდნენ, რომ პირველი ინსტანციის სასამართლოს მიერ მიღებული გადაწყვეტილება დაუყონებლივ აღსასრულებლად მიექცევა საქართველოს სამოქალაქო საპროცესო კოდექსის 268-ე მუხლის I1 ნაწილის შესაბამისად;
+                            <br>13. დამატებითი დებულებები
+                            <br>13.1. წინამდებარე ხელშეკრულებაზე ხელის მოწერით მხარეები აცხადებენ, რომ ამ ხელშეკრულების ყველა პირობა წარმოადგენს მათი ნამდვილი ნების გამოვლენას, ისინი ეთანხმებიან ამ პირობებს და სურთ ხელშეკრულების დადება აღნიშნული პირობებით;
+                            <br>13.2 წინადებარე ხელშეკრულებაზე ხელის მოწერით მსესხებელი ადასტურებს მის მიერ ამ ხელშეკრულებით გათვალისწინებული ოდენობით სესხის თანხის მიღების ფაქტს.
+                            <br>13.3. წინამდებარე ხელშეკრულების რომელიმე მუხლის, პუნქტის, დათქმის, წინადადების და ა.შ. ბათლობა არ იწვევს მთელი ხელშეკრულების ბათილობას;
+                            <br>13.4. ხელშეკრულების მონაწილე რომელიმე მხარის მიერ უფლების გამოუყენებლობა არ განიხილება ამ უფლებაზე უარის თქმად;
+                            <br>13.5. წინამდებარე ხელშეკრულებაში შეტანილი ცვლილებები ან/და დამატებები ძალაშია მხოლოდ იმ შემთხვევაში, თუ ისინი შესრულებულია ამ ხელშეკრულების ფორმის დაცვით და ხელმოწერილია მხარეთა მიერ. ამ წესის დარღვევით შეტანილი ნებისმიერი ცვლილება ან/და დამატება ბათილია მისი შეტანის მომენტიდან და არ წარმოშობს იურიდიული მნიშნველობის მქონე შედეგებს;
+                            <br>13.6. ამ ხელშეკრულების საფუძველზე ან/და მისგან გამომდინარე ყველა ხელშეკრულება ან/და შეთანხმება და მათი დანართები წარმოადგენენ ამ ხელშეკრულების განუყოფელ ნაწილს და მათზე სრულად ვრცელდება ამ ხელშეკრულების წესები.
+                            <br>13.7. ხელშეკრულება შედგენილია ქართულ ენაზე, თანაბარი იურიდიული ძალის მქონე 02 (ორ) ეგზემპლარად, ხელმოწერილია და ინახება მხარეებთან.
+                                                        
+                             </div>
+                            <div style="width:100%; margin-top: 100px;">
+                                <table style="width:100%;">
+                                    <tr style="width:100%;">
+                                        <td style="width:50%;"><label style="font-size: 12px; text-align: left;">გამსესხებელი: შპს "თი ჯი მობაილ" <br> მისამართი: ქ. თბილისი, დოლიძის ქ. 25/121<br>ს/კ 205270277<br>სს "საქართველოს ბანკი"<br>ბანკის კოდი: BAGAGE22<br>ა/ა GE12BG0000000523102000<br>ტელეფონის ნომერი: (ოფისი)<br>ტელეფონის ნომერი: 579796921<br>ტელეფონის ნომერი: 579131813 (ლერი)<br>ხელის მომწერის: ვახტანგ ბახტაძე,<br>პოზიცია: მენეჯერი<br>ელ.ფოსტა: tgmobail@mail.ru<br>s.qurdadze.1@gmail.com</label></td>
+                                        <td style="width:50%;"><label style="font-size: 12px; text-align: left;">მსესხებელი<br>მინდობილი პირი:'.$res['trust_pers'].'</br>პირ № '.$res['trusted_pid'].'<br>მისამართი:'.$res['trusted_actual_address'].'<br>'.$res['trusted_juridical_address'].'<br>ტელ.ნომერი:'.$res['trusted_phone'].' '.$res[client_person_person].'<br>ელ.ფოსტა:'.$res['trusted_email'].'</label></td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div style="width:100%; margin-top: 60px;">
+                                <table style="width:100%;">
+                                    <tr style="width:100%;">
+                                        <td style="width:50%;"><label style="font-size: 12px;">ხელმოწერა:</label></td>
+                                        <td style="width:50%;"><label style="font-size: 12px;">ხელმოწერა:</label></td>
+                                    </tr>
+                                </table>
+                            </div>
+                         </div>
+                   </div';
+    }elseif ($file_type == 'agreement_fee_'){
+        $data  .= '<div style="size: 7in 9.25in; margin: 15mm 16mm 15mm 16mm;" id="dialog-form">
+                        <div style="width:100%; font-size: 16px; text-align: center">საკრედიტო ხელშეკრულება #'.$res[loan_agreement_id].'</div>
+                        <div style="width:100%; font-size: 12px; margin-top: 15px; text-align: right;">'.$res[day].'.'.$res[month_id].'.'.$res[year].'</div>
+                        <div style="width:100%; font-size: 12px; text-align: left;">ქ. თბილისი</div>
+                        <div style="width:100%; font-size: 12px; margin-top: 15px;">
+                                                            წინამდებარე ხელშეკრულების მონაწილე მხარეები, ერთის მხრივ შპს "თი ჯი მობაილ" (საიდენტიფიკაციო № 205170177), -
+                                                            დირექტორი გიორგი კილაძე, წარმომადგენელი ვახტანგ ბახტაძის სახით (მინდობილობა №001, 10.25.2012 წელი)  (შემდგომში გამსესხებელი),
+                                                            და მეორეს მხრივ, '.$res['name'].' (პირადი № '.$res['pid'].'), (შემდგომში მსესხებელი),
+                                                            ჩვენს შორის მიღწეული შეთანხმების შედეგად, ვდებთ ხელშეკრულებას სასყიდლიანი სესხის გაცემის შესახებ.
+                        </div>
+                        <div style="width:100%; font-size: 12px; margin-top: 15px;">
+                                                            ტერმინთა განმარტება:
+                        </div>
+                        <div style="width:100%; font-size: 12px;">
+                            <br>1.1.	გამსესხებელი- შპს  "თი ჯი მობაილ"
+                            <br>1.2.	მსესხებელი- '.$res['name'].', რომელიც სარგებლობს ამ ხელშეკრულების შესაბამისად სასყიდლიანი სესხის სახით გაცემული ფულადი თანხით;
+                            <br>1.3.	ხელშეკრულება- წინამდებარე ხელშეკრულება, რომელიც განსაზღვრავს ამ ხელშეკრულების მონაწილე მხარეთა შორის არსებულ უფლებებსა და ვალდებულებებს, ასევე არეგულირებს გამსესხებელსა და მსესხებელს შორის არსებული სამართალურთიერთობის ძირითად პირობებს და პარამეტრებს;
+                            <br>1.4.	სესხი- მსესხებელზე წინამდებარე ხელშეკრულებით გათვალისწინებული წესით და ოდენობით პირადი მოხმარებისთვის გაცემული თანხა, საქართველოს მოქმედი კანონმდებლობის შესაბამისად;
+                            <br>1.5.	სესხის თანხა- ამ ხელშეკრულების შესაბამისად დადგენილი ოდენობით მსესხებელზე გამსესხებლის მიერ გაცემული ფულადი თანხა;
+                            <br>1.6.	საპროცენტო განაკვეთი- ამ ხელშეკრულებით გათვალისწინებული ფიქსირებული ან იდექსირებული საპროცენტო განაკვეთი ხელშეკრულების მოქმედების სრული პერიოდის მანძილზე;
+                            <br>1.7.	ფიქსირებული საპროცენტო განაკვეთი- საპროცენტო განაკვეთი, რომელიც დაფიქსირებულია ამ ხელშეკრულებაში და უცვლელია ხელშეკრულების მოქმედების სრული პერიოდის მანძილზე ან რომლის ცვლილებაც შესაძლებელია ხელშეკრულებით გათვალისწინებული ცალკეული გარემოებების დადგომის შემთხვევაში. საპროცენტო განაკვეთის ცვლილებად არ მიიჩნევა ხელშეკრულებაში წინასწარ განსაზღვრული პირობების შესაბამისად მსესხებლის ქმედებასთან დაკავშირებული გარემოებების დადგომიდან გამომდინარე საპროცენტო განაკვეთის ავტომატური ცვლილება;
+                            <br>1.8.	საპროცენტო სარგებელი- მსესხებლის მიერ გამსესხებლისთვის გადასახდელი ფულადი თანხა, რომელიც წარმოადგენს სარგებელს მსესხებლის მიერ გამსესხებლის მხრიდან მიღებული ფულადი სახსრებით სარგებლობისთვის;
+                            <br>1.9.	ფინანსური ხარჯი- ნებისმიერი ხარჯი, რომელიც პირდაპირ ან არაპირდაპირ გასწია ან/და მომავალში გასწევს გამსესხებელი და წარმოადგენს მსესხებლის მიერ სესხის მიღებასა და მისი ამოღებისთვის საჭირო ხარჯს;
+                            <br>1.10.	მხარეები- გამსესხებელი და მსესხებელი ერთად. 
+                            <br>2.	ხელშეკრულების საგანი
+                            <br>2.1.	წინამდებარე ხელშეკრულების შესაბამისად, გამსესხებელი კისრულობს ვალდებულებას, გასცეს მსესხებელზე სესხი ამ ხელშეკრულებით გათვალისწინებულ ვადებში და ოდენობით, ხოლო მსესხებელი კისრულობს ვალდებულებას დააბრუნოს მიღებული სესხი, მასზე დარიცხული საპროცენტო სარგებელი, დაფაროს ყველა ფინანსური ხარჯი და სრულიად შეასრულოს ყველა ნაკისრი ვალდებულება.
+                            <br>3.	სესხით სარგებლობის პირობები
+                            <br>3.1.	სესხის სრული მოცულობა (ოდენობა) – '.$res['loan_amount'].' აშშ დოლარი (ექვივალენტი ლარში)
+                            <br>3.2.	გატანის პერიოდულობა- ერთჯერადი;
+                            <br>3.3.	სესხით სარგებლობის ვადა- '.$res['loan_months'].' ('.float_replase($res['loan_months']).') თვე;
+                            <br>3.4.	სესხის გაცემის საკომისიო - '.$res['loan_fee'].'% (აკისრია მსესხებელს)
+                            <br>3.5.	საკრედიტო ხელშეკრულების გაგრძელების საფასური (საჭიროების შემთხვევაში, იხდის მსესხებელი)- '.$res['proceed_fee'].' ლარი.
+                            <br>3.6.	საკრედიტო ხელშეკრულების გაგრძელების შემთხვევაში, მსესხებელი ვალდებულია დაფაროს ძირი თანხის '.$res['proceed_percent'].' %;
+                            <br>3.7.	 სადაზღვევო ხარჯი- 3 თვის დაზღვევის საფასური -'.$res['insurance_fee'].' ('.float_replase($res['insurance_fee']).') აშშ დოლარი (ექვივალენტი ლარში). მსესხებელს ასევე ეკისრება ყოველ 3 თვეში დაზღვევის საფასურის დამატებით გადახდა იმ დროისთვის არსებული ოდენობით;
+                            <br>3.8.	გირავნობის ხარჯი - '.$res['pledge_fee'].' ('.float_replase($res['pledge_fee']).') ლარი; (აკისრია მსესხებელს)
+                            <br>3.9.	სარგებელი სესხით სარგებლობისთვის- ამ ხელშეკრულების მოქმედების მანძილზე ყოველთვიურად -'.$res['month_percent'].'% პროცენტი, რაც შეადგენს '.$res['monthly_pay'].' ('.float_replase($res['monthly_pay']).') აშშ დოლარის ექვივალენტს ლარში.
+                            <br>3.10.	მსესხებელი ვალდებულია ამ ხელშეკრულების  3.8 პუნქტში მითითებული თანხის გადახდები განახორციელოს ხელშეკრულების მოქმედების სრული პერიოდის განმავლობაში ყოველი თვის '.$res['month_id'].' რიცხვში .
+                            <br>3.11.		სესხის გაცემის ვადა – 01 (ერთი) დღე;
+                            <br>3.12.	        საპროცენტო სარგებლის გადახის პერიოდულობა განისაზღვრება წინამდებარე ხელშეკრულებით;
+                            ვალუტის კურსი ხელშეკრულების ხელმოწერის დღისათვის – 1 აშშ დოლარი = '.$res['exchange_rate'].' ლარი;
+                            <br>3.13.	სესხის ხელშეკრულებით გათვალისწინებული სესხის თანხის დადგენილ ვადაში დაუბრუნებლობის ან/და ამ ხელშეკრულებით დადგენილი პერიოდულობით გადაუხდელობის /ნაწილობრივ გადახდის შემთხვევაში, მსესხებელს დაერიცხება ამ ხელშეკრულებით გათვალისწინებული პირგასამტეხლო (საურავი), რომელიც დადგენილია გადახდის ვადის გადაცილებისათვის და რომელიც ანგარიშდება სესხის ძირი თანხიდან.
+                            <br>3.14.		ფინანსური ხარჯები: ამ ხელშეკრულების მიზნებისათვის ფინანსურ ხარჯს წარმოადგენს ყველა ის ხარჯი, რომელიც აუცილებელია სესხის გაცემისა და მისი ამოღებისათვის (მათ შორის სადაზღვევო ხარჯი, სააღსრულებო ხარჯი, სესხის გაპრობლემების შემთხვევაში პრობლემური სამსახურის მომსახურების საფასური, აუდიტის მომსახურების საფასური. გირავნობის საფასური, ,სსიპ შსს მომსახურების სააგენტოში გაწეული ხარჯი და ნებისმიერი გადასახდელი, რომელიც გასწია გამსესხებელმა სესხის გასაცემად და დასაბრუნებლად);
+                            <br>3.15.		წინამდებარე ხელშეკრულების მიზნებიდან გამომდინარე, ფინანსურ ხარჯად განიხილება ასევე ნებისმიერი გადასახდელი, რომელსაც მსესხებელი უხდის მესამე პირს, თუკი ეს გადასახდელი წარმოადგენს აუცილებლობას და მის გარეშე გამსესხებლის მიერ ნაკისრი ვალდებულების შესრულება იქნება შეუძლებელი ან არსებითად გართულდება;
+                            <br>3.16.	ფინანასურ ხარჯად არ განიხილება ის ხარჯები, რომლების გაღებაც მსესხებლის მიერ იქნებოდა აუცილებელი სესხის მიღების გარეშეც. ასეთი ტიპის ხარჯები არ წარმოადგენს წინამდებარე ხელშეკრულების რეგულირების სფეროს და სრულად ეკისრება მსესხებელს.
+                            <br>4.	სესხის უზრუნველყოფა
+                            <br>4.1.	სესხი უზრუნველყოფილია გირავნობით, ასევე მსესხებლის მთელი ქონებით;
+                            <br>4.2.	უზრუნველყოფიდან გამომდინარე მხარეთა უფლებები და ვალდებულებები დეტალურად რეგულირდება ზემოაღნიშნული სესხის უზრუნველსაყოფად მხარეთა (ან მესამე პირსა და გამსესხებელს შორის) შორის დადებული გირავნობის ხელშეკრულებით;
+                            <br>4.3.	იმ შემთხვევაში, თუ მსესხებლის მიერ ამ ხელშეკრულებით ნაკისრი ვალდებულება იქნება დარღვეული, ხოლო გირავნობის საგნის რეალიზაციის შედეგად მიღებული ამონაგები არ იქნება საკმარისი გამსესხებლის მოთხოვნების სრულად დასაკმაყოფილებლად, გამსესხებელი უფლებამოსილია მოითხოვოს მსესხებლის ან/და მესამე პირის (ასეთის არსებობის შემთხვევაში) საკუთრებაში არსებული უძრავ-მოძრავი ქონების რეალიზაცია საკუთარი მოთხოვნის დაკმაყოფილების მიზნით;
+                            <br>4.4.	მსესხებლის მიერ ნაკისრ ვალდებულებათა ნებისმიერი დარღვევა იძლევა საფუძველს გამოყენებულ იქნას უზრუნველყოფის ხელშეკრულებით გათვალისწინებული აქტივები მათი რეალიზაციის უფლებით;
+                            <br>4.5.	დარღვევად განიხილება მსესხებლის მიერ ნაკისრი ვალდებულების შეუსრულებლობა ან/და ნაწილობრივი შესრულება, რომელიც არ მოდის შესაბამისობაში მსესხებლის მიერ ნაკისრ ვალდებულებებთან და ეწინააღმდეგება ვალდებულების შესრულების ძირითად პრინციპებს.
+                            
+                            <br>4.6.	იმ შემთხვევაში, თუკი უზრუნველყოფის საგნად გამოყენებული ნივთის მდგომარეობა გაუარესდება, განადგურდება, ღირებულება შემცირდება ან/და ადგილი ექნება რაიმე ისეთ გარემოებას, რომლიდან გამომდინარეც რეალური საფრთხე ექმნება სესხის უზრუნველყოფას, მსესხებელი ვალდებულია ამის თაობაზე აცნობოს გამსესხებელს ასეთი ფაქტის დადგომის მომენტიდან 48 (ორმოცდარვა) საათის განმავლობაში;
+                            <br>4.7.	ამ ხელშეკრულების 4.6 პუნქტით გათვალისწინებული შემთხვევის დადგომისას გამსესხებელი უფლებამოსილია მოსთხოვოს მსესხებელს დამატებითი უზურნველყოფის საშუალების წარდგენა, ხოლო მსესხებელი ვალდებულია წარმოუდგინოს გამსესხებელს ასეთი უზურნველყოფა;
+                            <br>4.8.	მსესხებლის მიერ ამ ხელშეკრულების 4.7 პუნქტით გათვალისწინებული უზრუნველყოფის საშუალების წარმოდგენის შეუძლებლობის შემთხვევაში გამსესხებელი უფლებამოსილია დაუყოვნებლივ შეწყიტოს სესხის ხელშეკრულება და მოითხოვოს მსესხებლისაგან სესხის ძირი თანხის და მასზე დარიცხული პროცენტისა თუ პირგასამტეხლოს გადახდა;
+                            <br>4.9.	მსესხებლის მხრიდან ამ ხელშეკრულების 4.6 პუნქტით გათვალისწინებული ინფორმაციის მიწოდების ვალდებულების დარღვევა გამსესხებელს აძლევს უფლებას, ვადაზე ადრე შეწყვიტოს ხელშეკრულება და მოითხოვოს მსესხებლისაგან ნაკისრი ვალდებულების დაუყოვნებლივ სრულად შესრულება.
+                            <br>5. მხარეთა უფლებები და ვალდებულებები
+                            <br>5.1. მხარეები კისრულობენ ვალდებულებას, რომ შეასრულებენ წინამდებარე ხელშეკრულებით ნაკისრ ვალდებულებებს ჯეროვნად, კეთისინდისიერად, დათქმულ დროსა და ადგილას;
+                            <br>5.2. გამსესხებელი უფლებამოსილია:
+                            <br>5.2.1. მოითხოვოს მსესხებლისაგან ხელშეკრულებით ნაკისრი ვალდებულებების განუხრელად დაცვა და შესრულება;
+                            <br>5.2.2. მოითხოვოს მსესხებლისგან სრული ინფომრაციის წარმოდგენა მისი ფინანსური მდგომარეობის შესახებ, როგორც ხელშეკრულების დადებამდე, ასევე ხელშეკრულების მოქმედების სრული პერიოდის განმავლობაში; 
+                            <br>5.2.3. ვადაზე ადრე შეწყვიტოს ხელშეკრულება, თუკი მსესხებლის ქონებრივი მდგომარეობა იმდენად გაუარესდება, რომ შესაძლოა საფრთხე შეექმნება სესხის დაბრუნებას;
+                            <br>5.3. გამსესხებელი ვალდებულია:
+                            <br>5.3.1. გასცეს სესხის თანხა ამ ხელშეკრულებით გათვალისწინებული ოდენობით და ვადებში;
+                            <br>5.3.2. მიაწოდოს მსესხებელს სრული ინფორმაცია სესხის პირობებთან დაკავშირებით;
+                            <br>5.3.3. მიაწოდოს მსესხებელს სრული ინფორმაცია სესხის უზრუნველყოფის პირობებთან დაკავშირებით;
+                            <br>5.3.4. დაუყოვნებლივ აცნობოს მსესხებელს ნებისმიერი ისეთი გარემოების ცვლილების შესახებ, რამაც შეიძლება გავლენა მოახდინოს მხარეთა უფლებებსა და ვალდებულებებზე;
+                            <br>5.3.5. საკუთარი შესაძლებლობის და ვალდებულების ფარგლებში ყველანაირად შეუწყოს ხელი ხელშეკრულების შესრულებას;
+                            <br>5.4. მსესხებელი უფლებამოსილია:
+                            <br>5.4.1. მოსთხოვოს გამსესხებელს სესხის თანხის გადაცემა ამ ხელშეკრულებით გათვალისწინებული პირობებით, ოდენობით და ვადებში;
+                            <br>5.4.2. მიიღოს სრული ინფორმაცია სესხის პირობებზე;
+                            <br>5.4.3. მიიღოს სრული ინფორმაცია მოთხოვნის უზრუნველყოფის პირობებზე;
+                            <br>5.4.4. ვალდებულების სრულად შესრულების შემდგომ მოსთხოვოს გამსესხებელს ვალდებულების შესრულების და შეწყვეტის დამადასტურებელი დოკუმენტის შედგენა და მისთვის გადაცემა;
+                            <br>5.4.5. ამ ხელშეკრულებით გათვალსწინებული წესით და პირობებით ვადაზე ადრე შეასრულოს ნაკისრი ვალდებულება.
+                            <br>5.5. მსესხებელი ვალდებულია:
+                            <br>5.5.1. დააბრუნოს სესხის თანხა სარგებელთან (პროცენტთან) ერთად ამ ხელშეკრულებით გათვალისწინებული ოდენობით, პირობებით და ამ ხელშეკრულებით გათვალისწინებულ ვადებში.
+                            <br>5.5.2. მსესხებელი ვალდებულია დააბრუნოს სესხის თანხა სესხის დაბრუნების დღისთვის არსებული ეროვნული ბანკის კურსით ლარში.
+                            <br>5.5.3. მიაწოდოს გამსესხებელს სრული ინფორმაცია მისი ქონებრივი და ფინანსური მდგომარეობის შესახებ;
+                            <br>5.5.4 დაუყოვნებლიც აცნობოს გამსესხებელს მისი ფინანსური/ქონებრივი მდგომარეობის ისეთი გაუარესების შესახებ, რამაც შეიძლება საფრთხე შეუქმნას მის მიერ ნაკისრი ვალდებულების შესრულებას;
+                            <br>5.5.6 არ იკისროს რაიმე სახის ფინანსური (საკრედიტო, სასესხო და ა.შ.) ვალდებულებები ფიზიკური/იურიდიული პირების წინაშე გამსესხებელთან წინასწარი წერილობითი შეთანხმების გარეშე;
+                            <br>5.5.6 არ გამოიყენოს ამ ხელშეკრულებით გათვალისწინებული ვალდებულების შესრულების უზრუნველსაყოფად გამოყენებული ქონება საკუთარი ან/და მესამე პირების მიერ ნაკისრი ვალდებულების უზრუნველსაყოფად გამსესხებელთან წინასწარი წერილობითი შეთანხმების გარეშე;
+                            <br>5.5.7 აუნაზღაუროს გამსესხებელს ყველა ის დანახარჯი, რომელიც ამ უკანასკნელმა გასწია მსესხებლის მიერ ნაკისრი ვალდებულების იძულებით შესრულებისათვის (ასეთის არსებობის შემთხვევაში- კერძოდ: აღსრულების ეროვნულ ბიუროს მომსახურების საფასური, ,აუდიტის მომსახურებისსაფასური ,სსიპ შსს მომსახურების სააგენტოში გაწეული ხარჯი და ამ სახის სხვა ხარჯები, რომელიც გამსხებელმა გასწია)
+                            <br>5.6. მსესხებელი უფლებამოსილია ვადაზე ადრე შეასრულოს მის მიერ ნაკისრი ვალდებულება;
+                            <br>5.7. მსესხებლის მიერ ნაკისრი ვალდებულების ვადაზე ადრე შესრულებად ჩაითვლება მის მიერ ამ ხელშეკრულების მოქმედების ვადის გასვლამდე სესხის დაფარვა
+                            <br>5.8. გამსესხებელი ვალდებულია მიიღოს მსესხებლისაგან ვადაზე ადრე განხორციელებული შესრულება მხოლოდ იმ პირობით, თუ მსესხებლის მიერ დაფარული იქნება როგორც სესხის ძირი თანხა, ასევე ვადამოსული სარგებელი (პროცენტი) იმ ოდენობით, რა ოდენობითაც ის დაანგარიშდება ანგარიშსწორების დღისათვის;
+                            <br>5.9. ხელშეკრულების მონაწილე მხარეები საკუთარი ვალდებულების ფარგლებში ვალდებული არიან შეასრულონ ყველა ის მოქმედება ან თავი შეიკავონ ყველა იმ მოქმედებისაგან, რომელიც პირდაპირ არ არის გათვალისწინებული ამ ხელშეკრულებით, მაგრამ გამომდინარეობს ვალდებულების არსიდან, ამ ხელშეკრულების მიზნებიდან, კეთილსინდისიერების პრინციპიდან და აუცილებელია მხარეთა ვალდებულებების სრულყოფილად შესასრულებლად.
+                            <br>5.10. მსესხებელს ეკრძალება ა/მანქანის მართვა ნასვამ, ნარკოტიკულ და კანონით აკრძალული ყველანაირი საშუალებების ზემოქმედების ქვეშ. დამგირავებელს ასევე ეკრძალება ა/მანქანის გადაცემა მართვის უფლების არმქონე, არასრულწლოვან, სადაზღვეო პოლისში არ მითითებულ და ზემოთ აღნიშნული კანონით აკრძალული ნივთიერებების და საშუალებების ზემოქმედების ქვეშ მყოფი პირებისადმი.
+                            <br>5.11. მსესხებელს ეკისრება ყველა  ხარჯი, რომელიც გამსესხებელმა გასწია და ყველა სახის ზიანი, რომელიც გამსესხებელს მიადგა მსესხებლის მიერ ამ ხელშეკრულების 5.10 პუნქტის დარღვევის გამო.
+                            <br>6. ვალდებულების დარღვევა
+                            <br>6.1. ამ ხელშეკრულებით გათვალისწინებული ვალდებულების დარღვევად ჩაითვლება მისი მონაწილე რომელიმე მხარის მიერ ნაკისრი ვალდებულების შეუსრულებლობა ან/და არაჯეროვანი შესრულება;
+                            <br>6.2. ვალდებულების შეუსრულებლობად ითვლება ხელშეკრულების მონაწილე რომელიმე მხარის მიერ ნაკისრი ვალდებულების შესრულებაზე უარის გაცხადება ან/და რაიმე ისეთი მოქმედება/უმოქმედობა, რომლიდან გამომდინარეც ნათელია ან არსებობს საფუძვლიანი ეჭვი იმის თაობაზე, რომ ვალდებულება არ იქნება შესრულებული სრულად;
+                            <br>6.3. ვალდებულების არაჯეროვან შესრულებად ითვლება შეთანხმების რომელიმე მხარის მიერ ნაკისრი ვალდებულების არასრულფასოვან ან/და არასრულყოფილი შესრულება;
+                            <br>6.4. ვალდებულების შეუსრულებლობას ან არაჯეროვან შესრულებას უთანაბრდება ამ ხელშეკრულებით გათვალისწინებული ინფორმაციის მიწოდების ვალდებულების დარღვევა, არასწორი ან არასრულფასოვანი ინფორმაციის მიწოდება;
+                            <br>6.5. მსესხებლის მიერ ვალდებულების შეუსრულებლობის/არაჯეროვანი შესრულების შემთხვევაში გამსესხებელი უფლებამოსილია ვადაზე ადრე შეწყვიტოს ხელშეკრულება და მოითხოვოს სესხის ძირი თანხის, მასზე დარიცხული სარგებლის (პროცენტის) და პირგასამტეხლოს გადახდა;
+                            <br>6.6. თითოეული მხარე უფლებამოსილია მოითხოვოს იმ ზიანის ანაზღაურება, რომელიც მას მიადგა ვალდებულების დარღვევის შედეგად;
+                            <br>6.7. ზიანის ანაზღაურება არ ათავისუფლებს ვალდებულების დამრღვევ მხარეს ძირითადი ვალდებულებების შესრულებისაგან
+                            <br>6.8.  5.10. პუნქტით დადგენილი ვალდებულებების შეუსრულებლობის შემთხვევაში ხელშეკრულება ჩაითვლება დარღვეულად და სესხის უზრუნველყოფის საგანი გაჩერდება გამსესხებლის მიერ შერჩეულ ავტოსადგომზე ვალდებულების სრულად შესრულებამდე.
+                            <br>7. ხელშეკრულების შეწყვეტა
+                            <br>7.1. წინამდებარე ხელშეკრულება წყდება  ვალდებულების სრულად შესრულებით;
+                            <br>7.2. წინამდებარე ხელშეკრულება შესრულებით შეწყვეტილად ჩაითვლება მსესხებლის მიერ ნაკისრი ვალდებულების სრულად შესრულებით, ანუ სესხის ძირი თანხის, მასზე დარიცხული სარგებლის (პროცენტის), პირგასამტეხლოს და ხელშეკრულების შეწყვეტისათვის აუცილებელი ხარჯების (ასეთის არსებობის შემთხვევაში) სრულად გადახდის შემდგომ;
+                            <br>7.3. ხელშეკრულების მოქმედების ვადის ამოწურვის შემდგომ ხელშეკრულება გაგრძელდება, თუ ორივე მხარე წერილობით დააფიქსირებს პოზიციას ხელშეკრულების გაგრძელების თაობაზე.
+                            <br>7.4..  მსესხებელი ცნობად იღებს იმ გარემოებას, რომ ხელშეკრულების მოქმედების ვადის  წინამდებარე ხელშეკრულების  7.3 პუნქტით გათვალისწინებული პირობებით გაგრძელების შემთხვევაში მსესხებელი ვალდებულია ხელშეკრულების გაგრძელებისათვის გადაიხადოს სადაზღვევო ხარჯი ამ ხელშეკრულებაში მითითებული ოდენობით.
+                            <br>7.5. მხარეთა შეთანხმებით, ხელშეკრულება შეიძლება გაგრძელდეს ამ ხელშეკრულებით გათვალსწინებული პირობებისაგან განსხვავებული პირობებით .  
+                            <br>7.6 ხელშეკრულების  გაგრძელება დასაშვებია მხოლოდ ამ ხელშეკრულების ფორმის  (წერილობითი) დაცვით . ამ წესის დარღვევით დადებული შეთანხმება არის ბათილი და იურიდიული მნიშვნელობის მქონე შედეგებს არ წარმოშობს .
+                            <br>8. ხელშეკრულების ვადაზე ადრე შეწყვეტა
+                            <br>8.1. ხელშეკრულება შეიძლება ვადაზე ადრე შეწყდეს რომელიმე მხარის მიერ ნაკისრი ვალდებულების დარღვევის შემთხვევაში;
+                            <br>8.2. მსესხებლის მიერ ამ ხელშეკრულებით ნაკისრი  ვალდებულებების დარღვევის შემთხვევაში გამსესხებელი უგზავნის მსესხებელს წერილობით შეტყობინებას ვალდებულების შესრულების მოთხოვნით და განუსაზღვრავს მას ვალდებულების შესრულების ვადას.
+                            <br>8.3. გაფრთხილების მიუხედავად, მსესხებლის მიერ ვალდებულების შეუსრულებლბა ან არაჯეროვანი შესრულება აძლევს გამსესხებელს უფლებას ცალმხრივად, ვადაზე ადრე შეწყვიტოს ხელშეკრულება და მოითხოვოს სესხის თანხის, მასზე დარიცხული სარგებლის (პროცენტის) და პირგასამტეხლოს ერთიანად გადახდა, ასევე ყველა იმ დამატებითი დანახარჯის ანაზღაურება, რომელიც მას წარმოეშვა ხელშეკრულების ვადაზე ადრე შეწყვეტის შედეგად;
+                            <br>8.4. იმ შემთხვევაში, თუ მსესხებელი გაფრთხილების მიღებიდან განსაზღვრულ ვადაში დაფარავს დავალიანებას, ხელშეკრულების მოქმედება გაგრძელდება იმავე პირობებით, რაც გათვალისწინებულია ამ ხელშეკრულებით. 
+                            <br>8.5. ამ ხელშეკრულებით ნაკისრი ვალდებულების  განმეორებით დარღვევის შემთხვევაში გამსესხებელი უფლებამოსილია ცალმხრივად და უპირობოდ შეწყვიტოს ხელშეკრულება და მოითხოვოს სესხის თანხის, მასზე დარიცხული სარგებლის (პროცენტის) და პირგასამტეხლოს ერთიანად გადახდა, ასევე ყველა იმ დამატებითი დანახარჯის ანაზღაურება, რომელიც მას წარმოეშვა ხელშეკრულების ვადაზე ადრე შეწყვეტის შედეგად;
+                            <br>8.6. ამ ხელშეკრულებით  გათვალსიწინებული თანხის ნაწილობრივ გადახდა არ ჩაითვლება ხელშეკრულების პირობის შესრულებად.
+                            <br>9.პირგასამტეხლო
+                            <br>9.1. წინამდებარე ხელშეკრულებით ნაკისრი ვალდებულებების შესრულების მოთხოვნის უზრუნველყოფის დამატებით საშუალებას წარმოადგენს პირგასამტეხლო;
+                            <br>9.2. პირგასამტეხლოს გადახდის და მისი ოდენობის დაანგარიშების წესი განისაზღვრება ამ ხელშეკრულებით;
+                            <br>9.3. ამ ხელშეკრულების მიზნებისათვის პირგასამტეხლოს გადახდევინება ხორციელდება ნაკისრი ვალდებულების შესრულების ვადის გადაცილებისათვის;
+                            <br>9.4. მსესხებელს, ამ ხელშეკრულებით გათვალსწინებული გადახდის ვადის გადაცილების შემთხვევაში, დაერიცხება პირგასამტეხლო სესხის ძირი თანხის '.$res['penalty_percent'].'%-ის ოდენობით ყოველ ვადაგადაცილებულ დღეზე, ვალდებულების დარღვევიდან '.$res['penalty_days'].' დღის განმავლობაში; ხოლო გადახდის ვადის გადაცილების '.$res['penalty_days'].' ('.float_replase($res['penalty_days']).') დღეზე მეტი ვადით გაგრძელების შემთხვევაში მსესხებელს დაერიცხება პირგასამტეხლო სესხის ძირი თანხის '.$res['penalty_additional_percent'].'% ყოველ ვადაგადაცილებულ დღეზე.
+                            <br>9.5. ამ ხელშეკრულების 9.4 მუხლით გათვალისწინებული პირგასამტეხლოს ოდენობა დაანგარიშდება სესხის ძირი თანხიდან;
+                            <br>9.6. პირგასამტეხლოს დაკისრება ხდება ყოველი კონკრეტული ვალდებულების დარღვევისთვის (ყოველთვიური სარგებლის, გრაფიკით გათვალისწინებული თანხის თუ სესხის ძირი თანხის გადახდის ვადაგადაცილების შემთხვევაში)  ცალკ-ცალკე, სესხის ძირი თანხიდან.
+                            <br>9.7. სესხის სარგებლის (ან გრაფიკით გათვალისწინებული თანხის) გადახდის ვადის 2 ან მეტი თვით ვადა გადაცილების შემთხვევაში, თითოეული თვის ვადაგადაცილებისათვის მსესხებელს ცალკ-ცალკე ერიცხება პირგასამტეხლო. იმ შემთხვევაში, თუ მსესხებლის მიერ უკვე დარღვეულია სესხის სარგებლის ან გრაფიკით გათვალისწინებული თანხის გადახდის ვადა და მსესხებელმა მომდევნო თვის სარგებლის ან გრაფიკით გათვალისწინებული თანხის გადახდის ვადასაც გადააცილა, პირგასამტეხლოს დარიცხვა პირველი თვის სარგებლისთვის იმავე ფარგლებში გაგრძელდება და ამასთან, მეორე და მომდევნო თვის სარგებლის ან გრაფიკით გათვალისწინებული თანხის ვადაგადაცილებისთვის ცალკ-ცალკე, დამატებით მოხდება პირგასამტეხლოს დარიცხვა სესხის ძირი თანხის 0.5% -ის ოდენობით ყოველ ვადაგადაცილებულ დღეზე.
+                            <br>9.8. მსესხებლის მიერ გადახდილი პირგასამტეხლო არ ჩაითვლება სესხის თანხის ანგარიშში და რაიმე ფორმით მისი უკან დაბრუნების მოთხოვნა არის დაუშვებელი;
+                            <br>9.10. პირგასამტეხლოს გადახდა არ ათავისუფლებს მის გადამხდელ მხარეს ძირითადი ვალდებულების შესრულების ვალდებულებისაგან
+                            <br>10. საკონტაქტო ინფორმაცია
+                            <br>10.1. მხარეთა შორის კონტაქტი ხორციელდება ამ ხელშეკრულებაში აღნიშნულ მისამართებზე, ტელეფონებზე და/ან ელ. ფოსტებზე;
+                            <br>10.2. მსესხებელი აცხადებს, რომ თანახმაა მიიღოს გამსესხებლის მიერ გამოგზავნილი ყველანაირი შეტყობინება ამ ხელშეკრულებაში მითითებულ მისამართზე ან ელ/ფოსტებზე;
+                            <br>10.3. მხარეები თანხმდებიან, რომ ყველა შეტყობინება, რომელიც გაიგზავნება ამ ხელშეკრულებაში მითითებულ მსესხებლის მისამართსა თუ ელ ფოსტაზე, მიუხედავად მისი ჩაბარებისა ან მიღებაზე უარის თქმისა, ჩაითვლება მსესხებლის მიერ მიღებულად;
+                            <br>10.4. იმ შემთხვევაში, თუ მსესხებელი შეიცვლის საკონტაქტო მონაცემს -ადგილსამყოფელს (მისამართს), ან ელ/ფოსტას- იგი ვალდებულია აღნიშნულის თაობაზე წერილობით აცნობოს გამსესხებელს;
+                            <br>10.5. ამ ხელშეკრულების 10.4 მუხლით გათვალისწინებულ შემთხვევაში, თუკი მსესხებელი წერილობით აცნობებს გამსესხებელს მის შეცვლილ საკონტაქტო მონაცემს -ადგილსამყოფელს (მისამართს), ან ელ/ფოსტას-საკონტაქტო მისამართად ჩაითვლება ახალი მისამართი და მასზე სრულად გავრცელდება ამ ხელშეკრულებით დადგენილი წესები;
+                            <br>10.6. ამ ხელშეკრულების 10.4 მუხლით გათვალისწინებულ შემთხვევაში, თუკი მსესხებელი წერილობით არ აცნობებს გამსესხებელს მის შეცვლილ საკონტაქტო მონაცემს -ადგილსამყოფელს (მისამართს), ან ელ/ფოსტას-საკონტაქტო მისამართად ჩაითვლება ამ ხელშეკრულებაში მითითებული მონაცემები და მასზე გავრცელდება ამ ხელშეკრულების  წესები;
+                            <br>10.7. მსესხებლის მიერ წინამდებარე ხელშეკრულების 10.4 მუხლით გათვალსწინებული წერილობითი შეტყობინებით გათვალისწინებული ვალდებულების დარღვევის შემთხვევაში, დაუშვებელია რაიმე სახის პრეტენზიის დაყენება გამსესხებლის მიმართ.
+                            <br>11. ფორს-მაჟორი
+                            <br>11.1. ხელშეკრულების მონაწილე მხარეები დროებით თავისუფლდებიან პასუხისმგებლობისაგან იმ შემთხვევაში, თუკი ვალდებულების შეუსრულებლობა გამოწვეულია დაუძლეველი ძალით (ფორს-მაჟორი);
+                            <br>11.2. დაუძლეველ ძალად განიხილება ბუნებრივი კატაკლიზმები ან/და სახელმწიფოს მიერ მიღებული აქტები, რაც დროებით შეუძლებელს ხდის ვალდებულების შესრულებას;
+                            <br>11.3. დაუძლეველი ძალის არსებობის შემთხვევაში ვალდებულების შესრულება გადაიწევა ამ გარემოების აღმოფხვრამდე
+                            <br>12. დავათა გადაჭრის წესი:
+                            <br>12.1.ამ ხელშეკრულებიდან გამომდინარე მხარეთა შორის წარმოშობილ ნებისმიერ დავას განიხილავს თბილისის საქალაქო სასამართლო.
+                            <br>12.2.მხარეები შეთანხმდნენ, რომ პირველი ინსტანციის სასამართლოს მიერ მიღებული გადაწყვეტილება დაუყონებლივ აღსასრულებლად მიექცევა საქართველოს სამოქალაქო საპროცესო კოდექსის 268-ე მუხლის I1 ნაწილის შესაბამისად;
+                            <br>13. დამატებითი დებულებები
+                            <br>13.1. წინამდებარე ხელშეკრულებაზე ხელის მოწერით მხარეები აცხადებენ, რომ ამ ხელშეკრულების ყველა პირობა წარმოადგენს მათი ნამდვილი ნების გამოვლენას, ისინი ეთანხმებიან ამ პირობებს და სურთ ხელშეკრულების დადება აღნიშნული პირობებით;
+                            <br>13.2 წინადებარე ხელშეკრულებაზე ხელის მოწერით მსესხებელი ადასტურებს მის მიერ ამ ხელშეკრულებით გათვალისწინებული ოდენობით სესხის თანხის მიღების ფაქტს.
+                            <br>13.3. წინამდებარე ხელშეკრულების რომელიმე მუხლის, პუნქტის, დათქმის, წინადადების და ა.შ. ბათლობა არ იწვევს მთელი ხელშეკრულების ბათილობას;
+                            <br>13.4. ხელშეკრულების მონაწილე რომელიმე მხარის მიერ უფლების გამოუყენებლობა არ განიხილება ამ უფლებაზე უარის თქმად;
+                            <br>13.5. წინამდებარე ხელშეკრულებაში შეტანილი ცვლილებები ან/და დამატებები ძალაშია მხოლოდ იმ შემთხვევაში, თუ ისინი შესრულებულია ამ ხელშეკრულების ფორმის დაცვით და ხელმოწერილია მხარეთა მიერ. ამ წესის დარღვევით შეტანილი ნებისმიერი ცვლილება ან/და დამატება ბათილია მისი შეტანის მომენტიდან და არ წარმოშობს იურიდიული მნიშნველობის მქონე შედეგებს;
+                            <br>13.6. ამ ხელშეკრულების საფუძველზე ან/და მისგან გამომდინარე ყველა ხელშეკრულება ან/და შეთანხმება და მათი დანართები წარმოადგენენ ამ ხელშეკრულების განუყოფელ ნაწილს და მათზე სრულად ვრცელდება ამ ხელშეკრულების წესები.
+                            <br>13.7. ხელშეკრულება შედგენილია ქართულ ენაზე, თანაბარი იურიდიული ძალის მქონე 02 (ორ) ეგზემპლარად, ხელმოწერილია და ინახება მხარეებთან.
+                            
+                            </div>
+                            <div style="width:100%; margin-top: 150px;">
+                                <table style="width:100%;">
+                                    <tr style="width:100%;">
+                                        <td style="width:50%;"><label style="font-size: 12px; text-align: left;">გამსესხებელი: შპს "თი ჯი მობაილ" <br> მისამართი: ქ. თბილისი, დოლიძის ქ. 25/121<br>ს/კ 205270277<br>სს "საქართველოს ბანკი"<br>ბანკის კოდი: BAGAGE22<br>ა/ა GE12BG0000000523102000<br>ტელეფონის ნომერი: (ოფისი)<br>ტელეფონის ნომერი: 579796921<br>ტელეფონის ნომერი: 579131813 (ლერი)<br>ხელის მომწერის: ვახტანგ ბახტაძე,<br>პოზიცია: მენეჯერი<br>ელ.ფოსტა: tgmobail@mail.ru<br>s.qurdadze.1@gmail.com</label></td>
+                                        <td style="width:50%;"><label style="font-size: 12px; text-align: left;">მსესხებელი: '.$res['name'].'<br>პირ № '.$res['pid'].'<br>მისამართი:'.$res['actual_address'].'<br>'.$res['juridical_address'].'<br>ტელ.ნომერი:'.$res['phone'].' '.$res[client_person_person].'<br>ელ.ფოსტა:'.$res['email'].'</label></td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div style="width:100%; margin-top: 60px;">
+                                <table style="width:100%;">
+                                    <tr style="width:100%;">
+                                        <td style="width:50%;"><label style="font-size: 12px;">ხელმოწერა:</label></td>
+                                        <td style="width:50%;"><label style="font-size: 12px;">ხელმოწერა:</label></td>
+                                    </tr>
+                                </table>
+                            </div>
+                         </div>
+                   </div';
+    }elseif ($file_type == 'agreement_fee_ltd'){
+        $data  .= '<div style="size: 7in 9.25in; margin: 15mm 16mm 15mm 16mm;" id="dialog-form">
+                        <div style="width:100%; font-size: 16px; text-align: center">საკრედიტო ხელშეკრულება #'.$res[loan_agreement_id].'</div>
+                        <div style="width:100%; font-size: 12px; margin-top: 15px; text-align: right;">'.$res[day].'.'.$res[month_id].'.'.$res[year].'</div>
+                        <div style="width:100%; font-size: 12px; text-align: left;">ქ. თბილისი</div>
+                        <div style="width:100%; font-size: 12px; margin-top: 15px;">
+                                                            წინამდებარე ხელშეკრულების მონაწილე მხარეები, ერთის მხრივ შპს „თი ჯი მობაილ“ (საიდენტიფიკაციო № 205170177), - 
+                                                            დირექტორი გიორგი კილაძე, წარმომადგენელი ვახტანგ ბახტაძის სახით (მინდობილობა №001, 10.25.2012 წელი)  (შემდგომში გამსესხებელი), 
+                                                            და მეორეს მხრივ, შპს '.$res[$ltd_name].' (საიდენტიფიკაციო კ. № '.$res['ltd_id'].'), დირექტორი '.$res['name'].' (პირადი# '.$res['pid'].') (შემდგომში მსესხებელი), 
+                                                            ჩვენს შორის მიღწეული შეთანხმების შედეგად, ვდებთ ხელშეკრულებას სასყიდლიანი სესხის გაცემის შესახებ.
+                        </div>
+                        <div style="width:100%; font-size: 12px; margin-top: 15px;">
+                                                            ტერმინთა განმარტება:
+                        </div>
+                        <div style="width:100%; font-size: 12px;">
+                            <br>1.1.	გამსესხებელი- შპს  "თი ჯი მობაილ"
+                            <br>1.2.	მსესხებელი- შპს '.$res['ltd_name'].' (საიდენტიფიკაციო კ. № '.$res['ltd_id'].'), დირექტორი'.$res['name'].' (პირადი# '.$res['pid'].'), რომელიც სარგებლობს ამ ხელშეკრულების შესაბამისად სასყიდლიანი სესხის სახით გაცემული ფულადი თანხით;
+                            <br>1.3.	ხელშეკრულება- წინამდებარე ხელშეკრულება, რომელიც განსაზღვრავს ამ ხელშეკრულების მონაწილე მხარეთა შორის არსებულ უფლებებსა და ვალდებულებებს, ასევე არეგულირებს გამსესხებელსა და მსესხებელს შორის არსებული სამართალურთიერთობის ძირითად პირობებს და პარამეტრებს;
+                            <br>1.4.	სესხი- მსესხებელზე წინამდებარე ხელშეკრულებით გათვალისწინებული წესით და ოდენობით პირადი მოხმარებისთვის გაცემული თანხა, საქართველოს მოქმედი კანონმდებლობის შესაბამისად;
+                            <br>1.5.	სესხის თანხა- ამ ხელშეკრულების შესაბამისად დადგენილი ოდენობით მსესხებელზე გამსესხებლის მიერ გაცემული ფულადი თანხა;
+                            <br>1.6.	საპროცენტო განაკვეთი- ამ ხელშეკრულებით გათვალისწინებული ფიქსირებული ან იდექსირებული საპროცენტო განაკვეთი ხელშეკრულების მოქმედების სრული პერიოდის მანძილზე;
+                            <br>1.7.	ფიქსირებული საპროცენტო განაკვეთი- საპროცენტო განაკვეთი, რომელიც დაფიქსირებულია ამ ხელშეკრულებაში და უცვლელია ხელშეკრულების მოქმედების სრული პერიოდის მანძილზე ან რომლის ცვლილებაც შესაძლებელია ხელშეკრულებით გათვალისწინებული ცალკეული გარემოებების დადგომის შემთხვევაში. საპროცენტო განაკვეთის ცვლილებად არ მიიჩნევა ხელშეკრულებაში წინასწარ განსაზღვრული პირობების შესაბამისად მსესხებლის ქმედებასთან დაკავშირებული გარემოებების დადგომიდან გამომდინარე საპროცენტო განაკვეთის ავტომატური ცვლილება;
+                            <br>1.8.	საპროცენტო სარგებელი- მსესხებლის მიერ გამსესხებლისთვის გადასახდელი ფულადი თანხა, რომელიც წარმოადგენს სარგებელს მსესხებლის მიერ გამსესხებლის მხრიდან მიღებული ფულადი სახსრებით სარგებლობისთვის;
+                            <br>1.9.	ფინანსური ხარჯი- ნებისმიერი ხარჯი, რომელიც პირდაპირ ან არაპირდაპირ გასწია ან/და მომავალში გასწევს გამსესხებელი და წარმოადგენს მსესხებლის მიერ სესხის მიღებასა და მისი ამოღებისთვის საჭირო ხარჯს;
+                            <br>1.10.	მხარეები- გამსესხებელი და მსესხებელი ერთად. 
+                            <br>2.	ხელშეკრულების საგანი
+                            <br>2.1.	წინამდებარე ხელშეკრულების შესაბამისად, გამსესხებელი კისრულობს ვალდებულებას, გასცეს მსესხებელზე სესხი ამ ხელშეკრულებით გათვალისწინებულ ვადებში და ოდენობით, ხოლო მსესხებელი კისრულობს ვალდებულებას დააბრუნოს მიღებული სესხი, მასზე დარიცხული საპროცენტო სარგებელი, დაფაროს ყველა ფინანსური ხარჯი და სრულიად შეასრულოს ყველა ნაკისრი ვალდებულება.
+                            <br>3.	სესხით სარგებლობის პირობები
+                            <br>3.1.	სესხის სრული მოცულობა (ოდენობა) – '.$res['loan_amount'].' აშშ დოლარი (ექვივალენტი ლარში)
+                            <br>3.2.	გატანის პერიოდულობა- ერთჯერადი;
+                            <br>3.3.	სესხით სარგებლობის ვადა- '.$res['loan_months'].' ('.float_replase($res['loan_months']).') თვე;
+                            <br>3.4.	სესხის გაცემის საკომისიო - '.$res['loan_fee'].'% (აკისრია მსესხებელს)
+                            <br>3.5.	საკრედიტო ხელშეკრულების გაგრძელების საფასური (საჭიროების შემთხვევაში, იხდის მსესხებელი)- '.$res['proceed_fee'].' ლარი.
+                            <br>3.6.	საკრედიტო ხელშეკრულების გაგრძელების შემთხვევაში, მსესხებელი ვალდებულია დაფაროს ძირი თანხის '.$res['proceed_percent'].' %;
+                            <br>3.7.	 სადაზღვევო ხარჯი- 3 თვის დაზღვევის საფასური -'.$res['insurance_fee'].' ('.float_replase($res['insurance_fee']).') აშშ დოლარი (ექვივალენტი ლარში). მსესხებელს ასევე ეკისრება ყოველ 3 თვეში დაზღვევის საფასურის დამატებით გადახდა იმ დროისთვის არსებული ოდენობით;
+                            <br>3.8.	გირავნობის ხარჯი - '.$res['pledge_fee'].' ('.float_replase($res['pledge_fee']).') ლარი; (აკისრია მსესხებელს)
+                            <br>3.9.	სარგებელი სესხით სარგებლობისთვის- ამ ხელშეკრულების მოქმედების მანძილზე ყოველთვიურად -'.$res['month_percent'].'% პროცენტი, რაც შეადგენს '.$res['monthly_pay'].' ('.float_replase($res['monthly_pay']).') აშშ დოლარის ექვივალენტს ლარში.
+                            <br>3.10.	მსესხებელი ვალდებულია ამ ხელშეკრულების  3.8 პუნქტში მითითებული თანხის გადახდები განახორციელოს ხელშეკრულების მოქმედების სრული პერიოდის განმავლობაში ყოველი თვის '.$res['month_id'].' რიცხვში .
+                            <br>3.11.		სესხის გაცემის ვადა – 01 (ერთი) დღე;
+                            <br>3.12.	        საპროცენტო სარგებლის გადახის პერიოდულობა განისაზღვრება წინამდებარე ხელშეკრულებით;
+                            ვალუტის კურსი ხელშეკრულების ხელმოწერის დღისათვის – 1 აშშ დოლარი = '.$res['exchange_rate'].' ლარი;
+                            <br>3.13.	სესხის ხელშეკრულებით გათვალისწინებული სესხის თანხის დადგენილ ვადაში დაუბრუნებლობის ან/და ამ ხელშეკრულებით დადგენილი პერიოდულობით გადაუხდელობის /ნაწილობრივ გადახდის შემთხვევაში, მსესხებელს დაერიცხება ამ ხელშეკრულებით გათვალისწინებული პირგასამტეხლო (საურავი), რომელიც დადგენილია გადახდის ვადის გადაცილებისათვის და რომელიც ანგარიშდება სესხის ძირი თანხიდან.
+                            <br>3.14.		ფინანსური ხარჯები: ამ ხელშეკრულების მიზნებისათვის ფინანსურ ხარჯს წარმოადგენს ყველა ის ხარჯი, რომელიც აუცილებელია სესხის გაცემისა და მისი ამოღებისათვის (მათ შორის სადაზღვევო ხარჯი, სააღსრულებო ხარჯი, სესხის გაპრობლემების შემთხვევაში პრობლემური სამსახურის მომსახურების საფასური, აუდიტის მომსახურების საფასური. გირავნობის საფასური, ,სსიპ შსს მომსახურების სააგენტოში გაწეული ხარჯი და ნებისმიერი გადასახდელი, რომელიც გასწია გამსესხებელმა სესხის გასაცემად და დასაბრუნებლად);
+                            <br>3.15.		წინამდებარე ხელშეკრულების მიზნებიდან გამომდინარე, ფინანსურ ხარჯად განიხილება ასევე ნებისმიერი გადასახდელი, რომელსაც მსესხებელი უხდის მესამე პირს, თუკი ეს გადასახდელი წარმოადგენს აუცილებლობას და მის გარეშე გამსესხებლის მიერ ნაკისრი ვალდებულების შესრულება იქნება შეუძლებელი ან არსებითად გართულდება;
+                            <br>3.16.	ფინანასურ ხარჯად არ განიხილება ის ხარჯები, რომლების გაღებაც მსესხებლის მიერ იქნებოდა აუცილებელი სესხის მიღების გარეშეც. ასეთი ტიპის ხარჯები არ წარმოადგენს წინამდებარე ხელშეკრულების რეგულირების სფეროს და სრულად ეკისრება მსესხებელს.
+                            <br>4.	სესხის უზრუნველყოფა
+                            <br>4.1.	სესხი უზრუნველყოფილია გირავნობით, ასევე მსესხებლის მთელი ქონებით;
+                            <br>4.2.	უზრუნველყოფიდან გამომდინარე მხარეთა უფლებები და ვალდებულებები დეტალურად რეგულირდება ზემოაღნიშნული სესხის უზრუნველსაყოფად მხარეთა (ან მესამე პირსა და გამსესხებელს შორის) შორის დადებული გირავნობის ხელშეკრულებით;
+                            <br>4.3.	იმ შემთხვევაში, თუ მსესხებლის მიერ ამ ხელშეკრულებით ნაკისრი ვალდებულება იქნება დარღვეული, ხოლო გირავნობის საგნის რეალიზაციის შედეგად მიღებული ამონაგები არ იქნება საკმარისი გამსესხებლის მოთხოვნების სრულად დასაკმაყოფილებლად, გამსესხებელი უფლებამოსილია მოითხოვოს მსესხებლის ან/და მესამე პირის (ასეთის არსებობის შემთხვევაში) საკუთრებაში არსებული უძრავ-მოძრავი ქონების რეალიზაცია საკუთარი მოთხოვნის დაკმაყოფილების მიზნით;
+                            <br>4.4.	მსესხებლის მიერ ნაკისრ ვალდებულებათა ნებისმიერი დარღვევა იძლევა საფუძველს გამოყენებულ იქნას უზრუნველყოფის ხელშეკრულებით გათვალისწინებული აქტივები მათი რეალიზაციის უფლებით;
+                            <br>4.5.	დარღვევად განიხილება მსესხებლის მიერ ნაკისრი ვალდებულების შეუსრულებლობა ან/და ნაწილობრივი შესრულება, რომელიც არ მოდის შესაბამისობაში მსესხებლის მიერ ნაკისრ ვალდებულებებთან და ეწინააღმდეგება ვალდებულების შესრულების ძირითად პრინციპებს.
+                            
+                            <br>4.6.	იმ შემთხვევაში, თუკი უზრუნველყოფის საგნად გამოყენებული ნივთის მდგომარეობა გაუარესდება, განადგურდება, ღირებულება შემცირდება ან/და ადგილი ექნება რაიმე ისეთ გარემოებას, რომლიდან გამომდინარეც რეალური საფრთხე ექმნება სესხის უზრუნველყოფას, მსესხებელი ვალდებულია ამის თაობაზე აცნობოს გამსესხებელს ასეთი ფაქტის დადგომის მომენტიდან 48 (ორმოცდარვა) საათის განმავლობაში;
+                            <br>4.7.	ამ ხელშეკრულების 4.6 პუნქტით გათვალისწინებული შემთხვევის დადგომისას გამსესხებელი უფლებამოსილია მოსთხოვოს მსესხებელს დამატებითი უზურნველყოფის საშუალების წარდგენა, ხოლო მსესხებელი ვალდებულია წარმოუდგინოს გამსესხებელს ასეთი უზურნველყოფა;
+                            <br>4.8.	მსესხებლის მიერ ამ ხელშეკრულების 4.7 პუნქტით გათვალისწინებული უზრუნველყოფის საშუალების წარმოდგენის შეუძლებლობის შემთხვევაში გამსესხებელი უფლებამოსილია დაუყოვნებლივ შეწყიტოს სესხის ხელშეკრულება და მოითხოვოს მსესხებლისაგან სესხის ძირი თანხის და მასზე დარიცხული პროცენტისა თუ პირგასამტეხლოს გადახდა;
+                            <br>4.9.	მსესხებლის მხრიდან ამ ხელშეკრულების 4.6 პუნქტით გათვალისწინებული ინფორმაციის მიწოდების ვალდებულების დარღვევა გამსესხებელს აძლევს უფლებას, ვადაზე ადრე შეწყვიტოს ხელშეკრულება და მოითხოვოს მსესხებლისაგან ნაკისრი ვალდებულების დაუყოვნებლივ სრულად შესრულება.
+                            <br>5. მხარეთა უფლებები და ვალდებულებები
+                            <br>5.1. მხარეები კისრულობენ ვალდებულებას, რომ შეასრულებენ წინამდებარე ხელშეკრულებით ნაკისრ ვალდებულებებს ჯეროვნად, კეთისინდისიერად, დათქმულ დროსა და ადგილას;
+                            <br>5.2. გამსესხებელი უფლებამოსილია:
+                            <br>5.2.1. მოითხოვოს მსესხებლისაგან ხელშეკრულებით ნაკისრი ვალდებულებების განუხრელად დაცვა და შესრულება;
+                            <br>5.2.2. მოითხოვოს მსესხებლისგან სრული ინფომრაციის წარმოდგენა მისი ფინანსური მდგომარეობის შესახებ, როგორც ხელშეკრულების დადებამდე, ასევე ხელშეკრულების მოქმედების სრული პერიოდის განმავლობაში; 
+                            <br>5.2.3. ვადაზე ადრე შეწყვიტოს ხელშეკრულება, თუკი მსესხებლის ქონებრივი მდგომარეობა იმდენად გაუარესდება, რომ შესაძლოა საფრთხე შეექმნება სესხის დაბრუნებას;
+                            <br>5.3. გამსესხებელი ვალდებულია:
+                            <br>5.3.1. გასცეს სესხის თანხა ამ ხელშეკრულებით გათვალისწინებული ოდენობით და ვადებში;
+                            <br>5.3.2. მიაწოდოს მსესხებელს სრული ინფორმაცია სესხის პირობებთან დაკავშირებით;
+                            <br>5.3.3. მიაწოდოს მსესხებელს სრული ინფორმაცია სესხის უზრუნველყოფის პირობებთან დაკავშირებით;
+                            <br>5.3.4. დაუყოვნებლივ აცნობოს მსესხებელს ნებისმიერი ისეთი გარემოების ცვლილების შესახებ, რამაც შეიძლება გავლენა მოახდინოს მხარეთა უფლებებსა და ვალდებულებებზე;
+                            <br>5.3.5. საკუთარი შესაძლებლობის და ვალდებულების ფარგლებში ყველანაირად შეუწყოს ხელი ხელშეკრულების შესრულებას;
+                            <br>5.4. მსესხებელი უფლებამოსილია:
+                            <br>5.4.1. მოსთხოვოს გამსესხებელს სესხის თანხის გადაცემა ამ ხელშეკრულებით გათვალისწინებული პირობებით, ოდენობით და ვადებში;
+                            <br>5.4.2. მიიღოს სრული ინფორმაცია სესხის პირობებზე;
+                            <br>5.4.3. მიიღოს სრული ინფორმაცია მოთხოვნის უზრუნველყოფის პირობებზე;
+                            <br>5.4.4. ვალდებულების სრულად შესრულების შემდგომ მოსთხოვოს გამსესხებელს ვალდებულების შესრულების და შეწყვეტის დამადასტურებელი დოკუმენტის შედგენა და მისთვის გადაცემა;
+                            <br>5.4.5. ამ ხელშეკრულებით გათვალსწინებული წესით და პირობებით ვადაზე ადრე შეასრულოს ნაკისრი ვალდებულება.
+                            <br>5.5. მსესხებელი ვალდებულია:
+                            <br>5.5.1. დააბრუნოს სესხის თანხა სარგებელთან (პროცენტთან) ერთად ამ ხელშეკრულებით გათვალისწინებული ოდენობით, პირობებით და ამ ხელშეკრულებით გათვალისწინებულ ვადებში.
+                            <br>5.5.2. მსესხებელი ვალდებულია დააბრუნოს სესხის თანხა სესხის დაბრუნების დღისთვის არსებული ეროვნული ბანკის კურსით ლარში.
+                            <br>5.5.3. მიაწოდოს გამსესხებელს სრული ინფორმაცია მისი ქონებრივი და ფინანსური მდგომარეობის შესახებ;
+                            <br>5.5.4 დაუყოვნებლიც აცნობოს გამსესხებელს მისი ფინანსური/ქონებრივი მდგომარეობის ისეთი გაუარესების შესახებ, რამაც შეიძლება საფრთხე შეუქმნას მის მიერ ნაკისრი ვალდებულების შესრულებას;
+                            <br>5.5.6 არ იკისროს რაიმე სახის ფინანსური (საკრედიტო, სასესხო და ა.შ.) ვალდებულებები ფიზიკური/იურიდიული პირების წინაშე გამსესხებელთან წინასწარი წერილობითი შეთანხმების გარეშე;
+                            <br>5.5.6 არ გამოიყენოს ამ ხელშეკრულებით გათვალისწინებული ვალდებულების შესრულების უზრუნველსაყოფად გამოყენებული ქონება საკუთარი ან/და მესამე პირების მიერ ნაკისრი ვალდებულების უზრუნველსაყოფად გამსესხებელთან წინასწარი წერილობითი შეთანხმების გარეშე;
+                            <br>5.5.7 აუნაზღაუროს გამსესხებელს ყველა ის დანახარჯი, რომელიც ამ უკანასკნელმა გასწია მსესხებლის მიერ ნაკისრი ვალდებულების იძულებით შესრულებისათვის (ასეთის არსებობის შემთხვევაში- კერძოდ: აღსრულების ეროვნულ ბიუროს მომსახურების საფასური, ,აუდიტის მომსახურებისსაფასური ,სსიპ შსს მომსახურების სააგენტოში გაწეული ხარჯი და ამ სახის სხვა ხარჯები, რომელიც გამსხებელმა გასწია)
+                            <br>5.6. მსესხებელი უფლებამოსილია ვადაზე ადრე შეასრულოს მის მიერ ნაკისრი ვალდებულება;
+                            <br>5.7. მსესხებლის მიერ ნაკისრი ვალდებულების ვადაზე ადრე შესრულებად ჩაითვლება მის მიერ ამ ხელშეკრულების მოქმედების ვადის გასვლამდე სესხის დაფარვა
+                            <br>5.8. გამსესხებელი ვალდებულია მიიღოს მსესხებლისაგან ვადაზე ადრე განხორციელებული შესრულება მხოლოდ იმ პირობით, თუ მსესხებლის მიერ დაფარული იქნება როგორც სესხის ძირი თანხა, ასევე ვადამოსული სარგებელი (პროცენტი) იმ ოდენობით, რა ოდენობითაც ის დაანგარიშდება ანგარიშსწორების დღისათვის;
+                            <br>5.9. ხელშეკრულების მონაწილე მხარეები საკუთარი ვალდებულების ფარგლებში ვალდებული არიან შეასრულონ ყველა ის მოქმედება ან თავი შეიკავონ ყველა იმ მოქმედებისაგან, რომელიც პირდაპირ არ არის გათვალისწინებული ამ ხელშეკრულებით, მაგრამ გამომდინარეობს ვალდებულების არსიდან, ამ ხელშეკრულების მიზნებიდან, კეთილსინდისიერების პრინციპიდან და აუცილებელია მხარეთა ვალდებულებების სრულყოფილად შესასრულებლად.
+                            <br>5.10. მსესხებელს ეკრძალება ა/მანქანის მართვა ნასვამ, ნარკოტიკულ და კანონით აკრძალული ყველანაირი საშუალებების ზემოქმედების ქვეშ. დამგირავებელს ასევე ეკრძალება ა/მანქანის გადაცემა მართვის უფლების არმქონე, არასრულწლოვან, სადაზღვეო პოლისში არ მითითებულ და ზემოთ აღნიშნული კანონით აკრძალული ნივთიერებების და საშუალებების ზემოქმედების ქვეშ მყოფი პირებისადმი.
+                            <br>5.11. მსესხებელს ეკისრება ყველა  ხარჯი, რომელიც გამსესხებელმა გასწია და ყველა სახის ზიანი, რომელიც გამსესხებელს მიადგა მსესხებლის მიერ ამ ხელშეკრულების 5.10 პუნქტის დარღვევის გამო.
+                            <br>6. ვალდებულების დარღვევა
+                            <br>6.1. ამ ხელშეკრულებით გათვალისწინებული ვალდებულების დარღვევად ჩაითვლება მისი მონაწილე რომელიმე მხარის მიერ ნაკისრი ვალდებულების შეუსრულებლობა ან/და არაჯეროვანი შესრულება;
+                            <br>6.2. ვალდებულების შეუსრულებლობად ითვლება ხელშეკრულების მონაწილე რომელიმე მხარის მიერ ნაკისრი ვალდებულების შესრულებაზე უარის გაცხადება ან/და რაიმე ისეთი მოქმედება/უმოქმედობა, რომლიდან გამომდინარეც ნათელია ან არსებობს საფუძვლიანი ეჭვი იმის თაობაზე, რომ ვალდებულება არ იქნება შესრულებული სრულად;
+                            <br>6.3. ვალდებულების არაჯეროვან შესრულებად ითვლება შეთანხმების რომელიმე მხარის მიერ ნაკისრი ვალდებულების არასრულფასოვან ან/და არასრულყოფილი შესრულება;
+                            <br>6.4. ვალდებულების შეუსრულებლობას ან არაჯეროვან შესრულებას უთანაბრდება ამ ხელშეკრულებით გათვალისწინებული ინფორმაციის მიწოდების ვალდებულების დარღვევა, არასწორი ან არასრულფასოვანი ინფორმაციის მიწოდება;
+                            <br>6.5. მსესხებლის მიერ ვალდებულების შეუსრულებლობის/არაჯეროვანი შესრულების შემთხვევაში გამსესხებელი უფლებამოსილია ვადაზე ადრე შეწყვიტოს ხელშეკრულება და მოითხოვოს სესხის ძირი თანხის, მასზე დარიცხული სარგებლის (პროცენტის) და პირგასამტეხლოს გადახდა;
+                            <br>6.6. თითოეული მხარე უფლებამოსილია მოითხოვოს იმ ზიანის ანაზღაურება, რომელიც მას მიადგა ვალდებულების დარღვევის შედეგად;
+                            <br>6.7. ზიანის ანაზღაურება არ ათავისუფლებს ვალდებულების დამრღვევ მხარეს ძირითადი ვალდებულებების შესრულებისაგან
+                            <br>6.8.  5.10. პუნქტით დადგენილი ვალდებულებების შეუსრულებლობის შემთხვევაში ხელშეკრულება ჩაითვლება დარღვეულად და სესხის უზრუნველყოფის საგანი გაჩერდება გამსესხებლის მიერ შერჩეულ ავტოსადგომზე ვალდებულების სრულად შესრულებამდე.
+                            <br>7. ხელშეკრულების შეწყვეტა
+                            <br>7.1. წინამდებარე ხელშეკრულება წყდება  ვალდებულების სრულად შესრულებით;
+                            <br>7.2. წინამდებარე ხელშეკრულება შესრულებით შეწყვეტილად ჩაითვლება მსესხებლის მიერ ნაკისრი ვალდებულების სრულად შესრულებით, ანუ სესხის ძირი თანხის, მასზე დარიცხული სარგებლის (პროცენტის), პირგასამტეხლოს და ხელშეკრულების შეწყვეტისათვის აუცილებელი ხარჯების (ასეთის არსებობის შემთხვევაში) სრულად გადახდის შემდგომ;
+                            <br>7.3. ხელშეკრულების მოქმედების ვადის ამოწურვის შემდგომ ხელშეკრულება გაგრძელდება, თუ ორივე მხარე წერილობით დააფიქსირებს პოზიციას ხელშეკრულების გაგრძელების თაობაზე.
+                            <br>7.4.  მსესხებელი ცნობად იღებს იმ გარემოებას, რომ ხელშეკრულების მოქმედების ვადის  წინამდებარე ხელშეკრულების  7.3 პუნქტით გათვალისწინებული პირობებით გაგრძელების შემთხვევაში მსესხებელი ვალდებულია ხელშეკრულების გაგრძელებისათვის გადაიხადოს სადაზღვევო ხარჯი ამ ხელშეკრულებაში მითითებული ოდენობით.
+                            <br>7.5. მხარეთა შეთანხმებით, ხელშეკრულება შეიძლება გაგრძელდეს ამ ხელშეკრულებით გათვალსწინებული პირობებისაგან განსხვავებული პირობებით .  
+                            <br>7.6 ხელშეკრულების  გაგრძელება დასაშვებია მხოლოდ ამ ხელშეკრულების ფორმის  (წერილობითი) დაცვით . ამ წესის დარღვევით დადებული შეთანხმება არის ბათილი და იურიდიული მნიშვნელობის მქონე შედეგებს არ წარმოშობს .
+                            <br>8. ხელშეკრულების ვადაზე ადრე შეწყვეტა
+                            <br>8.1. ხელშეკრულება შეიძლება ვადაზე ადრე შეწყდეს რომელიმე მხარის მიერ ნაკისრი ვალდებულების დარღვევის შემთხვევაში;
+                            <br>8.2. მსესხებლის მიერ ამ ხელშეკრულებით ნაკისრი  ვალდებულებების დარღვევის შემთხვევაში გამსესხებელი უგზავნის მსესხებელს წერილობით შეტყობინებას ვალდებულების შესრულების მოთხოვნით და განუსაზღვრავს მას ვალდებულების შესრულების ვადას.
+                            <br>8.3. გაფრთხილების მიუხედავად, მსესხებლის მიერ ვალდებულების შეუსრულებლბა ან არაჯეროვანი შესრულება აძლევს გამსესხებელს უფლებას ცალმხრივად, ვადაზე ადრე შეწყვიტოს ხელშეკრულება და მოითხოვოს სესხის თანხის, მასზე დარიცხული სარგებლის (პროცენტის) და პირგასამტეხლოს ერთიანად გადახდა, ასევე ყველა იმ დამატებითი დანახარჯის ანაზღაურება, რომელიც მას წარმოეშვა ხელშეკრულების ვადაზე ადრე შეწყვეტის შედეგად;
+                            <br>8.4. იმ შემთხვევაში, თუ მსესხებელი გაფრთხილების მიღებიდან განსაზღვრულ ვადაში დაფარავს დავალიანებას, ხელშეკრულების მოქმედება გაგრძელდება იმავე პირობებით, რაც გათვალისწინებულია ამ ხელშეკრულებით. 
+                            <br>8.5. ამ ხელშეკრულებით ნაკისრი ვალდებულების  განმეორებით დარღვევის შემთხვევაში გამსესხებელი უფლებამოსილია ცალმხრივად და უპირობოდ შეწყვიტოს ხელშეკრულება და მოითხოვოს სესხის თანხის, მასზე დარიცხული სარგებლის (პროცენტის) და პირგასამტეხლოს ერთიანად გადახდა, ასევე ყველა იმ დამატებითი დანახარჯის ანაზღაურება, რომელიც მას წარმოეშვა ხელშეკრულების ვადაზე ადრე შეწყვეტის შედეგად;
+                            <br>8.6. ამ ხელშეკრულებით  გათვალსიწინებული თანხის ნაწილობრივ გადახდა არ ჩაითვლება ხელშეკრულების პირობის შესრულებად.
+                            <br>9.პირგასამტეხლო
+                            <br>9.1. წინამდებარე ხელშეკრულებით ნაკისრი ვალდებულებების შესრულების მოთხოვნის უზრუნველყოფის დამატებით საშუალებას წარმოადგენს პირგასამტეხლო;
+                            <br>9.2. პირგასამტეხლოს გადახდის და მისი ოდენობის დაანგარიშების წესი განისაზღვრება ამ ხელშეკრულებით;
+                            <br>9.3. ამ ხელშეკრულების მიზნებისათვის პირგასამტეხლოს გადახდევინება ხორციელდება ნაკისრი ვალდებულების შესრულების ვადის გადაცილებისათვის;
+                            <br>9.4. მსესხებელს, ამ ხელშეკრულებით გათვალსწინებული გადახდის ვადის გადაცილების შემთხვევაში, დაერიცხება პირგასამტეხლო სესხის ძირი თანხის '.$res['penalty_percent'].'%-ის ოდენობით ყოველ ვადაგადაცილებულ დღეზე, ვალდებულების დარღვევიდან '.$res['penalty_days'].' დღის განმავლობაში; ხოლო გადახდის ვადის გადაცილების '.$res['penalty_days'].'('.float_replase($res['penalty_days']).') დღეზე მეტი ვადით გაგრძელების შემთხვევაში მსესხებელს დაერიცხება პირგასამტეხლო სესხის ძირი თანხის '.$res['penalty_additional_percent'].'% ყოველ ვადაგადაცილებულ დღეზე.
                             <br>9.5. ამ ხელშეკრულების 9.4 მუხლით გათვალისწინებული პირგასამტეხლოს ოდენობა დაანგარიშდება სესხის ძირი თანხიდან;
                             <br>9.6. პირგასამტეხლოს დაკისრება ხდება ყოველი კონკრეტული ვალდებულების დარღვევისთვის (ყოველთვიური სარგებლის, გრაფიკით გათვალისწინებული თანხის თუ სესხის ძირი თანხის გადახდის ვადაგადაცილების შემთხვევაში)  ცალკ-ცალკე, სესხის ძირი თანხიდან.
                             <br>9.7. სესხის სარგებლის (ან გრაფიკით გათვალისწინებული თანხის) გადახდის ვადის 2 ან მეტი თვით ვადა გადაცილების შემთხვევაში, თითოეული თვის ვადაგადაცილებისათვის მსესხებელს ცალკ-ცალკე ერიცხება პირგასამტეხლო. იმ შემთხვევაში, თუ მსესხებლის მიერ უკვე დარღვეულია სესხის სარგებლის ან გრაფიკით გათვალისწინებული თანხის გადახდის ვადა და მსესხებელმა მომდევნო თვის სარგებლის ან გრაფიკით გათვალისწინებული თანხის გადახდის ვადასაც გადააცილა, პირგასამტეხლოს დარიცხვა პირველი თვის სარგებლისთვის იმავე ფარგლებში გაგრძელდება და ამასთან, მეორე და მომდევნო თვის სარგებლის ან გრაფიკით გათვალისწინებული თანხის ვადაგადაცილებისთვის ცალკ-ცალკე, დამატებით მოხდება პირგასამტეხლოს დარიცხვა სესხის ძირი თანხის 0.5% -ის ოდენობით ყოველ ვადაგადაცილებულ დღეზე.
@@ -2771,11 +2989,11 @@ if ($file_type == 'receipt') {
                             <br>13.7. ხელშეკრულება შედგენილია ქართულ ენაზე, თანაბარი იურიდიული ძალის მქონე 02 (ორ) ეგზემპლარად, ხელმოწერილია და ინახება მხარეებთან.
                                                         
                             </div>
-                            <div style="width:100%; margin-top: 60px;">
+                            <div style="width:100%; margin-top: 200px;">
                                 <table style="width:100%;">
                                     <tr style="width:100%;">
                                         <td style="width:50%;"><label style="font-size: 12px; text-align: left;">გამსესხებელი: შპს "თი ჯი მობაილ" <br> მისამართი: ქ. თბილისი, დოლიძის ქ. 25/121<br>ს/კ 205270277<br>სს "საქართველოს ბანკი"<br>ბანკის კოდი: BAGAGE22<br>ა/ა GE12BG0000000523102000<br>ტელეფონის ნომერი: (ოფისი)<br>ტელეფონის ნომერი: 579796921<br>ტელეფონის ნომერი: 579131813 (ლერი)<br>ხელის მომწერის: ვახტანგ ბახტაძე,<br>პოზიცია: მენეჯერი<br>ელ.ფოსტა: tgmobail@mail.ru<br>s.qurdadze.1@gmail.com</label></td>
-                                        <td style="width:50%;"><label style="font-size: 12px; text-align: left;">მსესხებელი: სახელწოდება: შპს „მანი“/“MANI“ LTD<br>(საიდენტიფიკაციო კ. № 445437965 ) <br>დირექტორი: აკაკი ელისაშვილი<br>პირ № 01019068974<br>მინდობილი პირი:</br>პირ № 01019068974<br>მისამართი:<br>ტელ.ნომერი:<br>ელ.ფოსტა:</label></td>
+                                        <td style="width:50%;"><label style="font-size: 12px; text-align: left;">მსესხებელი: სახელწოდება: შპს '.$res['ltd_name'].'<br>(საიდენტიფიკაციო კ. № '.$res['ltd_id'].' ) <br>დირექტორი: '.$res['name'].'<br>პირ № '.$res['pid'].'<br>მისამართი:'.$res['actual_address'].'<br>'.$res['juridical_address'].'<br>ტელ.ნომერი:'.$res['phone'].' '.$res[client_person_person].'<br>ელ.ფოსტა:'.$res['email'].'</label></td>
                                     </tr>
                                 </table>
                             </div>
@@ -2958,200 +3176,410 @@ if ($file_type == 'receipt') {
                             </div>
                          </div>
                    </div>';
+    }elseif ($file_type == 'car_insurance'){
+        function yes_no($id){
+        
+            $data .= '<option value="0" selected="selected">----</option>';
+        
+            if ($id == '') {
+                $data .= '<option value="1">დიახ</option>';
+                $data .= '<option value="2">არა</option>';
+                $data1='';
+            }else{
+                if($id == 1){
+                    $data .= '<option value="1" selected="selected">დიახ</option>';
+                    $data .= '<option value="2">არა</option>';
+                    
+                    $data1='დიახ';
+                } elseif ($id == 2) {
+                    $data .= '<option value="2" selected="selected">არა</option>';
+                    $data .= '<option value="1">დიახ</option>';
+                    $data1='არა';
+                }
+            }
+        
+            return $data1;
+        }
+        
+        $res_car_pers = mysql_query("SELECT `name`,
+                            				  born_date,
+                            				  driving_license_type,
+                            				  driving_license_date
+                                      FROM   `client_car_drivers`
+                                      WHERE   actived = 1 AND client_id = '$local_id'");
+        $num=1;
+        while ($res_row = mysql_fetch_assoc($res_car_pers)) {
+            
+            $dataa.=' <tr width="100%" height="25px">
+    					    <td>'.$num.'</td>
+                            <td>'.$res_row[name].'</td>
+                            <td></td>
+                            <td></td>
+                            <td>'.$res_row[born_date].'</td>
+                            <td>'.$res_row[driving_license_type].'</td>
+                            <td>'.$res_row[driving_license_date].'</td>
+    				    </tr>';
+            $num+=1;
+        }
+        
+        $data  .= '<div style="width:100%;">
+                         <table width="100%" border="1" cellpadding="0" cellspacing="0">
+        				    <tr width="100%" height="25px">
+        					    <td colspan="2" width="100%">
+        					         <img width="200" height="70" src="../../../media/uploads/images/client/aldagi_logo_ge.svg"></img>
+        					    </td>
+        				    </tr>
+                            <tr width="100%" height="30px">
+        					    <td colspan="2" width="100%" style="text-align: center;">ავტოტრანსპორტის დაზღვევის განაცხადი</td>
+        				    </tr>
+                            <tr width="100%" height="25px">
+        					    <td width="50%">დამზღვევის რეკვიზიტები  </td>
+                                <td width="50%">შ.პ.ს. თი ჯი მობაილ</td>
+        				    </tr>
+                            <tr width="100%" height="25px">
+        					    <td width="50%">მოსარგებლე (საზღაურის მიმღები)</td>
+                                <td width="50%">შ.პ.ს. თი ჯი მობაილ</td>
+        				    </tr>
+                            <tr width="100%" height="25px">
+        					    <td width="50%">დამზღვევის იურიდიული მისამართი </td>
+                                <td width="50%">თბილისი, დოლიძის 6 </td>
+        				    </tr>
+                            <tr width="100%" height="25px">
+        					    <td width="50%">დამზღვევის ფაქტობრივი მისამართი </td>
+                                <td width="50%">თბილისი, კერესელიძის 12</td>
+        				    </tr>
+                            <tr width="100%" height="25px">
+        					    <td width="50%">საიდენტიფიკაციო კოდი</td>
+                                <td width="50%">205270277</td>
+        				    </tr>
+                            <tr width="100%" height="25px">
+        					    <td width="50%">საქმიანობის ტიპი</td>
+                                <td width="50%">ავტოლომბარდი</td>
+        				    </tr>
+                            <tr width="100%" height="25px">
+        					    <td width="50%">ხელმძღვანელის თანამდებობა, სახელი გვარი</td>
+                                <td width="50%">'.$res['name'].' (პირადი # '.$res['pid'].') </td>
+        				    </tr>
+                            <tr width="100%" height="25px">
+        					    <td width="50%">ავტოტრანსპორტის მფლობელის მისამართი (მობილური)</td>
+                                <td width="50%">'.$res['actual_address'].'  '.$res['juridical_address'].' '.$res['phone'].'</td>
+        				    </tr>
+        				</table>
+                        <table style="text-align:center;" width="100%" border="1" cellpadding="0" cellspacing="0">
+        				    <tr width="100%" height="30px">
+        					    <td width="100%" colspan="7"">პიროვნებათა მონაცემები, რომლებიც მართავენ ავტოტრანსპორტს</td>
+        				    </tr>
+                            <tr width="100%" height="30px">
+        					    <td width="7%">№</td>
+                                <td width="21%">სახელი, გვარი</td>
+                                <td width="20%">თანამდებობა</td>
+                                <td width="10%">ასაკი</td>
+                                <td width="14%">დაბედების თარიღი</td>
+                                <td width="14%">მართვის მოწმობის ტიპი</td>
+                                <td width="14%">მართვის მოწმობის გაცემის თარიღი</td>
+        				    </tr>
+                           '.$dataa.'
+                        </table>
+                        <table style="text-align:center;" width="100%" border="1" cellpadding="0" cellspacing="0">
+        				    <tr width="100%" height="30px">
+        					    <td colspan="7" width="100%" style="text-align: center;">ინფორმაცია ავტოტრანსპორტის შესახებ</td>
+        				    </tr>
+                            <tr width="100%" height="30px">
+        					    <td width="7%">№</td>
+                                <td width="17%">ავტოტრანსპორტის მარკა</td>
+                                <td width="17%">მოდელი</td>
+                                <td width="17%">რომელ მხარეს მდებარეობს საჭე</td>
+                                <td width="14%">ძრავის ტიპი</td>
+                                <td width="14%">ადგილების რაოდენობა მძღოლის ჩათვლით</td>
+                                <td width="14%">ძრავის მოცულობა</td>
+        				    </tr>
+                            <tr width="100%" height="25px">
+        					    <td>1</td>
+                                <td>'.$res[car_marc].'</td>
+                                <td>'.$res[model].'</td>
+                                <td>'.$res[car_wheel].'</td>
+                                <td>'.$res[car_type_name].'</td>
+                                <td>'.$res[car_seats].'</td>
+                                <td>'.$res[engine_size].'</td>
+        				    </tr>
+                        </table>
+                        <table style="text-align:center;" width="100%" border="1" cellpadding="0" cellspacing="0">
+                            <tr width="100%" height="30px">
+        					    <td width="7%">№</td>
+                                <td width="17%">გამოშვების თარიღი</td>
+                                <td colspan="2" width="28%">ავტოტრასნპორტის დღევანდელი ღირებულება</td>
+                                <td width="16%">ავტოტრანსპორტის სარეგსიტრაციო ნომერი</td>
+                                <td width="16%">შეძენის თარიღი</td>
+                                <td width="16%">სესხის ოდენობა</td>
+        				    </tr>
+                            <tr width="100%" height="25px">
+        					    <td>1</td>
+                                <td>'.$res['manufacturing_date'].'</td>
+                                <td colspan="2">'.$res['car_price'].' აშშ დოლარი</td>
+                                <td>'.$res['registration_number'].'</td>
+                                <td>'.$res['car_sale_date'].'</td>
+                                <td>'.$res['loan_amount'].' აშშ დოლარი</td>
+        				    </tr>
+                        </table>
+                        <table width="100%" border="1" cellpadding="0" cellspacing="0">
+                            <tr width="100%" height="30px">
+        					    <td width="100%" height="30px" colspan="7" style="text-align: center;">დაზღვეული ავტომობილის აღწერა</td>
+        				    </tr>
+                            <tr width="100%" height="25px">
+        					    <td width="90%" colspan="6">გაფორმებულია თუ არა ავტოტრანსპორტი ორგანიზაციის სახელზე </td>
+                                <td width="10%" style="text-align:center">'.yes_no($res['lined_organization_yes_no']).'</td>
+                            </tr>
+                            <tr width="100%" height="25px">
+        					    <td width="90%" colspan="6">მართვას თუ არა ავტოტრანსპორტს ნებისმიერი პიროვნება 25 წლამდე</td>
+                                <td width="10%" style="text-align:center">'.yes_no($res['any_person_Managed_yes_no']).'</td>
+                            </tr>
+                            <tr width="100%" height="25px">
+        					    <td width="90%" colspan="6">მოთავსებულია თუ არა ავტოტრანსპორტი დაკეტილ ავტოფარეხში ან დაცულ ავტოსადგომზე</td>
+                                <td width="10%" style="text-align:center">'.yes_no($res['encased_yes_no']).'</td>
+                            </tr>
+                            <tr width="100%" height="25px">
+        					    <td width="90%" colspan="6">გააჩნია თუ არა ავტოტრანსპორტს სიგნალიზაცია</td>
+                                <td width="10%" style="text-align:center">'.yes_no($res['signaling_yes_no']).'</td>
+                            </tr>
+                            <tr width="100%" height="25px">
+        					    <td width="90%" colspan="6">გააჩნია თუ არა ავტოტრანსპორტს სხვა დამცავი საშუალება</td>
+                                <td width="10%" style="text-align:center">'.yes_no($res['autotransport_other_protection_yes_no']).'</td>
+                            </tr>
+                            <tr width="100%" height="25px">
+        					    <td width="90%" colspan="6">გთხოვთ მიუთითოთ სიგნალიზაციის ტიპი</td>
+                                <td width="10%" style="text-align:center">'.yes_no($res['signaling_type']).'</td>
+                            </tr>
+                        </table>
+                        <table style="margin-top:250px" border="1" cellpadding="0" cellspacing="0">
+                            <tr  width="100%" height="30px">
+        					    <td width="100%" colspan="7" style="text-align: center;">მონაცემები მართვის შესახებ და სარჩელები</td>
+        				    </tr>
+                            <tr width="100%" height="25px">
+        					    <td width="90%" colspan="6">არის თუ არა ზემოაღნიშნული რომელიმე მძღოლი ინვალიდი, უჩივის თუ არა მხედველობას, სმენას, ეპილეფსიას, დიაბეტს და/ან გულის დაავადებას</td>
+                                <td width="10%" style="text-align:center">'.yes_no($res['driver_disabled_yes_no']).'</td>
+                            </tr>
+                            <tr width="100%" height="25px">
+        					    <td width="90%" colspan="6">აქვს თუ არა ზემოაღნიშნულ რომელიმე მძღოლს მიღებული უარი ნებისმიერი ავტომანქანის დაზღვევაზე, ან სადაზღვევო პერიოდის გაგრძელებაზე, ან საჭირო იყო თუ არა გაზრდილი სადაზღვევო გადასახადის გადახდა, ან მზღვეველის მიერ წაყენებული იყო თუ არა განსაკუთრებული პირობები</td>
+                                <td width="10%" style="text-align:center">'.yes_no($res['driver_no_ins_yes_no']).'</td>
+                            </tr>
+                            <tr width="100%" height="25px">
+        					    <td width="90%" colspan="6">არის თუ არა ზემოაღნიშნული რომელიმე მძღოლი ნასამართლევი ავტოსაგზაო შემთხვევით ჩადენილ დანაშაულზე</td>
+                                <td width="10%" style="text-align:center">'.yes_no($res['car_accident_drivers_yes_no']).'</td>
+                            </tr>
+                            <tr width="100%" height="25px">
+        					    <td width="90%" colspan="6">აქვს თუ არა ზემოაღნიშნულ რომელიმე მძღოლს ჩადენილი რაიმე დანაშაული ბოლო 3 წლის განმავლობაში</td>
+                                <td width="10%" style="text-align:center">'.yes_no($res['guilt_drivers_yes_no']).'</td>
+                            </tr>
+                        </table>
+                        <table width="100%" border="1" cellpadding="0" cellspacing="0">
+                            <tr width="100%" height="30px">
+        					    <td colspan="7" style="text-align: center; font-weight: bold;">დაზღვევის სახეობა</td>
+        				    </tr>
+                            <tr width="100%" height="25px">
+        					    <td width="90%" colspan="6">ამოირჩიეთ თქვენთვის სასურველი დაზღვევის სახეობა:</td>
+                                <td width="10%" style="text-align:center"></td>
+                            </tr>
+                            <tr width="100%" height="25px">
+        					    <td width="90%" colspan="6">დაზიანება, გატაცებ (ქურდობა,ძარცვა-ყაჩაღობა)</td>
+                                <td width="10%" style="text-align:center">'.yes_no($res['injury_passion_ins_yes_no']).'</td>
+                            </tr>
+                            <tr width="100%" height="25px">
+        					    <td width="90%" colspan="6">თუ გსურთ მესამე მხარისადმი პასუხისმგებლობის დაზღვევა აირჩიეთ ლიმიტი</td>
+                                <td width="10%" style="text-align:center">'.$res['responsible_ins_limit'].'</td>
+                            </tr>
+                            <tr width="100%" height="25px">
+        					    <td width="90%" colspan="6">თუ გსურთ უბედური შემთხვევით გამოწვეული მძღოლის და/ან მგზავრის დაზღვევა აირჩიეთ ლიმიტი მანქანაზე</td>
+                                <td width="10%" style="text-align:center">'.$res['driver_or_passenger_ins_limit'].'</td>
+                            </tr>
+                            <tr width="100%" height="30px">
+        					    <td width="100%" colspan="7" style="text-align: center; font-weight: bold;">რა მიზნებისთვის გამოიყენება ავტოტრანსპორტი?</td>
+        				    </tr>
+                            <tr width="100%" height="25px">
+        					    <td width="90%" colspan="6">საზოგადოებრივი, პირადი და გასართობი</td>
+                                <td width="10%" style="text-align:center">'.yes_no($res['public_private_yes_no']).'</td>
+                            </tr>
+                            <tr width="100%" height="25px">
+        					    <td width="90%" colspan="6">მხოლოდ სამუშაო ადგილამდე მისვლა და უკან დაბრუნება</td>
+                                <td width="10%" style="text-align:center">'.yes_no($res['trade_yes_no']).'</td>
+                            </tr>
+                            <tr width="100%" height="25px">
+        					    <td width="90%" colspan="6">ორგანიზაციის საქმიანობასთან დაკავშირებით</td>
+                                <td width="10%" style="text-align:center">'.yes_no($res['trade_yes_no1']).'</td>
+                            </tr>
+                            <tr width="100%" height="25px">
+        					    <td width="90%" colspan="6">სხვადასხვა სამუშაო ადგილებზე გადასაადგილებლად</td>
+                                <td width="10%" style="text-align:center">'.yes_no($res['trade_yes_no2']).'</td>
+                            </tr>
+                            <tr width="100%" height="25px">
+        					    <td width="90%" colspan="6">სხვა პიროვნების მიერ ნებისმიერ საქმიანობასთან დაკავშირებით</td>
+                                <td width="10%" style="text-align:center">'.yes_no($res['trade_yes_no3']).'</td>
+                            </tr>
+                            <tr width="100%" height="25px">
+        					    <td width="90%" colspan="6">ვაჭრობასთან ან ნებისმიერ სხვა საქმიანობასთან დაკავშირებით</td>
+                                <td width="10%" style="text-align:center">'.yes_no($res['trade_yes_no4']).'</td>
+                            </tr>
+                            <tr width="100%" height="25px">
+        					    <td width="90%" colspan="6">საქონლის ან აპარატურის გადასაადგილებლად</td>
+                                <td width="10%" style="text-align:center">'.yes_no($res['goods_or_ardware_yes_no']).'</td>
+                            </tr>
+                        </table>
+                        <table width="100%" border="1" cellpadding="0" cellspacing="0">
+                            <tr width="100%" height="23px">
+        					    <td width="100%" colspan="7">მიმდინარე მდგომარეობა</td>
+        				    </tr>
+                            <tr width="100%" height="25px">
+        					    <td width="90%" colspan="6">არის/ყოფილა თუ არა ორგანიზაციის ავტოტრანსპორტი დაზღვეული</td>
+                                <td width="10%" style="text-align:center">'.yes_no($res['Insured_yes_no']).'</td>
+                            </tr>
+                            <tr width="100%" height="25px">
+        					    <td width="60%" colspan="3">წინა კითხვაზე დადებითი პასუხის შემთხვევაში გთხოვთ მიუთითოთ დეტალები</td>
+                                <td width="40%" colspan="4">სადზღვევო კომპანია '.$res['insurance_company'].'</td>
+                            </tr>
+                            <tr width="100%" height="25px">
+        					    <td width="40%" colspan="3">სადაზღვევო თანხა</td>
+                                <td width="15%">'.$res['insurance_price_gel'].'</td>
+                                <td width="15%">ლარი</td>
+                                <td width="15%">'.$res['insurance_price_usd'].'</td>
+                                <td width="15%">აშშ დოლარი</td>
+                            </tr>
+                            <tr width="100%" height="25px">
+        					    <td colspan="3" width="40%">სხვადასხვა სამუშაო ადგილებზე გადასაადგილებლად</td>
+                                <td colspan="2" width="30%">'.$res['insurance_start_date'].'</td>
+                                <td colspan="2" width="30%">'.$res['insurance_end_date'].'</td>
+                            </tr>
+                            <tr width="100%" height="50px">
+        					    <td colspan="7">ჩემი ხელმოწერით ვადასტურებ, რომ აღნიშნულ განაცხადში მითითებული ინფორმაცია სრულია და ჭეშმარიტი და არასწორად მოწოდებული ინფორმაციის შემთხვევაში კომპანია უფლებამოსილია გააუქმოს პოლისი და უარი თქვას ზარალის ანაზღაურებაზე</td>
+                            </tr>
+                            <tr width="100%" height="25px">
+        					    <td width="20%">შევსების თარიღი</td>
+                                <td colspan="2" width="20%"></td>
+                                <td colspan="2" width="30%">თანამდებობა</td>
+                                <td colspan="2" width="30%"></td>
+                            </tr>
+                            <tr width="100%" height="25px">
+        					    <td colspan="3" width="40%"></td>
+                                <td colspan="2" width="30%">ხელმოწერა</td>
+                                <td colspan="2" width="30%"></td>
+                            </tr>
+                        </table>
+                   </div>';
     }elseif ($file_type == 'payment_schedule'){
-        $id_hidden = $_REQUEST['id_hidden'];
-        $c_date	   = date('Y-m-d H:i:s');
-        
-        if ($id_hidden == ''){
-            $loan_amount         = $_REQUEST['loan_amount'];
-            $month_percent       = $_REQUEST['month_percent'];
-            $loan_months         = $_REQUEST['loan_months'];
-            $loan_agreement_type = $_REQUEST['loan_agreement_type'];
-            $name                = $_REQUEST['name'].' '.$_REQUEST['surname'];
-            $month_id            = date('m');
-            $day                 = date('d');
-            $year                = date('Y');
-        }else{
-            $loan_amount   = $res[loan_amount];
-            $month_percent = $res[percent];
-            $loan_months   = $res[loan_months];
-            $month_id      = $res[month_id];
-            $day           = $res[day];
-            $year          = $res[year];
-            $name          = $res[name];
-        }
-        
-        $sum_percent = 0;
-        $sum_P       = 0;
-        
-        if ($id_hidden == ''){
-            $loan_type  = $loan_agreement_type;
-            $PV         = $loan_amount;
-            $r          = $month_percent/100;
-            $n          = $loan_months;
-            $year_month = $month_percent*12;
-        }else {
+            $sum_percent = 0;
+            $sum_P       = 0;
+            $loan_amount = $res[loan_amount];
+            $n           = $res[loan_months];
+            $month_id    = $res[month_id];
+            $day         = $res[day];
+            $year_start  = $res[year];
+            $name        = $res[name];
             $loan_type   = $res[loan_type_id];
-            $PV          = $res[loan_amount]; //სესხის მოცულობა
-            $r           = $res[percent]/100; //პროცენტი თვეში
-            $n           = $res[loan_months]; //სესხის ვადა თვეში
-            $year_month  = $res[percent]*12;
-        } 
-        
-        
-        
-        $hint        = 'წლ';
-        
-        if ($loan_type == 1) {
-            
-            $P           = $PV*$r;
-            $ziri        = 0.00;
-            $percent     = $P;
-            if ($id_hidden == ''){
-                $year_month = $month_percent;
+            $i           = 0;
+            if ($loan_type == 2){
+                $year_month    = $res[month_percent]*12;
+                $hint          = 'წლ';
             }else{
-                $year_month  = $res[percent];
-            }
-            $hint        = 'თვ';
-            $sum_percent = $n*$percent;
-            $sum_P       = $sum_percent+$PV;
-        }else {
-            $P = ($PV*$r)/(1-(pow((1+$r),-$n))); //ყოველთვიური გადასახდელი
-        }
-        
-        for ($i = 1 ; $i<=$n; $i++){
-            if ($id_hidden == ''){
-                $month = $month_id +$i;
-            }else{
-                $month = $res[month_id]+$i;
+                $hint = 'თვ';
+                $year_month    = $res[month_percent];
             }
             
-            if ($loan_type == 1 && $i == $n) {
-                if ($id_hidden == ''){
-                    $P       = $P + $loan_amount;
-                    $ziri    = $loan_amount;
-                    $PV      = 0.00;
-                }else{
-                    $P       = $P + $res[loan_amount];
-                    $ziri    = $res[loan_amount];
-                    $PV      = 0.00;
-                }
+            $req = mysql_query("SELECT client_loan_schedule.number,
+                            			client_loan_schedule.schedule_date,
+                            			client_loan_schedule.root,
+                            			client_loan_schedule.percent,
+                            			client_loan_schedule.pay_amount,
+                            			client_loan_schedule.remaining_root
+                                 FROM   client_loan_schedule
+                                 JOIN   client_loan_agreement ON client_loan_schedule.client_loan_agreement_id = client_loan_agreement.id
+                                 WHERE  client_loan_agreement.client_id = $local_id AND client_loan_schedule.actived=1");
+            
+            while ($row = mysql_fetch_assoc($req)){
+                $sum_percent += $row[percent];
+                $sum_P       += $row[pay_amount];
                 
-            }elseif ($loan_type != 1){
-                $percent      = $PV / $n * $r * $n; //ყოველთვიური გადასახდელი პროცენტი
-                $ziri         = $P - $percent; //ყოველთვიური გადასახდელი ძირი
-                $PV           = $PV - $ziri; //დარჩენილი ძირი
-                $sum_percent += $percent;
-                $sum_P        = $sum_P +$P;
-            }
-            
-            if ($month<=12) {
-                if ($month<10) {
-                    $month = '0'.$month;
-                }
-                if ($id_hidden == ''){
-                    $date = $day.'-'.$month.'-'.$year;
-                }else{
-                    $date = $res[day].'-'.$month.'-'.$res[year];
-                }
-            }else{
-                $month = $month - 12;
-                if ($month<10) {
-                    $month = '0'.$month;
-                }
-                if ($id_hidden == ''){
-                    $year  = $year +1;
-                    $date = $day.'-'.$month.'-'.$year;
-                }else{
-                    $year  = $res[year] +1;
-                    $date = $res[day].'-'.$month.'-'.$year;
-                }
+                $dat.='<tr style="width:100%;">
+                        <td style="width:5%;"><label style="font-size: 12px; text-align:center;">'.$row[number].'<label></td>
+                        <td style="width:19%;"><label style="font-size: 12px; text-align:center;">'.$row[schedule_date].'</label></td>
+                        <td style="width:19%;"><label style="font-size: 12px; text-align:center;">'.$row[root].'</label></td>
+                        <td style="width:19%;"><label style="font-size: 12px; text-align:center;">'.$row[percent].'<label></td>
+                        <td style="width:19%;"><label style="font-size: 12px; text-align:center;">'.$row[pay_amount].'</label></td>
+                        <td style="width:19%;"><label style="font-size: 12px; text-align:center;">'.$row[remaining_root].'</label></td>
+                    </tr>';
                
             }
-            
-            $dat.='<tr style="width:100%; border: 1px solid #000;">
-                        <td style="width:5%; border-right: 1px solid #000;"><label style="font-size: 12px; text-align:center;">'.$i.'<label></td>
-                        <td style="width:19%; border-right: 1px solid #000;"><label style="font-size: 12px; text-align:center;">'.$date.'</label></td>
-                        <td style="width:19%; border-right: 1px solid #000;"><label style="font-size: 12px; text-align:center;">'.round($ziri,2).'</label></td>
-                        <td style="width:19%; border-right: 1px solid #000;"><label style="font-size: 12px; text-align:center;">'.round($percent,2).'<label></td>
-                        <td style="width:19%; border-right: 1px solid #000;"><label style="font-size: 12px; text-align:center;">'.round($P,2).'</label></td>
-                        <td style="width:19%;"><label style="font-size: 12px; text-align:center;">'.round($PV,2).'</label></td>
-                    </tr>';
-        }
         
         $data.='<div style="width:100%;">
                 <div style="width:100%; font-size: 16px; text-align:center;">სესხის დაფარვის გრაფიკი</div>
                 <div style="width:100%; font-size: 14px;">
                     <table style="width:100%; margin-top: 5px;">
-                        <tr style="width:100%; border: 1px solid #000;">
-                            <td style="width:20%; border-right: 1px solid #000;"><label style="font-size: 14px;">კლიენტის სახელი:<label></td>
+                        <tr style="width:100%;">
+                            <td style="width:20%;"><label style="font-size: 14px;">კლიენტის სახელი:<label></td>
                             <td style="width:80%;"><label style="font-size: 14px;">'.$name.'</label></td>
                         </tr>
                     </table> 
                 </div>
                 <div style="width:100%; margin-top: 5px;">
-                    <table style="width:100%;">
-                        <tr style="width:100%;border: 1px solid #000;">
-                            <td style="width:20%;border-right: 1px solid #000;"><label style="font-size: 12px;">სესხის მცულობა:<label></td>
-                            <td style="width:15%;border-right: 1px solid #000;"><label style="font-size: 12px;">'.$loan_amount.'</label></td>
-                            <td style="width:45%;border-right: 1px solid #000;"><label style="font-size: 12px; text-align:center;"></label></td>
-                            <td colspan="2" style="width:40%;"><label style="font-size: 12px; text-align:center;">სესხის გაცემის თარიღი</label></td>
+                    <table border="1" cellpadding="0" cellspacing="0" >
+                        <tr>
+                            <td style="width:20%;"><label style="font-size: 12px;">სესხის მცულობა:<label></td>
+                            <td style="width:15%;"><label style="font-size: 12px;">'.$loan_amount.'</label></td>
+                            <td style="width:45%;"><label style="font-size: 12px; "></label></td>
+                            <td colspan="2" style="width:40%;"><label style="font-size: 12px; ">სესხის გაცემის თარიღი</label></td>
                         </tr>
-                        <tr style="width:100%;border: 1px solid #000;">
-                            <td style="width:20%;border-right: 1px solid #000;"><label style="font-size: 12px;">საპროცემტო სარგ. ('.$hint.'.):<label></td>
-                            <td style="width:15%;border-right: 1px solid #000;"><label style="font-size: 12px;">'.round($year_month,2).'</label></td>
-                            <td style="width:45%;border-right: 1px solid #000;"><label style="font-size: 12px;"></label></td>
-                            <td style="width:10%;border-right: 1px solid #000;"><label style="font-size: 12px; text-align:center;">თვე</label></td>
-                            <td style="width:10%;"><label style="font-size: 12px; text-align:center;">'.$month_id.'</label></td>
+                        <tr style="width:100%;">
+                            <td style="width:20%;"><label style="font-size: 12px;">საპროცემტო სარგ. ('.$hint.'.):<label></td>
+                            <td style="width:15%;"><label style="font-size: 12px;">'.round($year_month,2).'</label></td>
+                            <td style="width:45%;"><label style="font-size: 12px;"></label></td>
+                            <td style="width:10%;"><label style="font-size: 12px;">თვე</label></td>
+                            <td style="width:10%;"><label style="font-size: 12px;">'.$month_id.'</label></td>
                         </tr>
-                        <tr style="width:100%;border: 1px solid #000;">
-                            <td style="width:20%;border-right: 1px solid #000;"><label style="font-size: 12px;">ვადა:<label></td>
-                            <td style="width:15%;border-right: 1px solid #000;"><label style="font-size: 12px;">'.$n.'</label></td>
-                            <td style="width:45%;border-right: 1px solid #000;"><label style="font-size: 12px;"></label></td>
-                            <td style="width:10%;border-right: 1px solid #000;"><label style="font-size: 12px; text-align:center;">რიცხვი</label></td>
-                            <td style="width:10%;"><label style="font-size: 12px; text-align:center;">'.$day.'</label></td>
+                        <tr style="width:100%;">
+                            <td style="width:20%;"><label style="font-size: 12px;">ვადა:<label></td>
+                            <td style="width:15%;"><label style="font-size: 12px;">'.$n.'</label></td>
+                            <td style="width:45%;"><label style="font-size: 12px;"></label></td>
+                            <td style="width:10%;"><label style="font-size: 12px;">რიცხვი</label></td>
+                            <td style="width:10%;"><label style="font-size: 12px;">'.$day.'</label></td>
                         </tr>
-                        <tr style="width:100%;border: 1px solid #000;">
-                            <td style="width:20%;border-right: 1px solid #000;"><label style="font-size: 12px;">საშეღავათო პერიოდი:<label></td>
-                            <td style="width:15%;border-right: 1px solid #000;"><label style="font-size: 12px;"></label></td>
-                            <td style="width:45%;border-right: 1px solid #000;"><label style="font-size: 12px;"></label></td>
-                            <td style="width:10%;border-right: 1px solid #000;"><label style="font-size: 12px; text-align:center;">წელი</label></td>
-                            <td style="width:10%;"><label style="font-size: 12px; text-align:center;">'.$year.'</label></td>
+                        <tr style="width:100%;">
+                            <td style="width:20%;"><label style="font-size: 12px;">საშეღავათო პერიოდი:<label></td>
+                            <td style="width:15%;"><label style="font-size: 12px;"></label></td>
+                            <td style="width:45%;"><label style="font-size: 12px;"></label></td>
+                            <td style="width:10%;"><label style="font-size: 12px;">წელი</label></td>
+                            <td style="width:10%;"><label style="font-size: 12px;"></label></td>
                         </tr>
-                        <tr style="width:100%;border: 1px solid #000;">
-                            <td style="width:20%; border-right: 1px solid #000;"><label style="font-size: 12px;">საკომისიო წინასწარ(%):<label></td>
+                        <tr style="width:100%;">
+                            <td style="width:20%;"><label style="font-size: 12px;">საკომისიო წინასწარ(%):<label></td>
                             <td colspan="4" style="width:20%;"><label style="font-size: 12px;"><label></td>
                         </tr>
                     </table>
                 </div>
-                <div style="width:100%; margin-top: 25px; border: 1px solid #000;">
-                    <table style="width:100%;">
-                        <tr style="width:100%;border: 1px solid #000;">
-                            <td colspan="2" style="width:5%;border-right: 1px solid #000;"><label style="font-size: 12px;">სულ პროცენტი<label></td>
-                            <td style="width:19%;border-right: 1px solid #000;"><label style="font-size: 12px;">სულ დასაფარი</label></td>
-                            <td style="width:19%;border-right: 1px solid #000;"><label style="font-size: 12px; text-align:center;">'.round($sum_percent,2).'</label></td>
-                            <td style="width:19%;border-right: 1px solid #000;"><label style="font-size: 12px; text-align:center;">'.round($sum_P, 2).'</label></td>
-                            <td style="width:19%;"><label style="font-size: 12px; text-align:center;">0</label></td>
+                <div style="width:100%; margin-top: 25px;">
+                    <table border="1" cellpadding="0" cellspacing="0" >
+                        <tr style="width:100%;">
+                            <td colspan="2" style="width:5%;"><label style="font-size: 12px;">სულ პროცენტი<label></td>
+                            <td style="width:19%;"><label style="font-size: 12px;">სულ დასაფარი</label></td>
+                            <td style="width:19%;"><label style="font-size: 12px; text-align:center;">'.round($sum_percent,2).'</label></td>
+                            <td style="width:19%;"><label style="font-size: 12px; text-align:center;">'.round($sum_P, 2).'</label></td>
+                            <td style="width:19%;"><label style="font-size: 12px;">0</label></td>
                         </tr>
-                        <tr colspan="6" style="height:25px; border: 1px solid #000;">
-                            <td colspan="6"style="width:20%; border-right: 1px solid #000;"><label style="font-size: 12px;"><label></td>
+                        <tr colspan="6" style="height:25px;">
+                            <td colspan="6"style="width:20%;"><label style="font-size: 12px;"><label></td>
                         </tr>
-                        <tr style="width:100%; border: 1px solid #000;">
-                            <td style="width:5%; border-right: 1px solid #000;"><label style="font-size: 12px; text-align:center;">#<label></td>
-                            <td style="width:19%; border-right: 1px solid #000;"><label style="font-size: 12px; text-align:center;">თარიღი</label></td>
-                            <td style="width:19%; border-right: 1px solid #000;"><label style="font-size: 12px; text-align:center;">ძირი<label></td>
-                            <td style="width:19%; border-right: 1px solid #000;"><label style="font-size: 12px; text-align:center;">პროცენტი</label></td>
-                            <td style="width:19%; border-right: 1px solid #000;"><label style="font-size: 12px; text-align:center;">შესატანი</label></td>
-                            <td style="width:19%;"><label style="font-size: 12px; text-align:center;">ნაშთი შენატანის შემდეგ</label></td>
+                        <tr style="width:100%;">
+                            <td style="width:5%;"><label style="font-size: 12px;">#<label></td>
+                            <td style="width:19%;"><label style="font-size: 12px;">თარიღი</label></td>
+                            <td style="width:19%;"><label style="font-size: 12px;">ძირი<label></td>
+                            <td style="width:19%;"><label style="font-size: 12px;">პროცენტი</label></td>
+                            <td style="width:19%;"><label style="font-size: 12px;">შესატანი</label></td>
+                            <td style="width:19%;"><label style="font-size: 12px;;">ნაშთი შენატანის შემდეგ</label></td>
                         </tr>';
         $data.=$dat;
         
-        $data.='<tr colspan="6" style="height:25px; border: 1px solid #000;">
-                    <td colspan="6"style="width:20%; border-right: 1px solid #000;"><label style="font-size: 12px;"><label></td>
+        $data.='<tr colspan="6" style="height:25px;">
+                    <td colspan="6"style="width:20%;"><label style="font-size: 12px;"><label></td>
                 </tr>
-                <tr style="width:100%;border: 1px solid #000;">
-                    <td colspan="3"style="width:20%; border-right: 1px solid #000;"><label style="font-size: 12px;">ხელმოწერა ლ:<label></td>
-                    <td colspan="3" style="width:20%; border-right: 1px solid #000;"><label style="font-size: 12px;">ხელმოწერა ლ:<label></td>
+                <tr style="width:100%;">
+                    <td colspan="3"style="width:20%;"><label style="font-size: 12px;">ხელმოწერა ლ:<label></td>
+                    <td colspan="3" style="width:20%;"><label style="font-size: 12px;">ხელმოწერა ლ:<label></td>
                 </tr>
                 </table>
                </div>
