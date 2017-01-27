@@ -401,79 +401,126 @@ $data .='</ss:Table>
 		';
 
 }elseif ($file_type == 'download_insurance'){
-    $res =mysql_query("SELECT    client.id,
-        CONCAT(client.`name`, ' ', client.lastname) AS `name`,
-        DATE_FORMAT(client_loan_agreement.datetime,'%m') AS `month_id`,
-        DATE_FORMAT(client_loan_agreement.datetime,'%Y') AS `year`,
-        DATE_FORMAT(client_loan_agreement.datetime,'%d') AS `day`,
-        client_loan_agreement.loan_amount,
-        client_loan_agreement.loan_months,
-        client_loan_agreement.percent,
-        client_loan_agreement.loan_type_id
-        FROM     `client`
-        LEFT JOIN client_loan_agreement ON client_loan_agreement.client_id = client.id
-        LEFT JOIN `month` ON `month`.id = DATE_FORMAT(client_loan_agreement.datetime,'%m')
-        WHERE     client.id = '$local_id' AND client.actived=1 LIMIT 1");
+    
+    function yes_no($id){
+        
+            $data .= '<option value="0" selected="selected">----</option>';
+        
+            if ($id == '') {
+                $data .= '<option value="1">დიახ</option>';
+                $data .= '<option value="2">არა</option>';
+                $data1='';
+            }else{
+                if($id == 1){
+                    $data .= '<option value="1" selected="selected">დიახ</option>';
+                    $data .= '<option value="2">არა</option>';
+                    
+                    $data1='დიახ';
+                } elseif ($id == 2) {
+                    $data .= '<option value="2" selected="selected">არა</option>';
+                    $data .= '<option value="1">დიახ</option>';
+                    $data1='არა';
+                }
+            }
+        
+            return $data1;
+        }
+    
+    $row1 =mysql_fetch_assoc(mysql_query("SELECT    CONCAT(client.name, ' ', client.lastname) AS name,
+                                                    client.pid,
+                                                    client.actual_address,
+                                                    client.juridical_address,
+                                                    client.phone,
+                                                    client_loan_agreement.loan_amount,
+                                                    client_car.car_marc,
+                                                    client_car.car_wheel,
+                                                    client_car.car_seats,
+                                                    client_car.car_price,
+                                                    client_car.car_sale_date,
+                                                    client_car.car_insurance_price,
+                                                    client_car.car_ins_start,
+                                                    client_car.car_ins_end,
+                                                    client_car.model,
+                                                    client_car.car_id,
+                                                    client_car.manufacturing_date,
+                                                    client_car.color,
+                                                    client_car.registration_number,
+                                                    car_type.name AS car_type_name,
+                                                    client_car.engine_size,
+                                                    client_car.certificate_id,
+                                                    car_insurance_info.datetime AS car_insurance_info_datetime,
+                                                    car_insurance_info.id AS car_insurance_info_id,
+                                                    car_insurance_info.lined_organization_yes_no,
+                                                    car_insurance_info.any_person_Managed_yes_no,
+                                                    car_insurance_info.encased_yes_no,
+                                                    car_insurance_info.signaling_yes_no,
+                                                    car_insurance_info.autotransport_other_protection_yes_no,
+                                                    car_insurance_info.signaling_type,
+                                                    car_insurance_info.driver_disabled_yes_no,
+                                                    car_insurance_info.driver_no_ins_yes_no,
+                                                    car_insurance_info.car_accident_drivers_yes_no,
+                                                    car_insurance_info.guilt_drivers_yes_no,
+                                                    car_insurance_info.injury_passion_ins_yes_no,
+                                                    car_insurance_info.responsible_ins_limit,
+                                                    car_insurance_info.driver_or_passenger_ins_limit,
+                                                    car_insurance_info.public_private_yes_no,
+                                                    car_insurance_info.trade_yes_no,
+                                                    car_insurance_info.trade_yes_no1,
+                                                    car_insurance_info.trade_yes_no2,
+                                                    car_insurance_info.trade_yes_no3,
+                                                    car_insurance_info.trade_yes_no4,
+                                                    car_insurance_info.goods_or_ardware_yes_no,
+                                                    car_insurance_info.Insured_yes_no,
+                                                    car_insurance_info.insurance_company,
+                                                    car_insurance_info.insurance_price_gel,
+                                                    car_insurance_info.insurance_price_usd,
+                                                    car_insurance_info.insurance_start_date,
+                                                    car_insurance_info.insurance_end_date
+                                         FROM       `client`
+                                         LEFT JOIN  client_loan_agreement ON client_loan_agreement.client_id = client.id
+                                         LEFT JOIN  client_car ON client_car.client_id = client.id
+                                         LEFT JOIN  car_type ON car_type.id = client_car.type_id
+                                         LEFT JOIN  car_insurance_info ON car_insurance_info.client_id = client.id
+                                         WHERE      client.id = '$local_id'"));
     
     
-    $row1    = mysql_fetch_assoc($res);
     
-    $sum_percent   = 0;
-    $sum_P         = 0;
-    
-    $loan_agreement_type   = $row1[loan_type_id];
-    $loan_amount           = $row1[loan_amount];
-    $n                     = $row1[loan_months];
-    $month_id              = $row1[month_id];
-    $day                   = $row1[day];
-    $year_start            = $row1[year];
-    $name                  = $row1[name];
-    $loan_type             = $loan_agreement_type;
-    
-    if ($loan_type == 2){
-        $year_month    = $row1[percent]*12;
-        $hint          = 'წლ';
-    }else{
-        $hint = 'თვ';
-        $year_month    = $row1[percent];
-    }
-    
-    $req = mysql_query("SELECT client_loan_schedule.number,
-        client_loan_schedule.schedule_date,
-        client_loan_schedule.root,
-        client_loan_schedule.percent,
-        client_loan_schedule.pay_amount,
-        client_loan_schedule.remaining_root
-        FROM   client_loan_schedule
-        JOIN   client_loan_agreement ON client_loan_schedule.client_loan_agreement_id = client_loan_agreement.id
-        WHERE  client_loan_agreement.client_id = $local_id AND client_loan_schedule.actived=1");
+    $req = mysql_query("SELECT `name`,
+                				born_date,
+                				driving_license_type,
+                				driving_license_date
+                        FROM   `client_car_drivers`
+                        WHERE   actived = 1 AND client_id = '$local_id'");
     
     $number = 100;
+    $i = 1;
     while ($row = mysql_fetch_assoc($req)){
-        $sum_percent += $row[percent];
-        $sum_P       += $row[pay_amount];
-    
+        
         $dat .= '<ss:Row>
     				<ss:Cell>
-    					<ss:Data ss:Type="String">345345</ss:Data>
+    					<ss:Data ss:Type="String">'.$i.'</ss:Data>
     				</ss:Cell>
     				<ss:Cell>
-    					<ss:Data ss:Type="String">345</ss:Data>
+    					<ss:Data ss:Type="String">'.$row[name].'</ss:Data>
     				</ss:Cell>
     				<ss:Cell>
-    					<ss:Data ss:Type="String">345</ss:Data>
+    					<ss:Data ss:Type="String"></ss:Data>
     				</ss:Cell>
     				<ss:Cell>
-    					<ss:Data ss:Type="String">345</ss:Data>
+    					<ss:Data ss:Type="String"></ss:Data>
     				</ss:Cell>
     				<ss:Cell>
-    					<ss:Data ss:Type="String">345</ss:Data>
+    					<ss:Data ss:Type="String">'.$row[born_date].'</ss:Data>
     				</ss:Cell>
     				<ss:Cell>
-    					<ss:Data ss:Type="String">345345</ss:Data>
+    					<ss:Data ss:Type="String">'.$row[driving_license_type].'</ss:Data>
+    				</ss:Cell>
+                    <ss:Cell ss:MergeAcross="1">
+    					<ss:Data ss:Type="String">'.$row[driving_license_date].'</ss:Data>
     				</ss:Cell>
     			</ss:Row>
     			';
+        $i+=1;
     }
     
     $name = "დაზღვევა ალდაგი";
@@ -535,6 +582,7 @@ $data .='</ss:Table>
 			<ss:Column ss:AutoFitWidth="1" ss:Width="100" />
 			<ss:Column ss:AutoFitWidth="1" ss:Width="100" />
 			<ss:Column ss:AutoFitWidth="1" ss:Width="100" />
+		    <ss:Column ss:AutoFitWidth="1" ss:Width="100" />
 		    
 			<ss:Row ss:AutoFitHeight="1" ss:Height="25">
 				<ss:Cell ss:MergeAcross="7" ss:StyleID="headercell">
@@ -542,8 +590,7 @@ $data .='</ss:Table>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 			</ss:Row>
-		    
-			<ss:Row ss:AutoFitHeight="1" ss:Height="25">
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
 				<ss:Cell ss:MergeAcross="7" ss:StyleID="headercell">
 					<ss:Data ss:Type="String">ავტოტრანსპორტის დაზღვევის განაცხადი</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
@@ -551,91 +598,91 @@ $data .='</ss:Table>
 			</ss:Row>
 		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
 				<ss:Cell ss:MergeAcross="3" ss:StyleID="headercell">
-					<ss:Data ss:Type="String">ავტოტრანსპორტის დაზღვევის განაცხადი</ss:Data>
+					<ss:Data ss:Type="String">დამზღვევის რეკვიზიტები</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		        <ss:Cell ss:MergeAcross="3" ss:StyleID="headercell">
-					<ss:Data ss:Type="String">ავტოტრანსპორტის დაზღვევის განაცხადი</ss:Data>
+					<ss:Data ss:Type="String">შ.პ.ს. თი ჯი მობაილ</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 			</ss:Row>
 		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
 				<ss:Cell ss:MergeAcross="3" ss:StyleID="headercell">
-					<ss:Data ss:Type="String">ავტოტრანსპორტის დაზღვევის განაცხადი</ss:Data>
+					<ss:Data ss:Type="String">მოსარგებლე (საზღაურის მიმღები)</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		        <ss:Cell ss:MergeAcross="3" ss:StyleID="headercell">
-					<ss:Data ss:Type="String">ავტოტრანსპორტის დაზღვევის განაცხადი</ss:Data>
+					<ss:Data ss:Type="String">შ.პ.ს. თი ჯი მობაილ</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 			</ss:Row>
 		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
 				<ss:Cell ss:MergeAcross="3" ss:StyleID="headercell">
-					<ss:Data ss:Type="String">ავტოტრანსპორტის დაზღვევის განაცხადი</ss:Data>
+					<ss:Data ss:Type="String">დამზღვევის იურიდიული მისამართი</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		        <ss:Cell ss:MergeAcross="3" ss:StyleID="headercell">
-					<ss:Data ss:Type="String">ავტოტრანსპორტის დაზღვევის განაცხადი</ss:Data>
+					<ss:Data ss:Type="String">თბილისი, დოლიძის 6</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 			</ss:Row>
 		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
 				<ss:Cell ss:MergeAcross="3" ss:StyleID="headercell">
-					<ss:Data ss:Type="String">ავტოტრანსპორტის დაზღვევის განაცხადი</ss:Data>
+					<ss:Data ss:Type="String">დამზღვევის ფაქტობრივი მისამართი</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		        <ss:Cell ss:MergeAcross="3" ss:StyleID="headercell">
-					<ss:Data ss:Type="String">ავტოტრანსპორტის დაზღვევის განაცხადი</ss:Data>
+					<ss:Data ss:Type="String">თბილისი, კერესელიძის 12</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 			</ss:Row>
 		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
 				<ss:Cell ss:MergeAcross="3" ss:StyleID="headercell">
-					<ss:Data ss:Type="String">ავტოტრანსპორტის დაზღვევის განაცხადი</ss:Data>
+					<ss:Data ss:Type="String">საიდენტიფიკაციო კოდი</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		        <ss:Cell ss:MergeAcross="3" ss:StyleID="headercell">
-					<ss:Data ss:Type="String">ავტოტრანსპორტის დაზღვევის განაცხადი</ss:Data>
+					<ss:Data ss:Type="String">205270277</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 			</ss:Row>
 		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
 				<ss:Cell ss:MergeAcross="3" ss:StyleID="headercell">
-					<ss:Data ss:Type="String">ავტოტრანსპორტის დაზღვევის განაცხადი</ss:Data>
+					<ss:Data ss:Type="String">საქმიანობის ტიპი</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		        <ss:Cell ss:MergeAcross="3" ss:StyleID="headercell">
-					<ss:Data ss:Type="String">ავტოტრანსპორტის დაზღვევის განაცხადი</ss:Data>
+					<ss:Data ss:Type="String">ავტოლომბარდი</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 			</ss:Row>
 		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
 				<ss:Cell ss:MergeAcross="3" ss:StyleID="headercell">
-					<ss:Data ss:Type="String">ავტოტრანსპორტის დაზღვევის განაცხადი</ss:Data>
+					<ss:Data ss:Type="String">ხელმძღვანელის თანამდებობა, სახელი გვარი</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		        <ss:Cell ss:MergeAcross="3" ss:StyleID="headercell">
-					<ss:Data ss:Type="String">ავტოტრანსპორტის დაზღვევის განაცხადი</ss:Data>
+					<ss:Data ss:Type="String">დირ. გიორგი კილაძე</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 			</ss:Row>
 		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
 				<ss:Cell ss:MergeAcross="3" ss:StyleID="headercell">
-					<ss:Data ss:Type="String">ავტოტრანსპორტის დაზღვევის განაცხადი</ss:Data>
+					<ss:Data ss:Type="String">ავტოტრანსპორტის მფლობელი (მიუთითეთ პირადი ნომერი)</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		        <ss:Cell ss:MergeAcross="3" ss:StyleID="headercell">
-					<ss:Data ss:Type="String">?</ss:Data>
+					<ss:Data ss:Type="String">'.$row1[name].' (პირადი # '.$row1[pid].')</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 			</ss:Row>
 		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
 				<ss:Cell ss:MergeAcross="3" ss:StyleID="headercell">
-					<ss:Data ss:Type="String">ავტოტრანსპორტის დაზღვევის განაცხადი</ss:Data>
+					<ss:Data ss:Type="String">ავტოტრანსპორტის მფლობელის მისამართი (მობილური)</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		        <ss:Cell ss:MergeAcross="3" ss:StyleID="headercell">
-					<ss:Data ss:Type="String">?</ss:Data>
+					<ss:Data ss:Type="String">'.$row1[actual_address].' '.$row1[juridical_address].' '.$row1[phone].'</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 			</ss:Row>
@@ -645,7 +692,7 @@ $data .='</ss:Table>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 			</ss:Row>
-		    
+		    '.$dat.'
 		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
 				<ss:Cell ss:MergeAcross="7" ss:StyleID="headercell">
 					<ss:Data ss:Type="String">ინფორმაცია ავტოტრანსპორტის შესახებ</ss:Data>
@@ -662,53 +709,54 @@ $data .='</ss:Table>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		        <ss:Cell ss:StyleID="headercell">
-					<ss:Data ss:Type="String">ინფორმაცია ავტოტრანსპორტის შესახებ</ss:Data>
+					<ss:Data ss:Type="String">მოდელი</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+		        <ss:Cell ss:StyleID="headercell">
+					<ss:Data ss:Type="String">რომელ მხარეს მდებარეობს საჭე</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		        <ss:Cell ss:StyleID="headercell">
 					<ss:Data ss:Type="String">ძრავის ტიპი</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
-		        <ss:Cell ss:StyleID="headercell">
-					<ss:Data ss:Type="String">ადგილების რაოდენობა მძღოლის ჩათვლით</ss:Data>
-					<ss:NamedCell ss:Name="Print_Titles"/>
-				</ss:Cell>
+		        
 		        <ss:Cell ss:StyleID="headercell">
 					<ss:Data ss:Type="String">ინფორმაცია ავტოტრანსპორტის შესახებ</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
-		        <ss:Cell ss:StyleID="headercell">
+		        <ss:Cell ss:MergeAcross="1" ss:StyleID="headercell">
 					<ss:Data ss:Type="String">ძრავის მოცულობა</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		    </ss:Row>
 		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
 				<ss:Cell ss:StyleID="headercell">
-					<ss:Data ss:Type="String">1</ss:Data>
+					<ss:Data ss:Type="String">'.$row1['car_marc'].'</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		        <ss:Cell ss:StyleID="headercell">
-					<ss:Data ss:Type="String">?</ss:Data>
+					<ss:Data ss:Type="String">'.$row1['model'].'</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		        <ss:Cell ss:StyleID="headercell">
-					<ss:Data ss:Type="String">?</ss:Data>
+					<ss:Data ss:Type="String">'.$row1['car_marc'].'</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		        <ss:Cell ss:StyleID="headercell">
-					<ss:Data ss:Type="String">?</ss:Data>
+					<ss:Data ss:Type="String">'.$row1['car_wheel'].'</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		        <ss:Cell ss:StyleID="headercell">
-					<ss:Data ss:Type="String">?</ss:Data>
+					<ss:Data ss:Type="String">'.$row1['car_type_name'].'</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		        <ss:Cell ss:StyleID="headercell">
-					<ss:Data ss:Type="String">?</ss:Data>
+					<ss:Data ss:Type="String">'.$row1['car_seats'].'</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
-		        <ss:Cell ss:StyleID="headercell">
-					<ss:Data ss:Type="String">?</ss:Data>
+		        <ss:Cell ss:MergeAcross="1" ss:StyleID="headercell">
+					<ss:Data ss:Type="String">'.$row1['engine_size'].'</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		    </ss:Row>
@@ -733,7 +781,7 @@ $data .='</ss:Table>
 					<ss:Data ss:Type="String">შეძენის თარიღი</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
-		        <ss:Cell ss:StyleID="headercell">
+		        <ss:Cell ss:MergeAcross="1" ss:StyleID="headercell">
 					<ss:Data ss:Type="String">სესხის ოდენობა</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
@@ -744,29 +792,26 @@ $data .='</ss:Table>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		        <ss:Cell ss:StyleID="headercell">
-					<ss:Data ss:Type="String">?</ss:Data>
+					<ss:Data ss:Type="String">'.$row1['manufacturing_date'].'</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		        <ss:Cell ss:StyleID="headercell">
-					<ss:Data ss:Type="String">?</ss:Data>
+					<ss:Data ss:Type="String">'.$row1['car_price'].'</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		        <ss:Cell ss:MergeAcross="1" ss:StyleID="headercell">
-					<ss:Data ss:Type="String">?</ss:Data>
+					<ss:Data ss:Type="String">'.$row1['registration_number'].'</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		        <ss:Cell ss:StyleID="headercell">
-					<ss:Data ss:Type="String">?</ss:Data>
+					<ss:Data ss:Type="String">'.$row1['car_sale_date'].'</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
-		        <ss:Cell ss:StyleID="headercell">
-					<ss:Data ss:Type="String">?</ss:Data>
+		        <ss:Cell ss:MergeAcross="1" ss:StyleID="headercell">
+					<ss:Data ss:Type="String">'.$row1['loan_amount'].'</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		    </ss:Row>
-		    
-		    
-		    
 		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
 				<ss:Cell ss:MergeAcross="7" ss:StyleID="headercell">
 					<ss:Data ss:Type="String">თუ აღნიშნული ცხრილი არ არის საკმარისი, გთხოვთ დაურთოთ განაცხადს დანართი შესაბამისი ორგანიზაციის ბეჭდითა და ხელმოწერით</ss:Data>
@@ -779,43 +824,344 @@ $data .='</ss:Table>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		    </ss:Row>
-		    
-		    
 		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
 				<ss:Cell ss:MergeAcross="5" ss:StyleID="headercell">
-					<ss:Data ss:Type="String">ავტოტრანსპორტის დაზღვევის განაცხადი</ss:Data>
+					<ss:Data ss:Type="String">გაფორმებულია თუ არა ავტოტრანსპორტი ორგანიზაციის სახელზე </ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		        <ss:Cell ss:MergeAcross="1" ss:StyleID="headercell">
-					<ss:Data ss:Type="String">ავტოტრანსპორტის დაზღვევის განაცხადი</ss:Data>
+					<ss:Data ss:Type="String">'.yes_no($row1['lined_organization_yes_no']).'</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 			</ss:Row>
 		    
 		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
 				<ss:Cell ss:MergeAcross="5" ss:StyleID="headercell">
-					<ss:Data ss:Type="String">ავტოტრანსპორტის დაზღვევის განაცხადი</ss:Data>
+					<ss:Data ss:Type="String">მართვას თუ არა ავტოტრანსპორტს ნებისმიერი პიროვნება 25 წლამდე</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		        <ss:Cell ss:MergeAcross="1" ss:StyleID="headercell">
-					<ss:Data ss:Type="String">ავტოტრანსპორტის დაზღვევის განაცხადი</ss:Data>
+					<ss:Data ss:Type="String">'.yes_no($row1['any_person_Managed_yes_no']).'</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 			</ss:Row>
 		    
 		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
 				<ss:Cell ss:MergeAcross="5" ss:StyleID="headercell">
-					<ss:Data ss:Type="String">ავტოტრანსპორტის დაზღვევის განაცხადი</ss:Data>
+					<ss:Data ss:Type="String">მოთავსებულია თუ არა ავტოტრანსპორტი დაკეტილ ავტოფარეხში ან დაცულ ავტოსადგომზე</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		        <ss:Cell ss:MergeAcross="1" ss:StyleID="headercell">
-					<ss:Data ss:Type="String">ავტოტრანსპორტის დაზღვევის განაცხადი</ss:Data>
+					<ss:Data ss:Type="String">'.yes_no($row1['encased_yes_no']).'</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 			</ss:Row>
-		    ';
-     //$data .= $dat;
-    
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
+				<ss:Cell ss:MergeAcross="5" ss:StyleID="headercell">
+					<ss:Data ss:Type="String">გააჩნია თუ არა ავტოტრანსპორტს სიგნალიზაცია</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+		        <ss:Cell ss:MergeAcross="1" ss:StyleID="headercell">
+					<ss:Data ss:Type="String">'.yes_no($row1['signaling_yes_no']).'</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+			</ss:Row>
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
+				<ss:Cell ss:MergeAcross="5" ss:StyleID="headercell">
+					<ss:Data ss:Type="String">გააჩნია თუ არა ავტოტრანსპორტს სხვა დამცავი საშუალება</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+		        <ss:Cell ss:MergeAcross="1" ss:StyleID="headercell">
+					<ss:Data ss:Type="String">'.yes_no($row1['autotransport_other_protection_yes_no']).'</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+			</ss:Row>
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
+				<ss:Cell ss:MergeAcross="5" ss:StyleID="headercell">
+					<ss:Data ss:Type="String">გთხოვთ მიუთითოთ სიგნალიზაციის ტიპი</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+		        <ss:Cell ss:MergeAcross="1" ss:StyleID="headercell">
+					<ss:Data ss:Type="String">?</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+			</ss:Row>
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
+				<ss:Cell ss:MergeAcross="7" ss:StyleID="headercell">
+					<ss:Data ss:Type="String">მონაცემები მართვის შესახებ და სარჩელები</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+		    </ss:Row>
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
+				<ss:Cell ss:MergeAcross="5" ss:StyleID="headercell">
+					<ss:Data ss:Type="String">არის თუ არა ზემოაღნიშნული რომელიმე მძღოლი ინვალიდი, უჩივის თუ არა მხედველობას, სმენას, ეპილეფსიას, დიაბეტს და/ან გულის დაავადებას</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+		        <ss:Cell ss:MergeAcross="1" ss:StyleID="headercell">
+					<ss:Data ss:Type="String">'.yes_no($row1['driver_disabled_yes_no']).'</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+			</ss:Row>
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
+				<ss:Cell ss:MergeAcross="5" ss:StyleID="headercell">
+					<ss:Data ss:Type="String">აქვს თუ არა ზემოაღნიშნულ რომელიმე მძღოლს მიღებული უარი ნებისმიერი ავტომანქანის დაზღვევაზე, ან სადაზღვევო პერიოდის გაგრძელებაზე, ან საჭირო იყო თუ არა გაზრდილი სადაზღვევო გადასახადის გადახდა, ან მზღვეველის მიერ წაყენებული იყო თუ არა განსაკუთრებული პირობები</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+		        <ss:Cell ss:MergeAcross="1" ss:StyleID="headercell">
+					<ss:Data ss:Type="String">'.yes_no($row1['driver_no_ins_yes_no']).'</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+			</ss:Row>
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
+				<ss:Cell ss:MergeAcross="5" ss:StyleID="headercell">
+					<ss:Data ss:Type="String">არის თუ არა ზემოაღნიშნული რომელიმე მძღოლი ნასამართლევი ავტოსაგზაო შემთხვევით ჩადენილ დანაშაულზე</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+		        <ss:Cell ss:MergeAcross="1" ss:StyleID="headercell">
+					<ss:Data ss:Type="String">'.yes_no($row1['car_accident_drivers_yes_no']).'</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+			</ss:Row>
+			<ss:Row ss:AutoFitHeight="1" ss:Height="25">
+				<ss:Cell ss:MergeAcross="5" ss:StyleID="headercell">
+					<ss:Data ss:Type="String">აქვს თუ არა ზემოაღნიშნულ რომელიმე მძღოლს ჩადენილი რაიმე დანაშაული ბოლო 3 წლის განმავლობაში</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+		        <ss:Cell ss:MergeAcross="1" ss:StyleID="headercell">
+					<ss:Data ss:Type="String">'.yes_no($row1['guilt_drivers_yes_no']).'</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+			</ss:Row>
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
+				<ss:Cell ss:MergeAcross="7" ss:StyleID="headercell">
+					<ss:Data ss:Type="String">დაზღვევის სახეობა</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+		    </ss:Row>
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
+				<ss:Cell ss:MergeAcross="5" ss:StyleID="headercell">
+					<ss:Data ss:Type="String">ამოირჩიეთ თქვენთვის სასურველი დაზღვევის სახეობა:</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+		        <ss:Cell ss:MergeAcross="1" ss:StyleID="headercell">
+					<ss:Data ss:Type="String"></ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+			</ss:Row>
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
+				<ss:Cell ss:MergeAcross="5" ss:StyleID="headercell">
+					<ss:Data ss:Type="String">დაზიანება, გატაცებ (ქურდობა,ძარცვა-ყაჩაღობა)</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+		        <ss:Cell ss:MergeAcross="1" ss:StyleID="headercell">
+					<ss:Data ss:Type="String">'.yes_no($row1['injury_passion_ins_yes_no']).'</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+			</ss:Row>
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
+				<ss:Cell ss:MergeAcross="5" ss:StyleID="headercell">
+					<ss:Data ss:Type="String">თუ გსურთ მესამე მხარისადმი პასუხისმგებლობის დაზღვევა აირჩიეთ ლიმიტი</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+		        <ss:Cell ss:MergeAcross="1" ss:StyleID="headercell">
+					<ss:Data ss:Type="String">'.$row1['responsible_ins_limit'].'</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+			</ss:Row>
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
+				<ss:Cell ss:MergeAcross="5" ss:StyleID="headercell">
+					<ss:Data ss:Type="String">თუ გსურთ უბედური შემთხვევით გამოწვეული მძღოლის და/ან მგზავრის დაზღვევა აირჩიეთ ლიმიტი მანქანაზე</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+		        <ss:Cell ss:MergeAcross="1" ss:StyleID="headercell">
+					<ss:Data ss:Type="String">'.$row1['driver_or_passenger_ins_limit'].'</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+			</ss:Row>
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
+				<ss:Cell ss:MergeAcross="7" ss:StyleID="headercell">
+					<ss:Data ss:Type="String">რა მიზნებისთვის გამოიყენება ავტოტრანსპორტი?</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+		    </ss:Row>
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
+				<ss:Cell ss:MergeAcross="5" ss:StyleID="headercell">
+					<ss:Data ss:Type="String">საზოგადოებრივი, პირადი და გასართობი</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+		        <ss:Cell ss:MergeAcross="1" ss:StyleID="headercell">
+					<ss:Data ss:Type="String">'.yes_no($row1['public_private_yes_no']).'</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+			</ss:Row>
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
+				<ss:Cell ss:MergeAcross="5" ss:StyleID="headercell">
+					<ss:Data ss:Type="String">მხოლოდ სამუშაო ადგილამდე მისვლა და უკან დაბრუნება</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+		        <ss:Cell ss:MergeAcross="1" ss:StyleID="headercell">
+					<ss:Data ss:Type="String">'.yes_no($row1['trade_yes_no']).'</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+			</ss:Row>
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
+				<ss:Cell ss:MergeAcross="5" ss:StyleID="headercell">
+					<ss:Data ss:Type="String">ორგანიზაციის საქმიანობასთან დაკავშირებით</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+		        <ss:Cell ss:MergeAcross="1" ss:StyleID="headercell">
+					<ss:Data ss:Type="String">'.yes_no($row1['trade_yes_no1']).'</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+			</ss:Row>
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
+				<ss:Cell ss:MergeAcross="5" ss:StyleID="headercell">
+					<ss:Data ss:Type="String">სხვადასხვა სამუშაო ადგილებზე გადასაადგილებლად</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+		        <ss:Cell ss:MergeAcross="1" ss:StyleID="headercell">
+					<ss:Data ss:Type="String">'.yes_no($row1['trade_yes_no2']).'</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+			</ss:Row>
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
+				<ss:Cell ss:MergeAcross="5" ss:StyleID="headercell">
+					<ss:Data ss:Type="String">სხვა პიროვნების მიერ ნებისმიერ საქმიანობასთან დაკავშირებით</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+		        <ss:Cell ss:MergeAcross="1" ss:StyleID="headercell">
+					<ss:Data ss:Type="String">'.yes_no($row1['trade_yes_no3']).'</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+			</ss:Row>
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
+				<ss:Cell ss:MergeAcross="5" ss:StyleID="headercell">
+					<ss:Data ss:Type="String">ვაჭრობასთან ან ნებისმიერ სხვა საქმიანობასთან დაკავშირებით</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+		        <ss:Cell ss:MergeAcross="1" ss:StyleID="headercell">
+					<ss:Data ss:Type="String">'.yes_no($row1['trade_yes_no4']).'</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+			</ss:Row>
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
+				<ss:Cell ss:MergeAcross="5" ss:StyleID="headercell">
+					<ss:Data ss:Type="String">საქონლის ან აპარატურის გადასაადგილებლად</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+		        <ss:Cell ss:MergeAcross="1" ss:StyleID="headercell">
+					<ss:Data ss:Type="String">'.yes_no($row1['goods_or_ardware_yes_no']).'</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+			</ss:Row>
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
+				<ss:Cell ss:MergeAcross="7" ss:StyleID="headercell">
+					<ss:Data ss:Type="String">მიმდინარე მდგომარეობა</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+		    </ss:Row>
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
+				<ss:Cell ss:MergeAcross="5" ss:StyleID="headercell">
+					<ss:Data ss:Type="String">არის/ყოფილა თუ არა ორგანიზაციის ავტოტრანსპორტი დაზღვეული</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+		        <ss:Cell ss:MergeAcross="1" ss:StyleID="headercell">
+					<ss:Data ss:Type="String">'.yes_no($row1['Insured_yes_no']).'</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+			</ss:Row>
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
+				<ss:Cell ss:MergeAcross="3" ss:StyleID="headercell">
+					<ss:Data ss:Type="String">წინა კითხვაზე დადებითი პასუხის შემთხვევაში გთხოვთ მიუთითოთ დეტალები</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+		        <ss:Cell ss:MergeAcross="3" ss:StyleID="headercell">
+					<ss:Data ss:Type="String">სადაზღვეო კომპანია "'.$row1['insurance_company'].'"</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+			</ss:Row>
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
+				<ss:Cell ss:MergeAcross="2" ss:StyleID="headercell">
+					<ss:Data ss:Type="String">სადაზღვევო თანხა</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+		        <ss:Cell ss:StyleID="headercell">
+					<ss:Data ss:Type="String">'.$row1['insurance_price_gel'].'</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+		        <ss:Cell ss:StyleID="headercell">
+					<ss:Data ss:Type="String">ლარი</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+		        <ss:Cell ss:StyleID="headercell">
+					<ss:Data ss:Type="String">'.$row1['insurance_price_usd'].'</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+		        <ss:Cell ss:StyleID="headercell">
+					<ss:Data ss:Type="String">აშშ დოლარი</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+			</ss:Row>
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
+				<ss:Cell ss:MergeAcross="2" ss:StyleID="headercell">
+					<ss:Data ss:Type="String">დაზღვევის პერიოდი</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+		        <ss:Cell ss:StyleID="headercell">
+					<ss:Data ss:Type="String">'.$row1['insurance_start_date'].'</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+		        <ss:Cell ss:StyleID="headercell">
+					<ss:Data ss:Type="String">- დან</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+		        <ss:Cell ss:StyleID="headercell">
+					<ss:Data ss:Type="String">'.$row1['insurance_end_date'].'</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+		        <ss:Cell ss:StyleID="headercell">
+					<ss:Data ss:Type="String">- მდე</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+			</ss:Row>
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
+				<ss:Cell ss:MergeAcross="7" ss:StyleID="headercell">
+					<ss:Data ss:Type="String">ჩემი ხელმოწერით ვადასტურებ, რომ აღნიშნულ განაცხადში მითითებული ინფორმაცია სრულია და ჭეშმარიტი და არასწორად მოწოდებული ინფორმაციის შემთხვევაში კომპანია უფლებამოსილია გააუქმოს პოლისი და უარი თქვას ზარალის ანაზღაურებაზე</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+		    </ss:Row>
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
+				<ss:Cell ss:MergeAcross="1" ss:StyleID="headercell">
+					<ss:Data ss:Type="String">შევსების თარიღი</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+		        <ss:Cell ss:MergeAcross="1" ss:StyleID="headercell">
+					<ss:Data ss:Type="String">'.$row1[car_insurance_info_datetime].'</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+		        <ss:Cell ss:MergeAcross="1" ss:StyleID="headercell">
+					<ss:Data ss:Type="String">თანამდებობა</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+		        <ss:Cell ss:MergeAcross="1" ss:StyleID="headercell">
+					<ss:Data ss:Type="String">?</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+			</ss:Row>
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
+				<ss:Cell ss:MergeAcross="3" ss:StyleID="headercell">
+					<ss:Data ss:Type="String"></ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+		        <ss:Cell ss:MergeAcross="1" ss:StyleID="headercell">
+					<ss:Data ss:Type="String">ხელმოწერა</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+		        <ss:Cell ss:MergeAcross="1" ss:StyleID="headercell">
+					<ss:Data ss:Type="String"></ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+			</ss:Row>';
     
     $data .='</ss:Table>
 		<x:WorksheetOptions>

@@ -198,8 +198,7 @@
          		SetEvents("add_button_cardriver", "delete_button_cardriver", "check-all_car_driver", tName+'cardrivers', 'add-edit-form-car_driver', aJaxURL_cl_car_driver,'','cardrivers',5,main_act,"<'F'Cpl>",aJaxURL_cl_car_driver,'');
             	GetButtons("add_button_cardriver","delete_button_cardriver");
          	}, 50);
-         	
-     	}else if(fName == 'add-edit-form-car_driver'){
+        }else if(fName == 'add-edit-form-car_driver'){
      		var buttons = {
     				"save": {
     		            text: "შენახვა",
@@ -814,7 +813,7 @@
     $(document).on("change", "#Insured_yes_no", function () {
 		if($(this).val() == 1){
 			$(".insurance_table").css('display', 'block');
-			$('#insurance_div').scrollTop(1000000);
+			$('#right_side').scrollTop(1000000);
 		}else{
 			$(".insurance_table").css('display', 'none');
 		}

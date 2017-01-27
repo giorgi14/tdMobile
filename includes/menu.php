@@ -308,22 +308,14 @@
 		$( ".sub_"+$(this).attr('page_id') ).fadeOut( "slow" );
 	});
 	$(document).on("click", ".give_me_blue", function () {
-		$("#img_7").attr("src","media/images/icons/home_blue.png");
-		$("#img_5").attr("src","media/images/icons/out_blue.png");
-		$("#img_2").attr("src","media/images/icons/news_blue.png");
-		$("#img_6").attr("src","media/images/icons/task_blue.png");
-		$("#img_4").attr("src","media/images/icons/inc_blue.png");
-		$("#img_3").attr("src","media/images/icons/flesh_panel_blue.png");
-		$("#img_25").attr("src","media/images/icons/report_blue.png");
-		$("#img_12").attr("src","media/images/icons/cnobari_blue.png");
-		$("#img_8").attr("src","media/images/icons/about_us_blue.png");
+		$("#img_3").attr("src","media/images/icons/home_blue.png");
+		$("#img_9").attr("src","media/images/icons/car-loan_blue.png");
+		$("#img_10").attr("src","media/images/icons/Real_estate_Loans_blue.png");
+		$("#img_7").attr("src","media/images/icons/report_blue.png");
+		$("#img_2").attr("src","media/images/icons/cnobari_blue.png");
+		$("#img_4").attr("src","media/images/icons/about_us_blue.png");
 		$("#img_1").attr("src","media/images/icons/sing_out_blue.png");
-		$("#img_44").attr("src","media/images/icons/call_center_menu_blue.png");
-		$("#img_45").attr("src","media/images/icons/documents_blue.png");
-		$("#img_56").attr("src","media/images/icons/client_menu_blue.png");
 		
-		$("#img_65").attr("src","media/images/icons/visit_blue.png");
-		$("#img_66").attr("src","media/images/icons/documents_blue.png");
 		
 		$("#menuwrapper a").css('color','#2681DC');
 		var str = $(this).children('img').attr('src');

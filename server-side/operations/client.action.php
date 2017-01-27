@@ -3782,7 +3782,7 @@ function Getdocumets_page($file_type, $local_id){
                         <div style="width:100%; font-size: 12px; margin-top: 15px;">
                                                             წინამდებარე ხელშეკრულების მონაწილე მხარეები, ერთის მხრივ შპს „თი ჯი მობაილ“ (საიდენტიფიკაციო № 205170177), - 
                                                             დირექტორი გიორგი კილაძე, წარმომადგენელი ვახტანგ ბახტაძის სახით (მინდობილობა №001, 10.25.2012 წელი)  (შემდგომში გამსესხებელი), 
-                                                            და მეორეს მხრივ, შპს '.$res[$ltd_name].' (საიდენტიფიკაციო კ. № '.$res['ltd_id'].'), დირექტორი '.$res['name'].' (პირადი# '.$res['pid'].') (შემდგომში მსესხებელი), 
+                                                            და მეორეს მხრივ, შპს '.$res[ltd_name].' (საიდენტიფიკაციო კ. № '.$res['ltd_id'].'), დირექტორი '.$res['name'].' (პირადი# '.$res['pid'].') (შემდგომში მსესხებელი), 
                                                             ჩვენს შორის მიღწეული შეთანხმების შედეგად, ვდებთ ხელშეკრულებას სასყიდლიანი სესხის გაცემის შესახებ.
                         </div>
                         <div style="width:100%; font-size: 12px; margin-top: 15px;">
@@ -4234,9 +4234,9 @@ function Getdocumets_page($file_type, $local_id){
             }
         }
         
-        $data.='<div style="width:100%;">
-                <div style="width:100%; font-size: 16px; text-align:center;">სესხის დაფარვის გრაფიკი</div>
-                <div style="width:100%; font-size: 14px;">
+        $data.='<div style="width:100%; overflow-y: scroll; height: 550px;">
+                <div style="width:99%; font-size: 16px; text-align:center;">სესხის დაფარვის გრაფიკი</div>
+                <div style="width:99%; font-size: 14px;">
                     <table style="width:100%; margin-top: 5px;">
                         <tr style="width:100%; border: 1px solid #000;">
                             <td style="width:20%; border-right: 1px solid #000;"><label style="font-size: 14px;">კლიენტის სახელი:<label></td>
@@ -4244,7 +4244,7 @@ function Getdocumets_page($file_type, $local_id){
                         </tr>
                     </table> 
                 </div>
-                <div style="width:100%; margin-top: 5px;">
+                <div style="width:99%; margin-top: 5px;">
                     <table style="width:100%;">
                         <tr style="width:100%;border: 1px solid #000;">
                             <td style="width:20%;border-right: 1px solid #000;"><label style="font-size: 12px;">სესხის მცულობა:<label></td>
@@ -4279,7 +4279,7 @@ function Getdocumets_page($file_type, $local_id){
                         </tr>
                     </table>
                 </div>
-                <div style="width:100%; margin-top: 25px; border: 1px solid #000;">
+                <div style="width:99%; margin-top: 25px; border: 1px solid #000;">
                     <table style="width:100%;">
                         <tr style="width:100%;border: 1px solid #000;">
                             <td colspan="2" style="width:5%;border-right: 1px solid #000;"><label style="font-size: 12px;">სულ პროცენტი<label></td>
@@ -4541,7 +4541,7 @@ function GetPage($res){
                     <spam class="documents" style="display: block;padding: 10px 5px;  cursor: pointer;" onclick="show_right_side(\'documents\','.$spanvalue.')"><img style="padding-left: 22px;padding-bottom: 5px;" src="media/images/icons/document.png" alt="24 ICON" height="24" width="24"><div style="text-align: center;">დოკუმენ<br>ტები</div></spam>
                     <spam class="client_insurance" style="display: block;padding: 10px 5px;  cursor: pointer;" onclick="show_right_side(\'client_insurance\', '.$spanvalue.')"><img style="padding-left: 22px;padding-bottom: 5px;" src="media/images/icons/car-insurance.png" alt="24 ICON" height="24" width="24"><div style="text-align: center;">დაზღვევა</div></spam>
                 </div>
-    	        <div style="width:905px; float:left; margin-left:10px;" id="right_side">
+    	        <div style="width:905px; float:left; margin-left:10px; overflow-y: scroll; height:543px; " id="right_side">
                     <fieldset style="display:none;" id="info">
                         <legend>ძირითადი ინფორმაცია</legend>
                         <table style="width: 100%;">
@@ -4780,7 +4780,7 @@ function GetPage($res){
                     </fieldset>
                     <fieldset style="display:none;" id="upload_picture">
                     <legend>სურათები</legend>
-                        <table style="width: 883px;">
+                        <table style="width: 873px;">
             	    		<tr>
             					<td style="width: 100%;">
             						<div style="width: 130px;" class="file-uploader">
@@ -4911,7 +4911,7 @@ function GetPage($res){
         	        <fieldset style="display:none;" id="client_insurance">
         	           <input id="car_insurance_info_hidde" type="hidden" value="'.$res['car_insurance_info_id'].'">
         	           <legend>დაზღვევის მონაცემები</legend>
-                       <div style="overflow-y: scroll; height:504px; margin-left: -5px;" id="insurance_div">
+                       <div style="margin-left: -5px;" id="insurance_div">
         	               <table style="width: 100%;">
                                 <tr style="width:100%; height: 20px;">
             					    <td colspan="6" style=" width:100%;">გაფორმებულია თუ არა ავტოტრანსპორტი ორგანიზაციის სახელზე </td>
@@ -5230,319 +5230,5 @@ function show_car_picture($local_id){
     
     }
     return $str_file_picture;
-}
-
-function show_client_insurance($local_id){
-
-    $picture_tbale = mysql_query(" SELECT   file.`name`,
-        file.`rand_name`,
-        file.`id`
-        FROM    `car_picture`
-        JOIN    file ON file.id = car_picture.file_id
-        WHERE   car_picture.`client_id` = '$local_id' AND file.`actived` = 1");
-
-    $str_client_insurance = '';
-    
-            $str_client_insurance .= '
-                <table style="width: 100%;border: 1px solid #ccc;">
-				    <tr style="width:100%; border: 1px solid #ccc;">
-					    <td colspan="2" style="border-right: 1px solid #ccc;">
-					         <img width="200" height="70" src="media/uploads/images/client/aldagi_logo_ge.svg"></img>
-					    </td>
-				    </tr>
-                    <tr style="width:100%; border: 1px solid #ccc;">
-					    <td colspan="2" style="border-right: 1px solid #ccc; text-align: center; padding-top: 6px; font-weight: bold; background: #34b233; height: 20px;">ავტოტრანსპორტის დაზღვევის განაცხადი</td>
-				    </tr>
-                    <tr style="width:100%; border: 1px solid #ccc; height: 20px;">
-					    <td style="width:50%; border-right: 1px solid #ccc;">დამზღვევის რეკვიზიტები  </td>
-                        <td style="width:50%; border-right: 1px solid #ccc;">შ.პ.ს. თი ჯი მობაილ</td>
-				    </tr>
-                    <tr style="width:100%; border: 1px solid #ccc; height: 20px;">
-					    <td style="width:50%; border-right: 1px solid #ccc;">მოსარგებლე (საზღაურის მიმღები)</td>
-                        <td style="width:50%; border-right: 1px solid #ccc;">შ.პ.ს. თი ჯი მობაილ</td>
-				    </tr>
-                    <tr style="width:100%; border: 1px solid #ccc; height: 20px;">
-					    <td style="width:50%; border-right: 1px solid #ccc;">დამზღვევის იურიდიული მისამართი </td>
-                        <td style="width:50%; border-right: 1px solid #ccc;">თბილისი, დოლიძის 6 </td>
-				    </tr>
-                    <tr style="width:100%; border: 1px solid #ccc; height: 20px;">
-					    <td style="width:50%; border-right: 1px solid #ccc;">დამზღვევის ფაქტობრივი მისამართი </td>
-                        <td style="width:50%; border-right: 1px solid #ccc;">თბილისი, კერესელიძის 12</td>
-				    </tr>
-                    <tr style="width:100%; border: 1px solid #ccc; height: 20px;">
-					    <td style="width:50%; border-right: 1px solid #ccc;">საიდენტიფიკაციო კოდი</td>
-                        <td style="width:50%; border-right: 1px solid #ccc;">205270277</td>
-				    </tr>
-                    <tr style="width:100%; border: 1px solid #ccc; height: 20px;">
-					    <td style="width:50%; border-right: 1px solid #ccc;">საქმიანობის ტიპი</td>
-                        <td style="width:50%; border-right: 1px solid #ccc;">ავტოლომბარდი</td>
-				    </tr>
-                    <tr style="width:100%; border: 1px solid #ccc; height: 20px;">
-					    <td style="width:50%; border-right: 1px solid #ccc;">ხელმძღვანელის თანამდებობა, სახელი გვარი</td>
-                        <td style="width:50%; border-right: 1px solid #ccc;">აკაკი ელისაშვილი (piradi # 01019068974) </td>
-				    </tr>
-                    <tr style="width:100%; border: 1px solid #ccc; height: 20px;">
-					    <td style="width:50%; border-right: 1px solid #ccc;">ავტოტრანსპორტის მფლობელის მისამართი (მობილური)</td>
-                        <td style="width:50%; border-right: 1px solid #ccc;">თბილისი, ქსანის ქუჩა, კორპუსი 12ა, ბინა 15  599199120</td>
-				    </tr>
-				</table>
-                <table style="width: 100%; text-align:center; border: 1px solid #ccc;">
-				    <tr style="width:100%; border: 1px solid #ccc;">
-					    <td colspan="7" style="border-right: 1px solid #ccc; text-align: center; padding-top: 6px; font-weight: bold; background: #34b233; height: 20px;">პიროვნებათა მონაცემები, რომლებიც მართავენ ავტოტრანსპორტს</td>
-				    </tr>
-                    <tr style="width:100%; border: 1px solid #ccc; height: 20px; background: #c5c5c5;">
-					    <td style="width:7%; border-right: 1px solid #848484;">№</td>
-                        <td style="width:21%; border-right: 1px solid #848484;">სახელი, გვარი</td>
-                        <td style="width:20%; border-right: 1px solid #848484;">თანამდებობა</td>
-                        <td style="width:10%; border-right: 1px solid #848484;">ასაკი</td>
-                        <td style="width:14%; border-right: 1px solid #848484;">დაბედების თარიღი</td>
-                        <td style="width:14%; border-right: 1px solid #848484;">მართვის მოწმობის ტიპი</td>
-                        <td style="width:14%; border-right: 1px solid #ccc;">მართვის მოწმობის გაცემის თარიღი</td>
-				    </tr>
-                    <tr style="width:100%; border: 1px solid #ccc; height: 20px;">
-					    <td style="border-right: 1px solid #ccc;">1</td>
-                        <td style="border-right: 1px solid #ccc;">აკაკი ელისაშვილი</td>
-                        <td style="border-right: 1px solid #ccc;"></td>
-                        <td style="border-right: 1px solid #ccc;">25</td>
-                        <td style="border-right: 1px solid #ccc;">19,12,1991</td>
-                        <td style="border-right: 1px solid #ccc;">B</td>
-                        <td style="border-right: 1px solid #ccc;">25,08,2010</td>
-				    </tr>
-                    <tr style="width:100%; border: 1px solid #ccc; height: 20px;">
-					    <td style="border-right: 1px solid #ccc;">2</td>
-                        <td style="border-right: 1px solid #ccc;"></td>
-                        <td style="border-right: 1px solid #ccc;"></td>
-                        <td style="border-right: 1px solid #ccc;"></td>
-                        <td style="border-right: 1px solid #ccc;"></td>
-                        <td style="border-right: 1px solid #ccc;"></td>
-                        <td style="border-right: 1px solid #ccc;"></td>
-				    </tr>
-                    <tr style="width:100%; border: 1px solid #ccc; height: 20px;">
-					    <td style="border-right: 1px solid #ccc;">3</td>
-                        <td style="border-right: 1px solid #ccc;"></td>
-                        <td style="border-right: 1px solid #ccc;"></td>
-                        <td style="border-right: 1px solid #ccc;"></td>
-                        <td style="border-right: 1px solid #ccc;"></td>
-                        <td style="border-right: 1px solid #ccc;"></td>
-                        <td style="border-right: 1px solid #ccc;"></td>
-				    </tr>
-                    <tr style="width:100%; border: 1px solid #ccc; height: 20px;">
-					    <td style="border-right: 1px solid #ccc;">4</td>
-                        <td style="border-right: 1px solid #ccc;"></td>
-                        <td style="border-right: 1px solid #ccc;"></td>
-                        <td style="border-right: 1px solid #ccc;"></td>
-                        <td style="border-right: 1px solid #ccc;"></td>
-                        <td style="border-right: 1px solid #ccc;"></td>
-                        <td style="border-right: 1px solid #ccc;"></td>
-				    </tr>
-                </table>
-                <table style="width: 100%; text-align:center; border: 1px solid #ccc;">
-				    <tr style="width:100%; border: 1px solid #ccc;">
-					    <td colspan="7" style="border-right: 1px solid #ccc; text-align: center; padding-top: 6px; font-weight: bold; background: #34b233; height: 20px;">ინფორმაცია ავტოტრანსპორტის შესახებ</td>
-				    </tr>
-                    <tr style="width:100%; border: 1px solid #ccc; height: 20px; background: #c5c5c5;">
-					    <td style="width:7%; border-right: 1px solid #848484;">№</td>
-                        <td style="width:17%; border-right: 1px solid #848484;">ავტოტრანსპორტის მარკა</td>
-                        <td style="width:17%; border-right: 1px solid #848484;">მოდელი</td>
-                        <td style="width:17%; border-right: 1px solid #848484;">რომელ მხარეს მდებარეობს საჭე</td>
-                        <td style="width:14%; border-right: 1px solid #848484;">ძრავის ტიპი</td>
-                        <td style="width:14%; border-right: 1px solid #848484;">ადგილების რაოდენობა მძღოლის ჩათვლით</td>
-                        <td style="width:14%; border-right: 1px solid #ccc;">ძრავის მოცულობა</td>
-				    </tr>
-                    <tr style="width:100%; border: 1px solid #ccc; height: 20px;">
-					    <td style="border-right: 1px solid #ccc;">1</td>
-                        <td style="border-right: 1px solid #ccc;">NISSAN</td>
-                        <td style="border-right: 1px solid #ccc;">NOTE</td>
-                        <td style="border-right: 1px solid #ccc;">მარჯვნივ</td>
-                        <td style="border-right: 1px solid #ccc;">ჰეჩბეკი</td>
-                        <td style="border-right: 1px solid #ccc;">5</td>
-                        <td style="border-right: 1px solid #ccc;">1498</td>
-				    </tr>
-                    <tr style="width:100%; border: 1px solid #ccc; height: 20px;">
-					    <td style="border-right: 1px solid #ccc;">2</td>
-                        <td style="border-right: 1px solid #ccc;"></td>
-                        <td style="border-right: 1px solid #ccc;"></td>
-                        <td style="border-right: 1px solid #ccc;"></td>
-                        <td style="border-right: 1px solid #ccc;"></td>
-                        <td style="border-right: 1px solid #ccc;"></td>
-                        <td style="border-right: 1px solid #ccc;"></td>
-				    </tr>
-                </table>
-                <table style="width: 100%; text-align:center; border: 1px solid #ccc;">
-                    <tr style="width:100%; border: 1px solid #ccc; height: 20px; background: #c5c5c5;">
-					    <td style="width:7%; border-right: 1px solid #848484;">№</td>
-                        <td style="width:17%; border-right: 1px solid #848484;">გამოშვების თარიღი</td>
-                        <td colspan="2" style="width:28%; border-right: 1px solid #848484;">ავტოტრასნპორტის დღევანდელი ღირებულება</td>
-                        <td style="width:16%; border-right: 1px solid #848484;">ავტოტრანსპორტის სარეგსიტრაციო ნომერი</td>
-                        <td style="width:16%; border-right: 1px solid #848484;">შეძენის თარიღი</td>
-                        <td style="width:16%; border-right: 1px solid #ccc;">სესხის ოდენობა</td>
-				    </tr>
-                    <tr style="width:100%; border: 1px solid #ccc; height: 20px;">
-					    <td style="border-right: 1px solid #ccc;">1</td>
-                        <td style="border-right: 1px solid #ccc;">2007</td>
-                        <td colspan="2" style="border-right: 1px solid #ccc;">3400 აშშ დოლარი</td>
-                        <td style="border-right: 1px solid #ccc;">GX321XX</td>
-                        <td style="border-right: 1px solid #ccc;">12,12,2016</td>
-                        <td style="border-right: 1px solid #ccc;">2380 აშშ დოლარი</td>
-				    </tr>
-                    <tr style="width:100%; border: 1px solid #ccc; height: 20px;">
-					    <td style="border-right: 1px solid #ccc;">2</td>
-                        <td style="border-right: 1px solid #ccc;"></td>
-                        <td colspan="2" style="border-right: 1px solid #ccc;"></td>
-                        <td style="border-right: 1px solid #ccc;"></td>
-                        <td style="border-right: 1px solid #ccc;"></td>
-                        <td style="border-right: 1px solid #ccc;"></td>
-				    </tr>
-                </table>
-                <table style="width: 100%;border: 1px solid #ccc;">
-                    <tr style="width:100%; border: 1px solid #ccc;">
-					    <td colspan="7" style="border-right: 1px solid #ccc; text-align: center; padding-top: 6px; font-weight: bold; background: #34b233; height: 20px;">დაზღვეული ავტომობილის აღწერა</td>
-				    </tr>
-                    <tr style="width:100%; border: 1px solid #ccc; height: 20px;">
-					    <td colspan="6" style=" width:90%;border-right: 1px solid #ccc;">გაფორმებულია თუ არა ავტოტრანსპორტი ორგანიზაციის სახელზე </td>
-                        <td style="width:10%; border-right: 1px solid #ccc; text-align:center;">არა</td>
-                    </tr>
-                    <tr style="width:100%; border: 1px solid #ccc; height: 20px;">
-					    <td colspan="6" style="border-right: 1px solid #ccc;">მართვას თუ არა ავტოტრანსპორტს ნებისმიერი პიროვნება 25 წლამდე</td>
-                        <td style="border-right: 1px solid #ccc; text-align:center;">დიახ</td>
-                    </tr>
-                    <tr style="width:100%; border: 1px solid #ccc; height: 20px;">
-					    <td colspan="6" style="border-right: 1px solid #ccc;">მოთავსებულია თუ არა ავტოტრანსპორტი დაკეტილ ავტოფარეხში ან დაცულ ავტოსადგომზე</td>
-                        <td style="border-right: 1px solid #ccc; text-align:center;">არა</td>
-                    </tr>
-                    <tr style="width:100%; border: 1px solid #ccc; height: 20px;">
-					    <td colspan="6" style="border-right: 1px solid #ccc;">გააჩნია თუ არა ავტოტრანსპორტს სიგნალიზაცია</td>
-                        <td style="border-right: 1px solid #ccc; text-align:center;">არა</td>
-                    </tr>
-                    <tr style="width:100%; border: 1px solid #ccc; height: 20px;">
-					    <td colspan="6" style="border-right: 1px solid #ccc;">გააჩნია თუ არა ავტოტრანსპორტს სხვა დამცავი საშუალება</td>
-                        <td style="border-right: 1px solid #ccc; text-align:center;">არა</td>
-                    </tr>
-                    <tr style="width:100%; border: 1px solid #ccc; height: 20px;">
-					    <td colspan="6" style="border-right: 1px solid #ccc;">გთხოვთ მიუთითოთ სიგნალიზაციის ტიპი</td>
-                        <td style="border-right: 1px solid #ccc; text-align:center;">არა</td>
-                    </tr>
-                    <tr style="width:100%; border: 1px solid #ccc;">
-					    <td colspan="7" style="border-right: 1px solid #ccc; text-align: center; padding-top: 6px; font-weight: bold; background: #34b233; height: 20px;">მონაცემები მართვის შესახებ და სარჩელები</td>
-				    </tr>
-                    <tr style="width:100%; border: 1px solid #ccc; height: 20px;">
-					    <td colspan="6" style="border-right: 1px solid #ccc;">არის თუ არა ზემოაღნიშნული რომელიმე მძღოლი ინვალიდი, უჩივის თუ არა მხედველობას, სმენას, ეპილეფსიას, დიაბეტს და/ან გულის დაავადებას</td>
-                        <td style="border-right: 1px solid #ccc; text-align:center;">არა</td>
-                    </tr>
-                    <tr style="width:100%; border: 1px solid #ccc; height: 20px;">
-					    <td colspan="6" style="border-right: 1px solid #ccc;">აქვს თუ არა ზემოაღნიშნულ რომელიმე მძღოლს მიღებული უარი ნებისმიერი ავტომანქანის დაზღვევაზე, ან სადაზღვევო პერიოდის გაგრძელებაზე, ან საჭირო იყო თუ არა გაზრდილი სადაზღვევო გადასახადის გადახდა, ან მზღვეველის მიერ წაყენებული იყო თუ არა განსაკუთრებული პირობები</td>
-                        <td style="border-right: 1px solid #ccc; text-align:center;">არა</td>
-                    </tr>
-                    <tr style="width:100%; border: 1px solid #ccc; height: 20px;">
-					    <td colspan="6" style="border-right: 1px solid #ccc;">არის თუ არა ზემოაღნიშნული რომელიმე მძღოლი ნასამართლევი ავტოსაგზაო შემთხვევით ჩადენილ დანაშაულზე</td>
-                        <td style="border-right: 1px solid #ccc; text-align:center;">არა</td>
-                    </tr>
-                    <tr style="width:100%; border: 1px solid #ccc; height: 20px;">
-					    <td colspan="6" style="border-right: 1px solid #ccc;">აქვს თუ არა ზემოაღნიშნულ რომელიმე მძღოლს ჩადენილი რაიმე დანაშაული ბოლო 3 წლის განმავლობაში</td>
-                        <td style="border-right: 1px solid #ccc; text-align:center;">არა</td>
-                    </tr>
-                    <tr style="width:100%; border: 1px solid #ccc;">
-					    <td colspan="7" style="border-right: 1px solid #ccc; text-align: center; padding-top: 6px; font-weight: bold; background: #34b233; height: 20px;">დაზღვევის სახეობა</td>
-				    </tr>
-                    <tr style="width:100%; border: 1px solid #ccc; height: 20px;">
-					    <td colspan="6" style="border-right: 1px solid #ccc;">ამოირჩიეთ თქვენთვის სასურველი დაზღვევის სახეობა:</td>
-                        <td style="border-right: 1px solid #ccc; text-align:center;">დიახ</td>
-                    </tr>
-                    <tr style="width:100%; border: 1px solid #ccc; height: 20px;">
-					    <td colspan="6" style="border-right: 1px solid #ccc;">დაზიანება, გატაცებ (ქურდობა,ძარცვა-ყაჩაღობა)</td>
-                        <td style="border-right: 1px solid #ccc; text-align:center;"></td>
-                    </tr>
-                    <tr style="width:100%; border: 1px solid #ccc; height: 20px;">
-					    <td colspan="6" style="border-right: 1px solid #ccc;">თუ გსურთ მესამე მხარისადმი პასუხისმგებლობის დაზღვევა აირჩიეთ ლიმიტი</td>
-                        <td style="border-right: 1px solid #ccc; text-align:center;"></td>
-                    </tr>
-                    <tr style="width:100%; border: 1px solid #ccc; height: 20px;">
-					    <td colspan="6" style="border-right: 1px solid #ccc;">თუ გსურთ უბედური შემთხვევით გამოწვეული მძღოლის და/ან მგზავრის დაზღვევა აირჩიეთ ლიმიტი მანქანაზე</td>
-                        <td style="border-right: 1px solid #ccc; text-align:center;"></td>
-                    </tr>
-                    <tr style="width:100%; border: 1px solid #ccc;">
-					    <td colspan="7" style="border-right: 1px solid #ccc; text-align: center; padding-top: 6px; font-weight: bold; background: #34b233; height: 20px;">რა მიზნებისთვის გამოიყენება ავტოტრანსპორტი?</td>
-				    </tr>
-                    <tr style="width:100%; border: 1px solid #ccc; height: 20px;">
-					    <td colspan="6" style="border-right: 1px solid #ccc;">საზოგადოებრივი, პირადი და გასართობი</td>
-                        <td style="border-right: 1px solid #ccc; text-align:center;">დიახ</td>
-                    </tr>
-                    <tr style="width:100%; border: 1px solid #ccc; height: 20px;">
-					    <td colspan="6" style="border-right: 1px solid #ccc;">მხოლოდ სამუშაო ადგილამდე მისვლა და უკან დაბრუნება</td>
-                        <td style="border-right: 1px solid #ccc; text-align:center;"></td>
-                    </tr>
-                    <tr style="width:100%; border: 1px solid #ccc; height: 20px;">
-					    <td colspan="6" style="border-right: 1px solid #ccc;">ორგანიზაციის საქმიანობასთან დაკავშირებით</td>
-                        <td style="border-right: 1px solid #ccc; text-align:center;">დიახ</td>
-                    </tr>
-                    <tr style="width:100%; border: 1px solid #ccc; height: 20px;">
-					    <td colspan="6" style="border-right: 1px solid #ccc;">სხვადასხვა სამუშაო ადგილებზე გადასაადგილებლად</td>
-                        <td style="border-right: 1px solid #ccc; text-align:center;">დიახ</td>
-                    </tr>
-                    <tr style="width:100%; border: 1px solid #ccc; height: 20px;">
-					    <td colspan="6" style="border-right: 1px solid #ccc;">სხვა პიროვნების მიერ ნებისმიერ საქმიანობასთან დაკავშირებით</td>
-                        <td style="border-right: 1px solid #ccc; text-align:center;">დიახ</td>
-                    </tr>
-                    <tr style="width:100%; border: 1px solid #ccc; height: 20px;">
-					    <td colspan="6" style="border-right: 1px solid #ccc;">ვაჭრობასთან ან ნებისმიერ სხვა საქმიანობასთან დაკავშირებით</td>
-                        <td style="border-right: 1px solid #ccc; text-align:center;">დიახ</td>
-                    </tr>
-                    <tr style="width:100%; border: 1px solid #ccc; height: 20px;">
-					    <td colspan="6" style="border-right: 1px solid #ccc;">საქონლის ან აპარატურის გადასაადგილებლად</td>
-                        <td style="border-right: 1px solid #ccc; text-align:center;">დიახ</td>
-                    </tr>
-                    <tr style="width:100%; border: 1px solid #ccc;">
-					    <td colspan="7" style="border-right: 1px solid #ccc; text-align: center; padding-top: 6px; font-weight: bold; background: #34b233; height: 20px;">მიმდინარე მდგომარეობა</td>
-				    </tr>
-                    <tr style="width:100%; border: 1px solid #ccc; height: 20px;">
-					    <td colspan="6" style="border-right: 1px solid #ccc;">არის/ყოფილა თუ არა ორგანიზაციის ავტოტრანსპორტი დაზღვეული</td>
-                        <td style="border-right: 1px solid #ccc; text-align:center;">დიახ</td>
-                    </tr>
-                    <tr style="width:100%; border: 1px solid #ccc; height: 20px;">
-					    <td colspan="4" style="width:60%; border-right: 1px solid #ccc;">წინა კითხვაზე დადებითი პასუხის შემთხვევაში გთხოვთ მიუთითოთ დეტალები</td>
-                        <td colspan="3"style="width:40%; border-right: 1px solid #ccc;">სადაზღვეო კომპანია "ალდაგი"</td>
-                    </tr>
-                </table>
-                <table style="width:100%;">
-                    <tr style="width:100%; border: 1px solid #ccc; height: 20px;">
-					    <td colspan="3" style="width:60%; border-right: 1px solid #ccc;">სადაზღვევო თანხა</td>
-                        <td style="width:14%; border-right: 1px solid #ccc;"></td>
-                        <td style="width:8%; border-right: 1px solid #ccc;">ლარი</td>
-                        <td style="width:8%; border-right: 1px solid #ccc;">3400</td>
-                        <td style="width:10%; border-right: 1px solid #ccc;">აშშ დოლარი</td>
-                    </tr>
-                </table>
-                <table style="width:100%;">
-                    <tr style="width:100%; border: 1px solid #ccc; height: 20px;">
-					    <td colspan="4" style="width:76%; border-right: 1px solid #ccc;">სხვადასხვა სამუშაო ადგილებზე გადასაადგილებლად</td>
-                        <td style="width:12%;border-right: 1px solid #ccc;">12,12,2016-დან</td>
-                        <td colspan="2" style=" width:12%;border-right: 1px solid #ccc;">12,03,2017-მდე</td>
-                    </tr>
-                </table>
-                <table style="width:100%;">
-                    <tr style="width:100%; border: 1px solid #ccc; height: 35px;">
-					    <td colspan="7" style="width:100%; border-right: 1px solid #ccc;">ჩემი ხელმოწერით ვადასტურებ, რომ აღნიშნულ განაცხადში მითითებული ინფორმაცია სრულია და ჭეშმარიტი და არასწორად მოწოდებული ინფორმაციის შემთხვევაში კომპანია უფლებამოსილია გააუქმოს პოლისი და უარი თქვას ზარალის ანაზღაურებაზე</td>
-                    </tr>
-                    <tr style="width:100%; border: 1px solid #ccc; height: 20px;">
-					    <td style="width:20%; border-right: 1px solid #ccc;">შევსების თარიღი</td>
-                        <td colspan="2" style="width:20%; border-right: 1px solid #ccc;"></td>
-                        <td colspan="2" style="width:20%; border-right: 1px solid #ccc;">თანამდებობა</td>
-                        <td colspan="2" style="width:20%; border-right: 1px solid #ccc;"></td>
-                    </tr>
-                    <tr style="width:100%; border: 1px solid #ccc; height: 20px;">
-					    <td colspan="3" style="width:40%; border-right: 1px solid #ccc;"></td>
-                        <td colspan="2" style="width:30%; border-right: 1px solid #ccc;">ხელმოწერა</td>
-                        <td colspan="2" style="width:30%; border-right: 1px solid #ccc;"></td>
-                    </tr>
-                </table>
-                <table style="width:100%;">
-                    <tr style="width:100%; border: 1px solid #ccc; height: 40px;">
-					    <td style="border-right: 1px solid #ccc;"><button id="download_insurance"  style="float: right;">ჩამოტვირთვა</button><button id="print_insurance" style="float: right;">ბეჭდვა</button></td>
-                    </tr>
-                </table>';
-            
-
-    
-    return $str_client_insurance;
 }
 ?>

@@ -107,6 +107,7 @@ function GetClient($id){
     return $res;
 }
 
+
 function GetPage($res){
     $data  .= '
     	   <div id="dialog-form">

@@ -229,7 +229,7 @@ $res = mysql_fetch_assoc(mysql_query("SELECT  client.id,
                                                 client_car.engine_size,
                                                 client_car.certificate_id,
                                                 GROUP_CONCAT(CONCAT(client_person.phone,' ',client_person.person)) AS client_person_person,
-                                                
+                                                car_insurance_info.datetime AS car_insurance_info_datetime,
                                                 car_insurance_info.id AS car_insurance_info_id,
                                                 car_insurance_info.lined_organization_yes_no,
                                                 car_insurance_info.any_person_Managed_yes_no,
@@ -2851,7 +2851,7 @@ if ($file_type == 'receipt') {
                         <div style="width:100%; font-size: 12px; margin-top: 15px;">
                                                             წინამდებარე ხელშეკრულების მონაწილე მხარეები, ერთის მხრივ შპს „თი ჯი მობაილ“ (საიდენტიფიკაციო № 205170177), - 
                                                             დირექტორი გიორგი კილაძე, წარმომადგენელი ვახტანგ ბახტაძის სახით (მინდობილობა №001, 10.25.2012 წელი)  (შემდგომში გამსესხებელი), 
-                                                            და მეორეს მხრივ, შპს '.$res[$ltd_name].' (საიდენტიფიკაციო კ. № '.$res['ltd_id'].'), დირექტორი '.$res['name'].' (პირადი# '.$res['pid'].') (შემდგომში მსესხებელი), 
+                                                            და მეორეს მხრივ, შპს '.$res[ltd_name].' (საიდენტიფიკაციო კ. № '.$res['ltd_id'].'), დირექტორი '.$res['name'].' (პირადი# '.$res['pid'].') (შემდგომში მსესხებელი), 
                                                             ჩვენს შორის მიღწეული შეთანხმების შედეგად, ვდებთ ხელშეკრულებას სასყიდლიანი სესხის გაცემის შესახებ.
                         </div>
                         <div style="width:100%; font-size: 12px; margin-top: 15px;">
@@ -3347,7 +3347,7 @@ if ($file_type == 'receipt') {
                             </tr>
                             <tr width="100%" height="25px">
         					    <td width="90%" colspan="6">გთხოვთ მიუთითოთ სიგნალიზაციის ტიპი</td>
-                                <td width="10%" style="text-align:center">'.yes_no($res['signaling_type']).'</td>
+                                <td width="10%" style="text-align:center"></td>
                             </tr>
                         </table>
                         <table style="margin-top:250px" border="1" cellpadding="0" cellspacing="0">
@@ -3452,7 +3452,7 @@ if ($file_type == 'receipt') {
                             </tr>
                             <tr width="100%" height="25px">
         					    <td width="20%">შევსების თარიღი</td>
-                                <td colspan="2" width="20%"></td>
+                                <td colspan="2" width="20%">'.$row1[car_insurance_info_datetime].'</td>
                                 <td colspan="2" width="30%">თანამდებობა</td>
                                 <td colspan="2" width="30%"></td>
                             </tr>
