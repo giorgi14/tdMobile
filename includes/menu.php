@@ -315,6 +315,7 @@
 		$("#img_2").attr("src","media/images/icons/cnobari_blue.png");
 		$("#img_4").attr("src","media/images/icons/about_us_blue.png");
 		$("#img_1").attr("src","media/images/icons/sing_out_blue.png");
+		$("#img_14").attr("src","media/images/icons/transaction_blue.png");
 		
 		
 		$("#menuwrapper a").css('color','#2681DC');
