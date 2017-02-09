@@ -27,9 +27,8 @@ switch ($action) {
                     					 `default`.loan_fee,
                     					 `default`.proceed_fee,
                     					 `default`.proceed_percent,
-                    					 `default`.rs_message_number,
-                    					 `default`.penalty_days,
                     					 `default`.penalty_percent,
+		                                 `default`.penalty_days,
                     					 `default`.penalty_additional_percent
                                 FROM     `default`
                                 LEFT JOIN agreement_type ON agreement_type.id = `default`.agreement_type_id 
@@ -236,62 +235,58 @@ function GetPage($res = ''){
 	$data = '
 	<div id="dialog-form">
 	    <fieldset>
-	    	<legend>ძირითადი ინფორმაცია</legend>
-
 	    	<table class="dialog-form-table">
 				<tr style="height:15px">
 					<td style="width: 190px;"><label for="name">სესხის ტიპი</label></td>
-	                <td style="width: 190px;"><label for="date">ხელშეკრულების ტიპი</label></td>
-            	    <td style="width: 190px;"><label for="date">ყოველთვიური პროცენტი</label></td>
-            	    <td style="width: 190px;"><label for="date">სესხის გაცემის საკომისიო</label></td>
-				</tr>
+	                <td colspan="3" style="width: 190px;"><label for="date">ხელშეკრულების ტიპი</label></td>
+            	</tr>
 				<tr style="height:15px">
 					<td style="width: 190px;">
 						<select id="loan_agreement_type" style="width: 175px;">'.loan_type($res[loan_type_id]).'</select>
 					</td>
-					<td style="width: 190px;">
-						<select id="agreement_type_id" style="width: 175px;">'.agreement_type($res[agreement_type_id]).'</select>
+					<td colspan="3" style="width: 190px;">
+						<select id="agreement_type_id" style="width: 555px;">'.agreement_type($res[agreement_type_id]).'</select>
 					</td>
-				    <td style="width: 190px;">
+				</tr>
+				<tr style="height:18px;"></tr>
+				<tr style="heght:15px">
+					<td style="width: 190px;"><label for="date">ყოველთვიური პროცენტი</label></td>
+            	    <td style="width: 190px;"><label for="date">სესხის გაცემის საკომისიო</label></td>
+					<td style="width: 190px;"><label style="'.$input_hidde.'" class="label_label" for="name">ხელშკრ. გაგრძ. საფასური</label></td>
+	                <td style="width: 190px;"><label style="'.$input_hidde.'" class="label_label" for="date">პროცენტი</label></td>
+            	</tr>
+				<tr style="height:15px">
+					<td style="width: 190px;">
 						<input style="width: 170px;" id="month_percent" type="text" value="'.$res[percent].'">
 					</td>
 					<td style="width: 190px;">
 						<input style="width: 170px;" id="loan_fee" type="text" value="'.$res[loan_fee].'">
 					</td>
-				</tr>
-				<tr style="height:18px;"></tr>
-				<tr style="heght:15px">
-					<td style="width: 190px;"><label style="'.$input_hidde.'" class="label_label" for="name">ხელშკრ. გაგრძ. საფასური</label></td>
-	                <td style="width: 190px;"><label style="'.$input_hidde.'" class="label_label" for="date">პროცენტი</label></td>
-            	    <td style="width: 190px;"><label for="date">შემოსავ. სამსახ. შეტყობ. N</label></td>
-            	    <td style="width: 190px;"><label for="date">ვადაგადაცილებული დღეები</label></td>
-				</tr>
-				<tr style="height:15px">
 					<td style="width: 190px;">
 						<input style="width: 170px; '.$input_hidde.'" id="proceed_fee" type="text" value="'.$res[proceed_fee].'">
 					</td>
 					<td style="width: 190px;">
 						<input style="width: 170px; '.$input_hidde.'" id="proceed_percent" type="text" value="'.$res[proceed_percent].'">
 					</td>
-				    <td style="width: 190px;">
-						<input style="width: 170px;" id="rs_message_number" type="text" value="'.$res[rs_message_number].'">
-					</td>
-					<td style="width: 190px;">
-						<input style="width: 170px;" id="penalty_days" type="text" value="'.$res[penalty_days].'">
-					</td>
 				</tr>
 				<tr style="height:18px;"></tr>
 				<tr style="height:15px">
 					<td style="width: 190px;"><label for="name">ვადაგადაც. პირგასამტეხლო%</label></td>
-	                <td colspan="3" style="width: 190px;"><label for="date">ვადაგადაც. პირგასამტეხლო%</label></td>
+					<td style="width: 190px;"><label for="date">ვადაგადაცილებული დღეები</label></td>
+	                <td style="width: 190px;"><label for="date">ვადაგადაც. პირგასამტეხლო%</label></td>
+					<td></td>
 				</tr>
 				<tr style="height:15px">
 					<td style="width: 190px;">
 						<input style="width: 170px;" id="penalty_percent" type="text" value="'.$res[penalty_percent].'">
 					</td>
 					<td style="width: 190px;">
+						<input style="width: 170px;" id="penalty_days" type="text" value="'.$res[penalty_days].'">
+					</td>
+					<td style="width: 190px;">
 						<input style="width: 170px;" id="penalty_additional_percent" type="text" value="'.$res[penalty_additional_percent].'">
 					</td>
+					<td></td>
 				</tr>
 			</table>
 			<!-- ID -->

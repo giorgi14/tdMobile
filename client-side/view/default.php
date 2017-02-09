@@ -7,12 +7,12 @@
 		var change_colum_main = "<'dataTable_buttons'T><'F'Cfipl>";
 		    	
 		$(document).ready(function () {        	
-			LoadTable(tName,11,change_colum_main,aJaxURL);	
+			LoadTable(tName,10,change_colum_main,aJaxURL);	
  						
 			/* Add Button ID, Delete Button ID */
 			GetButtons("add_button", "delete_button");
 			GetButtons("add_cat", "");
-			SetEvents("add_button", "delete_button", "check-all", tName, fName, aJaxURL,'',tName,4,change_colum_main,aJaxURL,'','','');
+			SetEvents("add_button", "delete_button", "check-all", tName, fName, aJaxURL,'',tName,10,change_colum_main,aJaxURL,'','','');
 		});
         
 		function LoadTable(tName,num,change_colum_main,aJaxURL){
@@ -66,7 +66,7 @@
 							if(data.error != ''){
 								alert(data.error);
 							}else{
-								LoadTable(tName,11,change_colum_main,aJaxURL);
+								LoadTable(tName,10,change_colum_main,aJaxURL);
 				        		CloseDialog(fName);
 							}
 						}
@@ -160,13 +160,12 @@
                 <th>ID</th>
                 <th style="width: 10%;">სესხის ტიპი</th>
                 <th style="width: 18%;">ხელშეკრულების<br>ტიპი</th>
-                <th style="width: 8%;">ყოველთ.<br>პროცენტი</th>
-                <th style="width: 8%;">სესხის <br>გაცემის<br>საკომისიო</th>
-                <th style="width: 8%;">ხელშკრ.<br>გაგრძ.<br>საფასური</th>
-                <th style="width: 8%;">პროცენტი</th>
-                <th style="width: 10%;">შემოსავ. სამსახ.<br>შეტყობ. N</th>
-                <th style="width: 8%;">ვადაგადაც.<br>დღეები</th>
+                <th style="width: 10%;">ყოველთ.<br>პროცენტი</th>
+                <th style="width: 10%;">სესხის <br>გაცემის<br>საკომისიო</th>
+                <th style="width: 10%;">ხელშკრ.<br>გაგრძ.<br>საფასური</th>
+                <th style="width: 10%;">პროცენტი</th>
                 <th style="width: 11%;">ვადაგადაც.<br>პირგასამტეხლო%</th>
+                <th style="width: 10%;">ვადაგადაც.<br>დღეები</th>
                 <th style="width: 11%;">ვადაგადაც.<br>პირგასამტეხლო%</th>
                 <th class="check" style="width: 30px;">#</th>
             </tr>
@@ -204,9 +203,6 @@
                     <input type="text" name="search_category" value="ფილტრი" class="search_init" />
                 </th>
                 <th>
-                    <input type="text" name="search_category" value="ფილტრი" class="search_init" />
-                </th>
-                <th>
                 	<div class="callapp_checkbox">
                         <input type="checkbox" id="check-all" name="check-all" />
                         <label for="check-all"></label>
@@ -216,7 +212,7 @@
         </thead>
     </table>
     <!-- jQuery Dialog -->
-    <div id="add-edit-form" class="form-dialog" title="ზირითადი ველები">
+    <div id="add-edit-form" class="form-dialog" title="ძირითადი ველები">
     	<!-- aJax -->
 	</div>
 </body>

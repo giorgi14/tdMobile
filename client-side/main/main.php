@@ -7,7 +7,7 @@
 		var change_colum_main = "<'dataTable_buttons'T><'F'Cfipl>";
 		    	
 		$(document).ready(function () {        	
-			LoadTable(tName,15,change_colum_main,aJaxURL);	
+			LoadTable(tName,16,change_colum_main,aJaxURL);	
  		});
         
 		function LoadTable(tName,num,change_colum_main,aJaxURL){
@@ -84,19 +84,20 @@
             <tr id="datatable_header">
                 <th>ID</th>
                 <th style="width: 7%;">თარიღი</th>
-                <th style="width: 16%;">მარკა</th>
-                <th style="width: 8%;">კოდი</th>
-                <th style="width: 7%;">ს/ხ</th>
-                <th style="width: 5%;">?</th>
-                <th style="width: 4%;">ფასი</th>
-                <th style="width: 4%;">კურსი</th>
-                <th style="width: 4%;">ფასი</th>
-                <th style="width: 11%;">დარიცხ.%<br>($ - ლარი)</th>
-                <th style="width: 5%;">დარჩე-<br>ნილი<br>ვალი</th>
-                <th style="width: 14%;">გაყვანა</th>
-                <th style="width: 5%;">სულ</th>
-                <th style="width: 5%;">გადახ-<br>დილი<br>ძირი<br>ლარში</th>
-                <th style="width: 5%;">ნაშთი<br>ლარში</th>
+                <th style="width: 9%;">მარკა</th>
+                <th style="width: 5%;">კოდი</th>
+                <th style="width: 6%;">ს/ხ</th>
+                <th style="width: 7%;">პროცენტი</th>
+                <th style="width: 7%;">ფასი - $</th>
+                <th style="width: 6%;">კურსი</th>
+                <th style="width: 7%;">ფასი - ლ</th>
+                <th style="width: 7%;">დარიცხ.%<br>$</th>
+                <th style="width: 7%;">დარიცხ.%<br>ლ</th>
+                <th style="width: 5%;">სხვა<br>ხარჯი</th>
+                <th style="width: 7%;">დარჩე-<br>ნილი<br>ვალი<br>$</th>
+                <th style="width: 7%;">დარჩე-<br>ნილი<br>ძირი<br>$</th>
+                <th style="width: 6%;">გაყვანა</th>
+                <th style="width: 6%;">ნაშთი<br>ლარში</th>
             </tr>
         </thead>
         <thead>
@@ -104,6 +105,9 @@
                 <th class="colum_hidden">
                     <input type="text" name="search_category" value="ფილტრი" class="search_init" />
                 </th>                
+                <th>
+                    <input type="text" name="search_category" value="ფილტრი" class="search_init" />
+                </th>
                 <th>
                     <input type="text" name="search_category" value="ფილტრი" class="search_init" />
                 </th>

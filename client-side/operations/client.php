@@ -153,7 +153,9 @@
             $('#name').focus();
             $('#datetime').blur();
      		$('.ui-widget-overlay').css('z-index',99);
-     		
+     		GetDate('car_sale_date');
+     		GetDate('car_ins_start');
+     		GetDate('car_ins_end');
      		GetDate('born_date');
      		GetDate('tin_date');
      		GetDate('car_born');
@@ -166,6 +168,9 @@
          		$("#car_born").val('');
          		$("#insurance_start_date").val('');
          		$("#insurance_end_date").val('');
+         		$("#car_sale_date").val('');
+     			$("#car_ins_start").val('');
+     			$("#car_ins_end").val('');
             }
             if($("#id_hidden").val()==''){
             	$(".documents").css('filter','brightness(0.3)');
@@ -193,9 +198,9 @@
             	GetButtons("add_button_pers","delete_button_pers");
          	}, 50);
             setTimeout(function(){
-         		LoadTable('cardrivers',5,main_act,"<'F'Cpl>",aJaxURL_cl_car_driver, '', 'local_id='+$("#local_id").val());
+         		LoadTable('cardrivers',6,main_act,"<'F'Cpl>",aJaxURL_cl_car_driver, '', 'local_id='+$("#local_id").val());
          		$("#table_cardrivers_length").css('top', '2px');
-         		SetEvents("add_button_cardriver", "delete_button_cardriver", "check-all_car_driver", tName+'cardrivers', 'add-edit-form-car_driver', aJaxURL_cl_car_driver,'','cardrivers',5,main_act,"<'F'Cpl>",aJaxURL_cl_car_driver,'');
+         		SetEvents("add_button_cardriver", "delete_button_cardriver", "check-all_car_driver", tName+'cardrivers', 'add-edit-form-car_driver', aJaxURL_cl_car_driver,'','cardrivers',6,main_act,"<'F'Cpl>",aJaxURL_cl_car_driver,'');
             	GetButtons("add_button_cardriver","delete_button_cardriver");
          	}, 50);
         }else if(fName == 'add-edit-form-car_driver'){
@@ -213,11 +218,11 @@
     		        }
     		    };
                 GetDialog("add-edit-form-car_driver", 490, "auto", buttons, 'left+43 top');
-                GetDate('license_born');
-                GetDate('born');
+                GetDate('car_driver_license_born');
+                GetDate('car_driver_born');
          		if($("#car_driver_hidde").val()==''){
-                	$("#license_born").val('');
-             		$("#born").val('');
+                	$("#car_driver_license_born").val('');
+             		$("#car_driver_born").val('');
              		
                 }
         }else{
@@ -265,10 +270,7 @@
         if(id == 'auto_mobile'){
             $("#upload_picture").show();
             $("#car_drivers_fieldset").show();
-            GetDate('car_sale_date');
-     		GetDate('car_ins_start');
-     		GetDate('car_ins_end');
-     	}else if(id == 'agreement'){
+        }else if(id == 'agreement'){
         	$("#agreement_grafic").show();
         }else if(id == 'info'){
         	$("#table_person_fieldset").show();
@@ -278,7 +280,9 @@
 
     		param.local_id = $("#local_id").val();
     		param.loan_agreement_type = $("#loan_agreement_type").val();
-    		param.agreement_type_id = $("#agreement_type_id").val();
+    		param.agreement_type_id   = $("#agreement_type_id").val();
+    		param.loan_currency       = $("#loan_currency").val();
+    		param.car_type            = $("#car_type").val();
     		
         	$.ajax({
     	        url: aJaxURL,
@@ -309,9 +313,11 @@
         $('#car_type').chosen();
         $('#loan_agreement_type').chosen();
         $('#agreement_type_id').chosen();
+        $('#loan_currency').chosen();
         $('#car_type_chosen').css('width', '206px');
-        $('#loan_agreement_type_chosen').css('width', '206px');
-        $('#agreement_type_id_chosen').css('width', '206px');
+        $('#loan_agreement_type_chosen').css('width', '200px');
+        $('#agreement_type_id_chosen').css('width', '332px');
+        $('#loan_currency_chosen').css('width', '130px');
         $('#choose_button').button();
         $('#check_monthly_pay').button();
         $('#show_payment_schedule').button();
@@ -427,6 +433,9 @@
 		param.loan_fee                    = $('#loan_fee').val();
 		param.proceed_fee                 = $('#proceed_fee').val();
 		param.proceed_percent             = $('#proceed_percent').val();
+		param.loan_currency               = $('#loan_currency').val();
+		param.oris_code                   = $('#oris_code').val();
+		param.loan_beforehand_percent     = $('#loan_beforehand_percent').val();
 		
 		if(param.name == ''){
 			alert('შეავსეთ "სახელი"');
@@ -652,10 +661,11 @@
 		param.car_driver_hidde	= $('#car_driver_hidde').val();
 		param.local_id	        = $("#local_id").val();
 		
-		param.name	        = $('#name').val();
-		param.born	        = $('#born').val();
-		param.license_type	= $('#license_type').val();
-		param.license_born	= $('#license_born').val();
+		param.name	        = $('#car_driver_name').val();
+		param.born	        = $('#car_driver_born').val();
+		param.license_type	= $('#car_driver_license_type').val();
+		param.license_born	= $('#car_driver_license_born').val();
+		param.position   	= $('#car_driver_position').val();
 		
 		$.ajax({
 	        url: aJaxURL_cl_car_driver,
@@ -665,7 +675,7 @@
 					if(data.error != ""){
 						alert(data.error);
 					}else{
-						LoadTable('cardrivers',5,main_act,"<'F'Cpl>",aJaxURL_cl_car_driver,'','local_id='+$("#local_id").val());
+						LoadTable('cardrivers',6,main_act,"<'F'Cpl>",aJaxURL_cl_car_driver,'','local_id='+$("#local_id").val());
 						$("#table_cardrivers_length").css('top', '2px');
 					    CloseDialog("add-edit-form-car_driver");
 					}

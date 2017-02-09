@@ -15,6 +15,7 @@ $name	          = $_REQUEST['name'];
 $born             = $_REQUEST['born'];
 $license_type     = $_REQUEST['license_type'];
 $license_born     = $_REQUEST['license_born'];
+$position         = $_REQUEST['position'];
 
 
 
@@ -36,6 +37,7 @@ switch ($action) {
 
         $rResult = mysql_query("SELECT client_car_drivers.id,
                                 	   client_car_drivers.name,
+                                       client_car_drivers.position,
                                 	   client_car_drivers.born_date,
                                        client_car_drivers.driving_license_type,
                                        client_car_drivers.driving_license_date
@@ -66,9 +68,9 @@ switch ($action) {
     case 'save_car_drivers':
         
         if($car_driver_hidde == ''){
-            insert($user_id, $local_id, $name, $born,$license_type,$license_born);
+            insert($user_id, $local_id, $name, $position, $born,$license_type,$license_born);
         }else{
-            update($car_driver_hidde, $user_id, $local_id, $name, $born,$license_type,$license_born);
+            update($car_driver_hidde, $user_id, $name, $position, $born,$license_type,$license_born);
         }
         break;
     default:
@@ -79,17 +81,17 @@ $data['error'] = $error;
 
 echo json_encode($data);
 
-function insert($user_id, $local_id, $name, $born, $license_type, $license_born){
+function insert($user_id, $local_id, $name, $position, $born,$license_type,$license_born){
     mysql_query("INSERT INTO `client_car_drivers` 
-						(`user_id`, `datetime`, `client_id`, `name`, `born_date`, `driving_license_type`, `driving_license_date`) 
+						(`user_id`, `datetime`, `client_id`, `name`, `position`, `born_date`, `driving_license_type`, `driving_license_date`) 
 					VALUES 
-					('$user_id', NOW(), '$local_id', '$name', '$born', '$license_type', '$license_born')");
+					('$user_id', NOW(), '$local_id', '$name', '$position', '$born', '$license_type', '$license_born')");
 }
 
-function update($car_driver_hidde, $local_id, $name, $born,$license_type,$license_born){
-    mysql_query("UPDATE `client_car_drivers`
-                    SET `client_id`            = '$local_id',
-                        `name`                 = '$name',
+function update($car_driver_hidde, $user_id, $name, $position, $born,$license_type,$license_born){
+   mysql_query("UPDATE `client_car_drivers`
+                    SET `name`                 = '$name',
+                        `position`             = '$position',
                         `born_date`            = '$born',
                         `driving_license_type` = '$license_type',
                         `driving_license_date` = '$license_born'
@@ -99,6 +101,7 @@ function update($car_driver_hidde, $local_id, $name, $born,$license_type,$licens
 function GetClient($id){
     $res = mysql_fetch_assoc(mysql_query("SELECT id,
                                                  name,
+                                                 position,
                                         		 born_date,
                                                  driving_license_type,
                                                  driving_license_date
@@ -116,22 +119,27 @@ function GetPage($res){
                    <table class="dialog-form-table">
             	       <tr>
                            <td style="width: 150px;"><label for="datetime">სახელი, გვარი</label></td>
-                           <td style="width: 275px;"><input style="width: 275px;" id="name" type="text" value="'.$res[name].'"></td>
+                           <td style="width: 275px;"><input style="width: 275px;" id="car_driver_name" type="text" value="'.$res[name].'"></td>
+            	       </tr>
+                       <tr style="height:15px;"></tr>
+                       <tr>
+                           <td style="width: 150px;"><label for="pet_num">თანამდებობა</label></td>
+                           <td style="width: 275px;"><input style="width: 275px;" id="car_driver_position" type="text" value="'.$res[position].'"></td>
             	       </tr>
                        <tr style="height:15px;"></tr>
                        <tr>
                            <td style="width: 150px;"><label for="pet_num">დაბადების თარიღი</label></td>
-                           <td style="width: 275px;"><input style="width: 275px;" id="born" type="text" value="'.$res[born_date].'"></td>
+                           <td style="width: 275px;"><input style="width: 275px;" id="car_driver_born" type="text" value="'.$res[born_date].'"></td>
             	       </tr>
                        <tr style="height:15px;"></tr>
                        <tr>
                            <td style="width: 150px;"><label for="pet_num">მართვის მოწმობის ტიპი</label></td>
-                           <td style="width: 275px;"><input style="width: 275px;" id="license_type" type="text" value="'.$res[driving_license_type].'"></td>
+                           <td style="width: 275px;"><input style="width: 275px;" id="car_driver_license_type" type="text" value="'.$res[driving_license_type].'"></td>
             	       </tr>
                        <tr style="height:15px;"></tr>
                        <tr>
                            <td style="width: 150px;"><label for="pet_num">გაცემის თარიღი</label></td>
-                           <td style="width: 275px;"><input style="width: 275px;" id="license_born" type="text" value="'.$res[driving_license_date].'"></td>
+                           <td style="width: 275px;"><input style="width: 275px;" id="car_driver_license_born" type="text" value="'.$res[driving_license_date].'"></td>
             	       </tr>
                    </table>
             </fieldset>
