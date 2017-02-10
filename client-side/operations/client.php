@@ -78,6 +78,7 @@
     var aJaxURL           = "server-side/operations/client.action.php";
     var aJaxURL_cl_person = "server-side/operations/subtables/client_person.action.php";
     var aJaxURL_cl_car_driver = "server-side/operations/subtables/client_car_drivers.action.php";
+    var aJaxURL_cl_guarantors = "server-side/operations/subtables/client_guarantors.action.php";
     var tName             = "table_";
     var dialog            = "add-edit-form";
     var colum_number      = 9;
@@ -94,10 +95,11 @@
     function LoadTable(tbl,col_num,act,change_colum,URL,leng,dataparam,total){
 
     	if(dataparam == undefined){dataparam = leng;}
-    	if(tbl == 'person' || tbl == 'cardrivers'){dataparam = 'local_id='+$("#local_id").val();}
+    	if(tbl == 'person' || tbl == 'cardrivers' || tbl == 'guarantors'){dataparam = 'local_id='+$("#local_id").val();}
     	GetDataTable(tName+tbl,URL,act,col_num,dataparam,0,"",1,"desc",total,change_colum);
     	$("#table_person_length").css('top', '2px');
     	$("#table_cardrivers_length").css('top', '2px');
+    	$("#table_guarantors_length").css('top', '2px');
     	setTimeout(function(){$('.ColVis, .dataTable_buttons').css('display','none');}, 50);
     }
 
@@ -197,12 +199,21 @@
          		SetEvents("add_button_pers", "delete_button_pers", "check-all_pers", tName+'person', 'add-edit-form-pers', aJaxURL_cl_person,'','person',4,main_act,"<'F'Cpl>",aJaxURL_cl_person,'');
             	GetButtons("add_button_pers","delete_button_pers");
          	}, 50);
+         	
             setTimeout(function(){
          		LoadTable('cardrivers',6,main_act,"<'F'Cpl>",aJaxURL_cl_car_driver, '', 'local_id='+$("#local_id").val());
          		$("#table_cardrivers_length").css('top', '2px');
          		SetEvents("add_button_cardriver", "delete_button_cardriver", "check-all_car_driver", tName+'cardrivers', 'add-edit-form-car_driver', aJaxURL_cl_car_driver,'','cardrivers',6,main_act,"<'F'Cpl>",aJaxURL_cl_car_driver,'');
             	GetButtons("add_button_cardriver","delete_button_cardriver");
          	}, 50);
+         	
+            setTimeout(function(){
+         		LoadTable('guarantors',6,main_act,"<'F'Cpl>",aJaxURL_cl_guarantors, '', 'local_id='+$("#local_id").val());
+         		$("#table_guarantors_length").css('top', '2px');
+         		SetEvents("add_button_guarantors", "delete_button_guarantors", "check-all_guarantors", tName+'guarantors', 'add-edit-form-guarantors', aJaxURL_cl_guarantors,'','guarantors',6,main_act,"<'F'Cpl>",aJaxURL_cl_guarantors,'');
+            	GetButtons("add_button_guarantors","delete_button_guarantors");
+         	}, 50);
+         	
         }else if(fName == 'add-edit-form-car_driver'){
      		var buttons = {
     				"save": {
@@ -218,6 +229,28 @@
     		        }
     		    };
                 GetDialog("add-edit-form-car_driver", 490, "auto", buttons, 'left+43 top');
+                GetDate('car_driver_license_born');
+                GetDate('car_driver_born');
+         		if($("#car_driver_hidde").val()==''){
+                	$("#car_driver_license_born").val('');
+             		$("#car_driver_born").val('');
+             		
+                }
+        }else if(fName == 'add-edit-form-guarantors'){
+     		var buttons = {
+    				"save": {
+    		            text: "შენახვა",
+    		            id: "save-guarantor"
+    		        },
+    	        	"cancel": {
+    		            text: "დახურვა",
+    		            id: "cancel-dialog",
+    		            click: function () {
+    		            	$(this).dialog("close");
+    		            }
+    		        }
+    		    };
+                GetDialog("add-edit-form-guarantors", 438, "auto", buttons, 'left+43 top');
                 GetDate('car_driver_license_born');
                 GetDate('car_driver_born');
          		if($("#car_driver_hidde").val()==''){
@@ -274,6 +307,7 @@
         	$("#agreement_grafic").show();
         }else if(id == 'info'){
         	$("#table_person_fieldset").show();
+        	$("#table_guarantors_fieldset").show();
         }else if(id == 'documents'){
         	param 	  = new Object();
     		param.act = "get_documentss";
@@ -654,30 +688,30 @@
 	   });
 	});
 
-    $(document).on("click", "#save-driver", function () {
-		param 			= new Object();
-		param.act		= "save_car_drivers";
+    $(document).on("click", "#save-guarantor", function () {
+		param 	  = new Object();
+		param.act = "save_guarantor";
 
-		param.car_driver_hidde	= $('#car_driver_hidde').val();
+		param.guarantor_hidde	= $('#guarantor_hidde').val();
 		param.local_id	        = $("#local_id").val();
 		
-		param.name	        = $('#car_driver_name').val();
-		param.born	        = $('#car_driver_born').val();
-		param.license_type	= $('#car_driver_license_type').val();
-		param.license_born	= $('#car_driver_license_born').val();
-		param.position   	= $('#car_driver_position').val();
+		param.guarantor_name	= $('#guarantor_name').val();
+		param.guarantor_pid	    = $('#guarantor_pid').val();
+		param.guarantor_address	= $('#guarantor_address').val();
+		param.guarantor_mail	= $('#guarantor_mail').val();
+		param.guarantor_phone   = $('#guarantor_phone').val();
 		
 		$.ajax({
-	        url: aJaxURL_cl_car_driver,
+	        url: aJaxURL_cl_guarantors,
 		    data: param,
 	        success: function(data) {       
 				if(typeof(data.error) != "undefined"){
 					if(data.error != ""){
 						alert(data.error);
 					}else{
-						LoadTable('cardrivers',6,main_act,"<'F'Cpl>",aJaxURL_cl_car_driver,'','local_id='+$("#local_id").val());
-						$("#table_cardrivers_length").css('top', '2px');
-					    CloseDialog("add-edit-form-car_driver");
+						LoadTable('guarantors',6,main_act,"<'F'Cpl>",aJaxURL_cl_guarantors,'','local_id='+$("#local_id").val());
+						$("#table_guarantors_length").css('top', '2px');
+					    CloseDialog("add-edit-form-guarantors");
 					}
 				}
 	    	}
@@ -1286,5 +1320,6 @@
     <div  id="add-edit-form-document" class="form-dialog" title="დოკუმენტი"></div>
     <div  id="add-edit-form-car_driver" class="form-dialog" title="პირი, რომელიც მართავს მანქანას"></div>
     <div id="add-edit-form-img" class="form-dialog" title="ავტომობილის სურათი">
+    <div id="add-edit-form-guarantors" class="form-dialog" title="თავდები პირი">
 	</div>
 </body>

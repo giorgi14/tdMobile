@@ -10,6 +10,7 @@
 		$(document).ready(function () {  
 			GetTabs(tbName);       	
 			LoadTable(tName,6,change_colum_main,aJaxURL);	
+			$(".ui-widget-content").css('border', '0px solid #aaaaaa');
  						
 			/* Add Button ID, Delete Button ID */
 			GetButtons("add_button");
@@ -19,18 +20,24 @@
 		$(document).on("tabsactivate", "#tabs1", function() {
         	tab = GetSelectedTab(tbName);
         	if (tab == 0) {
-        		GetTable0();
+        		LoadTable(tName,6,change_colum_main,aJaxURL);	
          	}else if(tab == 1){
          		GetButtons("add_button1", "");
              	GetDataTable("example1", aJaxURL, 'get_list', 9, "tab=1", 0, "", 1, "desc", "", change_colum_main);
+             	SetEvents("", "", "", "example1", fName, aJaxURL,'',tName,10,change_colum_main,aJaxURL,'','','');
+             	
              	setTimeout(function(){$('.ColVis, .dataTable_buttons').css('display','none');}, 90);
 			}else if(tab == 2){
 				GetButtons("add_button2", "");
 				GetDataTable("example2", aJaxURL, 'get_list', 9, "tab=2", 0, "", 1, "desc", "", change_colum_main);
+				SetEvents("", "", "", "example2", fName, aJaxURL,'',tName,10,change_colum_main,aJaxURL,'','','');
+				
 				setTimeout(function(){$('.ColVis, .dataTable_buttons').css('display','none');}, 90);
           	}else{
           		GetButtons("add_button3", "");
           		GetDataTable("example3", aJaxURL, 'get_list', 9, "tab=3", 0, "", 1, "desc", "", change_colum_main);
+          		SetEvents("", "", "", "example3", fName, aJaxURL,'',tName,10,change_colum_main,aJaxURL,'','','');
+          		
           		setTimeout(function(){$('.ColVis, .dataTable_buttons').css('display','none');}, 90);
             }
         });
@@ -62,6 +69,7 @@
     			GetDialog(fName, 560, "auto", buttons,"top");
     			$('#type_id').chosen();
     	        $('#client_id').chosen();
+    	        $('#currency_id').chosen();
     	        $('#add-edit-form, .add-edit-form-class').css('overflow','visible');
 			}
 		}
@@ -79,6 +87,9 @@
 	    	param.percent		= $("#percent").val();
 	    	param.penalti_fee	= $("#penalti_fee").val();
 	    	param.type_id	    = $("#type_id").val();
+	    	
+	    	param.currency_id	= $("#currency_id").val();
+	    	param.course	    = $("#course").val();
 	    	
 	    	param.hidde_id		= $("#hidde_id").val();
 	    	
@@ -107,13 +118,53 @@
 				$("#root1").val('');
 				$("#percent1").val('');
 				$("#penalti_fee1").val('');
+
+				param         =  new Object();
+    		    param.act     = "get_shedule";
+    		    
+    		    param.id      =  $("#client_id").val();
+    		    param.type_id =  $(this).val();
+    			$.ajax({
+    		        url: aJaxURL,
+    			    data: param,
+    		        success: function(data) {			        
+    					if(typeof(data.error) != 'undefined'){
+    						if(data.error != ''){
+    							alert(data.error);
+    						}else{
+	    						if(data.status==1){
+	    							$("#month_fee1").val(data.pay_amount);
+	    							$("#root1").val(data.root);
+	    							$("#percent1").val(data.percent);
+	    							$("#penalti_fee1").val(data.penalty);
+	    							$("#hidde_id").val(data.id);
+		    					}else if(data.status==2){
+		    						$("#month_fee1").val(data.insurance_fee);
+		    						$("#root1").val('');
+	    							$("#percent1").val('');
+	    							$("#penalti_fee1").val('');
+
+	    							$("#hidde_id").val(data.id);
+	    						}else if(data.status==3){
+			    					$("#month_fee1").val(data.pledge_fee);
+			    					$("#root1").val('');
+	    							$("#percent1").val('');
+	    							$("#penalti_fee1").val('');
+
+	    							$("#hidde_id").val(data.id);
+	    						}
+    						}
+    					}
+    			    }
+    		    });
 	        }else{
 	        	if($(this).val() == 1 && $("#client_id").val()>0){
 		        	
-	        		param     =  new Object();
-	    		    param.act = "get_shedule";
-	    		    param.id  =  $("#client_id").val();
+	        		param         =  new Object();
+	    		    param.act     = "get_shedule";
 	    		    
+	    		    param.id      =  $("#client_id").val();
+	    		    param.type_id =  $(this).val();
 	    			$.ajax({
 	    		        url: aJaxURL,
 	    			    data: param,
@@ -122,11 +173,27 @@
 	    						if(data.error != ''){
 	    							alert(data.error);
 	    						}else{
-	    							$("#month_fee1").val(data.pay_amount);
-	    							$("#root1").val(data.root);
-	    							$("#percent1").val(data.percent);
-	    							$("#penalti_fee1").val(data.penalty);
-	    							$("#hidde_id").val(data.id);
+		    						if(data.status==1){
+		    							$("#month_fee1").val(data.pay_amount);
+		    							$("#root1").val(data.root);
+		    							$("#percent1").val(data.percent);
+		    							$("#penalti_fee1").val(data.penalty);
+		    							$("#hidde_id").val(data.id);
+			    					}else if(data.status==2){
+			    						$("#month_fee1").val(data.insurance_fee);
+			    						$("#root1").val('');
+		    							$("#percent1").val('');
+		    							$("#penalti_fee1").val('');
+
+		    							$("#hidde_id").val(data.id);
+		    						}else if(data.status==3){
+				    					$("#month_fee1").val(data.pledge_fee);
+				    					$("#root1").val('');
+		    							$("#percent1").val('');
+		    							$("#penalti_fee1").val('');
+
+		    							$("#hidde_id").val(data.id);
+		    						}
 	    						}
 	    					}
 	    			    }
@@ -139,9 +206,10 @@
 	    });
 
 		$(document).on("change", "#client_id", function () {
-			param     =  new Object();
-		    param.act = "get_shedule";
-		    param.id  =  $(this).val();
+			param         =  new Object();
+		    param.act     = "get_shedule";
+		    param.id      =  $(this).val();
+		    param.type_id =  $("#type_id").val();
 			$.ajax({
 		        url: aJaxURL,
 			    data: param,
@@ -150,11 +218,27 @@
 						if(data.error != ''){
 							alert(data.error);
 						}else{
-							$("#month_fee1").val(data.pay_amount);
-							$("#root1").val(data.root);
-							$("#percent1").val(data.percent);
-							$("#penalti_fee1").val(data.penalty);
-							$("#hidde_id").val(data.id);
+							if(data.status==1){
+    							$("#month_fee1").val(data.pay_amount);
+    							$("#root1").val(data.root);
+    							$("#percent1").val(data.percent);
+    							$("#penalti_fee1").val(data.penalty);
+    							$("#hidde_id").val(data.id);
+	    					}else if(data.status==2){
+	    						$("#month_fee1").val(data.insurance_fee);
+	    						$("#root1").val('');
+    							$("#percent1").val('');
+    							$("#penalti_fee1").val('');
+
+    							$("#hidde_id").val(data.id);
+    						}else if(data.status==3){
+		    					$("#month_fee1").val(data.pledge_fee);
+		    					$("#root1").val('');
+    							$("#percent1").val('');
+    							$("#penalti_fee1").val('');
+
+    							$("#hidde_id").val(data.id);
+    						}
 						}
 					}
 			    }
@@ -244,7 +328,7 @@
                         <th>ID</th>
                         <th style="width: 12%;">თარიღი</th>
                         <th style="width: 18%;">მსესხებელი</th>
-                        <th style="width: 12%;">ჰარიცხული<br>თანხა</th>
+                        <th style="width: 12%;">ჩარიცხული თანხა</th>
                         <th style="width: 12%;">კურსი</th>
                         <th style="width: 12%;">ვალუტა</th>
                     </tr>
