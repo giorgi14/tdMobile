@@ -1,9 +1,5 @@
 <head>
 <style type="text/css">
-
-
-
-
 .add-edit-form-research_lab-class,
    .add-edit-form-function_detail-class,
    .add-edit-form-emergency-class,
@@ -75,15 +71,15 @@
 </style>
 <script src="js/exporting.js"></script>
 <script type="text/javascript">
-    var aJaxURL           = "server-side/operations/client.action.php";
-    var aJaxURL_cl_person = "server-side/operations/subtables/client_person.action.php";
+    var aJaxURL               = "server-side/operations/client.action.php";
+    var aJaxURL_cl_person     = "server-side/operations/subtables/client_person.action.php";
     var aJaxURL_cl_car_driver = "server-side/operations/subtables/client_car_drivers.action.php";
     var aJaxURL_cl_guarantors = "server-side/operations/subtables/client_guarantors.action.php";
-    var tName             = "table_";
-    var dialog            = "add-edit-form";
-    var colum_number      = 9;
-    var main_act          = "get_list";
-    var change_colum_main = "<'dataTable_buttons'T><'F'Cfipl>";
+    var tName                 = "table_";
+    var dialog                = "add-edit-form";
+    var colum_number          = 9;
+    var main_act              = "get_list";
+    var change_colum_main     = "<'dataTable_buttons'T><'F'Cfipl>";
      
     $(document).ready(function () {
     	GetButtons("add_button","delete_button");
