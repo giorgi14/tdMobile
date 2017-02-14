@@ -400,7 +400,7 @@
                     <tr id="datatable_header">
                         <th>ID</th>
                         <th style="width: 10%;">თარიღი</th>
-                        <th style="width: 16%;">მსესხებელი</th>
+                        <th style="width: 50%;">მსესხებელი</th>
                         <th style="width: 10%;">ჩარიცხული თანხა</th>
                         <th style="width: 10%;">ვალუტა</th>
                         <th style="width: 10%;">კურსი</th>
@@ -515,7 +515,7 @@
                     <tr id="datatable_header">
                         <th>ID</th>
                         <th style="width: 12%;">თარიღი</th>
-                        <th style="width: 18%;">მსესხებელი</th>
+                        <th style="width: 52%;">მსესხებელი</th>
                         <th style="width: 12%;">ჩარიცხული<br>თანხა</th>
                         <th style="width: 12%;">ვალუტა</th>
                         <th style="width: 12%;">კურსი</th>
@@ -564,7 +564,7 @@
                     <tr id="datatable_header">
                         <th>ID</th>
                         <th style="width: 12%;">თარიღი</th>
-                        <th style="width: 18%;">მსესხებელი</th>
+                        <th style="width: 52%;">მსესხებელი</th>
                         <th style="width: 12%;">ჩარიცხული<br>თანხა</th>
                         <th style="width: 12%;">ვალუტა</th>
                         <th style="width: 12%;">კურსი</th>
