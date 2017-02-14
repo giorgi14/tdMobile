@@ -395,7 +395,7 @@
                 </td>
             </tr>
         </table>
-            <table class="display" id="example">
+            <table class="display" id="example" style="width: 100%;">
                 <thead>
                     <tr id="datatable_header">
                         <th>ID</th>
@@ -448,7 +448,7 @@
                     </td>
                 </tr>
             </table>
-            <table class="display" id="example1">
+            <table class="display" id="example1" style="width: 100%;">
                 <thead>
                     <tr id="datatable_header">
                         <th>ID</th>
@@ -510,7 +510,7 @@
                     </td>
                 </tr>
             </table>
-            <table class="display" id="example2">
+            <table class="display" id="example2" style="width: 100%;">
                 <thead>
                     <tr id="datatable_header">
                         <th>ID</th>
@@ -559,7 +559,7 @@
                     </td>
                 </tr>
             </table>
-            <table class="display" id="example3">
+            <table class="display" id="example3" style="width: 100%;">
                 <thead>
                     <tr id="datatable_header">
                         <th>ID</th>

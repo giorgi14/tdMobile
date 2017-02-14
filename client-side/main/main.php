@@ -131,7 +131,7 @@
 </td>
 </tr>
 </table>
-    <table class="display" id="table_example">
+    <table class="display" id="table_example" >
         <thead>
             <tr id="datatable_header">
                 <th>ID</th>
