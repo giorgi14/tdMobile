@@ -151,8 +151,8 @@ switch ($action) {
                                     				money_transactions.course AS `exchange`,
                                     			    '' AS `loan_amount_gel`,
                                     				'' AS `loan_amount`,
-                                    				(SELECT CASE
-                            									 WHEN DATEDIFF(DATE(money_transactions.pay_datetime), clsh1.pay_date)>0 AND DATEDIFF(DATE(money_transactions.pay_datetime), clsh1.pay_date) < client_loan_agreement.penalty_days THEN ROUND((clsh1.remaining_root*(client_loan_agreement.penalty_percent/100))*(DATEDIFF(money_transactions.pay_datetime, clsh1.pay_date)),2)
+                                    				IFNULL(CONCAT('<div style=\"background: #f90404\">',(SELECT CASE
+                            									 WHEN DATEDIFF(DATE(money_transactions.pay_datetime), clsh1.pay_date)>0 AND DATEDIFF(DATE(money_transactions.pay_datetime), clsh1.pay_date) <= client_loan_agreement.penalty_days THEN ROUND((clsh1.remaining_root*(client_loan_agreement.penalty_percent/100))*(DATEDIFF(money_transactions.pay_datetime, clsh1.pay_date)),2)
                             									 WHEN DATEDIFF(DATE(money_transactions.pay_datetime), clsh1.pay_date)>client_loan_agreement.penalty_days THEN ROUND((clsh1.remaining_root*(client_loan_agreement.penalty_additional_percent/100))*(DATEDIFF(money_transactions.pay_datetime, clsh1.pay_date)),2)
                                 							 END AS penalty
                                     				FROM  `client_loan_schedule` AS clsh1
@@ -160,9 +160,9 @@ switch ($action) {
                                     				JOIN   money_transactions ON money_transactions.client_loan_schedule_id = clsh1.id 
                                     	            WHERE clsh1.id = client_loan_schedule.id
                                     	            ORDER BY money_transactions.pay_datetime DESC
-                                    				LIMIT 1) AS percent_gel,
-                                    				ROUND((SELECT CASE
-                													 WHEN DATEDIFF(DATE(money_transactions.pay_datetime), clsh.pay_date)>0 AND DATEDIFF(DATE(money_transactions.pay_datetime), clsh.pay_date) < client_loan_agreement.penalty_days THEN ROUND((clsh.remaining_root*(client_loan_agreement.penalty_percent/100))*(DATEDIFF(money_transactions.pay_datetime, clsh.pay_date)),2)
+                                    				LIMIT 1),'</div>'),'') AS percent_gel,
+                                    				IFNULL(CONCAT('<div style=\"background: #f90404\">',ROUND((SELECT CASE
+                													 WHEN DATEDIFF(DATE(money_transactions.pay_datetime), clsh.pay_date)>0 AND DATEDIFF(DATE(money_transactions.pay_datetime), clsh.pay_date) <= client_loan_agreement.penalty_days THEN ROUND((clsh.remaining_root*(client_loan_agreement.penalty_percent/100))*(DATEDIFF(money_transactions.pay_datetime, clsh.pay_date)),2)
                 													 WHEN DATEDIFF(DATE(money_transactions.pay_datetime), clsh.pay_date)>client_loan_agreement.penalty_days THEN ROUND((clsh.remaining_root*(client_loan_agreement.penalty_additional_percent/100))*(DATEDIFF(money_transactions.pay_datetime, clsh.pay_date)),2)
                     											   END AS penalty
                             								FROM  `client_loan_schedule` AS clsh
@@ -170,7 +170,7 @@ switch ($action) {
                             								JOIN money_transactions ON money_transactions.client_loan_schedule_id = clsh.id
                             								WHERE clsh.id = client_loan_schedule.id
 	                                                        ORDER BY money_transactions.pay_datetime DESC
-                                    				        LIMIT 1)/money_transactions.course,2) AS percent,
+                                    				        LIMIT 1)/money_transactions.course,2),'</div>'),'') AS percent,
                                     				'' AS percent_gel1,
                                     				'' AS percent1,
                                     				'' AS pay_root_gel,
@@ -180,6 +180,7 @@ switch ($action) {
                                             JOIN   client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
                                             WHERE  client_loan_agreement.client_id = $id AND client_loan_schedule.actived=1 AND money_transactions.type_id = 1
 	                                        GROUP BY money_transactions.client_loan_schedule_id
+	                                        HAVING percent_gel !=''
 	                                        ) AS letter
                             	            ORDER BY letter.number, letter.sort ASC");
 	    }else{	
@@ -237,8 +238,8 @@ switch ($action) {
                                     				money_transactions.course AS `exchange`,
     	                                            '' AS `loan_amount`,
     	                                            '' AS `loan_amount_gel`,
-                                    			    (SELECT CASE
-                            									 WHEN DATEDIFF(DATE(money_transactions.pay_datetime), clsh1.pay_date)>0 AND DATEDIFF(DATE(money_transactions.pay_datetime), clsh1.pay_date) < client_loan_agreement.penalty_days THEN ROUND((clsh1.remaining_root*(client_loan_agreement.penalty_percent/100))*(DATEDIFF(money_transactions.pay_datetime, clsh1.pay_date)),2)
+                                    			    IFNULL(CONCAT('<div style=\"background: #f90404\">',(SELECT CASE
+                            									 WHEN DATEDIFF(DATE(money_transactions.pay_datetime), clsh1.pay_date)>0 AND DATEDIFF(DATE(money_transactions.pay_datetime), clsh1.pay_date) <= client_loan_agreement.penalty_days THEN ROUND((clsh1.remaining_root*(client_loan_agreement.penalty_percent/100))*(DATEDIFF(money_transactions.pay_datetime, clsh1.pay_date)),2)
                             									 WHEN DATEDIFF(DATE(money_transactions.pay_datetime), clsh1.pay_date)>client_loan_agreement.penalty_days THEN ROUND((clsh1.remaining_root*(client_loan_agreement.penalty_additional_percent/100))*(DATEDIFF(money_transactions.pay_datetime, clsh1.pay_date)),2)
                                 							 END AS penalty
                                     				FROM  `client_loan_schedule` AS clsh1
@@ -246,17 +247,17 @@ switch ($action) {
                                     				JOIN   money_transactions ON money_transactions.client_loan_schedule_id = clsh1.id 
     	                                            WHERE clsh1.id = client_loan_schedule.id
     	                                            ORDER BY money_transactions.pay_datetime DESC
-                                    				LIMIT 1) AS percent_gel,
-                                    				ROUND((SELECT CASE
-                													 WHEN DATEDIFF(DATE(money_transactions.pay_datetime), clsh.pay_date)>0 AND DATEDIFF(DATE(money_transactions.pay_datetime), clsh.pay_date) < client_loan_agreement.penalty_days THEN ROUND((clsh.remaining_root*(client_loan_agreement.penalty_percent/100))*(DATEDIFF(money_transactions.pay_datetime, clsh.pay_date)),2)
-                													 WHEN DATEDIFF(DATE(money_transactions.pay_datetime), clsh.pay_date)>client_loan_agreement.penalty_days THEN ROUND((clsh.remaining_root*(client_loan_agreement.penalty_additional_percent/100))*(DATEDIFF(money_transactions.pay_datetime, clsh.pay_date)),2)
-                    											   END AS penalty
+                                    				LIMIT 1),'</div>'),'') AS percent_gel,
+                                    				IFNULL(CONCAT('<div style=\"background: #f90404\">',ROUND((SELECT CASE
+																														 WHEN DATEDIFF(DATE(money_transactions.pay_datetime), clsh.pay_date)>0 AND DATEDIFF(DATE(money_transactions.pay_datetime), clsh.pay_date) <= client_loan_agreement.penalty_days THEN ROUND((clsh.remaining_root*(client_loan_agreement.penalty_percent/100))*(DATEDIFF(money_transactions.pay_datetime, clsh.pay_date)),2)
+																														 WHEN DATEDIFF(DATE(money_transactions.pay_datetime), clsh.pay_date)>client_loan_agreement.penalty_days THEN ROUND((clsh.remaining_root*(client_loan_agreement.penalty_additional_percent/100))*(DATEDIFF(money_transactions.pay_datetime, clsh.pay_date)),2)
+																													END AS penalty
                             								FROM  `client_loan_schedule` AS clsh
                             								JOIN   client_loan_agreement ON client_loan_agreement.id = clsh.client_loan_agreement_id
                             								JOIN money_transactions ON money_transactions.client_loan_schedule_id = clsh.id
                             								WHERE clsh.id = client_loan_schedule.id
     	                                                    ORDER BY money_transactions.pay_datetime DESC
-                                    				        LIMIT 1)*money_transactions.course,2) AS percent,
+                                    				        LIMIT 1)*money_transactions.course,2),'</div>'),'') AS percent,
                                     				'' AS percent_gel1,
                                     				'' AS percent1,
                                     				'' AS pay_root_gel,

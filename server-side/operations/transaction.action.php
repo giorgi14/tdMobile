@@ -29,8 +29,15 @@ switch ($action) {
 		    $val = 'money_transactions.pay_root,
                     money_transactions.pay_percent,
                     money_transactions.diff';
+		    $where_status = 'AND money_transactions.status = 1';
 		}else{
 		    $val = 'transaction_type.`name`';
+		    if ($tab==0) {
+		        $where_status = 'AND money_transactions.status = 0';
+		    }else{
+		        $where_status = 'AND money_transactions.status = 1';
+		    }
+		    
 		}
 		
 		$rResult = mysql_query("SELECT  money_transactions.id,
@@ -46,7 +53,7 @@ switch ($action) {
 		                        LEFT JOIN   loan_currency ON loan_currency.id = money_transactions.currency_id
 		                        JOIN transaction_type ON transaction_type.id = money_transactions.type_id
                                 JOIN   client ON client.id = client_loan_agreement.client_id 
-		                        WHERE money_transactions.type_id != 4 $where");
+		                        WHERE money_transactions.type_id != 4 $where_status $where");
 
 		$data = array("aaData"	=> array());
 
@@ -98,7 +105,7 @@ switch ($action) {
                                             		     client_loan_agreement.pledge_fee,
     		                                             client_loan_agreement.loan_currency_id,
                                             			 CASE 
-                                            				  WHEN DATEDIFF(CURDATE(), client_loan_schedule.pay_date)>0 AND DATEDIFF(CURDATE(), client_loan_schedule.pay_date) < client_loan_agreement.penalty_days THEN ROUND((client_loan_schedule.remaining_root*(client_loan_agreement.penalty_percent/100))*(DATEDIFF(CURDATE(), client_loan_schedule.pay_date)),2)
+                                            				  WHEN DATEDIFF(CURDATE(), client_loan_schedule.pay_date)>0 AND DATEDIFF(CURDATE(), client_loan_schedule.pay_date) <= client_loan_agreement.penalty_days THEN ROUND((client_loan_schedule.remaining_root*(client_loan_agreement.penalty_percent/100))*(DATEDIFF(CURDATE(), client_loan_schedule.pay_date)),2)
                                             				  WHEN DATEDIFF(CURDATE(), client_loan_schedule.pay_date)>client_loan_agreement.penalty_days THEN ROUND((client_loan_schedule.remaining_root*(client_loan_agreement.penalty_additional_percent/100))*(DATEDIFF(CURDATE(), client_loan_schedule.pay_date)),2)
                                             			 END AS penalty
                                                    FROM `client_loan_schedule`
@@ -284,8 +291,8 @@ function GetPage($res = ''){
                                                  client_loan_schedule.root,
                                                  client_loan_schedule.percent,
                                                  CASE
-                                                    WHEN DATEDIFF(CURDATE(), client_loan_schedule.pay_date)>0 AND DATEDIFF(CURDATE(), client_loan_schedule.pay_date) < client_loan_agreement.penalty_days THEN ROUND((client_loan_agreement.loan_amount*(client_loan_agreement.penalty_percent/100))*(DATEDIFF(CURDATE(), client_loan_schedule.pay_date)),2)
-                                                    WHEN DATEDIFF(CURDATE(), client_loan_schedule.pay_date)>client_loan_agreement.penalty_days THEN ROUND((client_loan_agreement.loan_amount*(client_loan_agreement.penalty_additional_percent/100))*(DATEDIFF(CURDATE(), client_loan_schedule.pay_date)),2)
+                                                    WHEN DATEDIFF(money_transactions.pay_datetime, client_loan_schedule.pay_date)>0 AND DATEDIFF(money_transactions.pay_datetime, client_loan_schedule.pay_date) <= client_loan_agreement.penalty_days THEN ROUND((client_loan_agreement.loan_amount*(client_loan_agreement.penalty_percent/100))*(DATEDIFF(money_transactions.pay_datetime, client_loan_schedule.pay_date)),2)
+                                                    WHEN DATEDIFF(money_transactions.pay_datetime, client_loan_schedule.pay_date)>client_loan_agreement.penalty_days THEN ROUND((client_loan_agreement.loan_amount*(client_loan_agreement.penalty_additional_percent/100))*(DATEDIFF(money_transactions.pay_datetime, client_loan_schedule.pay_date)),2)
                                                  END AS penalty
                                            FROM `client_loan_schedule`
                                            JOIN  client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
