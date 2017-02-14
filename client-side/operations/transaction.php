@@ -9,7 +9,7 @@
 		    	
 		$(document).ready(function () {  
 			GetTabs(tbName);       	
-			LoadTable(tName,6,change_colum_main,aJaxURL);	
+			LoadTable(tName,7,change_colum_main,aJaxURL);	
 			$(".ui-widget-content").css('border', '0px solid #aaaaaa');
  						
 			/* Add Button ID, Delete Button ID */
@@ -20,22 +20,22 @@
 		$(document).on("tabsactivate", "#tabs1", function() {
         	tab = GetSelectedTab(tbName);
         	if (tab == 0) {
-        		LoadTable(tName,6,change_colum_main,aJaxURL);	
+        		LoadTable(tName,7,change_colum_main,aJaxURL);	
          	}else if(tab == 1){
          		GetButtons("add_button1", "");
-             	GetDataTable("example1", aJaxURL, 'get_list', 9, "tab=1", 0, "", 1, "desc", "", change_colum_main);
+             	GetDataTable("example1", aJaxURL, 'get_list', 9, "tab=1", 0, "", 0, "desc", "", change_colum_main);
              	SetEvents("", "", "", "example1", fName, aJaxURL,'',tName,10,change_colum_main,aJaxURL,'','','');
              	
              	setTimeout(function(){$('.ColVis, .dataTable_buttons').css('display','none');}, 90);
 			}else if(tab == 2){
 				GetButtons("add_button2", "");
-				GetDataTable("example2", aJaxURL, 'get_list', 9, "tab=2", 0, "", 1, "desc", "", change_colum_main);
+				GetDataTable("example2", aJaxURL, 'get_list', 9, "tab=2", 0, "", 0, "desc", "", change_colum_main);
 				SetEvents("", "", "", "example2", fName, aJaxURL,'',tName,10,change_colum_main,aJaxURL,'','','');
 				
 				setTimeout(function(){$('.ColVis, .dataTable_buttons').css('display','none');}, 90);
           	}else{
           		GetButtons("add_button3", "");
-          		GetDataTable("example3", aJaxURL, 'get_list', 9, "tab=3", 0, "", 1, "desc", "", change_colum_main);
+          		GetDataTable("example3", aJaxURL, 'get_list', 9, "tab=3", 0, "", 0, "desc", "", change_colum_main);
           		SetEvents("", "", "", "example3", fName, aJaxURL,'',tName,10,change_colum_main,aJaxURL,'','','');
           		
           		setTimeout(function(){$('.ColVis, .dataTable_buttons').css('display','none');}, 90);
@@ -45,7 +45,7 @@
 		function LoadTable(tName,num,change_colum_main,aJaxURL){
 			
 			/* Table ID, aJaxURL, Action, Colum Number, Custom Request, Hidden Colum, Menu Array */
-			GetDataTable(tName, aJaxURL, 'get_list', num, "tab=0", 0, "", 1, "desc", "", change_colum_main);
+			GetDataTable(tName, aJaxURL, 'get_list', num, "tab=0", 0, "", 0, "desc", "", change_colum_main);
 			setTimeout(function(){$('.ColVis, .dataTable_buttons').css('display','none');}, 90);
 		}
 		
@@ -66,11 +66,16 @@
 		    };
 			/* Dialog Form Selector Name, Buttons Array */
 			if(fname=='add-edit-form'){
-    			GetDialog(fName, 560, "auto", buttons,"top");
+    			GetDialog(fName, 757, "auto", buttons,"top");
     			$('#type_id').chosen();
     	        $('#client_id').chosen();
     	        $('#currency_id').chosen();
     	        $('#add-edit-form, .add-edit-form-class').css('overflow','visible');
+				if($("#id").val()!=''){
+					$('#currency_id').prop('disabled', true).trigger("chosen:updated");
+        	        $('#client_id').prop('disabled', true).trigger("chosen:updated");
+        	        $('#type_id').prop('disabled', true).trigger("chosen:updated");
+				}
 			}
 		}
 
@@ -87,27 +92,37 @@
 	    	param.percent		= $("#percent").val();
 	    	param.penalti_fee	= $("#penalti_fee").val();
 	    	param.type_id	    = $("#type_id").val();
+	    	param.client_id	    = $("#client_id").val();
 	    	
 	    	param.currency_id	= $("#currency_id").val();
 	    	param.course	    = $("#course").val();
 	    	
 	    	param.hidde_id		= $("#hidde_id").val();
-	    	
-	    	$.ajax({
-		        url: aJaxURL,
-			    data: param,
-		        success: function(data) {			        
-					if(typeof(data.error) != 'undefined'){
-						if(data.error != ''){
-							alert(data.error);
-						}else{
-							LoadTable(tName,10,change_colum_main,aJaxURL);
-			        		CloseDialog(fName);
-						}
-					}
-			    }
-		    });
-			
+
+	    	if(param.type_id == 0){
+		    	alert('შეავსე ტიპი');
+			}else if(param.client_id == 0){
+		    	alert('შეავსე კლიენტი');
+			}else if(param.course == ''){
+		    	alert('შეავსე კურსი');
+			}else if(param.month_fee == ''){
+		    	alert('შეავსე ჩარიცხული თანხა');
+			}else{
+    	    	$.ajax({
+    		        url: aJaxURL,
+    			    data: param,
+    		        success: function(data) {			        
+    					if(typeof(data.error) != 'undefined'){
+    						if(data.error != ''){
+    							alert(data.error);
+    						}else{
+    							LoadTable(tName,10,change_colum_main,aJaxURL);
+    			        		CloseDialog(fName);
+    						}
+    					}
+    			    }
+    		    });
+    	    }
 		});
 
 	    $(document).on("change", "#type_id", function () {
@@ -137,21 +152,40 @@
 	    							$("#root1").val(data.root);
 	    							$("#percent1").val(data.percent);
 	    							$("#penalti_fee1").val(data.penalty);
+
+	    							$("#month_fee2").val(data.pay_amount1);
+	    							$("#root2").val(data.root1);
+	    							$("#percent2").val(data.percent1);
+	    							$("#penalti_fee2").val(data.penalty1);
+	    							
 	    							$("#hidde_id").val(data.id);
+	    							$('#currency_id').prop('disabled', true).trigger("chosen:updated");
 		    					}else if(data.status==2){
 		    						$("#month_fee1").val(data.insurance_fee);
 		    						$("#root1").val('');
 	    							$("#percent1").val('');
 	    							$("#penalti_fee1").val('');
 
+	    							$("#month_fee2").val('');
+	    							$("#root2").val('');
+	    							$("#percent2").val('');
+	    							$("#penalti_fee2").val('');
+
 	    							$("#hidde_id").val(data.id);
+	    							$('#currency_id').prop('disabled', false).trigger("chosen:updated");
 	    						}else if(data.status==3){
 			    					$("#month_fee1").val(data.pledge_fee);
 			    					$("#root1").val('');
 	    							$("#percent1").val('');
 	    							$("#penalti_fee1").val('');
 
+	    							$("#month_fee2").val('');
+	    							$("#root2").val('');
+	    							$("#percent2").val('');
+	    							$("#penalti_fee2").val('');
+
 	    							$("#hidde_id").val(data.id);
+	    							$('#currency_id').prop('disabled', false).trigger("chosen:updated");
 	    						}
     						}
     					}
@@ -178,21 +212,40 @@
 		    							$("#root1").val(data.root);
 		    							$("#percent1").val(data.percent);
 		    							$("#penalti_fee1").val(data.penalty);
+
+		    							$("#month_fee2").val(data.pay_amount1);
+		    							$("#root2").val(data.root1);
+		    							$("#percent2").val(data.percent1);
+		    							$("#penalti_fee2").val(data.penalty1);
+		    							
 		    							$("#hidde_id").val(data.id);
+		    							$('#currency_id').prop('disabled', true).trigger("chosen:updated");
 			    					}else if(data.status==2){
 			    						$("#month_fee1").val(data.insurance_fee);
 			    						$("#root1").val('');
 		    							$("#percent1").val('');
 		    							$("#penalti_fee1").val('');
 
+		    							$("#month_fee2").val('');
+		    							$("#root2").val('');
+		    							$("#percent2").val('');
+		    							$("#penalti_fee2").val('');
+
 		    							$("#hidde_id").val(data.id);
+		    							$('#currency_id').prop('disabled', false).trigger("chosen:updated");
 		    						}else if(data.status==3){
 				    					$("#month_fee1").val(data.pledge_fee);
 				    					$("#root1").val('');
 		    							$("#percent1").val('');
 		    							$("#penalti_fee1").val('');
 
+		    							$("#month_fee2").val('');
+		    							$("#root2").val('');
+		    							$("#percent2").val('');
+		    							$("#penalti_fee2").val('');
+
 		    							$("#hidde_id").val(data.id);
+		    							$('#currency_id').prop('disabled', false).trigger("chosen:updated");
 		    						}
 	    						}
 	    					}
@@ -210,7 +263,7 @@
 		    param.act     = "get_shedule";
 		    param.id      =  $(this).val();
 		    param.type_id =  $("#type_id").val();
-			$.ajax({
+		    $.ajax({
 		        url: aJaxURL,
 			    data: param,
 		        success: function(data) {			        
@@ -223,27 +276,47 @@
     							$("#root1").val(data.root);
     							$("#percent1").val(data.percent);
     							$("#penalti_fee1").val(data.penalty);
+
+    							$("#month_fee2").val(data.pay_amount1);
+    							$("#root2").val(data.root1);
+    							$("#percent2").val(data.percent1);
+    							$("#penalti_fee2").val(data.penalty1);
+    							
     							$("#hidde_id").val(data.id);
+    							$("#currency_id").html(data.currenc).trigger("chosen:updated");
+    							$('#currency_id').prop('disabled', true).trigger("chosen:updated");
 	    					}else if(data.status==2){
 	    						$("#month_fee1").val(data.insurance_fee);
 	    						$("#root1").val('');
     							$("#percent1").val('');
     							$("#penalti_fee1").val('');
 
+    							$("#month_fee2").val('');
+    							$("#root2").val('');
+    							$("#percent2").val('');
+    							$("#penalti_fee2").val('');
+
     							$("#hidde_id").val(data.id);
+    							$('#currency_id').prop('disabled', false).trigger("chosen:updated");
     						}else if(data.status==3){
 		    					$("#month_fee1").val(data.pledge_fee);
 		    					$("#root1").val('');
     							$("#percent1").val('');
     							$("#penalti_fee1").val('');
 
+    							$("#month_fee2").val('');
+    							$("#root2").val('');
+    							$("#percent2").val('');
+    							$("#penalti_fee2").val('');
+
     							$("#hidde_id").val(data.id);
+    							$('#currency_id').prop('disabled', false).trigger("chosen:updated");
     						}
 						}
 					}
 			    }
 		    });
-	    });
+    	});
 	    
 	    $(document).on("click", "#show_copy_prit_exel", function () {
 	        if($(this).attr('myvar') == 0){
@@ -298,7 +371,7 @@
 <div id="tabs" style="width: 98%">
 <div class="callapp_head">ტრანზაქციები (ჩარიცხვები)<hr class="callapp_head_hr"></div>
 
-<div id="tabs1" style="width: 100%; margin: 0 auto; min-height: 768px; margin-top: 25px;">
+<div id="tabs1" style="width: 100%; margin: 0 auto;">
 	<ul>
 		<li><a href="#tab-0">დასადასტურებელი</a></li>
 		<li><a href="#tab-1">სესხი</a></li>
@@ -326,11 +399,12 @@
                 <thead>
                     <tr id="datatable_header">
                         <th>ID</th>
-                        <th style="width: 12%;">თარიღი</th>
-                        <th style="width: 18%;">მსესხებელი</th>
-                        <th style="width: 12%;">ჩარიცხული თანხა</th>
-                        <th style="width: 12%;">კურსი</th>
-                        <th style="width: 12%;">ვალუტა</th>
+                        <th style="width: 10%;">თარიღი</th>
+                        <th style="width: 16%;">მსესხებელი</th>
+                        <th style="width: 10%;">ჩარიცხული თანხა</th>
+                        <th style="width: 10%;">ვალუტა</th>
+                        <th style="width: 10%;">კურსი</th>
+                        <th style="width: 10%;">ტიპი</th>
                     </tr>
                 </thead>
                 <thead>
@@ -345,6 +419,9 @@
                             <input type="text" name="search_category" value="ფილტრი" class="search_init" />
                         </th>
                        	<th>
+                            <input type="text" name="search_category" value="ფილტრი" class="search_init" />
+                        </th>
+                        <th>
                             <input type="text" name="search_category" value="ფილტრი" class="search_init" />
                         </th>
                         <th>
@@ -378,8 +455,8 @@
                         <th style="width: 12%;">თარიღი</th>
                         <th style="width: 18%;">მსესხებელი</th>
                         <th style="width: 12%;">ჩარიცხული<br>თანხა</th>
-                        <th style="width: 12%;">კურსი</th>
                         <th style="width: 12%;">ვალუტა</th>
+                        <th style="width: 12%;">კურსი</th>
                         <th style="width: 12%;">დაფარული<br>ძირი</th>
                         <th style="width: 11%;">დაფარული<br>პროცენტი</th>
                         <th style="width: 11%;">სხვაობა</th>
@@ -440,8 +517,8 @@
                         <th style="width: 12%;">თარიღი</th>
                         <th style="width: 18%;">მსესხებელი</th>
                         <th style="width: 12%;">ჩარიცხული<br>თანხა</th>
-                        <th style="width: 12%;">კურსი</th>
                         <th style="width: 12%;">ვალუტა</th>
+                        <th style="width: 12%;">კურსი</th>
                     </tr>
                 </thead>
                 <thead>
@@ -489,8 +566,8 @@
                         <th style="width: 12%;">თარიღი</th>
                         <th style="width: 18%;">მსესხებელი</th>
                         <th style="width: 12%;">ჩარიცხული<br>თანხა</th>
-                        <th style="width: 12%;">კურსი</th>
                         <th style="width: 12%;">ვალუტა</th>
+                        <th style="width: 12%;">კურსი</th>
                     </tr>
                 </thead>
                 <thead>

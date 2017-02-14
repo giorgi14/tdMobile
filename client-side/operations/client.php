@@ -1315,7 +1315,6 @@
     <div  id="add-edit-form-pers" class="form-dialog" title="საკონტაქტო პირი"></div>
     <div  id="add-edit-form-document" class="form-dialog" title="დოკუმენტი"></div>
     <div  id="add-edit-form-car_driver" class="form-dialog" title="პირი, რომელიც მართავს მანქანას"></div>
-    <div id="add-edit-form-img" class="form-dialog" title="ავტომობილის სურათი">
-    <div id="add-edit-form-guarantors" class="form-dialog" title="თავდები პირი">
-	</div>
+    <div id="add-edit-form-img" class="form-dialog" title="ავტომობილის სურათი"></div>
+    <div id="add-edit-form-guarantors" class="form-dialog" title="თავდები პირი"></div>
 </body>

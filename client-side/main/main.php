@@ -2,19 +2,67 @@
 <head>
 	<script type="text/javascript">
 		var aJaxURL	          = "server-side/main.action.php";		//server side folder url
-		var tName	          = "example";													//table name
-		var fName	          = "add-edit-form";												//form name
-		var change_colum_main = "<'dataTable_buttons'T><'F'Cfipl>";
-		    	
+		var tName	          = "table_";													//table name
+		var dialog	          = "add-edit-form";												//form name
+		var colum_number      = 16;
+	    var main_act          = "get_list";
+	    var change_colum_main = "<'dataTable_buttons'T><'F'Cfipl>";   	
 		$(document).ready(function () {        	
-			LoadTable(tName,16,change_colum_main,aJaxURL);	
+			LoadTable("example",colum_number,'get_list',change_colum_main,aJaxURL);	
+			SetEvents("", "", "", tName+'example', dialog, aJaxURL,'','example',colum_number,main_act,change_colum_main,aJaxURL,'');
  		});
         
-		function LoadTable(tName,num,change_colum_main,aJaxURL){
-			GetDataTable(tName, aJaxURL, 'get_list', num, "", 0, "", 1, "desc", "", change_colum_main);
+		function LoadTable(tbl,num,act,change_colum_main,aJaxURL){
+			var dLength = [[50, -1], [50, "ყველა"]];
+			
+			if(tbl == 'letter'){
+				var total =	[4,5,6,7,8,9,10,11,12,13];
+				GetDataTable1(tName+tbl, aJaxURL, act, num, "&id="+$("#id").val()+"&loan_currency_id="+$("#loan_currency_id").val(), 0, dLength, 1, "asc", total, change_colum_main);
+				
+				param 		            = new Object();
+			    param.act	            = "gel_footer";
+			    param.id	            = $("#id").val();
+			    param.loan_currency_id	= $("#loan_currency_id").val();
+			    
+				$.ajax({
+    		        url: aJaxURL,
+    			    data: param,
+    		        success: function(data) {			        
+    					if(typeof(data.error) != 'undefined'){
+    						if(data.error != ''){
+    							alert(data.error);
+    						}else{
+    							$("#remaining_root").html(data.remaining_root);
+    							$("#remaining_root_gel").html(data.remaining_root_gel);
+    							$("#insurance_fee").html(data.insurance_fee);
+    						}
+    					}
+    			    }
+    		    });
+			}else{
+				GetDataTable1(tName+tbl, aJaxURL, act, num, "&id="+$("#id").val()+"&loan_currency_id="+$("#loan_currency_id").val(), 0, dLength, 1, "asc", "", change_colum_main);
+			}
+			$("#table_letter_length").css('top', '2px');
 			setTimeout(function(){$('.ColVis, .dataTable_buttons').css('display','none');}, 90);
 		}
-		
+
+		function LoadDialog(fName){
+	        if(fName == 'add-edit-form'){
+	        	var buttons = {
+	        			"cancel": {
+	    		            text: "დახურვა",
+	    		            id: "cancel-dialog",
+	    		            click: function () {
+	    		            	$(this).dialog("close");
+	    		            }
+	    		        }
+	    		    };
+	            GetDialog(fName, 1262, "auto", buttons, 'left+43 top');
+	            LoadTable('letter', 17, 'get_list1', "<'F'Cpl>", aJaxURL, '');
+	            
+	        }
+	    }
+	    
 	    $(document).on("click", "#show_copy_prit_exel", function () {
 	        if($(this).attr('myvar') == 0){
 	            $('.ColVis,.dataTable_buttons').css('display','block');
@@ -61,6 +109,10 @@
             padding: 0;
             height: 18px;
         }
+        #dialog-form fieldset select{
+        	height: 19px;
+        	width: 70px;
+        }
     </style>
 </head>
 
@@ -79,7 +131,7 @@
 </td>
 </tr>
 </table>
-    <table class="display" id="example">
+    <table class="display" id="table_example">
         <thead>
             <tr id="datatable_header">
                 <th>ID</th>
@@ -155,5 +207,5 @@
     </table>
 </body>
 </html>
-
+<div  id="add-edit-form" class="form-dialog" title="ბარათები"></div>
 
