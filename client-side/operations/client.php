@@ -312,7 +312,7 @@
     		param.loan_agreement_type = $("#loan_agreement_type").val();
     		param.agreement_type_id   = $("#agreement_type_id").val();
     		param.loan_currency       = $("#loan_currency").val();
-    		param.car_type            = $("#car_type").val();
+    		param.car_type            = $("input[id='carsize']:checked").val();
     		
         	$.ajax({
     	        url: aJaxURL,
@@ -440,6 +440,7 @@
 		param.car_insurance_price     = $('#car_insurance_price').val();
 		param.car_ins_start           = $('#car_ins_start').val();
 		param.car_ins_end             = $('#car_ins_end').val();
+		param.carsize                 = $("input[id='carsize']:checked").val();
 		
 		$("#name, #surname, #born_date, #tin, #tin_number,#tin_date,#phone,#fact_address,#jur_address,#ltd_name,#ltd_id,#client_trust_name,client_trust_surname,#client_trust_tin,#client_trust_phone,#client_trust_fact_address,#client_trust_jur_address,#trusting_number,#trusting_date,#trusting_notary,#trusting_notary_address,#trusting_notary_phone,#car_model,#car_born,#car_color,#car_engine,#car_registration_number,#car_ident,#car_ertificate,#agreement_date,#loan_amount,#loan_months,#insurance_fee,#pledge_fee,#monthly_pay,#month_percent,#monthly_pay,#exchange_rate,#penalty_days,#penalty_percent,#penalty_additional_percent,#loan_fee,#proceed_fee,#proceed_percent").css('border','1px solid #42B4E6');
 		$("#loan_agreement_type_chosen, #agreement_type_id_chosen, #car_type_chosen").css('border','');
