@@ -11,11 +11,11 @@ $user_id = $_SESSION['USERID'];
 $id		          = $_REQUEST['id'];
 $car_driver_hidde = $_REQUEST['car_driver_hidde'];
 $local_id         = $_REQUEST['local_id'];
-$name	          = $_REQUEST['name'];
-$born             = $_REQUEST['born'];
-$license_type     = $_REQUEST['license_type'];
-$license_born     = $_REQUEST['license_born'];
-$position         = $_REQUEST['position'];
+$name	          = $_REQUEST['car_driver_name'];
+$born             = $_REQUEST['car_driver_born'];
+$license_type     = $_REQUEST['car_driver_license_type'];
+$license_born     = $_REQUEST['car_driver_license_born'];
+$position         = $_REQUEST['car_driver_position'];
 
 
 

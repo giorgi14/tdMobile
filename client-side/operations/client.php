@@ -714,6 +714,36 @@
 	   });
 	});
 
+    $(document).on("click", "#save-driver", function () {
+		param 	  = new Object();
+		param.act = "save_car_drivers";
+
+		param.car_driver_hidde	= $('#car_driver_hidde').val();
+		param.local_id	        = $("#local_id").val();
+		
+		param.car_driver_name	        = $('#car_driver_name').val();
+		param.car_driver_position	    = $('#car_driver_position').val();
+		param.car_driver_born	        = $('#car_driver_born').val();
+		param.car_driver_license_type	= $('#car_driver_license_type').val();
+		param.car_driver_license_born   = $('#car_driver_license_born').val();
+		
+		$.ajax({
+	        url: aJaxURL_cl_car_driver,
+		    data: param,
+	        success: function(data) {       
+				if(typeof(data.error) != "undefined"){
+					if(data.error != ""){
+						alert(data.error);
+					}else{
+						LoadTable('cardrivers',6,main_act,"<'F'Cpl>",aJaxURL_cl_car_driver,'','local_id='+$("#local_id").val());
+						$("#table_cardrivers_length").css('top', '2px');
+					    CloseDialog("add-edit-form-car_driver");
+					}
+				}
+	    	}
+	   });
+	});
+	
     $(document).on("click", "#save_insurance_info", function () {
 		param 			= new Object();
 		param.act		= "save_insurance_info";
