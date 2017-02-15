@@ -14,17 +14,18 @@ switch ($action) {
     case 'gel_footer':
         $id	              = $_REQUEST['id'];
         
-        $req = mysql_fetch_array(mysql_query("SELECT  client_loan_schedule.remaining_root,
-                                        			  CASE 
-                                        				  WHEN client_loan_agreement.loan_currency_id = 1 THEN ROUND(client_loan_schedule.remaining_root / client_loan_agreement.exchange_rate,2)
-                                        				  WHEN client_loan_agreement.loan_currency_id = 2 THEN ROUND(client_loan_schedule.remaining_root * client_loan_agreement.exchange_rate,2)
-                                        			  END AS remaining_root_gel,
-                                                      client_loan_agreement.insurance_fee
-                                             FROM     client_loan_schedule
-                                             JOIN     client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
-                                             WHERE    client_loan_agreement.client_id = $id AND client_loan_schedule.`status` = 1
-                                             ORDER BY client_loan_schedule.pay_date DESC
-                                             LIMIT 1"));
+        $req = mysql_fetch_array(mysql_query("SELECT   client_loan_schedule.remaining_root,
+                                        			   CASE 
+                                        				   WHEN client_loan_agreement.loan_currency_id = 1 THEN ROUND(client_loan_schedule.remaining_root / client_loan_agreement.exchange_rate,2)
+                                        				   WHEN client_loan_agreement.loan_currency_id = 2 THEN ROUND(client_loan_schedule.remaining_root * client_loan_agreement.exchange_rate,2)
+                                        			   END AS remaining_root_gel,
+                                                       client_loan_agreement.insurance_fee
+                                              FROM     client_loan_schedule
+                                              JOIN     client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
+                                              WHERE    client_loan_agreement.client_id = $id AND client_loan_schedule.`status` = 1
+                                              ORDER BY client_loan_schedule.pay_date DESC
+                                              LIMIT 1"));
+        
         $data = array("remaining_root" => $req[remaining_root], "remaining_root_gel" => $req[remaining_root_gel], "insurance_fee" => $req[insurance_fee]);
         
     
@@ -219,6 +220,7 @@ switch ($action) {
                                             JOIN   client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
                                             JOIN   money_transactions ON money_transactions.client_loan_schedule_id = client_loan_schedule.id
                                             WHERE  client_loan_agreement.client_id = $id AND client_loan_schedule.actived=1 AND money_transactions.type_id = 1
+    	                                    GROUP BY money_transactions.client_loan_schedule_id
                                             UNION ALL
                                             SELECT  client_loan_schedule.id AS `id`,
                                     				money_transactions.pay_datetime AS sort,
