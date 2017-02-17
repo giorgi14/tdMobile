@@ -385,7 +385,6 @@
 		param 			= new Object();
 		param.act		= "save_client";
 
-		
 		param.id_hidden	          = $('#id_hidden').val();
 		param.local_id	          = $('#local_id').val();
 		
@@ -414,7 +413,6 @@
 		param.client_trust_mail	        = $('#client_trust_mail').val();
 		param.client_trust_fact_address = $('#client_trust_fact_address').val();
 		param.client_trust_jur_address  = $('#client_trust_jur_address').val();
-		
 		param.trusting_number	        = $('#trusting_number').val();
 		param.trusting_date	            = $('#trusting_date').val();
 		param.trusting_notary	        = $('#trusting_notary').val();
@@ -432,7 +430,6 @@
 		param.car_owner               = $('#car_owner').val();
 		param.car_ident               = $('#car_ident').val();
 		param.car_ertificate          = $('#car_ertificate').val();
-		
 		param.car_wheel               = $('#car_wheel').val();
 		param.car_seats               = $('#car_seats').val();
 		param.car_price               = $('#car_price').val();
@@ -440,10 +437,13 @@
 		param.car_insurance_price     = $('#car_insurance_price').val();
 		param.car_ins_start           = $('#car_ins_start').val();
 		param.car_ins_end             = $('#car_ins_end').val();
+		param.car_max_pledge          = $('#car_max_pledge').val();
+		param.shss_number             = $('#shss_number').val();
 		param.carsize                 = $("input[id='carsize']:checked").val();
 		
 		$("#name, #surname, #born_date, #tin, #tin_number,#tin_date,#phone,#fact_address,#jur_address,#ltd_name,#ltd_id,#client_trust_name,client_trust_surname,#client_trust_tin,#client_trust_phone,#client_trust_fact_address,#client_trust_jur_address,#trusting_number,#trusting_date,#trusting_notary,#trusting_notary_address,#trusting_notary_phone,#car_model,#car_born,#car_color,#car_engine,#car_registration_number,#car_ident,#car_ertificate,#agreement_date,#loan_amount,#loan_months,#insurance_fee,#pledge_fee,#monthly_pay,#month_percent,#monthly_pay,#exchange_rate,#penalty_days,#penalty_percent,#penalty_additional_percent,#loan_fee,#proceed_fee,#proceed_percent").css('border','1px solid #42B4E6');
 		$("#loan_agreement_type_chosen, #agreement_type_id_chosen, #car_type_chosen").css('border','');
+
 		//ხელშეკრულების მონაცემები//
 		param.agreement_type_id           = $('#agreement_type_id').val();
 		param.loan_agreement_type	      = $('#loan_agreement_type').val();
@@ -982,8 +982,10 @@
     		            text: "ბეჭდვა",
     		            id: "print-dialog",
     		            click: function () {
-    		            	var local_id = $("#local_id").val();
-    		                local_id  = "&local_id="+local_id+"&file_type="+file_type+"&id_hidden="+$("#id_hidden").val();
+    		            	var local_id          = $("#local_id").val();
+    		            	var acceptance_amount = $("#acceptance_amount").val();
+    		            	
+    		                local_id  = "&local_id="+local_id+"&file_type="+file_type+"&id_hidden="+$("#id_hidden").val()+"&acceptance_amount="+$("#acceptance_amount").val();
     		        		win=window.open("server-side/operations/subtables/print_documents.action.php?"+local_id, "" , "scrollbars=no,toolbar=no,screenx=0,screeny=0,location=no,titlebar=no,directories=no,status=no,menubar=no");
     		            }
     		        },
@@ -992,7 +994,7 @@
     		            id: "download-dialog",
     		            click: function () {
         		            if(file_type != 'payment_schedule'){
-        		            	URL="server-side/operations/subtables/download_doc.php?file_type="+file_type+"&local_id="+$("#local_id").val()+"&file_name="+file_name;
+        		            	URL="server-side/operations/subtables/download_doc.php?file_type="+file_type+"&local_id="+$("#local_id").val()+"&file_name="+file_name + "&acceptance_amount="+$("#acceptance_amount").val();
         		            	open(URL);
         		            }else{
             		            

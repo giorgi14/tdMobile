@@ -57,8 +57,7 @@ switch ($action) {
 
 		$data = array("aaData"	=> array());
 
-		while ( $aRow = mysql_fetch_array( $rResult ) )
-		{
+		while ($aRow = mysql_fetch_array($rResult)){
 			$row = array();
 			for ( $i = 0 ; $i < $count ; $i++ )
 			{
@@ -76,6 +75,7 @@ switch ($action) {
 		$root        = $_REQUEST['root'];
 		$percent     = $_REQUEST['percent'];
 		$penalti_fee = $_REQUEST['penalti_fee'];
+		$surplus     = $_REQUEST['surplus'];
 		$diff        = $_REQUEST['diff'];
 		$type_id     = $_REQUEST['type_id'];
 		$currency_id = $_REQUEST['currency_id'];
@@ -87,7 +87,7 @@ switch ($action) {
 		
 	    if ($id == '') {
 	        //$check = mysql_fetch_assoc(mysql_query(""));
-            Add($hidde_id, $month_fee, $course, $currency_id, $root,  $percent, $penalti_fee, $diff, $type_id);
+            Add($hidde_id, $month_fee, $course, $currency_id, $root,  $percent, $penalti_fee, $surplus, $diff, $type_id);
         }
 		
 		break;
@@ -95,34 +95,39 @@ switch ($action) {
 	case 'get_shedule':
 		$id	     = $_REQUEST['id'];
 		$type_id = $_REQUEST['type_id'];
+		$agr_id  = $_REQUEST['agr_id'];
 		
 		
-    		$res = mysql_fetch_assoc(mysql_query("SELECT client_loan_schedule.id,
-    		                                             client_loan_schedule.pay_amount,
-                                                	     client_loan_schedule.root,
-                                                		 client_loan_schedule.percent,
-                                            		     client_loan_agreement.insurance_fee,
-                                            		     client_loan_agreement.pledge_fee,
-    		                                             client_loan_agreement.loan_currency_id,
-                                            			 CASE 
-                                            				  WHEN DATEDIFF(CURDATE(), client_loan_schedule.pay_date)>0 AND DATEDIFF(CURDATE(), client_loan_schedule.pay_date) <= client_loan_agreement.penalty_days THEN ROUND((client_loan_schedule.remaining_root*(client_loan_agreement.penalty_percent/100))*(DATEDIFF(CURDATE(), client_loan_schedule.pay_date)),2)
-                                            				  WHEN DATEDIFF(CURDATE(), client_loan_schedule.pay_date)>client_loan_agreement.penalty_days THEN ROUND((client_loan_schedule.remaining_root*(client_loan_agreement.penalty_additional_percent/100))*(DATEDIFF(CURDATE(), client_loan_schedule.pay_date)),2)
-                                            			 END AS penalty
-                                                   FROM `client_loan_schedule`
-                                                   JOIN  client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
-                                                   JOIN  client ON client.id = client_loan_agreement.client_id
-                                                   WHERE client.id = $id AND client_loan_schedule.actived = 1 AND client_loan_schedule.`status` != 1
-                                                   ORDER BY pay_date ASC
-                                                   LIMIT 1"));
-    		
-    		$res1 = mysql_fetch_assoc(mysql_query("SELECT SUM(pay_amount) AS pay_amount,
-                                                    	  SUM(pay_root) AS pay_root,
-                                                    	  SUM(pay_percent) AS pay_percent,
-                                                    	  SUM(pay_penalty) AS pay_penalty
-                                                   FROM   money_transactions
-                                                   WHERE  money_transactions.client_loan_schedule_id = $res[id]"));
-    	if ($type_id == 1 || $type_id == 0) {	
-    		$data = array('status' => 1, 'id' => $res[id],'pay_amount' => $res[pay_amount], 'root' => $res[root], 'percent' => $res[percent], 'penalty' => $res[penalty], 'currenc' => currency($res[loan_currency_id]),'pay_amount1' => $res1[pay_amount], 'root1' => $res1[pay_root], 'percent1' => $res1[pay_percent], 'penalty1' => $res1[pay_penalty]);
+		$res = mysql_fetch_assoc(mysql_query("SELECT client_loan_schedule.id,
+		                                             client_loan_schedule.pay_amount,
+                                            	     client_loan_schedule.root,
+                                            		 client_loan_schedule.percent,
+                                        		     client_loan_agreement.insurance_fee,
+                                        		     client_loan_agreement.pledge_fee,
+		                                             client_loan_agreement.loan_currency_id,
+		                                             client_loan_agreement.id AS agrement_id,
+		                                             client.id AS client_id,
+                                        			 CASE 
+		                                                  WHEN client_loan_agreement.loan_type_id =1 AND DATEDIFF(CURDATE(), client_loan_schedule.pay_date)>0 THEN ROUND(client_loan_schedule.percent/(DAY(LAST_DAY(CURDATE())))*(DATEDIFF(CURDATE(), client_loan_schedule.pay_date)),2)
+                                        				  WHEN client_loan_agreement.loan_type_id =2 AND DATEDIFF(CURDATE(), client_loan_schedule.pay_date)>0 AND DATEDIFF(CURDATE(), client_loan_schedule.pay_date) <= client_loan_agreement.penalty_days THEN ROUND((client_loan_schedule.remaining_root*(client_loan_agreement.penalty_percent/100))*(DATEDIFF(CURDATE(), client_loan_schedule.pay_date)),2)
+                                        				  WHEN client_loan_agreement.loan_type_id =2 AND DATEDIFF(CURDATE(), client_loan_schedule.pay_date)>client_loan_agreement.penalty_days THEN ROUND((client_loan_schedule.remaining_root*(client_loan_agreement.penalty_additional_percent/100))*(DATEDIFF(CURDATE(), client_loan_schedule.pay_date)),2)
+                                        			 END AS penalty
+                                               FROM `client_loan_schedule`
+                                               JOIN  client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
+                                               JOIN  client ON client.id = client_loan_agreement.client_id
+                                               WHERE (client_loan_agreement.client_id = '$id' OR client_loan_agreement.id = '$agr_id') AND client_loan_schedule.actived = 1 AND client_loan_schedule.`status` != 1
+                                               ORDER BY pay_date ASC
+                                               LIMIT 1"));
+		
+		$res1 = mysql_fetch_assoc(mysql_query("SELECT SUM(pay_amount) AS pay_amount,
+                                                	  SUM(pay_root) AS pay_root,
+                                                	  SUM(pay_percent) AS pay_percent,
+                                                	  SUM(pay_penalty) AS pay_penalty
+                                               FROM   money_transactions
+                                               WHERE  money_transactions.client_loan_schedule_id = $res[id] AND money_transactions.status in(1,5)"));
+		
+		if ($type_id == 1 || $type_id == 0) {	
+    		$data = array('status' => 1, 'id' => $res[id],'pay_amount' => $res[pay_amount], 'root' => $res[root], 'percent' => $res[percent], 'penalty' => $res[penalty], 'client_data' => client($res[client_id]), 'agrement_data' => client_loan_number($res[agrement_id]), 'currenc' => currency($res[loan_currency_id]),'pay_amount1' => $res1[pay_amount], 'root1' => $res1[pay_root], 'percent1' => $res1[pay_percent], 'penalty1' => $res1[pay_penalty]);
 		}elseif ($type_id == 2){
 		    $data = array('status' => 2, 'id' => $res[id],'insurance_fee' => $res[insurance_fee]);
 		}elseif ($type_id == 3){
@@ -146,37 +151,57 @@ echo json_encode($data);
 * ******************************
 */
 
-function Add($hidde_id, $month_fee, $course, $currency_id, $root,  $percent, $penalti_fee, $diff, $type_id){
+function Add($hidde_id, $month_fee, $course, $currency_id, $root,  $percent, $penalti_fee, $surplus, $diff, $type_id){
     
 	$user_id	= $_SESSION['USERID'];
-	$res = mysql_fetch_assoc(mysql_query("SELECT  ROUND(SUM(pay_amount),2) AS pay_amount,
-                                            	  ROUND(SUM(pay_root),2) AS pay_root,
-                                            	  ROUND(SUM(pay_percent),2) AS pay_percent,
-                                            	  ROUND(SUM(pay_penalty),2) AS pay_penalty
-                                	      FROM    money_transactions
-                                	      WHERE   money_transactions.client_loan_schedule_id = $hidde_id"));
+	$res = mysql_fetch_assoc(mysql_query("SELECT  ROUND(SUM(pay_amount),2) AS pay_amount
+                                          FROM    money_transactions
+                                	      WHERE   money_transactions.client_loan_schedule_id = $hidde_id 
+	                                      AND     money_transactions.status in(1,5)"));
+	
+	$res_p = mysql_fetch_assoc(mysql_query("SELECT  ROUND(SUM(pay_amount),2) AS pay_amount
+                                            FROM    money_transactions
+                                	        WHERE   money_transactions.client_loan_schedule_id = $hidde_id 
+	                                        AND     money_transactions.status = 4"));
 	
 	$res1 = mysql_fetch_assoc(mysql_query("SELECT  client_loan_schedule.pay_amount,
                                             	   CASE
-                                                	   WHEN DATEDIFF(CURDATE(), client_loan_schedule.pay_date)>0 AND DATEDIFF(CURDATE(), client_loan_schedule.pay_date) < client_loan_agreement.penalty_days THEN ROUND((client_loan_schedule.remaining_root*(client_loan_agreement.penalty_percent/100))*(DATEDIFF(CURDATE(), client_loan_schedule.pay_date)),2)
-                                                	   WHEN DATEDIFF(CURDATE(), client_loan_schedule.pay_date)>client_loan_agreement.penalty_days THEN ROUND((client_loan_schedule.remaining_root*(client_loan_agreement.penalty_additional_percent/100))*(DATEDIFF(CURDATE(), client_loan_schedule.pay_date)),2)
+	                                                   WHEN client_loan_agreement.loan_type_id = 1 AND DATEDIFF(CURDATE(), client_loan_schedule.pay_date)>0 THEN ROUND(client_loan_schedule.percent/(DAY(LAST_DAY(CURDATE())))*(DATEDIFF(CURDATE(), client_loan_schedule.pay_date)),2)
+                                                	   WHEN client_loan_agreement.loan_type_id = 2 AND DATEDIFF(CURDATE(), client_loan_schedule.pay_date)>0 AND DATEDIFF(CURDATE(), client_loan_schedule.pay_date) < client_loan_agreement.penalty_days THEN ROUND((client_loan_schedule.remaining_root*(client_loan_agreement.penalty_percent/100))*(DATEDIFF(CURDATE(), client_loan_schedule.pay_date)),2)
+                                                	   WHEN client_loan_agreement.loan_type_id = 2 AND DATEDIFF(CURDATE(), client_loan_schedule.pay_date)>client_loan_agreement.penalty_days THEN ROUND((client_loan_schedule.remaining_root*(client_loan_agreement.penalty_additional_percent/100))*(DATEDIFF(CURDATE(), client_loan_schedule.pay_date)),2)
                                             	   END AS penalty
-                                    	    FROM  `client_loan_schedule`
-	                                        JOIN   client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
-                                    	    WHERE  client_loan_schedule.id = $hidde_id"));
+                                    	   FROM   `client_loan_schedule`
+	                                       JOIN    client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
+                                    	   WHERE   client_loan_schedule.id = $hidde_id"));
 	
-	$all_pay = ROUND($res[pay_amount] + $res[pay_penalty] + round($month_fee,2) + ROUND($penalti_fee,2),2);
+	$all_pay = ROUND($res[pay_amount] + $res_p[pay_amount] + $month_fee + $res1[penalty],2);
 	$all_fee = ROUND($res1[pay_amount] + $res1[penalty],2);
 	
-	if ($all_fee == $all_pay) {
+	if ($all_fee == $all_pay){
 	    
 	    mysql_query("INSERT INTO `money_transactions`
-                    	        (`datetime`, `user_id`, `client_loan_schedule_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `pay_root`, `pay_percent`, `pay_penalty`, `diff`, `type_id`, `status`, `actived`)
+                    	        (`datetime`, `user_id`, `client_loan_schedule_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `pay_root`, `pay_percent`, `pay_penalty`, `surplus`, `diff`, `type_id`, `status`, `actived`)
                     	  VALUES
-                    	        (NOW(), '$user_id', '$hidde_id', curdate(), '$month_fee', '$course', '$currency_id', '$root', '$percent', '$penalti_fee', '$diff', '$type_id', '1','1');");
+                    	        (NOW(), '$user_id', '$hidde_id', curdate(), '$month_fee', '$course', '$currency_id', '$root', '$percent', '', '', '$diff', '$type_id', '1','1');");
+	    
+	    if ($penalti_fee>0){
+	        mysql_query("INSERT INTO `money_transactions`
+                    	        (`datetime`, `user_id`, `client_loan_schedule_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `pay_root`, `pay_percent`, `pay_penalty`, `surplus`, `diff`, `type_id`, `status`, `actived`)
+                    	  VALUES
+                    	        (NOW(), '$user_id', '$hidde_id', curdate(), '$penalti_fee', '$course', '$currency_id', '', '', '$penalti_fee', '', '', '$type_id', '4', '1');");
+	    }
+	    
+	    if ($surplus>0){
+	        mysql_query("INSERT INTO `money_transactions`
+                    	            (`datetime`, `user_id`, `client_loan_schedule_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `pay_root`, `pay_percent`, `pay_penalty`, `surplus`, `diff`, `type_id`, `status`, `actived`)
+                    	      VALUES
+                    	            (NOW(), '$user_id', '$hidde_id', curdate(), '$surplus', '$course', '$currency_id', '', '', '$penalti_fee', '', '$surplus', '$type_id', '5','1');");
+	    }
+	    
 	    mysql_query("UPDATE  `client_loan_schedule`
             	        SET  `status` = '1'
             	      WHERE  `id`     = '$hidde_id'");
+	    
 	}elseif ($all_fee < $all_pay){
 	    $delta = round($all_pay - $all_fee,2);
 	    $month_fee = round($month_fee - $delta,2);
@@ -188,18 +213,18 @@ function Add($hidde_id, $month_fee, $course, $currency_id, $root,  $percent, $pe
 	    
 	    mysql_query("UPDATE  `client_loan_schedule`
         	            SET  `status` = '1'
-        	        WHERE    `id`     = '$hidde_id'");
+        	         WHERE    `id`     = '$hidde_id'");
 	    
 	    $hidde_id = $hidde_id+1;
 	    mysql_query("INSERT INTO `money_transactions`
-                    	        (`datetime`, `user_id`, `client_loan_schedule_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `pay_root`, `pay_percent`, `pay_penalty`, `diff`, `type_id`, `status`, `actived`)
-                    	  VALUES
-                    	        (NOW(), '$user_id', '$hidde_id', curdate(), '$delta', '$course', '$currency_id', '', '', '', '', '4', '1','1');");
+                    	            (`datetime`, `user_id`, `client_loan_schedule_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `pay_root`, `pay_percent`, `pay_penalty`, `surplus`, `diff`, `type_id`, `status`, `actived`)
+                    	      VALUES
+                    	            (NOW(), '$user_id', '$hidde_id', curdate(), '$delta', '$course', '$currency_id', '', '', '', '$delta', '', '$type_id', '5','1');");
 	}else{
 	    mysql_query("INSERT INTO `money_transactions`
-                    	        (`datetime`, `user_id`, `client_loan_schedule_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `pay_root`, `pay_percent`, `pay_penalty`, `diff`, `type_id`, `status`, `actived`)
-                    	  VALUES
-                    	        (NOW(), '$user_id', '$hidde_id', curdate(), '$month_fee', '$course', '$currency_id', '$root', '$percent', '$penalti_fee', '$diff', '$type_id', '1','1');");
+                	            (`datetime`, `user_id`, `client_loan_schedule_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `pay_root`, `pay_percent`, `pay_penalty`, `surplus`, `diff`, `type_id`, `status`, `actived`)
+                	      VALUES
+                	            (NOW(), '$user_id', '$hidde_id', curdate(), '$month_fee', '$course', '$currency_id', '', '', '', '', '$month_fee', '$type_id', '5','1');");
 	}
 }
 
@@ -235,10 +260,11 @@ function currency($id){
 }
 
 function client($id){
-    $req = mysql_query("SELECT id,
+    $req = mysql_query("SELECT client.id,
                                concat(client.`name`,' ',lastname) AS `name`
                         FROM   client
-                        WHERE  client.actived=1");
+                        JOIN   client_loan_agreement ON client.id = client_loan_agreement.client_id
+                        WHERE  client.actived=1 AND client_loan_agreement.status =1");
 
     $data .= '<option value="0" selected="selected">----</option>';
     while( $res = mysql_fetch_assoc($req)){
@@ -246,6 +272,26 @@ function client($id){
             $data .= '<option value="' . $res['id'] . '" selected="selected">' . $res['name'] . '</option>';
         } else {
             $data .= '<option value="' . $res['id'] . '">' . $res['name'] . '</option>';
+        }
+    }
+    return $data;
+}
+
+function client_loan_number($id){
+    $req = mysql_query("SELECT client_loan_agreement.id, 
+                               client_loan_agreement.id
+                        FROM   client_loan_agreement
+                        JOIN   client ON client.id = client_loan_agreement.client_id
+                        WHERE  client_loan_agreement.actived = 1 
+                        AND    client_loan_agreement.`status` = 1 
+                        AND    client.actived = 1");
+
+    $data .= '<option value="0" selected="selected">----</option>';
+    while( $res = mysql_fetch_assoc($req)){
+        if($res['id'] == $id){
+            $data .= '<option value="' . $res['id'] . '" selected="selected">' . $res['id'] . '</option>';
+        } else {
+            $data .= '<option value="' . $res['id'] . '">' . $res['id'] . '</option>';
         }
     }
     return $data;
@@ -319,6 +365,10 @@ function GetPage($res = ''){
     					<td style="width: 190px;">
     						<select id="client_id" calss="label" style="width: 200px;">'.client($res[client_id]).'</select>
     					</td>
+    					<td style="width: 105px;"><label calss="label" style="padding-top: 5px; margin-left: 19px;" for="date">სესხის ნომერი</label></td>
+    					<td style="width: 120px;">
+    						<select id="client_loan_number" calss="label" style="width: 120px;">'.client_loan_number($res[client_id]).'</select>
+    					</td>
     				</tr>
     				<tr style="height:15px;"></tr>
     				<tr>
@@ -330,68 +380,81 @@ function GetPage($res = ''){
     					<td style="width: 190px;">
     						<input style="width: 80px;" id="course" class="label" type="text" value="'.$res['course'].'" '.$disable.'>
     					</td>
+    					<td style="width: 70px;"></td>
+    					<td style="width: 120px;"></td>
     				</tr>
 				</table>
     			<table>
     				<tr style="height:40px;"></tr>
     				<tr>
     					<td style="width: 110px;"><label style="padding-top: 5px;" class="label" for="date">ჩარიცხული თანხა:</label></td>
-                	    <td style="width: 120px;">
+                	    <td style="width: 130px;">
     						<input style="width: 80px;" id="month_fee" class="label" type="text" value="'.$res['pay_amount'].'" '.$disable.'>
     					</td>
-    					<td style="width: 120px;"><label style="padding-top: 5px;" class="label" for="name">სულ შესატანი თანხა:</label></td>
-    					<td style="width: 120px;">
-    						<input style="width: 80px;" id="month_fee1" class="label" type="text" value="'.$res1['pay_amount'].'" disabled="disabled">
-    					</td>
-    				    <td style="width: 140px;"><label style="padding-top: 5px;" class="label" for="name">სულ გადახდილი თანხა:</label></td>
-    					<td style="width: 80px;">
+    					<td style="width: 140px;"><label style="padding-top: 5px;" class="label" for="name">სულ გადახდილი თანხა:</label></td>
+    					<td style="width: 130px;">
     						<input style="width: 80px;" id="month_fee2" class="label" type="text" value="'.$res2['pay_amount'].'" disabled="disabled">
     					</td>
-    	            </tr>
+    					<td style="width: 125px;"><label style="padding-top: 5px;" class="label" for="name">სულ შესატანი თანხა:</label></td>
+    					<td style="width: 80px;">
+    						<input style="width: 80px;" id="month_fee1" class="label" type="text" value="'.$res1['pay_amount'].'" disabled="disabled">
+    					</td>
+    				</tr>
     				<tr style="height:10px;"></tr>
     				<tr style="'.$input_hidde.'">
     					<td style="width: 110px;"><label class="label_label" for="date">ძირი თანხა:</label></td>
-    					<td style="width: 120px;">
+    					<td style="width: 130px;">
     						<input style="width: 80px;" id="root" class="label_label" type="text" value="'.$res['pay_root'].'" '.$disable.'>
     					</td>
     					<td style="width: 120px;"><label style="padding-top: 5px;" class="label_label" for="date">ძირი თანხა:</label></td>
-    					<td style="width: 120px;">
-    						<input style="width: 80px;" id="root1" class="label_label" type="text" value="'.$res1['root'].'" disabled="disabled">
-    					</td>
-    					<td style="width: 140px;"><label style="padding-top: 5px;" class="label_label" for="date">ძირი თანხა:</label></td>
-    					<td style="width: 80px;">
+    					<td style="width: 130px;">
     						<input style="width: 80px;" id="root2" class="label_label" type="text" value="'.$res2['pay_root'].'" disabled="disabled">
+    					</td>
+    					<td style="width: 125px;"><label style="padding-top: 5px;" class="label_label" for="date">ძირი თანხა:</label></td>
+    					<td style="width: 80px;">
+    						<input style="width: 80px;" id="root1" class="label_label" type="text" value="'.$res1['root'].'" disabled="disabled">
     					</td>
     				</tr>
     				<tr style="height:10px;"></tr>
     				<tr style="'.$input_hidde.'">
     					<td style="width: 110px;"><label class="label_label" for="date">პროცენტი:</label></td>
-    					<td style="width: 120px;">
+    					<td style="width: 130px;">
     						<input style="width: 80px;" id="percent" class="label_label" type="text" value="'.$res['pay_percent'].'" '.$disable.'>
     					</td>
     					<td style="width: 120px;"><label style="padding-top: 5px;" class="label_label" for="date">პროცენტი:</label></td>
-    					<td style="width: 120px;">
-    						<input style="width: 80px;"  class="label_label" id="percent1" type="text" value="'.$res1['percent'].'" disabled="disabled">
-    					</td>
-    					<td style="width: 140px;"><label style="padding-top: 5px;" class="label_label" for="date">პროცენტი:</label></td>
-    					<td style="width: 80px;">
+    					<td style="width: 130px;">
     						<input style="width: 80px;"  class="label_label" id="percent2" type="text" value="'.$res2['pay_percent'].'" disabled="disabled">
+    					</td>
+    					<td style="width: 125px;"><label style="padding-top: 5px;" class="label_label" for="date">პროცენტი:</label></td>
+    					<td style="width: 80px;">
+    						<input style="width: 80px;"  class="label_label" id="percent1" type="text" value="'.$res1['percent'].'" disabled="disabled">
     					</td>
     				</tr>
     				<tr style="height:10px;"></tr>
     				<tr style="'.$input_hidde.'">
     					<td style="width: 110px;"><label class="label_label" for="date">ჯარიმა:</label></td>
-    					<td style="width: 120px;">
+    					<td style="width: 130px;">
     						<input class="label_label" style="width: 80px;" id="penalti_fee" type="text" value="'.$res['pay_penalty'].'" '.$disable.'>
     					</td>
     					<td style="width: 120px;"><label style="padding-top: 5px;" class="label_label" for="date">ჯარიმა:</label></td>
-    					<td style="width: 120px;">
-    						<input style="width: 80px;" id="penalti_fee1" class="label_label" type="text" value="'.$res1['penalty'].'" disabled="disabled">
-    					</td>
-    					<td style="width: 140px;"><label style="padding-top: 5px;" class="label_label" for="date">ჯარიმა:</label></td>
-    					<td style="width: 80px;">
+    					<td style="width: 130px;">
     						<input style="width: 80px;" id="penalti_fee2" class="label_label" type="text" value="'.$res2['pay_penalty'].'" disabled="disabled">
     					</td>
+    					<td style="width: 125px;"><label style="padding-top: 5px;" class="label_label" for="date">ჯარიმა:</label></td>
+    					<td style="width: 80px;">
+    						<input style="width: 80px;" id="penalti_fee1" class="label_label" type="text" value="'.$res1['penalty'].'" disabled="disabled">
+    					</td>
+    				</tr>
+    				<tr style="height:10px;"></tr>
+    				<tr style="'.$input_hidde.'">
+    					<td style="width: 110px;"><label class="label_label" for="date">მეტობა</label></td>
+    					<td style="width: 130px;">
+    						<input class="label_label" style="width: 80px;" id="surplus" type="text" value="'.$res['pay_penalty'].'" '.$disable.'>
+    					</td>
+    					<td style="width: 120px;"></td>
+    					<td style="width: 130px;"></td>
+    					<td style="width: 125px;"></td>
+    					<td style="width: 80px;"></td>
     				</tr>
 				</table>
 			</table>

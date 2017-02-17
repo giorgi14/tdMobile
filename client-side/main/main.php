@@ -35,6 +35,10 @@
     							$("#remaining_root").html(data.remaining_root);
     							$("#remaining_root_gel").html(data.remaining_root_gel);
     							$("#insurance_fee").html(data.insurance_fee);
+    							
+    							delta_cource = parseFloat($("#dziri_lari").html()) + parseFloat($("#procenti_lari").html())-parseFloat($("#daricxva_lari").html())-parseFloat($("#gacema_lari").html());
+                            	$("#delta_cource").html(delta_cource);
+                                
     						}
     					}
     			    }

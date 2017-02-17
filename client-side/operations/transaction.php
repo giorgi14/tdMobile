@@ -66,15 +66,17 @@
 		    };
 			/* Dialog Form Selector Name, Buttons Array */
 			if(fname=='add-edit-form'){
-    			GetDialog(fName, 757, "auto", buttons,"top");
+    			GetDialog(fName, 800, "auto", buttons,"top");
     			$('#type_id').chosen();
     	        $('#client_id').chosen();
     	        $('#currency_id').chosen();
+    	        $('#client_loan_number').chosen();
     	        $('#add-edit-form, .add-edit-form-class').css('overflow','visible');
 				if($("#id").val()!=''){
 					$('#currency_id').prop('disabled', true).trigger("chosen:updated");
         	        $('#client_id').prop('disabled', true).trigger("chosen:updated");
         	        $('#type_id').prop('disabled', true).trigger("chosen:updated");
+        	        $('#client_loan_number').prop('disabled', true).trigger("chosen:updated");
 				}
 			}
 		}
@@ -91,6 +93,7 @@
 	    	param.root		    = $("#root").val();
 	    	param.percent		= $("#percent").val();
 	    	param.penalti_fee	= $("#penalti_fee").val();
+	    	param.surplus	    = $("#surplus").val();
 	    	param.type_id	    = $("#type_id").val();
 	    	param.client_id	    = $("#client_id").val();
 	    	
@@ -138,6 +141,7 @@
     		    param.act     = "get_shedule";
     		    
     		    param.id      =  $("#client_id").val();
+    		    param.agr_id  =  $("#client_loan_number").val();
     		    param.type_id =  $(this).val();
     			$.ajax({
     		        url: aJaxURL,
@@ -198,6 +202,7 @@
 	    		    param.act     = "get_shedule";
 	    		    
 	    		    param.id      =  $("#client_id").val();
+	    		    param.agr_id  =  $("#client_loan_number").val();
 	    		    param.type_id =  $(this).val();
 	    			$.ajax({
 	    		        url: aJaxURL,
@@ -262,6 +267,7 @@
 			param         =  new Object();
 		    param.act     = "get_shedule";
 		    param.id      =  $(this).val();
+		    param.agr_id  =  $("#client_loan_number").val();
 		    param.type_id =  $("#type_id").val();
 		    $.ajax({
 		        url: aJaxURL,
@@ -285,6 +291,68 @@
     							$("#hidde_id").val(data.id);
     							$("#currency_id").html(data.currenc).trigger("chosen:updated");
     							$('#currency_id').prop('disabled', true).trigger("chosen:updated");
+    							$('#client_loan_number').html(data.agrement_data).trigger("chosen:updated");
+	    					}else if(data.status==2){
+	    						$("#month_fee1").val(data.insurance_fee);
+	    						$("#root1").val('');
+    							$("#percent1").val('');
+    							$("#penalti_fee1").val('');
+
+    							$("#month_fee2").val('');
+    							$("#root2").val('');
+    							$("#percent2").val('');
+    							$("#penalti_fee2").val('');
+
+    							$("#hidde_id").val(data.id);
+    							$('#currency_id').prop('disabled', false).trigger("chosen:updated");
+    						}else if(data.status==3){
+		    					$("#month_fee1").val(data.pledge_fee);
+		    					$("#root1").val('');
+    							$("#percent1").val('');
+    							$("#penalti_fee1").val('');
+
+    							$("#month_fee2").val('');
+    							$("#root2").val('');
+    							$("#percent2").val('');
+    							$("#penalti_fee2").val('');
+
+    							$("#hidde_id").val(data.id);
+    							$('#currency_id').prop('disabled', false).trigger("chosen:updated");
+    						}
+						}
+					}
+			    }
+		    });
+    	});
+
+		$(document).on("change", "#client_loan_number", function () {
+			param         =  new Object();
+		    param.act     = "get_shedule";
+		    param.agr_id  =  $(this).val();
+		    param.id      =  $("#client_id").val();
+		    $.ajax({
+		        url: aJaxURL,
+			    data: param,
+		        success: function(data) {			        
+					if(typeof(data.error) != 'undefined'){
+						if(data.error != ''){
+							alert(data.error);
+						}else{
+							if(data.status==1){
+    							$("#month_fee1").val(data.pay_amount);
+    							$("#root1").val(data.root);
+    							$("#percent1").val(data.percent);
+    							$("#penalti_fee1").val(data.penalty);
+
+    							$("#month_fee2").val(data.pay_amount1);
+    							$("#root2").val(data.root1);
+    							$("#percent2").val(data.percent1);
+    							$("#penalti_fee2").val(data.penalty1);
+    							
+    							$("#hidde_id").val(data.id);
+    							$("#currency_id").html(data.currenc).trigger("chosen:updated");
+    							$('#currency_id').prop('disabled', true).trigger("chosen:updated");
+    							$('#client_id').html(data.client_data).trigger("chosen:updated");
 	    					}else if(data.status==2){
 	    						$("#month_fee1").val(data.insurance_fee);
 	    						$("#root1").val('');
