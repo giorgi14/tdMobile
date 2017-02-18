@@ -305,6 +305,7 @@
         	$("#table_person_fieldset").show();
         	$("#table_guarantors_fieldset").show();
         }else if(id == 'documents'){
+        	
         	param 	  = new Object();
     		param.act = "get_documentss";
 
@@ -323,11 +324,14 @@
     						alert(data.error);
     					}else{
         					$("#documents_div").html(data.page);
+        					$("#documents_div1").html(data.page1);
     						$("#id_hidden").val(data.local_id);
     					}
     				}
     	    	}
     	   });
+
+           $("#other_documents").show();
         }
         setTimeout(function(){
             if(value==1 || $("#span_status").val()==1){
@@ -928,6 +932,78 @@
         hide_right_side();
     });
 
+    $(document).on("click", "#add_doc", function () {
+    	
+		
+		param          = new Object();
+		
+		param.act      = 'get_other_doc';
+		param.local_id = $("#local_id").val();
+		
+    	$.ajax({
+            url: aJaxURL,
+    	    data: param,
+            success: function(data) {
+            	if(typeof(data.error) != "undefined"){
+					if(data.error != ""){
+						alert(data.error);
+					}else{
+						$("#add-edit-form-other_doc").html(data.page);
+						var buttons = {
+					    	       "save": {
+						            text: "დამატება",
+						            id: "add_other_docs"
+						        },
+					        	"cancel": {
+						            text: "დახურვა",
+						            id: "cancel-dialog",
+						            click: function () {
+						            	$(this).dialog("close");
+						            }
+						        }
+						    };
+						GetDialog("add-edit-form-other_doc", 575, "auto", buttons, 'left+43 top');
+					}
+				}
+    	    }
+        });
+    	
+    });
+
+    $(document).on("click", "#add_other_docs", function () {
+    	param     = new Object();
+		param.act = 'save_other_doc';
+		
+		param.local_id                      = $("#local_id").val();
+		
+		param.receipt_check                 = $("input[id='receipt_check']:checked").val();
+		param.acceptance_act_check          = $("input[id='acceptance_act_check']:checked").val();
+		param.Client_car_confiscation_check = $("input[id='Client_car_confiscation_check']:checked").val();
+		param.approval1_check               = $("input[id='approval1_check']:checked").val();
+		param.execution_pickup_check        = $("input[id='execution_pickup_check']:checked").val();
+		param.b_agreement_check             = $("input[id='b_agreement_check']:checked").val();
+		param.registering_a_car_mogo_check  = $("input[id='registering_a_car_mogo_check']:checked").val();
+		param.pledge_removal_check          = $("input[id='pledge_removal_check']:checked").val();
+		param.add_car_driver_check          = $("input[id='add_car_driver_check']:checked").val();
+		param.rename_payment_system_check   = $("input[id='rename_payment_system_check']:checked").val();
+		param.attachment_check              = $("input[id='attachment_check']:checked").val();
+		
+    	$.ajax({
+            url: aJaxURL,
+    	    data: param,
+            success: function(data) {
+            	if(typeof(data.error) != "undefined"){
+					if(data.error != ""){
+						alert(data.error);
+					}else{
+						$("#documents_div1").html(data.page);
+						CloseDialog("add-edit-form-other_doc");
+					}
+				}
+    	    }
+        });
+    });
+    
     $(document).on("click", "#show_copy_prit_exel", function () {
         if($(this).attr('myvar') == 0){
             $('.ColVis,.dataTable_buttons').css('display','block');
@@ -1025,6 +1101,15 @@
     		        }
     		    };
                	GetDialog("add-edit-form-document", 1200, "auto", buttons, 'left+43 top');
+    		}
+        });
+    }
+    function delete_document(value){
+    	$.ajax({
+            url: aJaxURL,
+            data: "act=delete_other_document&local_id="+$("#local_id").val()+"&value="+value,
+            success: function(data) {
+            	$("#documents_div1").html(data.page);
     		}
         });
     }
@@ -1350,4 +1435,5 @@
     <div  id="add-edit-form-car_driver" class="form-dialog" title="პირი, რომელიც მართავს მანქანას"></div>
     <div id="add-edit-form-img" class="form-dialog" title="ავტომობილის სურათი"></div>
     <div id="add-edit-form-guarantors" class="form-dialog" title="თავდები პირი"></div>
+    <div id="add-edit-form-other_doc" class="form-dialog" title="დამატებითი საბუტები"></div>
 </body>
