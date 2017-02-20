@@ -4,7 +4,7 @@
 		var aJaxURL	          = "server-side/main.action.php";		//server side folder url
 		var tName	          = "table_";													//table name
 		var dialog	          = "add-edit-form";												//form name
-		var colum_number      = 16;
+		var colum_number      = 17;
 	    var main_act          = "get_list";
 	    var change_colum_main = "<'dataTable_buttons'T><'F'Cfipl>";   	
 		$(document).ready(function () {        	
@@ -139,19 +139,20 @@
         <thead>
             <tr id="datatable_header">
                 <th>ID</th>
-                <th style="width: 7%;">თარიღი</th>
-                <th style="width: 9%;">მარკა</th>
+                <th style="width: 6%;">თარიღი</th>
+                <th style="width: 8%;">მარკა</th>
                 <th style="width: 5%;">კოდი</th>
                 <th style="width: 6%;">ს/ხ</th>
                 <th style="width: 7%;">პროცენტი</th>
-                <th style="width: 7%;">ფასი - $</th>
-                <th style="width: 6%;">კურსი</th>
-                <th style="width: 7%;">ფასი - ლ</th>
+                <th style="width: 6%;">ფასი<br>$</th>
+                <th style="width: 5%;">კურსი</th>
+                <th style="width: 6%;">ფასი<br>ლ</th>
                 <th style="width: 7%;">დარიცხ.%<br>$</th>
                 <th style="width: 7%;">დარიცხ.%<br>ლ</th>
-                <th style="width: 5%;">სხვა<br>ხარჯი</th>
-                <th style="width: 7%;">დარჩე-<br>ნილი<br>ვალი<br>$</th>
-                <th style="width: 7%;">დარჩე-<br>ნილი<br>ძირი<br>$</th>
+                <th style="width: 6%;">დარჩე-<br>ნილი<br>ვალი<br>$</th>
+                <th style="width: 6%;">დარჩე-<br>ნილი<br>ვალი<br>ლ</th>
+                <th style="width: 6%;">დარჩე-<br>ნილი<br>ძირი<br>$</th>
+                <th style="width: 6%;">დარჩე-<br>ნილი<br>ძირი<br>ლ</th>
                 <th style="width: 6%;">გაყვანა</th>
                 <th style="width: 6%;">ნაშთი<br>ლარში</th>
             </tr>
@@ -176,7 +177,10 @@
                 <th>
                     <input type="text" name="search_category" value="ფილტრი" class="search_init" />
                 </th>
-               	<th>
+                <th>
+                    <input type="text" name="search_category" value="ფილტრი" class="search_init" />
+                </th>
+                <th>
                     <input type="text" name="search_category" value="ფილტრი" class="search_init" />
                 </th>
                 <th>
