@@ -435,7 +435,7 @@ function GetPage($id){
                         <th style="width: 7%;">ძირის<br>გადახდა<br>დოლარი</th>
                         <th style="width: 7%;">ვალდე-<br>ბულება<br>ლარი</th>
                         <th style="width: 7%;">ვალდე-<br>ბულება<br>დოლარი</th>
-                        <th style="width: 7%;">კურსთა<br>შორისი<br>სხვაონა</th>
+                        <th style="width: 7%;">კურსთა<br>შორისი<br>სხვაობა</th>
                         <th style="width: 7%;">დაზღვევა</th>
                     </tr>
                 </thead>
@@ -528,7 +528,7 @@ function GetPage($id){
                         <th style="width: 7%;">ძირის<br>გადახდა<br>ლარი</th>
                         <th style="width: 7%;">ვალდე-<br>ბულება<br>დოლარი</th>
                         <th style="width: 7%;">ვალდე-<br>ბულება<br>ლარი</th>
-                        <th style="width: 7%;">კურსთა<br>შორისი<br>სხვაონა</th>
+                        <th style="width: 7%;">კურსთა<br>შორისი<br>სხვაობა</th>
                         <th style="width: 7%;">დაზღვევა</th>
         
                     </tr>
