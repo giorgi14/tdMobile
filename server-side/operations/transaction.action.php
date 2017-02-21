@@ -96,7 +96,15 @@ switch ($action) {
 		$id	     = $_REQUEST['id'];
 		$type_id = $_REQUEST['type_id'];
 		$agr_id  = $_REQUEST['agr_id'];
+		$status  = $_REQUEST['status'];
 		
+		if ($status == 1) {
+		    $filt = "AND client_loan_agreement.client_id = $id";
+		}elseif ($status == 2){
+		    $filt = "AND client_loan_agreement.id = $agr_id";
+		}else{
+		    $filt = "AND client_loan_agreement.client_id = $id";
+		}
 		
 		$res = mysql_fetch_assoc(mysql_query("SELECT client_loan_schedule.id,
 		                                             client_loan_schedule.pay_amount,
@@ -113,9 +121,9 @@ switch ($action) {
                                         				  WHEN client_loan_agreement.loan_type_id =2 AND DATEDIFF(CURDATE(), client_loan_schedule.pay_date)>client_loan_agreement.penalty_days THEN ROUND((client_loan_schedule.remaining_root*(client_loan_agreement.penalty_additional_percent/100))*(DATEDIFF(CURDATE(), client_loan_schedule.pay_date)),2)
                                         			 END AS penalty
                                                FROM `client_loan_schedule`
-                                               JOIN  client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
+                                               LEFT JOIN  client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
                                                JOIN  client ON client.id = client_loan_agreement.client_id
-                                               WHERE (client_loan_agreement.client_id = '$id' OR client_loan_agreement.id = '$agr_id') AND client_loan_schedule.actived = 1 AND client_loan_schedule.`status` != 1
+                                               WHERE client_loan_schedule.actived = 1 $filt AND client_loan_schedule.`status` != 1
                                                ORDER BY pay_date ASC
                                                LIMIT 1"));
 		
@@ -264,7 +272,7 @@ function client($id){
                                concat(client.`name`,' ',lastname) AS `name`
                         FROM   client
                         JOIN   client_loan_agreement ON client.id = client_loan_agreement.client_id
-                        WHERE  client.actived=1 AND client_loan_agreement.status =1");
+                        WHERE  client.actived=1 AND client_loan_agreement.status =1 AND client_loan_agreement.canceled_status = 0 ");
 
     $data .= '<option value="0" selected="selected">----</option>';
     while( $res = mysql_fetch_assoc($req)){
@@ -283,7 +291,8 @@ function client_loan_number($id){
                         FROM   client_loan_agreement
                         JOIN   client ON client.id = client_loan_agreement.client_id
                         WHERE  client_loan_agreement.actived = 1 
-                        AND    client_loan_agreement.`status` = 1 
+                        AND    client_loan_agreement.`status` = 1
+                        AND    client_loan_agreement.canceled_status = 0 
                         AND    client.actived = 1");
 
     $data .= '<option value="0" selected="selected">----</option>';

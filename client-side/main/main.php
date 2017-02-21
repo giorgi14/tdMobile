@@ -38,8 +38,7 @@
     							
     							delta_cource = parseFloat($("#dziri_lari").html()) + parseFloat($("#procenti_lari").html())-parseFloat($("#daricxva_lari").html())-parseFloat($("#gacema_lari").html());
                             	$("#delta_cource").html(delta_cource);
-                                
-    						}
+                            }
     					}
     			    }
     		    });

@@ -266,9 +266,9 @@
 		$(document).on("change", "#client_id", function () {
 			param         =  new Object();
 		    param.act     = "get_shedule";
+		    param.status  = 1;
 		    param.id      =  $(this).val();
-		    param.agr_id  =  $("#client_loan_number").val();
-		    param.type_id =  $("#type_id").val();
+		    
 		    $.ajax({
 		        url: aJaxURL,
 			    data: param,
@@ -329,7 +329,8 @@
 			param         =  new Object();
 		    param.act     = "get_shedule";
 		    param.agr_id  =  $(this).val();
-		    param.id      =  $("#client_id").val();
+		    param.status  = 2;
+		    
 		    $.ajax({
 		        url: aJaxURL,
 			    data: param,

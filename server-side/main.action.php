@@ -15,12 +15,12 @@ switch ($action) {
         $id	              = $_REQUEST['id'];
         
         $req = mysql_fetch_array(mysql_query("SELECT   client_loan_agreement.loan_currency_id,
-                                                       client_loan_schedule.remaining_root,
+                                                       ROUND(client_loan_schedule.remaining_root,2) AS remaining_root,
                                         			   CASE 
                                         				   WHEN client_loan_agreement.loan_currency_id = 1 THEN ROUND(client_loan_schedule.remaining_root / client_loan_agreement.exchange_rate,2)
                                         				   WHEN client_loan_agreement.loan_currency_id = 2 THEN ROUND(client_loan_schedule.remaining_root * client_loan_agreement.exchange_rate,2)
                                         			   END AS remaining_root_gel,
-                                                       client_loan_agreement.insurance_fee
+                                                       ROUND(client_loan_agreement.insurance_fee,2) AS insurance_fee
                                               FROM     client_loan_schedule
                                               JOIN     client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
                                               WHERE    client_loan_agreement.client_id = $id AND client_loan_schedule.`status` = 0
@@ -139,7 +139,8 @@ switch ($action) {
                                     FROM     `client`
                                     LEFT JOIN client_loan_agreement ON client_loan_agreement.client_id = `client`.id 
                                     LEFT JOIN client_car ON client_car.client_id = `client`.id 
-                                    WHERE    `client`.actived = 1 ");
+                                    WHERE    `client`.actived = 1 
+		                            ORDER BY client.name");
 
 		$data = array("aaData"	=> array());
 
