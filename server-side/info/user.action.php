@@ -246,20 +246,28 @@ function AddWorker($user_id, $name, $tin, $position, $address, $password, $home_
     
     $persons_id = mysql_insert_id();
     
+    $trust_number = $_REQUEST['trust_number'];
+    $trust_date   = $_REQUEST['trust_date'];
+    
 	mysql_query("INSERT INTO `user_info`
-					(`user_id`, `name`, `tin`, `position_id`, `address`, `home_phone`, `mobile_phone`, `comment`, `file_id`)
+					(`user_id`, `name`, `tin`, `position_id`, `trust_number`, `trust_date`, `address`, `home_phone`, `mobile_phone`, `comment`, `file_id`)
 				 VALUES
-					($persons_id, '$name', '$tin', $position, '$address', '$home_number', '$mobile_number', '$comment', '$file_id')");
+					($persons_id, '$name', '$tin', $position, '$trust_number', '$trust_date', '$address', '$home_number', '$mobile_number', '$comment', '$file_id')");
 
 }
 
 function SaveWorker($persons_id, $user_id, $name, $tin, $position, $address, $password, $home_number, $mobile_number, $comment, $user, $userpassword, $group_permission)
 {
+    $trust_number = $_REQUEST['trust_number'];
+    $trust_date   = $_REQUEST['trust_date'];
+    
 	mysql_query("UPDATE `user_info` SET
                     	`user_id`		= '$persons_id',
                     	`name`			= '$name',
                     	`tin`			= '$tin',
                     	`position_id`	= $position,
+	                    `trust_number`  = '$trust_number',
+	                    `trust_date`    = '$trust_date',
                     	`address`		= '$address',
                     	`home_phone`	= '$home_number',
                     	`mobile_phone`  = '$mobile_number',
@@ -313,6 +321,19 @@ function GetPosition($point)
 	return $data;
 }
 
+function yes_no($point){
+    $data = '';
+    
+    if($point == 1){
+         $data .= '<option value="1" selected="selected">კი</option>';
+         $data .= '<option value="0">არა</option>';
+    }else{
+         $data .= '<option value="1">კი</option>';
+         $data .= '<option value="0" selected="selected">არა</option>';
+    }
+    return $data;
+}
+
 function GetDepart($id){
     $data = '';
     $req = mysql_query("SELECT 	`id`,
@@ -338,6 +359,8 @@ function GetWorker($per_id){
                                     				`user_info`.`name` as `name`,
                                     				`user_info`.`tin` as `tin`,
                                     				`user_info`.`position_id` as `position`,
+                                                    `user_info`.`trust_number` as `trust_number`,
+                                                    `user_info`.`trust_date` as `trust_date`,
                                     				`user_info`.`address` as `address`,
                                     				`file`.`rand_name` as `image`,
                                                     `file`.`id` as `image_id`,
@@ -394,6 +417,13 @@ function GetPage($res = '')
 	}else{
 	    $disable_img = 'disabled';
 	}
+	
+	$hidde = '';
+	$point = 1;
+	if ($res[trust_number] == '') {
+	    $hidde = 'display:none';
+	    $point = 0;
+	}
 	$data = '
 	<div id="dialog-form">
 	    <fieldset>
@@ -416,6 +446,24 @@ function GetPage($res = '')
 					<td style="width: 120px;"><label for="position">თანამდებობა</label></td>
 					<td>
 						<select id="position" class="idls" style="width: 233px;">' . GetPosition($res['position']) . '</select>
+					</td>
+				</tr>
+				<tr>
+					<td style="width: 120px;"><label for="position">მინდობილი პირი</label></td>
+					<td>
+						<select id="company_trust" class="idls" style="width: 233px;">' . yes_no($point) . '</select>
+					</td>
+				</tr>
+			    <tr style="'.$hidde.'" class="trust">
+					<td style="width: 120px;"><label  for="address">მინდობილობა №</label></td>
+					<td>
+						<input type="text" id="trust_number" class="idle address" onblur="this.className=\'idle address\'" onfocus="this.className=\'activeField address\'" value="' . $res['trust_number'] . '" />
+					</td>
+				</tr>
+				<tr style="'.$hidde.'"  class="trust">
+					<td style="width: 120px;"><label for="address">თარიღი</label></td>
+					<td>
+						<input type="text" id="trust_date" class="idle address" onblur="this.className=\'idle address\'" onfocus="this.className=\'activeField address\'" value="' . $res['trust_date'] . '" />
 					</td>
 				</tr>
 				<tr>

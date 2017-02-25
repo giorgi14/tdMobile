@@ -132,7 +132,7 @@ switch ($action) {
                                                 	  SUM(pay_percent) AS pay_percent,
                                                 	  SUM(pay_penalty) AS pay_penalty
                                                FROM   money_transactions
-                                               WHERE  money_transactions.client_loan_schedule_id = $res[id] AND money_transactions.status in(1,5)"));
+                                               WHERE  money_transactions.client_loan_schedule_id = $res[id] AND money_transactions.status in(1, 5)"));
 		
 		if ($type_id == 1 || $type_id == 0) {	
     		$data = array('status' => 1, 'id' => $res[id],'pay_amount' => $res[pay_amount], 'root' => $res[root], 'percent' => $res[percent], 'penalty' => $res[penalty], 'client_data' => client($res[client_id]), 'agrement_data' => client_loan_number($res[agrement_id]), 'currenc' => currency($res[loan_currency_id]),'pay_amount1' => $res1[pay_amount], 'root1' => $res1[pay_root], 'percent1' => $res1[pay_percent], 'penalty1' => $res1[pay_penalty]);
@@ -165,7 +165,7 @@ function Add($hidde_id, $month_fee, $course, $currency_id, $root,  $percent, $pe
 	$res = mysql_fetch_assoc(mysql_query("SELECT  ROUND(SUM(pay_amount),2) AS pay_amount
                                           FROM    money_transactions
                                 	      WHERE   money_transactions.client_loan_schedule_id = $hidde_id 
-	                                      AND     money_transactions.status in(1,5)"));
+	                                      AND     money_transactions.status = 5"));
 	
 	$res_p = mysql_fetch_assoc(mysql_query("SELECT  ROUND(SUM(pay_amount),2) AS pay_amount
                                             FROM    money_transactions
@@ -180,31 +180,23 @@ function Add($hidde_id, $month_fee, $course, $currency_id, $root,  $percent, $pe
                                             	   END AS penalty
                                     	   FROM   `client_loan_schedule`
 	                                       JOIN    client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
-                                    	   WHERE   client_loan_schedule.id = $hidde_id"));
+                                    	   WHERE   client_loan_schedule.id = $hidde_id AND client_loan_schedule.actived = 1"));
 	
-	$all_pay = ROUND($res[pay_amount] + $res_p[pay_amount] + $month_fee + $res1[penalty],2);
-	$all_fee = ROUND($res1[pay_amount] + $res1[penalty],2);
+	$all_pay = ROUND($month_fee,2);
+	$all_fee = ROUND($res1[pay_amount] + $res1[penalty] - $res[pay_amount],2);
 	
 	if ($all_fee == $all_pay){
+	    if ($penalti_fee>0){
+	        mysql_query("INSERT INTO `money_transactions`
+	                                (`datetime`, `user_id`, `client_loan_schedule_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `pay_root`, `pay_percent`, `pay_penalty`, `surplus`, `diff`, `type_id`, `status`, `actived`)
+	                          VALUES
+	                                (NOW(), '$user_id', '$hidde_id', curdate(), '$penalti_fee', '$course', '$currency_id', '', '', '$penalti_fee', '', '', '$type_id', '4', '1');");
+	    }
 	    
 	    mysql_query("INSERT INTO `money_transactions`
                     	        (`datetime`, `user_id`, `client_loan_schedule_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `pay_root`, `pay_percent`, `pay_penalty`, `surplus`, `diff`, `type_id`, `status`, `actived`)
                     	  VALUES
                     	        (NOW(), '$user_id', '$hidde_id', curdate(), '$month_fee', '$course', '$currency_id', '$root', '$percent', '', '', '$diff', '$type_id', '1','1');");
-	    
-	    if ($penalti_fee>0){
-	        mysql_query("INSERT INTO `money_transactions`
-                    	        (`datetime`, `user_id`, `client_loan_schedule_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `pay_root`, `pay_percent`, `pay_penalty`, `surplus`, `diff`, `type_id`, `status`, `actived`)
-                    	  VALUES
-                    	        (NOW(), '$user_id', '$hidde_id', curdate(), '$penalti_fee', '$course', '$currency_id', '', '', '$penalti_fee', '', '', '$type_id', '4', '1');");
-	    }
-	    
-	    if ($surplus>0){
-	        mysql_query("INSERT INTO `money_transactions`
-                    	            (`datetime`, `user_id`, `client_loan_schedule_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `pay_root`, `pay_percent`, `pay_penalty`, `surplus`, `diff`, `type_id`, `status`, `actived`)
-                    	      VALUES
-                    	            (NOW(), '$user_id', '$hidde_id', curdate(), '$surplus', '$course', '$currency_id', '', '', '$penalti_fee', '', '$surplus', '$type_id', '5','1');");
-	    }
 	    
 	    mysql_query("UPDATE  `client_loan_schedule`
             	        SET  `status` = '1'
@@ -212,16 +204,15 @@ function Add($hidde_id, $month_fee, $course, $currency_id, $root,  $percent, $pe
 	    
 	}elseif ($all_fee < $all_pay){
 	    $delta = round($all_pay - $all_fee,2);
-	    $month_fee = round($month_fee - $delta,2);
 	    
 	    mysql_query("INSERT INTO `money_transactions`
                     	        (`datetime`, `user_id`, `client_loan_schedule_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `pay_root`, `pay_percent`, `pay_penalty`, `diff`, `type_id`, `status`, `actived`)
                     	  VALUES
-                    	        (NOW(), '$user_id', '$hidde_id', curdate(), '$month_fee', '$course', '$currency_id', '$root', '$percent', '$penalti_fee', '$diff', '$type_id', '1','1');");
+                    	        (NOW(), '$user_id', '$hidde_id', curdate(), '$all_fee', '$course', '$currency_id', '$root', '$percent', '$penalti_fee', '$diff', '$type_id', '1','1');");
 	    
 	    mysql_query("UPDATE  `client_loan_schedule`
         	            SET  `status` = '1'
-        	         WHERE    `id`     = '$hidde_id'");
+        	         WHERE   `id`     = '$hidde_id'");
 	    
 	    $hidde_id = $hidde_id+1;
 	    mysql_query("INSERT INTO `money_transactions`

@@ -402,30 +402,6 @@ $data .='</ss:Table>
 
 }elseif ($file_type == 'download_insurance'){
     
-    function yes_no($id){
-        
-            $data .= '<option value="0" selected="selected">----</option>';
-        
-            if ($id == '') {
-                $data .= '<option value="1">დიახ</option>';
-                $data .= '<option value="2">არა</option>';
-                $data1='';
-            }else{
-                if($id == 1){
-                    $data .= '<option value="1" selected="selected">დიახ</option>';
-                    $data .= '<option value="2">არა</option>';
-                    
-                    $data1='დიახ';
-                } elseif ($id == 2) {
-                    $data .= '<option value="2" selected="selected">არა</option>';
-                    $data .= '<option value="1">დიახ</option>';
-                    $data1='არა';
-                }
-            }
-        
-            return $data1;
-        }
-    
     $row1 =mysql_fetch_assoc(mysql_query("SELECT    CONCAT(client.name, ' ', client.lastname) AS name,
                                                     client.pid,
                                                     client.actual_address,
@@ -450,28 +426,6 @@ $data .='</ss:Table>
                                                     client_car.certificate_id,
                                                     car_insurance_info.datetime AS car_insurance_info_datetime,
                                                     car_insurance_info.id AS car_insurance_info_id,
-                                                    car_insurance_info.lined_organization_yes_no,
-                                                    car_insurance_info.any_person_Managed_yes_no,
-                                                    car_insurance_info.encased_yes_no,
-                                                    car_insurance_info.signaling_yes_no,
-                                                    car_insurance_info.autotransport_other_protection_yes_no,
-                                                    car_insurance_info.signaling_type,
-                                                    car_insurance_info.driver_disabled_yes_no,
-                                                    car_insurance_info.driver_no_ins_yes_no,
-                                                    car_insurance_info.car_accident_drivers_yes_no,
-                                                    car_insurance_info.guilt_drivers_yes_no,
-                                                    car_insurance_info.injury_passion_ins_yes_no,
-                                                    car_insurance_info.responsible_ins_limit,
-                                                    car_insurance_info.driver_or_passenger_ins_limit,
-                                                    car_insurance_info.public_private_yes_no,
-                                                    car_insurance_info.trade_yes_no,
-                                                    car_insurance_info.trade_yes_no1,
-                                                    car_insurance_info.trade_yes_no2,
-                                                    car_insurance_info.trade_yes_no3,
-                                                    car_insurance_info.trade_yes_no4,
-                                                    car_insurance_info.goods_or_ardware_yes_no,
-                                                    car_insurance_info.Insured_yes_no,
-                                                    car_insurance_info.insurance_company,
                                                     car_insurance_info.insurance_price_gel,
                                                     car_insurance_info.insurance_price_usd,
                                                     car_insurance_info.insurance_start_date,
@@ -482,8 +436,6 @@ $data .='</ss:Table>
                                          LEFT JOIN  car_type ON car_type.id = client_car.type_id
                                          LEFT JOIN  car_insurance_info ON car_insurance_info.client_id = client.id
                                          WHERE      client.id = '$local_id'"));
-    
-    
     
     $req = mysql_query("SELECT `name`,
                 				born_date,
@@ -506,7 +458,7 @@ $data .='</ss:Table>
     					<ss:Data ss:Type="String">'.$row[name].'</ss:Data>
     				</ss:Cell>
     				<ss:Cell>
-    					<ss:Data ss:Type="String">'.$row[position].'</ss:Data>
+    					<ss:Data ss:Type="String"></ss:Data>
     				</ss:Cell>
     				<ss:Cell>
     					<ss:Data ss:Type="String">'.$row[age].'</ss:Data>
@@ -832,7 +784,7 @@ $data .='</ss:Table>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		        <ss:Cell ss:MergeAcross="1" ss:StyleID="headercell">
-					<ss:Data ss:Type="String">'.yes_no($row1['lined_organization_yes_no']).'</ss:Data>
+					<ss:Data ss:Type="String">არა</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 			</ss:Row>
@@ -843,7 +795,7 @@ $data .='</ss:Table>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		        <ss:Cell ss:MergeAcross="1" ss:StyleID="headercell">
-					<ss:Data ss:Type="String">'.yes_no($row1['any_person_Managed_yes_no']).'</ss:Data>
+					<ss:Data ss:Type="String">დიახ</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 			</ss:Row>
@@ -854,7 +806,7 @@ $data .='</ss:Table>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		        <ss:Cell ss:MergeAcross="1" ss:StyleID="headercell">
-					<ss:Data ss:Type="String">'.yes_no($row1['encased_yes_no']).'</ss:Data>
+					<ss:Data ss:Type="String">არა</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 			</ss:Row>
@@ -864,7 +816,7 @@ $data .='</ss:Table>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		        <ss:Cell ss:MergeAcross="1" ss:StyleID="headercell">
-					<ss:Data ss:Type="String">'.yes_no($row1['signaling_yes_no']).'</ss:Data>
+					<ss:Data ss:Type="String">არა</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 			</ss:Row>
@@ -874,7 +826,7 @@ $data .='</ss:Table>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		        <ss:Cell ss:MergeAcross="1" ss:StyleID="headercell">
-					<ss:Data ss:Type="String">'.yes_no($row1['autotransport_other_protection_yes_no']).'</ss:Data>
+					<ss:Data ss:Type="String">არა</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 			</ss:Row>
@@ -884,7 +836,7 @@ $data .='</ss:Table>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		        <ss:Cell ss:MergeAcross="1" ss:StyleID="headercell">
-					<ss:Data ss:Type="String">'.$row1['signaling_type'].'</ss:Data>
+					<ss:Data ss:Type="String"></ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 			</ss:Row>
@@ -900,7 +852,7 @@ $data .='</ss:Table>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		        <ss:Cell ss:MergeAcross="1" ss:StyleID="headercell">
-					<ss:Data ss:Type="String">'.yes_no($row1['driver_disabled_yes_no']).'</ss:Data>
+					<ss:Data ss:Type="String">არა</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 			</ss:Row>
@@ -910,7 +862,7 @@ $data .='</ss:Table>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		        <ss:Cell ss:MergeAcross="1" ss:StyleID="headercell">
-					<ss:Data ss:Type="String">'.yes_no($row1['driver_no_ins_yes_no']).'</ss:Data>
+					<ss:Data ss:Type="String">არა</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 			</ss:Row>
@@ -920,7 +872,7 @@ $data .='</ss:Table>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		        <ss:Cell ss:MergeAcross="1" ss:StyleID="headercell">
-					<ss:Data ss:Type="String">'.yes_no($row1['car_accident_drivers_yes_no']).'</ss:Data>
+					<ss:Data ss:Type="String">არა</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 			</ss:Row>
@@ -930,7 +882,7 @@ $data .='</ss:Table>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		        <ss:Cell ss:MergeAcross="1" ss:StyleID="headercell">
-					<ss:Data ss:Type="String">'.yes_no($row1['guilt_drivers_yes_no']).'</ss:Data>
+					<ss:Data ss:Type="String">არა</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 			</ss:Row>
@@ -956,7 +908,7 @@ $data .='</ss:Table>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		        <ss:Cell ss:MergeAcross="1" ss:StyleID="headercell">
-					<ss:Data ss:Type="String">'.yes_no($row1['injury_passion_ins_yes_no']).'</ss:Data>
+					<ss:Data ss:Type="String">დიახ</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 			</ss:Row>
@@ -966,7 +918,7 @@ $data .='</ss:Table>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		        <ss:Cell ss:MergeAcross="1" ss:StyleID="headercell">
-					<ss:Data ss:Type="String">'.$row1['responsible_ins_limit'].'</ss:Data>
+					<ss:Data ss:Type="String"></ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 			</ss:Row>
@@ -976,7 +928,7 @@ $data .='</ss:Table>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		        <ss:Cell ss:MergeAcross="1" ss:StyleID="headercell">
-					<ss:Data ss:Type="String">'.$row1['driver_or_passenger_ins_limit'].'</ss:Data>
+					<ss:Data ss:Type="String"></ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 			</ss:Row>
@@ -992,7 +944,7 @@ $data .='</ss:Table>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		        <ss:Cell ss:MergeAcross="1" ss:StyleID="headercell">
-					<ss:Data ss:Type="String">'.yes_no($row1['public_private_yes_no']).'</ss:Data>
+					<ss:Data ss:Type="String">დიახ</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 			</ss:Row>
@@ -1002,7 +954,7 @@ $data .='</ss:Table>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		        <ss:Cell ss:MergeAcross="1" ss:StyleID="headercell">
-					<ss:Data ss:Type="String">'.yes_no($row1['trade_yes_no']).'</ss:Data>
+					<ss:Data ss:Type="String"></ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 			</ss:Row>
@@ -1012,7 +964,7 @@ $data .='</ss:Table>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		        <ss:Cell ss:MergeAcross="1" ss:StyleID="headercell">
-					<ss:Data ss:Type="String">'.yes_no($row1['trade_yes_no1']).'</ss:Data>
+					<ss:Data ss:Type="String">დიახ</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 			</ss:Row>
@@ -1022,7 +974,7 @@ $data .='</ss:Table>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		        <ss:Cell ss:MergeAcross="1" ss:StyleID="headercell">
-					<ss:Data ss:Type="String">'.yes_no($row1['trade_yes_no2']).'</ss:Data>
+					<ss:Data ss:Type="String">დიახ</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 			</ss:Row>
@@ -1032,7 +984,7 @@ $data .='</ss:Table>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		        <ss:Cell ss:MergeAcross="1" ss:StyleID="headercell">
-					<ss:Data ss:Type="String">'.yes_no($row1['trade_yes_no3']).'</ss:Data>
+					<ss:Data ss:Type="String">დიახ</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 			</ss:Row>
@@ -1042,7 +994,7 @@ $data .='</ss:Table>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		        <ss:Cell ss:MergeAcross="1" ss:StyleID="headercell">
-					<ss:Data ss:Type="String">'.yes_no($row1['trade_yes_no4']).'</ss:Data>
+					<ss:Data ss:Type="String">დიახ</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 			</ss:Row>
@@ -1052,7 +1004,7 @@ $data .='</ss:Table>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		        <ss:Cell ss:MergeAcross="1" ss:StyleID="headercell">
-					<ss:Data ss:Type="String">'.yes_no($row1['goods_or_ardware_yes_no']).'</ss:Data>
+					<ss:Data ss:Type="String">დიახ</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 			</ss:Row>
@@ -1068,7 +1020,7 @@ $data .='</ss:Table>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		        <ss:Cell ss:MergeAcross="1" ss:StyleID="headercell">
-					<ss:Data ss:Type="String">'.yes_no($row1['Insured_yes_no']).'</ss:Data>
+					<ss:Data ss:Type="String">დიახ</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 			</ss:Row>
@@ -1078,7 +1030,7 @@ $data .='</ss:Table>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		        <ss:Cell ss:MergeAcross="3" ss:StyleID="headercell">
-					<ss:Data ss:Type="String">სადაზღვეო კომპანია "'.$row1['insurance_company'].'"</ss:Data>
+					<ss:Data ss:Type="String">სადაზღვეო კომპანია "ალდაგი"</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 			</ss:Row>

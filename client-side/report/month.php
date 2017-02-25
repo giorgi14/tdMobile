@@ -4,67 +4,24 @@
 		var aJaxURL	          = "server-side/report/month.action.php";		//server side folder url
 		var tName	          = "table_";													//table name
 		var dialog	          = "add-edit-form";												//form name
-		var colum_number      = 17;
+		var colum_number      = 13;
 	    var main_act          = "get_list";
 	    var change_colum_main = "<'dataTable_buttons'T><'F'Cfipl>";   	
-		$(document).ready(function () {        	
+		$(document).ready(function () {
+			$("#filt_month").chosen();
 			LoadTable("example",colum_number,'get_list',change_colum_main,aJaxURL);	
-			SetEvents("", "", "", tName+'example', dialog, aJaxURL,'','example',colum_number,main_act,change_colum_main,aJaxURL,'');
- 		});
-        
-		function LoadTable(tbl,num,act,change_colum_main,aJaxURL){
+		});
+		
+        function LoadTable(tbl,num,act,change_colum_main,aJaxURL){
 			var dLength = [[50, -1], [50, "ყველა"]];
-			
-			if(tbl == 'letter'){
-				var total =	[4,5,6,7,8,9,10,11,12,13];
-				GetDataTable1(tName+tbl, aJaxURL, act, num, "&id="+$("#id").val()+"&loan_currency_id="+$("#loan_currency_id").val(), 0, dLength, 1, "asc", total, change_colum_main);
-				
-				param 		            = new Object();
-			    param.act	            = "gel_footer";
-			    param.id	            = $("#id").val();
-			    param.loan_currency_id	= $("#loan_currency_id").val();
-			    
-				$.ajax({
-    		        url: aJaxURL,
-    			    data: param,
-    		        success: function(data) {			        
-    					if(typeof(data.error) != 'undefined'){
-    						if(data.error != ''){
-    							alert(data.error);
-    						}else{
-    							$("#remaining_root").html(data.remaining_root);
-    							$("#remaining_root_gel").html(data.remaining_root_gel);
-    							$("#insurance_fee").html(data.insurance_fee);
-    							
-    							delta_cource = parseFloat($("#dziri_lari").html()) + parseFloat($("#procenti_lari").html())-parseFloat($("#daricxva_lari").html())-parseFloat($("#gacema_lari").html());
-                            	$("#delta_cource").html(delta_cource);
-                            }
-    					}
-    			    }
-    		    });
-			}else{
-				GetDataTable1(tName+tbl, aJaxURL, act, num, "&id="+$("#id").val()+"&loan_currency_id="+$("#loan_currency_id").val(), 0, dLength, 1, "asc", "", change_colum_main);
-			}
+			GetDataTable1(tName+tbl, aJaxURL, act, num, "&filt_month="+$("#filt_month").val(), 0, dLength, 1, "asc", "", change_colum_main);
 			$("#table_letter_length").css('top', '2px');
 			setTimeout(function(){$('.ColVis, .dataTable_buttons').css('display','none');}, 90);
 		}
 
-		function LoadDialog(fName){
-	        if(fName == 'add-edit-form'){
-	        	var buttons = {
-	        			"cancel": {
-	    		            text: "დახურვა",
-	    		            id: "cancel-dialog",
-	    		            click: function () {
-	    		            	$(this).dialog("close");
-	    		            }
-	    		        }
-	    		    };
-	            GetDialog(fName, 1262, "auto", buttons, 'left+43 top');
-	            LoadTable('letter', 17, 'get_list1', "<'F'Cpl>", aJaxURL, '');
-	            
-	        }
-	    }
+        $(document).on("change", "#filt_month", function () {
+        	LoadTable("example",colum_number,'get_list',change_colum_main,aJaxURL);	 
+	    });
 	    
 	    $(document).on("click", "#show_copy_prit_exel", function () {
 	        if($(this).attr('myvar') == 0){
@@ -79,8 +36,8 @@
 	            $(this).attr('myvar','0');
 	        }
 	    });
-	   
-    </script>
+	    
+	</script>
     <style type="text/css">
         #table_right_menu{
             position: relative;
@@ -123,37 +80,60 @@
 <div id="tabs" style="width: 95%">
 <div class="callapp_head">თვეების მიხედვით<hr class="callapp_head_hr"></div>
 <div id="button_area">
+	<select id="filt_month" style="width:  130px;">
+		<?php 
+		
+    		mysql_connect('192.168.11.10','root','Gl-1114');
+    		mysql_select_db('tdmobile');
+    		mysql_set_charset ( 'utf8');
+		
+		    $c_date	= date('m');
+            $req = mysql_query("SELECT id,
+                                      `name`
+                                FROM   month");
+
+            while( $res = mysql_fetch_assoc($req)){
+                if($res['id'] == $c_date){
+                    $data .= '<option value="' . $res['id'] . '" selected="selected">' . $res['name'] . '</option>';
+                } else {
+                    $data .= '<option value="' . $res['id'] . '">' . $res['name'] . '</option>';
+                }
+            }
+            
+            echo $data;
+		 ?>
+	</select>
 </div>
 <table id="table_right_menu">
-<tr>
-<td style="cursor: pointer;padding: 4px;border-right: 1px solid #E6E6E6;background:#2681DC;"><img alt="table" src="media/images/icons/table_w.png" height="14" width="14">
-</td>
-<td style="cursor: pointer;padding: 4px;border-right: 1px solid #E6E6E6;"><img alt="log" src="media/images/icons/log.png" height="14" width="14">
-</td>
-<td style="cursor: pointer;padding: 4px;" id="show_copy_prit_exel" myvar="0"><img alt="link" src="media/images/icons/select.png" height="14" width="14">
-</td>
-</tr>
+    <tr>
+        <td style="cursor: pointer;padding: 4px;border-right: 1px solid #E6E6E6;background:#2681DC;">
+        	<img alt="table" src="media/images/icons/table_w.png" height="14" width="14">
+        </td>
+        <td style="cursor: pointer;padding: 4px;border-right: 1px solid #E6E6E6;">
+        	<img alt="log" src="media/images/icons/log.png" height="14" width="14">
+        </td>
+        <td style="cursor: pointer;padding: 4px;" id="show_copy_prit_exel" myvar="0">
+        	<img alt="link" src="media/images/icons/select.png" height="14" width="14">
+        </td>
+    </tr>
 </table>
+
     <table class="display" id="table_example" >
         <thead>
             <tr id="datatable_header">
                 <th>ID</th>
                 <th style="width: 6%;">თარიღი</th>
-                <th style="width: 8%;">მარკა</th>
-                <th style="width: 5%;">კოდი</th>
-                <th style="width: 6%;">ს/ხ</th>
-                <th style="width: 7%;">პროცენტი</th>
-                <th style="width: 6%;">ფასი<br>$</th>
-                <th style="width: 5%;">კურსი</th>
-                <th style="width: 6%;">ფასი<br>ლ</th>
-                <th style="width: 7%;">დარიცხ.%<br>$</th>
-                <th style="width: 7%;">დარიცხ.%<br>ლ</th>
-                <th style="width: 6%;">დარჩე-<br>ნილი<br>ვალი<br>$</th>
-                <th style="width: 6%;">დარჩე-<br>ნილი<br>ვალი<br>ლ</th>
-                <th style="width: 6%;">დარჩე-<br>ნილი<br>ძირი<br>$</th>
-                <th style="width: 6%;">დარჩე-<br>ნილი<br>ძირი<br>ლ</th>
-                <th style="width: 6%;">გაყვანა</th>
-                <th style="width: 6%;">ნაშთი<br>ლარში</th>
+                <th style="width: 14%;">სახელი, გვარი</th>
+                <th style="width: 7%;">კოდი</th>
+                <th style="width: 7%;">ს/ხ</th>
+                <th style="width: 7%;">სესხი</th>
+                <th style="width: 9%;">დარიცხვის<br>თარიღი</th>
+                <th style="width: 9%;">დარიცხული<br>პროცენტი</th>
+                <th style="width: 9%;">გადახდის<br>თარიღი</th>
+                <th style="width: 9%;">გადახდილი<br>თანხა</th>
+                <th style="width: 8%;">ძირის<br>დაფარვის<br>თარიღი</th>
+                <th style="width: 8%;">ძირის<br>თანხა</th>
+                <th style="width: 7%;">ნაშთი</th>
             </tr>
         </thead>
         <thead>
@@ -161,18 +141,6 @@
                 <th class="colum_hidden">
                     <input type="text" name="search_category" value="ფილტრი" class="search_init" />
                 </th>                
-                <th>
-                    <input type="text" name="search_category" value="ფილტრი" class="search_init" />
-                </th>
-                <th>
-                    <input type="text" name="search_category" value="ფილტრი" class="search_init" />
-                </th>
-                <th>
-                    <input type="text" name="search_category" value="ფილტრი" class="search_init" />
-                </th>
-                <th>
-                    <input type="text" name="search_category" value="ფილტრი" class="search_init" />
-                </th>
                 <th>
                     <input type="text" name="search_category" value="ფილტრი" class="search_init" />
                 </th>

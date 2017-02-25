@@ -37,7 +37,6 @@ switch ($action) {
 
         $rResult = mysql_query("SELECT client_car_drivers.id,
                                 	   client_car_drivers.name,
-                                       client_car_drivers.position,
                                 	   client_car_drivers.born_date,
                                        client_car_drivers.driving_license_type,
                                        client_car_drivers.driving_license_date
@@ -68,9 +67,9 @@ switch ($action) {
     case 'save_car_drivers':
         
         if($car_driver_hidde == ''){
-            insert($user_id, $local_id, $name, $position, $born,$license_type,$license_born);
+            insert($user_id, $local_id, $name, $born,$license_type,$license_born);
         }else{
-            update($car_driver_hidde, $user_id, $name, $position, $born,$license_type,$license_born);
+            update($car_driver_hidde, $user_id, $name, $born,$license_type,$license_born);
         }
         break;
     default:
@@ -81,17 +80,16 @@ $data['error'] = $error;
 
 echo json_encode($data);
 
-function insert($user_id, $local_id, $name, $position, $born,$license_type,$license_born){
+function insert($user_id, $local_id, $name, $born,$license_type,$license_born){
     mysql_query("INSERT INTO `client_car_drivers` 
-						(`user_id`, `datetime`, `client_id`, `name`, `position`, `born_date`, `driving_license_type`, `driving_license_date`) 
+						(`user_id`, `datetime`, `client_id`, `name`, `born_date`, `driving_license_type`, `driving_license_date`) 
 					VALUES 
-					('$user_id', NOW(), '$local_id', '$name', '$position', '$born', '$license_type', '$license_born')");
+					('$user_id', NOW(), '$local_id', '$name', '$born', '$license_type', '$license_born')");
 }
 
-function update($car_driver_hidde, $user_id, $name, $position, $born,$license_type,$license_born){
+function update($car_driver_hidde, $user_id, $name, $born,$license_type,$license_born){
    mysql_query("UPDATE `client_car_drivers`
                     SET `name`                 = '$name',
-                        `position`             = '$position',
                         `born_date`            = '$born',
                         `driving_license_type` = '$license_type',
                         `driving_license_date` = '$license_born'
@@ -120,11 +118,6 @@ function GetPage($res){
             	       <tr>
                            <td style="width: 150px;"><label for="datetime">სახელი, გვარი</label></td>
                            <td style="width: 275px;"><input style="width: 275px;" id="car_driver_name" type="text" value="'.$res[name].'"></td>
-            	       </tr>
-                       <tr style="height:15px;"></tr>
-                       <tr>
-                           <td style="width: 150px;"><label for="pet_num">თანამდებობა</label></td>
-                           <td style="width: 275px;"><input style="width: 275px;" id="car_driver_position" type="text" value="'.$res[position].'"></td>
             	       </tr>
                        <tr style="height:15px;"></tr>
                        <tr>

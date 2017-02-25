@@ -49,6 +49,8 @@
 				}
 			});
 			$('#position').chosen({ search_contains: true });
+			$('#company_trust').chosen({ search_contains: true });
+			
 		}
 
 	    // Add - Save
@@ -68,6 +70,13 @@
 		    param.pas	  = $("#password").val();
 		    param.h_n	  = $("#home_number").val();
 		    param.m_n	  = $("#mobile_number").val();
+		    if($("#company_trust").val()==0){
+		    	$("#trust_number").val('');
+		    	$("#trust_date").val('')
+			}
+		    param.trust_number = $("#trust_number").val();
+		    param.trust_date   = $("#trust_date").val();
+		    
 		    param.comm	  = $("#comment").val();
 
 		    param.user	  = $("#user").val();
@@ -101,6 +110,14 @@
 
 		});
 
+		$(document).on("change", "#company_trust", function () {
+		    if($(this).val()==0){
+			    $(".trust").css('display','none');
+			}else{
+				$(".trust").css('display','');
+			}
+		});
+		
 	    $(document).on("click", "#choose_button", function () {
 		    $("#choose_file").click();
 		});

@@ -222,7 +222,7 @@
      		GetDate('car_ins_end');
      		GetDate('born_date');
      		GetDate('tin_date');
-     		GetDate('car_born');
+     		//GetDate('car_born');
      		GetDate('insurance_start_date');
      		GetDate('insurance_end_date');
             if($("#local_id").val()==''){
@@ -273,9 +273,9 @@
          	}, 50);
          	
             setTimeout(function(){
-         		LoadTable('cardrivers',6,main_act,"<'F'Cpl>",aJaxURL_cl_car_driver, '', 'local_id='+$("#local_id").val());
+         		LoadTable('cardrivers',5,main_act,"<'F'Cpl>",aJaxURL_cl_car_driver, '', 'local_id='+$("#local_id").val());
          		$("#table_cardrivers_length").css('top', '2px');
-         		SetEvents("add_button_cardriver", "delete_button_cardriver", "check-all_car_driver", tName+'cardrivers', 'add-edit-form-car_driver', aJaxURL_cl_car_driver,'','cardrivers',6,main_act,"<'F'Cpl>",aJaxURL_cl_car_driver,'');
+         		SetEvents("add_button_cardriver", "delete_button_cardriver", "check-all_car_driver", tName+'cardrivers', 'add-edit-form-car_driver', aJaxURL_cl_car_driver,'','cardrivers',5,main_act,"<'F'Cpl>",aJaxURL_cl_car_driver,'');
             	GetButtons("add_button_cardriver","delete_button_cardriver");
          	}, 50);
          	
@@ -431,9 +431,11 @@
         $('#car_type').chosen();
         $('#loan_agreement_type').chosen();
         $('#agreement_type_id').chosen();
+        $('#responsible_user_id').chosen();
         $('#loan_currency').chosen();
         $('#car_type_chosen').css('width', '206px');
         $('#loan_agreement_type_chosen').css('width', '200px');
+        $('#responsible_user_id_chosen').css('width', '200px');
         $('#agreement_type_id_chosen').css('width', '332px');
         $('#loan_currency_chosen').css('width', '130px');
         $('#choose_button').button();
@@ -527,10 +529,11 @@
 		param.car_ins_end             = $('#car_ins_end').val();
 		param.car_max_pledge          = $('#car_max_pledge').val();
 		param.shss_number             = $('#shss_number').val();
+		param.tech_test_price         = $('#tech_test_price').val();
 		param.carsize                 = $("input[id='carsize']:checked").val();
 		
 		$("#name, #surname, #born_date, #tin, #tin_number,#tin_date,#phone,#fact_address,#jur_address,#ltd_name,#ltd_id,#client_trust_name,client_trust_surname,#client_trust_tin,#client_trust_phone,#client_trust_fact_address,#client_trust_jur_address,#trusting_number,#trusting_date,#trusting_notary,#trusting_notary_address,#trusting_notary_phone,#car_model,#car_born,#car_color,#car_engine,#car_registration_number,#car_ident,#car_ertificate,#agreement_date,#loan_amount,#loan_months,#insurance_fee,#pledge_fee,#monthly_pay,#month_percent,#monthly_pay,#exchange_rate,#penalty_days,#penalty_percent,#penalty_additional_percent,#loan_fee,#proceed_fee,#proceed_percent").css('border','1px solid #42B4E6');
-		$("#loan_agreement_type_chosen, #agreement_type_id_chosen, #car_type_chosen").css('border','');
+		$("#responsible_user_id, #loan_agreement_type_chosen, #agreement_type_id_chosen, #car_type_chosen").css('border','');
 
 		//ხელშეკრულების მონაცემები//
 		param.agreement_type_id           = $('#agreement_type_id').val();
@@ -555,6 +558,7 @@
 		param.loan_currency               = $('#loan_currency').val();
 		param.oris_code                   = $('#oris_code').val();
 		param.loan_beforehand_percent     = $('#loan_beforehand_percent').val();
+		param.responsible_user_id         = $('#responsible_user_id').val();
 		
 		if(param.name == ''){
 			alert('შეავსეთ "სახელი"');
@@ -690,6 +694,9 @@
 		}else if(param.penalty_additional_percent == ''){
 			alert('შეავსეთ "ვადაგადაც. პირგასამტეხლო%"');
 			$("#penalty_additional_percent").css('border','1px solid #F44336');
+		}else if(param.responsible_user_id == 0){
+			alert('შეავსეთ "ხელმომწერი პირი"');
+			$("#responsible_user_id").css('border','1px solid #F44336');
 		}else{
     		$.ajax({
     	        url: aJaxURL,
@@ -966,7 +973,7 @@
 					if(data.error != ""){
 						alert(data.error);
 					}else{
-						LoadTable('cardrivers',6,main_act,"<'F'Cpl>",aJaxURL_cl_car_driver,'','local_id='+$("#local_id").val());
+						LoadTable('cardrivers',5,main_act,"<'F'Cpl>",aJaxURL_cl_car_driver,'','local_id='+$("#local_id").val());
 						$("#table_cardrivers_length").css('top', '2px');
 					    CloseDialog("add-edit-form-car_driver");
 					}
@@ -982,28 +989,6 @@
 		param.local_id 								= $("#local_id").val();
 		param.car_insurance_info_hidde	            = $("#car_insurance_info_hidde").val();
 		
-		param.lined_organization_yes_no	            = $('#lined_organization_yes_no').val();
-		param.any_person_Managed_yes_no	            = $('#any_person_Managed_yes_no').val();
-		param.encased_yes_no	                    = $('#encased_yes_no').val();
-		param.signaling_yes_no	                    = $('#signaling_yes_no').val();
-		param.autotransport_other_protection_yes_no	= $('#autotransport_other_protection_yes_no').val();
-		param.signaling_type	                    = $('#signaling_type').val();
-		param.driver_disabled_yes_no	            = $('#driver_disabled_yes_no').val();
-		param.driver_no_ins_yes_no	                = $('#driver_no_ins_yes_no').val();
-		param.car_accident_drivers_yes_no	        = $('#car_accident_drivers_yes_no').val();
-		param.guilt_drivers_yes_no	                = $('#guilt_drivers_yes_no').val();
-		param.injury_passion_ins_yes_no	            = $('#injury_passion_ins_yes_no').val();
-		param.responsible_ins_limit	                = $('#responsible_ins_limit').val();
-		param.driver_or_passenger_ins_limit	        = $('#driver_or_passenger_ins_limit').val();
-		param.public_private_yes_no	                = $('#public_private_yes_no').val();
-		param.trade_yes_no	                        = $('#trade_yes_no').val();
-		param.trade_yes_no1	                        = $('#trade_yes_no1').val();
-		param.trade_yes_no2	                        = $('#trade_yes_no2').val();
-		param.trade_yes_no3	                        = $('#trade_yes_no3').val();
-		param.trade_yes_no4	                        = $('#trade_yes_no4').val();
-		param.goods_or_ardware_yes_no	            = $('#goods_or_ardware_yes_no').val();
-		param.Insured_yes_no	                    = $('#Insured_yes_no').val();
-		param.insurance_company	                    = $('#insurance_company').val();
 		param.insurance_price_gel	                = $('#insurance_price_gel').val();
 		param.insurance_price_usd	                = $('#insurance_price_usd').val();
 		param.insurance_start_date	                = $('#insurance_start_date').val();
@@ -1122,6 +1107,14 @@
     
 	$(document).on("change", "#agreement_type_id", function () {
 
+		if($(this).val() == 1 || $(this).val() == 4 || $(this).val() == 6 || $(this).val() == 8 || $(this).val() == 9 || $(this).val() == 11){
+			$("#rs_message_number").css('display', 'block');
+			$(".rs_message_number").css('display', 'block');
+		}else{
+			$("#rs_message_number").css('display', 'none');
+			$(".rs_message_number").css('display', 'none');
+		}
+		
 		param 			          = new Object();
 		
         param.act                 = 'get_default';
