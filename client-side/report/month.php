@@ -9,17 +9,22 @@
 	    var change_colum_main = "<'dataTable_buttons'T><'F'Cfipl>";   	
 		$(document).ready(function () {
 			$("#filt_month").chosen();
+			$("#filt_year").chosen();
 			LoadTable("example",colum_number,'get_list',change_colum_main,aJaxURL);	
 		});
 		
         function LoadTable(tbl,num,act,change_colum_main,aJaxURL){
 			var dLength = [[50, -1], [50, "ყველა"]];
-			GetDataTable1(tName+tbl, aJaxURL, act, num, "&filt_month="+$("#filt_month").val(), 0, dLength, 1, "asc", "", change_colum_main);
+			GetDataTable1(tName+tbl, aJaxURL, act, num, "&filt_month="+$("#filt_month").val()+"&filt_year="+$("#filt_year").val(), 0, dLength, 1, "asc", "", change_colum_main);
 			$("#table_letter_length").css('top', '2px');
 			setTimeout(function(){$('.ColVis, .dataTable_buttons').css('display','none');}, 90);
 		}
 
         $(document).on("change", "#filt_month", function () {
+        	LoadTable("example",colum_number,'get_list',change_colum_main,aJaxURL);	 
+	    });
+
+        $(document).on("change", "#filt_year", function () {
         	LoadTable("example",colum_number,'get_list',change_colum_main,aJaxURL);	 
 	    });
 	    
@@ -83,8 +88,8 @@
 	<select id="filt_month" style="width:  130px;">
 		<?php 
 		
-    		mysql_connect('192.168.11.10','root','Gl-1114');
-    		mysql_select_db('tdmobile');
+    		mysql_connect('212.72.155.176','root','Gl-1114');
+    		mysql_select_db('tgmobile');
     		mysql_set_charset ( 'utf8');
 		
 		    $c_date	= date('m');
@@ -101,6 +106,28 @@
             }
             
             echo $data;
+		 ?>
+	</select>
+	<select id="filt_year" style="width:  75px;">
+		<?php 
+		
+    		mysql_connect('212.72.155.176','root','Gl-1114');
+    		mysql_select_db('tgmobile');
+    		mysql_set_charset ( 'utf8');
+    		
+            $req = mysql_fetch_assoc(mysql_query("SELECT YEAR(CURDATE())+1 AS `year`,
+                                                         YEAR(CURDATE()) AS `cur_year`"));
+            $year = $req['year'];
+            for ($i=0; $i<=37; $i++){
+                $year --; 
+                if($req['cur_year'] == $year){
+                    $data1 .= '<option value="' . $year . '" selected="selected">' . $year . '</option>';
+                } else {
+                    $data1 .= '<option value="' . $year . '">' . $year . '</option>';
+                }
+            }
+            
+            echo $data1;
 		 ?>
 	</select>
 </div>

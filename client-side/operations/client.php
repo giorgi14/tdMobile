@@ -532,7 +532,7 @@
 		param.tech_test_price         = $('#tech_test_price').val();
 		param.carsize                 = $("input[id='carsize']:checked").val();
 		
-		$("#name, #surname, #born_date, #tin, #tin_number,#tin_date,#phone,#fact_address,#jur_address,#ltd_name,#ltd_id,#client_trust_name,client_trust_surname,#client_trust_tin,#client_trust_phone,#client_trust_fact_address,#client_trust_jur_address,#trusting_number,#trusting_date,#trusting_notary,#trusting_notary_address,#trusting_notary_phone,#car_model,#car_born,#car_color,#car_engine,#car_registration_number,#car_ident,#car_ertificate,#agreement_date,#loan_amount,#loan_months,#insurance_fee,#pledge_fee,#monthly_pay,#month_percent,#monthly_pay,#exchange_rate,#penalty_days,#penalty_percent,#penalty_additional_percent,#loan_fee,#proceed_fee,#proceed_percent").css('border','1px solid #42B4E6');
+		$("#name, #surname, #born_date, #tin, #tin_number,#tin_date,#phone,#fact_address,#jur_address,#ltd_name,#ltd_id,#client_trust_name,client_trust_surname,#client_trust_tin,#client_trust_phone,#client_trust_fact_address,#client_trust_jur_address,#trusting_number,#trusting_date,#trusting_notary,#trusting_notary_address,#trusting_notary_phone,#agreement_date,#loan_amount,#loan_months,#insurance_fee,#pledge_fee,#monthly_pay,#month_percent,#monthly_pay,#exchange_rate,#penalty_days,#penalty_percent,#penalty_additional_percent,#loan_fee,#proceed_fee,#proceed_percent").css('border','1px solid #42B4E6');
 		$("#responsible_user_id, #loan_agreement_type_chosen, #agreement_type_id_chosen, #car_type_chosen").css('border','');
 
 		//ხელშეკრულების მონაცემები//
@@ -559,6 +559,12 @@
 		param.oris_code                   = $('#oris_code').val();
 		param.loan_beforehand_percent     = $('#loan_beforehand_percent').val();
 		param.responsible_user_id         = $('#responsible_user_id').val();
+
+		param.hidde_loan_amount           = $('#hidde_loan_amount').val();
+		param.hidde_loan_months           = $('#hidde_loan_months').val();
+		param.hidde_agreement_datetime    = $('#hidde_agreement_datetime').val();
+		param.hidde_agreement_percent     = $('#hidde_agreement_percent').val();
+		param.hidde_loan_type_id          = $('#hidde_loan_type_id').val();
 		
 		if(param.name == ''){
 			alert('შეავსეთ "სახელი"');
@@ -622,30 +628,6 @@
 		}else if(param.trust_pers_checkbox == 1 && param.trusting_notary_address  == ''){
 			alert('შეავსეთ "ნოტარიუსის მისამართი"');
 			$("#trusting_notary_address").css('border','1px solid #F44336');
-		}else if(param.car_model == ''){
-			alert('შეავსეთ "მანქანის მოდელი"');
-			$("#car_model").css('border','1px solid #F44336');
-		}else if(param.car_born == ''){
-			alert('შეავსეთ "მანქანის გამოშვების წელი"');
-			$("#car_born").css('border','1px solid #F44336');
-		}else if(param.car_color == ''){
-			alert('შეავსეთ "მანქანის ფერი"');
-			$("#car_color").css('border','1px solid #F44336');
-		}else if(param.car_type == 0){
-			alert('შეავსეთ "მანქანის ტიპი"');
-			$("#car_type_chosen").css('border','1px solid #F44336');
-		}else if(param.car_engine == ''){
-			alert('შეავსეთ "მანქანის ძრავის მოცულობა"');
-			$("#car_engine").css('border','1px solid #F44336');
-		}else if(param.car_registration_number==''){
-			alert('შეავსეთ "მანქანის რეგისტრაციის ნომერი"');
-			$("#car_registration_number").css('border','1px solid #F44336');
-		}else if(param.car_ident == ''){
-			alert('შეავსეთ "მანქანის საიდენტიფიკაციო ნომერი"');
-			$("#car_ident").css('border','1px solid #F44336');
-		}else if(param.car_ertificate == ''){
-			alert('შეავსეთ "მოწმობის ნომერი"');
-			$("#car_ertificate").css('border','1px solid #F44336');
 		}else if(param.agreement_date == ''){
 			alert('შეავსეთ "ხელშეკრულების თარიღი"');
 			$("#agreement_date").css('border','1px solid #F44336');
@@ -713,6 +695,12 @@
     						$(".documents").css('filter','');
     						$(".client_insurance").css('filter','');
     						$("#id_hidden").val($('#local_id').val());
+    						
+    						$('#hidde_loan_amount').val(param.loan_amount);
+    						$('#hidde_loan_months').val(param.loan_months);
+    						$('#hidde_agreement_datetime').val(param.agreement_date);
+    						$('#hidde_agreement_percent').val(param.month_percent);
+    						$('#hidde_loan_type_id').val(param.loan_agreement_type);
     					}
     				}
     	    	}
