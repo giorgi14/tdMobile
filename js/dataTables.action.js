@@ -272,7 +272,10 @@ function GetDataTable1(tname, aJaxURL, action, count, data, hidden, length, sort
                 		if (titleVal != '') {
                 		  $this.attr('title', titleVal);
                 		}
+                		//alert(data.aaData1);
+                		
                 	});
+                    
                     if (typeof (data.error) != "undefined") {
                         if (data.error != "") {
                             alert(data.error);
@@ -284,6 +287,12 @@ function GetDataTable1(tname, aJaxURL, action, count, data, hidden, length, sort
                             }
                         }
                     }
+                    $("#daricxva_lari").html(data.aaData1);
+                    $("#daricxva_lari1").html(data.aaData2);
+                    $("#procenti_lari").html(data.aaData3);
+                    $("#procenti_lari1").html(data.aaData4);
+                    $("#dziri_lari").html(data.aaData5);
+                    $("#dziri_lari1").html(data.aaData6);
                 }
             });
         },

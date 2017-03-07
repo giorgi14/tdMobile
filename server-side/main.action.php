@@ -162,16 +162,25 @@ switch ($action) {
 	    if ($loan_currency_id == 1) {
 	        $rResult = mysql_query("SELECT   letter.number,
                                 			 letter.number,
-                                			 IF(letter.sort1=4,CONCAT('<div title=\"წინა თვის მეტობა\" style=\"background: #F44336;\">', letter.date, '<div>'), IF(letter.sort1=2,CONCAT('<div title=\"', letter.loan_amount_gel,' დღის ჯარიმა\" style=\"background: #009688;\">', letter.date, '<div>'), letter.date)),
+                                			 letter.date,
     	                                     letter.exchange,
                                 			 letter.loan_amount,
                                 			 letter.loan_amount_gel,
     	                                     letter.percent,
-                                			 letter.percent_gel,
-                                			 letter.percent1,
-                                			 letter.percent_gel1,
+    	                                     letter.percent_gel,
+                            	             letter.percent1,
+                            	             letter.percent_gel1,
                                 			 letter.pay_root,
-                                			 letter.pay_root_gel
+                                			 letter.pay_root_gel,
+	                                         '',
+                                	         '',
+                                	         '',
+                                	         '',
+                                	         '',
+                                	         '',
+    	                                     '',
+	                                         letter.sort1,
+    	                                     letter.loan_amount_gel
                                      FROM(SELECT client_loan_agreement.id AS `id`,
                                     			 client_loan_agreement.datetime AS sort,
                                     			 '0' AS sort1,
@@ -427,16 +436,25 @@ switch ($action) {
 	    }else{	
     	    $rResult = mysql_query("SELECT   letter.number,
                                 			 letter.number,
-                                			 IF(letter.sort1=4,CONCAT('<div title=\"წინა თვის მეტობა\" style=\"background: #F44336;\">', letter.date, '<div>'), IF(letter.sort1=2,CONCAT('<div title=\"', letter.loan_amount_gel,' დღის ჯარიმა\" style=\"background: #009688;\">', letter.date, '<div>'), letter.date)),
+                                			 letter.date,
     	                                     letter.exchange,
                                 			 letter.loan_amount,
                                 			 letter.loan_amount_gel,
     	                                     letter.percent,
-                                			 letter.percent_gel,
-                                			 letter.percent1,
-                                			 letter.percent_gel1,
+    	                                     letter.percent_gel,
+    	                                     letter.percent1,
+	                                         letter.percent_gel1,
                                 			 letter.pay_root,
-                                			 letter.pay_root_gel
+    	                                     '',
+                                	         '',
+                                	         '',
+                                	         '',
+                                	         '',
+                                	         '',
+    	                                     '',
+                                			 letter.pay_root_gel,
+    	                                     letter.sort1,
+    	                                     letter.loan_amount_gel
                                      FROM(SELECT client_loan_agreement.id AS `id`,
                                     			 client_loan_agreement.datetime AS sort,
                                     			 '0' AS sort1,
@@ -556,7 +574,12 @@ switch ($action) {
                                  ORDER BY letter.number, letter.sort,  letter.sort1 ASC");
 	    }
 	    
-	    
+	    $sumpercent  = 0;
+	    $sumpercent1 = 0;
+	    $sumpercent2 = 0;
+	    $sumpercent3 = 0;
+	    $sumpercent4 = 0;
+	    $sumpercent5 = 0;
 	    $data = array("aaData"	=> array(), "aaData1"	=> '', "aaData2"	=> '');
 	    $j=1;
 	    while ( $aRow = mysql_fetch_array( $rResult )){
@@ -566,24 +589,51 @@ switch ($action) {
 	            if ($j>1 && $i>3 && $i<6) {
 	                $row[] = '';
 	            }else{
-	                
 	               if ($i == 6) {
 	                   $sumpercent+=$aRow[$i];
-	               }
-	               
-	               if ($i == 7) {
+	                   if($aRow[sort1]==2){
+	                       $row[] = '<div title="'.$aRow[loan_amount_gel].' დღის ჯარიმა" style="background: #009688;  color: #fff;">'.$aRow[$i].'</div>';
+	                   }else{
+    	                   $row[] = $aRow[$i];
+    	               }
+	               }else if ($i == 7){
 	                   $sumpercent1+=$aRow[$i];
-	               }
-	               
-	               if ($i == 8) {
+	                   if($aRow[sort1]==2){
+	                       $row[] = '<div title="'.$aRow[loan_amount_gel].' დღის ჯარიმა" style="background: #009688; color: #fff;">'.$aRow[$i].'</div>';
+	                   }else{
+	                       $row[] = $aRow[$i];
+	                   }
+	               }elseif ($i == 8){
 	                   $sumpercent2+=$aRow[$i];
-	               }
-	               
-	               if ($i == 9) {
+	                   if($aRow[sort1]==4){
+	                       $row[] = '<div title="წინა თვის მეტობა" style="background: #F44336; color: #fff;">'.$aRow[$i].'</div>';
+	                   }else{
+	                       $row[] = $aRow[$i];
+	                   } 
+	               }elseif ($i == 9){
 	                   $sumpercent3+=$aRow[$i];
+	                   if($aRow[sort1]==4){
+	                       $row[] = '<div title="წინა თვის მეტობა" style="background: #F44336; color: #fff;">'.$aRow[$i].'</div>';
+	                   }else{
+	                       $row[] = $aRow[$i];
+	                   }
+	               }elseif ($i == 10){
+	                   $sumpercent4+=$aRow[$i];
+	                   if($aRow[sort1]==4){
+	                       $row[] = '<div title="წინა თვის მეტობა" style="background: #F44336; color: #fff;">'.$aRow[$i].'</div>';
+	                   }else{
+	                       $row[] = $aRow[$i];
+	                   }
+	               }elseif ($i == 11){
+	                   $sumpercent5+=$aRow[$i];
+	                   if($aRow[sort1]==4){
+	                       $row[] = '<div title="წინა თვის მეტობა" style="background: #F44336; color: #fff;">'.$aRow[$i].'</div>';
+	                   }else{
+	                       $row[] = $aRow[$i];
+	                   }
+	               }else{
+	                   $row[] = $aRow[$i];
 	               }
-	               
-	               $row[] = $aRow[$i];
 	            }
 	        }
 	        $data['aaData'][] = $row;
@@ -594,6 +644,8 @@ switch ($action) {
 	    $data['aaData2'][] = $sumpercent1;
 	    $data['aaData3'][] = $sumpercent2;
 	    $data['aaData4'][] = $sumpercent3;
+	    $data['aaData5'][] = $sumpercent4;
+	    $data['aaData6'][] = $sumpercent5;
 	    
 	    break;
 	default:
@@ -691,11 +743,11 @@ function GetPage($id){
                         <th id ="gacema_lari" style="text-align: left; font-weight: bold;">&nbsp;</th>
                         <th style="text-align: left; font-weight: bold;">&nbsp;</th>
                         <th id ="daricxva_lari" style="text-align: left; font-weight: bold;">&nbsp;</th>
-                        <th style="text-align: left; font-weight: bold;">&nbsp;</th>
+                        <th id ="daricxva_lari1" style="text-align: left; font-weight: bold;">&nbsp;</th>
                         <th id ="procenti_lari" style="text-align: left; font-weight: bold;">&nbsp;</th>
-                        <th style="text-align: left; font-weight: bold;">&nbsp;</th>
+                        <th id ="procenti_lari1" style="text-align: left; font-weight: bold;">&nbsp;</th>
                         <th id ="dziri_lari" style="text-align: left; font-weight: bold;">&nbsp;</th>
-                        <th style="text-align: left; font-weight: bold;">&nbsp;</th>
+                        <th id ="dziri_lari1" style="text-align: left; font-weight: bold;">&nbsp;</th>
                         <th id="remaining_root" style="text-align: left; font-weight: bold;">&nbsp;</th>
                         <th id="remaining_root_gel" style="text-align: left; font-weight: bold;">&nbsp;</th>
                         <th id="delta_cource" style="text-align: left; font-weight: bold;">&nbsp;</th>
@@ -786,10 +838,11 @@ function GetPage($id){
                         <th id ="gacema_lari" style="text-align: left; font-weight: bold;">&nbsp;</th>
                         <th style="text-align: left; font-weight: bold;">&nbsp;</th>
                         <th id ="daricxva_lari" style="text-align: left; font-weight: bold;">&nbsp;</th>
-                        <th style="text-align: left; font-weight: bold;">&nbsp;</th>
+                        <th id ="daricxva_lari1" style="text-align: left; font-weight: bold;">&nbsp;</th>
                         <th id ="procenti_lari" style="text-align: left; font-weight: bold;">&nbsp;</th>
-                        <th style="text-align: left; font-weight: bold;">&nbsp;</th>
+                        <th id ="procenti_lari1" style="text-align: left; font-weight: bold;">&nbsp;</th>
                         <th id ="dziri_lari" style="text-align: left; font-weight: bold;">&nbsp;</th>
+                        <th id ="dziri_lari1" style="text-align: left; font-weight: bold;">&nbsp;</th>
                         <th id="remaining_root" style="text-align: left; font-weight: bold;">&nbsp;</th>
                         <th id="remaining_root_gel" style="text-align: left; font-weight: bold;">&nbsp;</th>
                         <th id="delta_cource" style="text-align: left; font-weight: bold;">&nbsp;</th>

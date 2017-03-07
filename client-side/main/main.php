@@ -16,7 +16,7 @@
 			var dLength = [[50, -1], [50, "ყველა"]];
 			
 			if(tbl == 'letter'){
-				var total =	[4,5,6,7,8,9,10,11,12,13];
+				var total =	[4,5];
 				GetDataTable1(tName+tbl, aJaxURL, act, num, "&id="+$("#id").val()+"&loan_currency_id="+$("#loan_currency_id").val(), 0, dLength, 1, "asc", total, change_colum_main);
 				
 				param 		            = new Object();
