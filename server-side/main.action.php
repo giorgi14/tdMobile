@@ -274,7 +274,7 @@ switch ($action) {
                                         FROM   money_transactions
                                         JOIN   client_loan_schedule ON client_loan_schedule.id = money_transactions.client_loan_schedule_id
                                         JOIN   client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
-                                        WHERE  client_loan_agreement.client_id = $id AND client_loan_schedule.actived=1 AND money_transactions.status = 3 AND money_transactions.actived = 1
+                                        WHERE  client_loan_agreement.client_id = $id AND client_loan_schedule.actived=1 AND money_transactions.status = 3 AND money_transactions.actived = 1 AND money_transactions.pay_amount > 1
     	                                
                                         UNION ALL
                                         SELECT  client_loan_schedule.id AS `id`,
