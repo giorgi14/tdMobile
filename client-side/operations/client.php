@@ -102,6 +102,42 @@
     function LoadDialog(fName){
         if(fName == 'add-edit-form'){
         	var buttons = {
+        			"calculation-dialog": {
+    		            text: "წინასწარი კალკულაცია",
+    		            id: "calculation-dialog",
+    		            click: function () {
+    		            	param 	       = new Object();
+    		        		param.act      = "get_calculation";
+    		        		param.hidde_id = $("#id_hidden").val();
+    		        		
+    		        		$.ajax({
+    		        	        url: aJaxURL,
+    		        		    data: param,
+    		        	        success: function(data) {       
+    		        				if(typeof(data.error) != "undefined"){
+    		        					if(data.error != ""){
+    		        						alert(data.error);
+    		        					}else{
+    		        						$("#add-edit-form-calculation").html(data.page);
+    		        						var buttons = {
+		        			    				"cancel": {
+		        			    		            text: "დახურვა",
+		        			    		            id: "cancel-dialog",
+		        			    		            click: function () {
+		        			    		            	$(this).dialog("close");
+		        			    		            }
+		        			    		        }
+		        			    		    };
+    		        			            GetDialog("add-edit-form-calculation", 521, "auto", buttons, 'left+43 top');
+    		        			            $("#check_calculation").button();
+    		        			            GetDate('pay_datee');
+    		        			            $("#pay_datee").blur();
+    		        			        }
+    		        				}
+    		        	    	}
+    		        	    });
+    		            }
+    		        },
         			"update-loan": {
     		            text: "სესხის რესტრუქტურიზაცია",
     		            id: "update-loan",
@@ -939,6 +975,31 @@
 	    	}
 	   });
 	});
+    $(document).on("click", "#check_calculation", function () {
+		param 	  = new Object();
+		param.act = "check_calculation";
+
+		param.local_id	= $("#local_id").val();
+		param.pay_datee	= $('#pay_datee').val();
+		
+		$.ajax({
+	        url: aJaxURL,
+		    data: param,
+	        success: function(data) {       
+				if(typeof(data.error) != "undefined"){
+					if(data.error != ""){
+						alert(data.error);
+					}else{
+						$("#full_fee2").val(data.pay_amount);
+						$("#root_fee2").val(data.root);
+						$("#percent_fee2").val(data.percent);
+						$("#penalty_fee2").val(data.penalty);
+						$("#full_pay2").val(data.pay_amount1);
+					}
+				}
+	    	}
+	   });
+	});
 
     $(document).on("click", "#save-driver", function () {
 		param 	  = new Object();
@@ -1268,7 +1329,7 @@
     		            	var local_id          = $("#local_id").val();
     		            	var acceptance_amount = $("#acceptance_amount").val();
     		            	
-    		                local_id  = "&local_id="+local_id+"&file_type="+file_type+"&id_hidden="+$("#id_hidden").val()+"&acceptance_amount="+$("#acceptance_amount").val();
+    		                local_id  = "&local_id="+local_id+"&file_type="+file_type+"&id_hidden="+$("#id_hidden").val()+"&acceptance_amount="+$("#acceptance_amount").val()+"&execution_pickup_datee="+$("#execution_pickup_datee").val();
     		        		win=window.open("server-side/operations/subtables/print_documents.action.php?"+local_id, "" , "scrollbars=no,toolbar=no,screenx=0,screeny=0,location=no,titlebar=no,directories=no,status=no,menubar=no");
     		            }
     		        },
@@ -1277,7 +1338,7 @@
     		            id: "download-dialog",
     		            click: function () {
         		            if(file_type != 'payment_schedule'){
-        		            	URL="server-side/operations/subtables/download_doc.php?file_type="+file_type+"&local_id="+$("#local_id").val()+"&file_name="+file_name + "&acceptance_amount="+$("#acceptance_amount").val();
+        		            	URL="server-side/operations/subtables/download_doc.php?file_type="+file_type+"&local_id="+$("#local_id").val()+"&file_name="+file_name+"&acceptance_amount="+$("#acceptance_amount").val()+"&execution_pickup_datee="+$("#execution_pickup_datee").val();
         		            	open(URL);
         		            }else{
             		            
@@ -1308,6 +1369,8 @@
     		        }
     		    };
                	GetDialog("add-edit-form-document", 1200, "auto", buttons, 'left+43 top');
+               	GetDate('execution_pickup_datee');
+               	$("#execution_pickup_datee").blur();
     		}
         });
     }
@@ -1644,4 +1707,5 @@
     <div id="add-edit-form-guarantors" class="form-dialog" title="თავდები პირი"></div>
     <div id="add-edit-form-other_doc" class="form-dialog" title="დამატებითი საბუტები"></div>
     <div id="add-edit-form-update_loan" class="form-dialog" title="ავტო ლომბარდი"></div>
+    <div id="add-edit-form-calculation" class="form-dialog" title="წინასწარი კალკულაცია"></div>
 </body>

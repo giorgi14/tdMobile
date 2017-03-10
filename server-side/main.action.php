@@ -139,7 +139,7 @@ switch ($action) {
                                     FROM     `client`
                                     LEFT JOIN client_loan_agreement ON client_loan_agreement.client_id = `client`.id 
                                     LEFT JOIN client_car ON client_car.client_id = `client`.id 
-                                    WHERE    `client`.actived = 1 
+                                    WHERE    `client`.actived = 1 AND client_loan_agreement.status = 1 
 		                            ORDER BY client.name");
 
 		$data = array("aaData"	=> array());
