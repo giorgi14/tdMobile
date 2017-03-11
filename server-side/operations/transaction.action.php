@@ -29,13 +29,10 @@ switch ($action) {
 		    $val = 'money_transactions.pay_root,
                     money_transactions.pay_percent,
                     money_transactions.diff';
-		    $where_status = 'AND money_transactions.status = 1';
 		}else{
 		    $val = 'transaction_type.`name`';
 		    if ($tab==0) {
-		        $where_status = 'AND money_transactions.status = 0';
-		    }else{
-		        $where_status = 'AND money_transactions.status = 1';
+		        $where_status = 'AND money_transactions.type_id = 0';
 		    }
 		    
 		}
@@ -86,8 +83,7 @@ switch ($action) {
 
 		
 	    if ($id == '') {
-	        //$check = mysql_fetch_assoc(mysql_query(""));
-            Add($hidde_id, $month_fee, $course, $currency_id, $root,  $percent, $penalti_fee, $surplus, $diff, $type_id);
+	        Add($hidde_id, $month_fee, $course, $currency_id, $root,  $percent, $penalti_fee, $surplus, $diff, $type_id);
         }
 		
 		break;
