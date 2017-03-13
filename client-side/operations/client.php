@@ -182,7 +182,7 @@
     		            id: "cancel-loan",
     		            click: function () {
     		            	param 	       = new Object();
-    		        		param.act      = "cancel_loan";
+    		        		param.act      = "get_canceled-loan_dialog";
     		        		param.hidde_id = $("#id_hidden").val();
     		        		
     		        		$.ajax({
@@ -193,10 +193,22 @@
     		        					if(data.error != ""){
     		        						alert(data.error);
     		        					}else{
-    		        						alert('ხელშეკრულება წარმატებით დაიხურა');
-    		        						$("#add-edit-form").dialog("close");
-    		        						LoadTable('index',colum_number,main_act,change_colum_main,aJaxURL,'','');
-    		        					}
+    		        						$("#add-edit-form-canceled").html(data.page);
+    		        						var buttons = {
+		        			    				"save": {
+		        			    		            text: "ხელშეკრულების დახურვა",
+		        			    		            id: "canceled_client_loan"
+		        			    		        },
+		        			    	        	"cancel": {
+		        			    		            text: "დახურვა",
+		        			    		            id: "cancel-dialog",
+		        			    		            click: function () {
+		        			    		            	$(this).dialog("close");
+		        			    		            }
+		        			    		        }
+		        			    		    };
+    		        			            GetDialog("add-edit-form-canceled", 300, "auto", buttons, 'center top');
+    		        			        }
     		        				}
     		        	    	}
     		        	    });
@@ -294,6 +306,7 @@
             if($("#hidde_canceled_status").val()==1){
             	$("#cancel-loan").button("disable");
 				$("#update-loan").button("disable");
+				$("#calculation-dialog").button("disable");
             }
             
             if($("#car_insurance_info_hidde").val()==''){
@@ -853,7 +866,29 @@
     	    });
 		}
 	});
-    
+
+    $(document).on("click", "#canceled_client_loan", function () {
+    	param 	       = new Object();
+		param.act      = "cancel_loan";
+		param.hidde_id = $("#id_hidden").val();
+		
+		$.ajax({
+	        url: aJaxURL,
+		    data: param,
+	        success: function(data) {       
+				if(typeof(data.error) != "undefined"){
+					if(data.error != ""){
+						alert(data.error);
+					}else{
+						alert('ხელშეკრულება წარმატებით დაიხურა');
+						$("#add-edit-form").dialog("close");
+						LoadTable('index',colum_number,main_act,change_colum_main,aJaxURL,'','');
+					}
+				}
+	    	}
+	    });
+	});
+	
     $(document).on("click", "#check_monthly_pay", function () {
 		param 	  = new Object();
 		param.act = "check_monthly_pay";
@@ -1699,13 +1734,14 @@
             </thead>
         </table>
     
-    <div  id="add-edit-form" class="form-dialog" title="ავტო ლომბარდი"></div>
-    <div  id="add-edit-form-pers" class="form-dialog" title="საკონტაქტო პირი"></div>
-    <div  id="add-edit-form-document" class="form-dialog" title="დოკუმენტი"></div>
-    <div  id="add-edit-form-car_driver" class="form-dialog" title="პირი, რომელიც მართავს მანქანას"></div>
+    <div id="add-edit-form" class="form-dialog" title="ავტო ლომბარდი"></div>
+    <div id="add-edit-form-pers" class="form-dialog" title="საკონტაქტო პირი"></div>
+    <div id="add-edit-form-document" class="form-dialog" title="დოკუმენტი"></div>
+    <div id="add-edit-form-car_driver" class="form-dialog" title="პირი, რომელიც მართავს მანქანას"></div>
     <div id="add-edit-form-img" class="form-dialog" title="ავტომობილის სურათი"></div>
     <div id="add-edit-form-guarantors" class="form-dialog" title="თავდები პირი"></div>
     <div id="add-edit-form-other_doc" class="form-dialog" title="დამატებითი საბუტები"></div>
     <div id="add-edit-form-update_loan" class="form-dialog" title="ავტო ლომბარდი"></div>
     <div id="add-edit-form-calculation" class="form-dialog" title="წინასწარი კალკულაცია"></div>
+    <div id="add-edit-form-canceled" class="form-dialog" title="დაანგარიშებული თანხა"></div>
 </body>

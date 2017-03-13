@@ -1077,18 +1077,17 @@ function GetPage($id){
                 <fieldset>
                     <legend>გრაფიკი</legend>
                     <div style="width:100%; font-size: 14px;">
-                        <table style="width:100%; margin-top: 5px;">
+                        <table style="width:100%;">
                             <tr style="width:100%;">
                                 <td style="width:12%;"><label style="font-size: 14px;">კლიენტის სახელი:<label></td>
                                 <td style="width:88%;"><label style="font-size: 14px;">'.$res[name].'</label></td>
                             </tr>
                         </table> 
                     </div>
-                    <div style="width:100%; margin-top: 20px;">
+                    <div style="width:100%;">
                         <table style="width:100%;">
                              <tr style="width:100%;">
                                  <td  style="width:49%; '.$dis.'">
-                                    <div style="width:100%; font-size: 16px; text-align:center;">გრაფიკი</div>
                                     <div style="width:100%; margin-top: 5px;">
                                         <table style="width:100%;">
                                             <tr style="width:100%;border: 1px solid #000;">
@@ -1124,7 +1123,7 @@ function GetPage($id){
                                             </tr>
                                         </table>
                                     </div>
-                                    <div style="width:100%; margin-top: 25px; border: 1px solid #000;">
+                                    <div style="width:100%; margin-top: 5px; border: 1px solid #000;">
                                         <table style="width:100%;">
                                             <tr style="width:100%;border: 1px solid #000;">
                                                 <td colspan="2" style="width:5%;border-right: 1px solid #000;"><label style="font-size: 12px;">სულ პროცენტი<label></td>
@@ -1142,19 +1141,12 @@ function GetPage($id){
                                                 <td style="width:19%;"><label style="font-size: 12px; text-align:center;">ნაშთი შენატანის შემდეგ</label></td>
                                             </tr>';
                                 $data.=$dat1;
-                                $data.='<tr colspan="6" style="height:25px; border: 1px solid #000;">
-                                            <td colspan="6"style="width:20%; border-right: 1px solid #000;"><label style="font-size: 12px;"><label></td>
-                                        </tr>
-                                        <tr style="width:100%;border: 1px solid #000;">
-                                            <td colspan="3"style="width:20%; border-right: 1px solid #000;"><label style="font-size: 12px;">ხელმოწერა ლ:<label></td>
-                                            <td colspan="3" style="width:20%; border-right: 1px solid #000;"><label style="font-size: 12px;">ხელმოწერა ლ:<label></td>
-                                        </tr>
+                                $data.='
                                     </table>
                                  </div>
                             </td>
                             <td style="width:2%; '.$dis.'"></td>
                             <td style="width:49%;">
-                                <div style="width:100%; font-size: 16px; text-align:center;">გრაფიკი</div>
                                 <div style="width:100%; margin-top: 5px; float:right">
                                     <table style="width:100%;">
                                         <tr style="width:100%;border: 1px solid #000;">
@@ -1190,7 +1182,7 @@ function GetPage($id){
                                         </tr>
                                     </table>
                                 </div>
-                                <div style="width:100%; margin-top: 25px; border: 1px solid #000; float:right">
+                                <div style="width:100%; margin-top: 5px; border: 1px solid #000; float:right">
                                     <table style="width:100%;">
                                         <tr style="width:100%;border: 1px solid #000;">
                                             <td colspan="2" style="width:5%;border-right: 1px solid #000;"><label style="font-size: 12px;">სულ პროცენტი<label></td>
@@ -1208,13 +1200,7 @@ function GetPage($id){
                                             <td style="width:19%;"><label style="font-size: 12px; text-align:center;">ნაშთი შენატანის შემდეგ</label></td>
                                         </tr>';
                             $data.=$dat;
-                            $data.='<tr colspan="6" style="height:25px; border: 1px solid #000;">
-                                        <td colspan="6"style="width:20%; border-right: 1px solid #000;"><label style="font-size: 12px;"><label></td>
-                                    </tr>
-                                    <tr style="width:100%;border: 1px solid #000;">
-                                        <td colspan="3"style="width:20%; border-right: 1px solid #000;"><label style="font-size: 12px;">ხელმოწერა ლ:<label></td>
-                                        <td colspan="3" style="width:20%; border-right: 1px solid #000;"><label style="font-size: 12px;">ხელმოწერა ლ:<label></td>
-                                    </tr>
+                            $data.='
                                 </table>
                             </div> 
                       </td>
