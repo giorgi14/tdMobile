@@ -300,6 +300,9 @@
     				$('#loan_agreement_type').prop('disabled', true).trigger("chosen:updated");
     				$('#agreement_type_id').prop('disabled', true).trigger("chosen:updated");
     				$('#car_type').prop('disabled', true).trigger("chosen:updated");
+                }else if($("#hidde_status").val()==0){
+                	$("#cancel-loan").button("disable");
+    				$("#update-loan").button("disable");
                 }
             }
 
