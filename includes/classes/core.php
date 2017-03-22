@@ -51,7 +51,7 @@ class sql_db {
 }
 
 
-	$db = new sql_db ( "192.168.11.10", "root", "Gl-1114", "tdmobile" );
+	$db = new sql_db ("212.72.155.176", "root", "Gl-1114", "tgmobile" );
 
 	
 	function GetUserGroup($user_id){

@@ -12,7 +12,8 @@
 	      	
 		$(document).ready(function () { 
 			$("#filt_year").chosen();
-			$("#difference_cource").button();      	
+			$("#difference_cource").button();
+			  
 			LoadTable("example",colum_number,'get_list',change_colum_main,aJaxURL);	
 			SetEvents("", "", "", tName+'example', dialog, aJaxURL,'','example',colum_number,main_act,change_colum_main,aJaxURL,'');
 
@@ -59,14 +60,14 @@
 			
 			if(tbl == 'letter'){
 				var total =	[4,5,14];
-				GetDataTable1(tName+tbl, aJaxURL, act, num, "&id="+$("#id").val()+"&loan_currency_id="+$("#loan_currency_id").val(), 0, dLength, 1, "asc", total, change_colum_main);
+				GetDataTable1(tName+tbl, aJaxURL, act, num, "&id="+$("#id").val()+"&loan_currency_id="+$("#loan_currency_id").val()+"&loan_currency_id="+$("#loan_currency_id").val(), 0, dLength, 1, "asc", total, change_colum_main);
 				
 				param 		            = new Object();
 			    param.act	            = "gel_footer";
 			    param.id	            = $("#id").val();
 			    param.loan_currency_id	= $("#loan_currency_id").val();
 			    
-				$.ajax({
+			    $.ajax({
     		        url: aJaxURL,
     			    data: param,
     		        success: function(data) {			        
@@ -81,7 +82,8 @@
     			    }
     		    });
 			}else{
-				GetDataTable1(tName+tbl, aJaxURL, act, num, "&id="+$("#id").val()+"&loan_currency_id="+$("#loan_currency_id").val(), 0, dLength, 1, "asc", "", change_colum_main);
+				
+				GetDataTable1(tName+tbl, aJaxURL, act, num, "&id="+$("#id").val()+"&filt_year="+$("#filt_year").val(), 0, dLength, 1, "asc", "", change_colum_main);
 			}
 			$("#table_letter_length").css('top', '2px');
 			setTimeout(function(){$('.ColVis, .dataTable_buttons').css('display','none');}, 90);
@@ -395,6 +397,9 @@
 					}
 			    }
 		    });
+		});
+		$(document).on("change", "#filt_year", function () {
+			LoadTable("example",colum_number,'get_list',change_colum_main,aJaxURL);	
 		});
 		
 	    $(document).on("click", "#show_copy_prit_exel", function () {
