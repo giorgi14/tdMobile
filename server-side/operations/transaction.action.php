@@ -338,6 +338,17 @@ function GetPage($res = ''){
         $disable = "";
     }
     
+    if ($res['id']=='') {
+        $req = mysql_fetch_assoc(mysql_query("SELECT MAX(id),
+                                                     cource 
+                                              FROM   cur_cource
+                                              WHERE  actived = 1 
+                                              AND    DATE(datetime) = CURDATE() 
+                                              LIMIT  1"));
+        $cource = $req[cource];
+    }else{
+        $cource = $res[course];
+    }
     $res1= mysql_fetch_assoc(mysql_query("SELECT client_loan_schedule.id,
                                                  client_loan_schedule.pay_amount,
                                                  client_loan_schedule.root,
@@ -384,7 +395,7 @@ function GetPage($res = ''){
     					</td>
     					<td style="width: 70px;"><label calss="label" style="padding-top: 5px;" for="date">კურსი</label></td>
     					<td style="width: 190px;">
-    						<input style="width: 80px;" id="course" class="label" type="text" value="'.$res['course'].'" '.$disable.'>
+    						<input style="width: 80px;" id="course" class="label" type="text" value="'.$cource.'" '.$disable.'>
     					</td>
     					<td style="width: 70px;"></td>
     					<td style="width: 120px;"></td>

@@ -316,7 +316,7 @@
 		$("#img_4").attr("src","media/images/icons/about_us_blue.png");
 		$("#img_1").attr("src","media/images/icons/sing_out_blue.png");
 		$("#img_14").attr("src","media/images/icons/transaction_blue.png");
-		
+		$("#img_16").attr("src","media/images/icons/sms_blue.png");
 		
 		$("#menuwrapper a").css('color','#2681DC');
 		var str = $(this).children('img').attr('src');

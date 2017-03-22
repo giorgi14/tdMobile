@@ -108,7 +108,7 @@
             echo $data;
 		 ?>
 	</select>
-	<select id="filt_year" style="width:  75px;">
+	<select id="filt_year" style="width:  100px;">
 		<?php 
 		
     		mysql_connect('212.72.155.176','root','Gl-1114');
@@ -118,7 +118,7 @@
             $req = mysql_fetch_assoc(mysql_query("SELECT YEAR(CURDATE())+1 AS `year`,
                                                          YEAR(CURDATE()) AS `cur_year`"));
             $year = $req['year'];
-            for ($i=0; $i<=37; $i++){
+            for ($i=0; $i<=10; $i++){
                 $year --; 
                 if($req['cur_year'] == $year){
                     $data1 .= '<option value="' . $year . '" selected="selected">' . $year . '</option>';

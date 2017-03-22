@@ -135,7 +135,9 @@ switch ($action) {
                                                       LIMIT 1) 
                     					    END AS darchenili_dziri_lari,
                         					'',
-		                                    ''
+		                                    ROUND((SELECT SUM(difference) 
+                                                  FROM difference_cource
+                                                  WHERE difference_cource.client_id = `client`.id),2) AS dsf
                                     FROM     `client`
                                     LEFT JOIN client_loan_agreement ON client_loan_agreement.client_id = `client`.id 
                                     LEFT JOIN client_car ON client_car.client_id = `client`.id 
@@ -180,7 +182,11 @@ switch ($action) {
             					'' AS percent1,
             					'' AS percent_gel1,
             					'' AS pay_root,
-            					'' AS pay_root_gel
+            					'' AS pay_root_gel,
+            					'' AS jh,
+                                '' AS kj,
+                                '' AS difference,
+                                '' AS pledge
                 		FROM    client_loan_agreement
                 		WHERE   client_loan_agreement.client_id = '$id'
 	                    UNION ALL";
@@ -191,7 +197,7 @@ switch ($action) {
 	        $rResult = mysql_query("SELECT   letter.client_id,
                             				 letter.number,
                             				 letter.date,
-                            				 letter.exchange,
+                            				 ROUND(letter.exchange,4),
                             				 letter.loan_amount,
                             				 letter.loan_amount_gel,
                             				 letter.percent,
@@ -200,13 +206,13 @@ switch ($action) {
                             				 letter.percent_gel1,
                             				 letter.pay_root,
                             				 letter.pay_root_gel,
-                            				 '',
-                            				 '',
-                            				 '',
-                            				 '',
-                            				 '',
-                            				 '',
-                            				 '',
+                            				 '' as `g`,
+                            				 '' as `gd`,
+                            				 letter.difference AS difference,
+                            				 letter.pledge as pledge,
+                            				 '' as `gdx`,
+                            				 '' as `gdfgh`,
+                            				 '' as `difference`,
                             				 letter.sort1,
                             				 letter.loan_amount_gel
                                     FROM(   $query 
@@ -227,7 +233,11 @@ switch ($action) {
                             						 '' AS percent1,
                             						 '' AS percent_gel1,
                             						 '' AS pay_root,
-                            						 '' AS pay_root_gel
+                            						 '' AS pay_root_gel,
+	                                                 '' AS jh,
+	                                                 '' AS kj,
+	                                                 '' AS difference,
+	                                                 '' AS pledge
                                     		FROM     client_loan_schedule
                                     		JOIN     client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
                                     		JOIN     money_transactions ON money_transactions.client_loan_schedule_id = client_loan_schedule.id
@@ -254,7 +264,13 @@ switch ($action) {
                             						CASE 
                             							WHEN client_loan_agreement.loan_currency_id = 1 THEN ROUND(SUM(money_transactions.pay_root)/money_transactions.course,2)
                             							WHEN client_loan_agreement.loan_currency_id = 2 THEN ROUND(SUM(money_transactions.pay_root)*money_transactions.course,2)
-                            						END AS pay_root_gel
+                            						END AS pay_root_gel,
+	                                                '' AS jh,
+	                                                 '' AS kj,
+	                                                 '' AS difference,
+	                                                 ROUND((SELECT pay_amount 
+                                                      FROM   money_transactions 
+                                                      WHERE  type_id = 2 AND DATE_FORMAT(money_transactions.datetime,'%Y-%m') = DATE_FORMAT(money_transactions.pay_datetime,'%Y-%m')),2) AS pledge
                                     		FROM    money_transactions
                                     		JOIN    client_loan_schedule ON client_loan_schedule.id = money_transactions.client_loan_schedule_id
                                     		JOIN    client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
@@ -282,7 +298,11 @@ switch ($action) {
                             						CASE 
                             							WHEN client_loan_agreement.loan_currency_id = 1 THEN ROUND(money_transactions.pay_root/money_transactions.course,2)
                             							WHEN client_loan_agreement.loan_currency_id = 2 THEN ROUND(money_transactions.pay_root*money_transactions.course,2)
-                            						END AS pay_root_gel
+                            						END AS pay_root_gel,
+	                                                '' AS jh,
+	                                                 '' AS kj,
+	                                                 '' AS difference,
+	                                                 '' AS pledge
                             				FROM   money_transactions
                             				JOIN   client_loan_schedule ON client_loan_schedule.id = money_transactions.client_loan_schedule_id
                             				JOIN   client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
@@ -305,7 +325,11 @@ switch ($action) {
                     								'' AS percent1,
                     								'' AS percent_gel1,
                     								'' AS pay_root,
-                    								'' AS pay_root_gel
+                    								'' AS pay_root_gel,
+	                                                '' AS jh,
+	                                                 '' AS kj,
+	                                                 '' AS difference,
+	                                                 '' AS pledge
                             				FROM   money_transactions
                             				JOIN   client_loan_schedule ON client_loan_schedule.id = money_transactions.client_loan_schedule_id
                             				JOIN   client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
@@ -328,7 +352,11 @@ switch ($action) {
                                 					'' AS percent1,
                                 					'' AS percent_gel1,
                                 					'' AS pay_root,
-                                					'' AS pay_root_gel
+                                					'' AS pay_root_gel,
+	                                                '' AS jh,
+	                                                 '' AS kj,
+	                                                 '' AS difference,
+	                                                 '' AS pledge
                                     		FROM    client_loan_agreement
                                     		WHERE   client_loan_agreement.client_id = '$sub_client'
 	                                        UNION ALL
@@ -349,7 +377,11 @@ switch ($action) {
                         							 '' AS percent1,
                         							 '' AS percent_gel1,
                         							 '' AS pay_root,
-                        							 '' AS pay_root_gel
+                        							 '' AS pay_root_gel,
+	                                                 '' AS jh,
+	                                                 '' AS kj,
+	                                                 '' AS difference,
+	                                                 '' AS pledge
                                 			FROM     client_loan_schedule
                                 			JOIN     client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
                                 			JOIN     money_transactions ON money_transactions.client_loan_schedule_id = client_loan_schedule.id
@@ -376,7 +408,11 @@ switch ($action) {
                         							CASE 
                         								WHEN client_loan_agreement.loan_currency_id = 1 THEN ROUND(SUM(money_transactions.pay_root)/money_transactions.course,2)
                         								WHEN client_loan_agreement.loan_currency_id = 2 THEN ROUND(SUM(money_transactions.pay_root)*money_transactions.course,2)
-                        							END AS pay_root_gel
+                        							END AS pay_root_gel,
+	                                                '' AS jh,
+	                                                 '' AS kj,
+	                                                 '' AS difference,
+	                                                 '' AS pledge
                                 			FROM    money_transactions
                                 			JOIN    client_loan_schedule ON client_loan_schedule.id = money_transactions.client_loan_schedule_id
                                 			JOIN    client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
@@ -404,12 +440,39 @@ switch ($action) {
                         							CASE 
                         								WHEN client_loan_agreement.loan_currency_id = 1 THEN ROUND(money_transactions.pay_root/money_transactions.course,2)
                         								WHEN client_loan_agreement.loan_currency_id = 2 THEN ROUND(money_transactions.pay_root*money_transactions.course,2)
-                        							END AS pay_root_gel
+                        							END AS pay_root_gel,
+	                                               '' AS jh,
+	                                                 '' AS kj,
+	                                                 '' AS difference,
+	                                                 '' AS pledge
                                 			FROM   money_transactions
                                 			JOIN   client_loan_schedule ON client_loan_schedule.id = money_transactions.client_loan_schedule_id
                                 			JOIN   client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
                                 			WHERE  client_loan_agreement.client_id = '$sub_client' AND client_loan_schedule.actived=1 AND money_transactions.status = 3 AND money_transactions.actived = 1 AND money_transactions.pay_amount > 1
                                 			UNION ALL
+    	                                    SELECT  difference_cource.client_id,
+                                    				client_loan_schedule.id AS `id`,
+                                    				client_loan_schedule.pay_date AS sort,
+                                    				'5' AS sort1,
+                                    				client_loan_schedule.number,
+                                    				DATE(difference_cource.datetime) AS `date`,
+                                    				difference_cource.end_cource AS `exchange`,
+                                    				'' AS `loan_amount`,
+                                    				'' AS `loan_amount_gel`,
+                                    				'' AS percent,
+                                    				'' AS percent_gel,
+                                    				'' AS percent1,
+                                    				'' AS percent_gel1,
+                                    				'' AS pay_root,
+                                    				'' AS pay_root_gel,
+                                    				'' AS jh,
+                                    				'' AS kj,
+                                    				ROUND(difference_cource.difference,2) AS difference,
+                                    				'' AS pledge
+                                            FROM    difference_cource
+                                            JOIN    client_loan_schedule ON client_loan_schedule.id = difference_cource.cliet_loan_schedule_id
+                                            WHERE   difference_cource.client_id = '$id' AND client_loan_schedule.actived = 1
+	                                        UNION ALL
                                 			SELECT  client_loan_agreement.client_id,
                         							client_loan_schedule.id AS `id`,
                         							client_loan_schedule.pay_date AS sort,
@@ -427,7 +490,11 @@ switch ($action) {
                         							'' AS percent1,
                         							'' AS percent_gel1,
                         							'' AS pay_root,
-                        							'' AS pay_root_gel
+                        							'' AS pay_root_gel,
+	                                                '' AS jh,
+	                                                 '' AS kj,
+	                                                 '' AS difference,
+	                                                 '' AS pledge
                                 			FROM   money_transactions
                                 			JOIN   client_loan_schedule ON client_loan_schedule.id = money_transactions.client_loan_schedule_id
                                 			JOIN   client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
@@ -437,7 +504,7 @@ switch ($action) {
     	    $rResult = mysql_query("SELECT   letter.client_id,
                             				 letter.number,
                             				 letter.date,
-                            				 letter.exchange,
+                            				 ROUND(letter.exchange,4),
                             				 letter.loan_amount,
                             				 letter.loan_amount_gel,
                             				 letter.percent,
@@ -446,13 +513,13 @@ switch ($action) {
                             				 letter.percent_gel1,
                             				 letter.pay_root,
                             				 letter.pay_root_gel,
-                            				 '',
-                            				 '',
-                            				 '',
-                            				 '',
-                            				 '',
-                            				 '',
-                            				 '',
+                            				 '' as `g`,
+                            				 '' as `gd`,
+                            				 letter.difference AS difference,
+                            				 letter.pledge as pledge,
+                            				 '' as `gdx`,
+                            				 '' as `gdfgh`,
+                            				 '' as `gdasda`,
                             				 letter.sort1,
                             				 letter.loan_amount_gel
                                     FROM(   $query 
@@ -467,13 +534,17 @@ switch ($action) {
                             						 '' AS `loan_amount_gel`,
                             						 ROUND(client_loan_schedule.percent,2) AS percent,
                             						 CASE 
-                            								WHEN client_loan_agreement.loan_currency_id = 1 THEN ROUND(client_loan_schedule.percent/client_loan_agreement.exchange_rate,2)
-                            								WHEN client_loan_agreement.loan_currency_id = 2 THEN ROUND(client_loan_schedule.percent*client_loan_agreement.exchange_rate,2)
+                            							 WHEN client_loan_agreement.loan_currency_id = 1 THEN ROUND(client_loan_schedule.percent/client_loan_agreement.exchange_rate,2)
+                            							 WHEN client_loan_agreement.loan_currency_id = 2 THEN ROUND(client_loan_schedule.percent*client_loan_agreement.exchange_rate,2)
                             						 END AS percent_gel,
                             						 '' AS percent1,
                             						 '' AS percent_gel1,
                             						 '' AS pay_root,
-                            						 '' AS pay_root_gel
+                            						 '' AS pay_root_gel,
+    	                                             '' AS jh,
+	                                                 '' AS kj,
+	                                                 '' AS difference,
+	                                                 '' AS pledge
                                     		FROM     client_loan_schedule
                                     		JOIN     client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
                                     		JOIN     money_transactions ON money_transactions.client_loan_schedule_id = client_loan_schedule.id
@@ -500,7 +571,13 @@ switch ($action) {
                             						CASE 
                             							WHEN client_loan_agreement.loan_currency_id = 1 THEN ROUND(SUM(money_transactions.pay_root)/money_transactions.course,2)
                             							WHEN client_loan_agreement.loan_currency_id = 2 THEN ROUND(SUM(money_transactions.pay_root)*money_transactions.course,2)
-                            						END AS pay_root_gel
+                            						END AS pay_root_gel,
+    	                                             '' AS jh,
+	                                                 '' AS kj,
+	                                                 '' AS difference,
+	                                                 ROUND((SELECT pay_amount 
+                                                            FROM   money_transactions 
+                                                            WHERE  type_id = 2 AND money_transactions.client_loan_schedule_id = client_loan_schedule.id AND DATE_FORMAT(money_transactions.datetime,'%Y-%m') = DATE_FORMAT(money_transactions.pay_datetime,'%Y-%m')),2) AS pledge
                                     		FROM    money_transactions
                                     		JOIN    client_loan_schedule ON client_loan_schedule.id = money_transactions.client_loan_schedule_id
                                     		JOIN    client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
@@ -528,12 +605,39 @@ switch ($action) {
                             						CASE 
                             							WHEN client_loan_agreement.loan_currency_id = 1 THEN ROUND(money_transactions.pay_root/money_transactions.course,2)
                             							WHEN client_loan_agreement.loan_currency_id = 2 THEN ROUND(money_transactions.pay_root*money_transactions.course,2)
-                            						END AS pay_root_gel
+                            						END AS pay_root_gel,
+    	                                            '' AS jh,
+	                                                '' AS kj,
+	                                                '' AS difference,
+	                                                '' AS pledge
                             				FROM   money_transactions
                             				JOIN   client_loan_schedule ON client_loan_schedule.id = money_transactions.client_loan_schedule_id
                             				JOIN   client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
                             				WHERE  client_loan_agreement.client_id = '$id' AND client_loan_schedule.actived=1 AND money_transactions.status = 3 AND money_transactions.actived = 1 AND money_transactions.pay_amount > 1
                             				UNION ALL
+    	                                    SELECT  difference_cource.client_id,
+                                    				client_loan_schedule.id AS `id`,
+                                    				client_loan_schedule.pay_date AS sort,
+                                    				'5' AS sort1,
+                                    				client_loan_schedule.number,
+                                    				DATE(difference_cource.datetime) AS `date`,
+                                    				difference_cource.end_cource AS `exchange`,
+                                    				'' AS `loan_amount`,
+                                    				'' AS `loan_amount_gel`,
+                                    				'' AS percent,
+                                    				'' AS percent_gel,
+                                    				'' AS percent1,
+                                    				'' AS percent_gel1,
+                                    				'' AS pay_root,
+                                    				'' AS pay_root_gel,
+                                    				'' AS jh,
+                                    				'' AS kj,
+                                    				ROUND(difference_cource.difference,2) AS difference,
+                                    				'' AS pledge
+                                            FROM    difference_cource
+                                            JOIN    client_loan_schedule ON client_loan_schedule.id = difference_cource.cliet_loan_schedule_id
+                                            WHERE   difference_cource.client_id = '$id' AND client_loan_schedule.actived = 1
+    	                                    UNION ALL
                             				SELECT  client_loan_agreement.client_id,
                     								client_loan_schedule.id AS `id`,
                     								client_loan_schedule.pay_date AS sort,
@@ -551,7 +655,11 @@ switch ($action) {
                     								'' AS percent1,
                     								'' AS percent_gel1,
                     								'' AS pay_root,
-                    								'' AS pay_root_gel
+                    								'' AS pay_root_gel,
+    	                                            '' AS jh,
+	                                                '' AS kj,
+	                                                '' AS difference,
+	                                                '' AS pledge
                             				FROM   money_transactions
                             				JOIN   client_loan_schedule ON client_loan_schedule.id = money_transactions.client_loan_schedule_id
                             				JOIN   client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
@@ -574,7 +682,11 @@ switch ($action) {
                                 					'' AS percent1,
                                 					'' AS percent_gel1,
                                 					'' AS pay_root,
-                                					'' AS pay_root_gel
+                                					'' AS pay_root_gel,
+    	                                            '' AS jh,
+	                                                 '' AS kj,
+	                                                 '' AS difference,
+	                                                 '' AS pledge
                                     		FROM    client_loan_agreement
                                     		WHERE   client_loan_agreement.client_id = '$sub_client'
 	                                        UNION ALL
@@ -595,7 +707,11 @@ switch ($action) {
                         							 '' AS percent1,
                         							 '' AS percent_gel1,
                         							 '' AS pay_root,
-                        							 '' AS pay_root_gel
+                        							 '' AS pay_root_gel,
+    	                                             '' AS jh,
+	                                                 '' AS kj,
+	                                                 '' AS difference,
+	                                                 '' AS pledge
                                 			FROM     client_loan_schedule
                                 			JOIN     client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
                                 			JOIN     money_transactions ON money_transactions.client_loan_schedule_id = client_loan_schedule.id
@@ -622,7 +738,11 @@ switch ($action) {
                         							CASE 
                         								WHEN client_loan_agreement.loan_currency_id = 1 THEN ROUND(SUM(money_transactions.pay_root)/money_transactions.course,2)
                         								WHEN client_loan_agreement.loan_currency_id = 2 THEN ROUND(SUM(money_transactions.pay_root)*money_transactions.course,2)
-                        							END AS pay_root_gel
+                        							END AS pay_root_gel,
+    	                                            '' AS jh,
+	                                                 '' AS kj,
+	                                                 '' AS difference,
+	                                                 '' AS pledge
                                 			FROM    money_transactions
                                 			JOIN    client_loan_schedule ON client_loan_schedule.id = money_transactions.client_loan_schedule_id
                                 			JOIN    client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
@@ -650,8 +770,12 @@ switch ($action) {
                         							CASE 
                         								WHEN client_loan_agreement.loan_currency_id = 1 THEN ROUND(money_transactions.pay_root/money_transactions.course,2)
                         								WHEN client_loan_agreement.loan_currency_id = 2 THEN ROUND(money_transactions.pay_root*money_transactions.course,2)
-                        							END AS pay_root_gel
-                                			FROM   money_transactions
+                        							END AS pay_root_gel,
+    	                                            '' AS jh,
+	                                                 '' AS kj,
+	                                                 '' AS difference,
+	                                                 '' AS pledge
+    	                                    FROM   money_transactions
                                 			JOIN   client_loan_schedule ON client_loan_schedule.id = money_transactions.client_loan_schedule_id
                                 			JOIN   client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
                                 			WHERE  client_loan_agreement.client_id = '$sub_client' AND client_loan_schedule.actived=1 AND money_transactions.status = 3 AND money_transactions.actived = 1 AND money_transactions.pay_amount > 1
@@ -673,7 +797,11 @@ switch ($action) {
                         							'' AS percent1,
                         							'' AS percent_gel1,
                         							'' AS pay_root,
-                        							'' AS pay_root_gel
+                        							'' AS pay_root_gel,
+    	                                            '' AS jh,
+	                                                 '' AS kj,
+	                                                 '' AS difference,
+	                                                 '' AS pledge
                                 			FROM   money_transactions
                                 			JOIN   client_loan_schedule ON client_loan_schedule.id = money_transactions.client_loan_schedule_id
                                 			JOIN   client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
@@ -755,6 +883,486 @@ switch ($action) {
 	    $data['aaData6'][] = $sumpercent5;
 	    
 	    break;
+    case 'get_canceled-loan_dialog':
+        $hidde_idd	= $_REQUEST[hidde_id];
+    
+        $res = mysql_query("SELECT   client_loan_schedule.id,
+                                     client_loan_agreement.status as st,
+                                     client_loan_schedule.pay_date,
+                    				 client_loan_schedule.`status`,
+                    				 ROUND(client_loan_schedule.percent,2) AS percent,
+                                     ROUND((client_loan_schedule.root + client_loan_schedule.remaining_root),2) AS remaining_root,
+                                     ROUND(((client_loan_schedule.root + client_loan_schedule.remaining_root)*client_loan_agreement.loan_beforehand_percent)/100, 2) AS sakomisio,
+                            		 CASE
+                						 WHEN client_loan_agreement.loan_type_id =1 AND DATEDIFF(CURDATE(), client_loan_schedule.pay_date)>0 THEN ROUND(client_loan_schedule.percent/(DAY(LAST_DAY(CURDATE())))*(DATEDIFF(CURDATE(), client_loan_schedule.pay_date)),2)
+                						 WHEN client_loan_agreement.loan_type_id =2 AND DATEDIFF(CURDATE(), client_loan_schedule.pay_date)>0 AND DATEDIFF(CURDATE(), client_loan_schedule.pay_date) <= client_loan_agreement.penalty_days THEN ROUND((client_loan_schedule.remaining_root*(client_loan_agreement.penalty_percent/100))*(DATEDIFF(CURDATE(), client_loan_schedule.pay_date)),2)
+                						 WHEN client_loan_agreement.loan_type_id =2 AND DATEDIFF(CURDATE(), client_loan_schedule.pay_date)>client_loan_agreement.penalty_days THEN ROUND((client_loan_schedule.remaining_root*(client_loan_agreement.penalty_additional_percent/100))*(DATEDIFF(CURDATE(), client_loan_schedule.pay_date)),2)
+                    				 END AS penalty
+                            FROM     client_loan_schedule
+                            JOIN     client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
+                            WHERE    client_loan_agreement.client_id = '$hidde_idd' AND client_loan_schedule.`status` = 0 AND client_loan_schedule.schedule_date <= CURDATE()
+                            ORDER BY client_loan_schedule.id ASC
+                            LIMIT 1");
+        
+        $check = mysql_num_rows($res);
+        
+        if ($check == 0) {
+            $res = mysql_query("SELECT   client_loan_schedule.id,
+                                         client_loan_agreement.status as st,
+                                         client_loan_schedule.pay_date,
+                        				 client_loan_schedule.`status`,
+                                         ROUND(((client_loan_schedule.root + client_loan_schedule.remaining_root)*client_loan_agreement.loan_beforehand_percent)/100,2) AS sakomisio,
+                        				 0 AS percent,
+                                         0 AS penalty,
+                                         ROUND(client_loan_schedule.remaining_root,2) AS remaining_root
+                                FROM     client_loan_schedule
+                                JOIN     client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
+                                WHERE    client_loan_agreement.client_id = '$hidde_idd' AND client_loan_schedule.`status` = 1 AND client_loan_schedule.schedule_date <= CURDATE()
+                                ORDER BY client_loan_schedule.id DESC
+                                LIMIT 1");
+        }
+        
+        $result = mysql_fetch_assoc($res);
+        
+        $req = mysql_fetch_assoc(mysql_query("SELECT client_loan_schedule.id,
+                                                	 ROUND(DATEDIFF(CURDATE(), '$result[pay_date]')*(client_loan_schedule.percent/DAY(LAST_DAY(client_loan_schedule.pay_date))),2) AS nasargeblebebi
+                                              FROM   client_loan_schedule
+                                              JOIN   client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
+                                              WHERE  client_loan_agreement.client_id = $hidde_idd AND client_loan_schedule.`id` = '$result[id]+1'"));
+        
+        
+        $res1 = mysql_fetch_assoc(mysql_query("SELECT SUM(pay_amount) AS pay_amount
+                                               FROM   money_transactions
+                                               WHERE  money_transactions.client_loan_schedule_id = $res[id] AND money_transactions.status in(3) AND actived = 1"));
+    
+        $all_fee = $req[nasargeblebebi]+$result[sakomisio] + $result[percent] + $result[penalty] + $result[remaining_root];
+        $page = '<div id="dialog-form">
+                 <fieldset>
+                    <table class="dialog-form-table" style="width: 100%;">
+                       <tr>
+                           <td style="width: 130px;"><label>სულ შესატანი</label></td>
+                           <td style="width: 100px;"><input id="payable_all" class="idle" style="width: 100px;" type="text" value="'.$all_fee.'" disabled="disabled"></td>
+                       </tr>
+                       <tr>
+                           <td style="width: 130px;"><label>დარჩენილი ძირი</label></td>
+                           <td style="width: 100px;"><input id="payable_root" class="idle" style="width: 100px;" type="text" value="'.$result[remaining_root].'" disabled="disabled"></td>
+                       </tr>
+                       <tr style="height:10px;"></tr>
+                       <tr>
+                           <td style="width: 130px;"><label>დარჩენილი პროცენტი</label></td>
+                           <td style="width: 100px;"><input id="payable_percent" class="idle" style="width: 100px;" type="text" value="'.$result[percent].'" disabled="disabled"></td>
+                       </tr>
+                       <tr style="height:10px;"></tr>
+                       <tr>
+                           <td style="width: 130px;"><label>ჯარიმა</label></td>
+                           <td style="width: 100px;"><input id="payable_penalty" class="idle" style="width: 100px;" type="text" value="'.$result[penalty].'" disabled="disabled"></td>
+                       </tr>
+                       <tr style="height:10px;"></tr>
+                       <tr>
+                           <td style="width: 130px;"><label>საკომისიო</label></td>
+                           <td style="width: 100px;"><input id="payable_Fee" class="idle" style="width: 100px;" type="text" value="'.$result[sakomisio].'" disabled="disabled"></td>
+                       </tr>
+                       <tr style="height:10px;"></tr>
+                       <tr>
+                           <td style="width: 130px;"><label>დღიური სარგებელი</label></td>
+                           <td style="width: 100px;"><input id="yield" class="idle" style="width: 100px;" type="text" value="'.$req[nasargeblebebi].'" disabled="disabled"></td>
+                       </tr>
+                    </table>
+                 </fieldset>
+             </div>';
+        $data = array('page' => $page);
+    
+        break;
+    case 'get_calculation':
+        $hidde_idd	= $_REQUEST[hidde_id];
+        $res = mysql_fetch_array(mysql_query("SELECT loan_currency.`name`
+                                              FROM   client_loan_agreement
+                                              JOIN   loan_currency ON loan_currency.id = client_loan_agreement.loan_currency_id
+                                              WHERE  client_id = '$hidde_idd'"));
+        $page = '<div id="dialog-form">
+                    <div id="tabs1" style="width: 99%;">
+                    	<ul>
+                    		<li><a href="#tab-0">პროცენტის გადახდა</a></li>
+                    		<li><a href="#tab-1">მანქანის გაყვანა</a></li>
+                    	</ul>
+                        <div id="tab-0">
+                             <fieldset>
+                                <table class="dialog-form-table" style="width: 100%;">
+                                   <tr>
+                                       <td colspan="3" style="width: 120px;"><label>სესხის ვალუტა: '.$res[name].'</label></td>
+                                   </tr>
+                                   <tr>
+                                       <td style="width: 120px;"><label>აირჩიე თარიღი</label></td>
+                                       <td style="width: 115px;"><input id="pay_datee" class="idle" style="width: 100px;" type="text" value=""></td>
+                                       <td colspan="2"><button id="check_calculation">შემოწმება</button></td>
+                                   </tr>
+                                   <tr style="height:20px;"></tr>
+                                   <tr>
+                                       <td style="width: 120px;"><label>სულ შესატანი თანხა</label></td>
+                                       <td style="width: 115px;"><input id="full_fee2" class="idle" style="width: 100px;" type="text" value="" disabled="disabled"></td>
+                                       <td style="width: 123px;"><label>სულ შეტანილი თანხა</label></td>
+                                       <td><input  id="full_pay2" class="idle" style="width: 100px;" type="text" value="" disabled="disabled"></td>
+                                   </tr>
+                                   <tr style="height:10px;"></tr>
+                                   <tr>
+                                       <td style="width: 120px;"><label>ძირი თანხა</label></td>
+                                       <td colspan="3"><input id="root_fee2" class="idle" style="width: 100px;" type="text" value="" disabled="disabled"></td>
+                                   </tr>
+                                   <tr style="height:10px;"></tr>
+                                   <tr>
+                                       <td style="width: 120px;"><label>პროცენტი</label></td>
+                                       <td colspan="3"><input id="percent_fee2" class="idle" style="width: 100px;" type="text" value="" disabled="disabled"></td>
+                                   </tr>
+                                   <tr style="height:10px;"></tr>
+                                   <tr>
+                                       <td style="width: 120px;"><label>ჯარიმა</label></td>
+                                       <td colspan="3"><input id="penalty_fee2" class="idle" style="width: 100px;" type="text" value="" disabled="disabled"></td>
+                                   </tr>
+                                </table>
+                             </fieldset>
+                        </div>
+                        <div id="tab-1">
+                            <fieldset>
+                                <table class="dialog-form-table" style="width: 100%;">
+                                   <tr>
+                                       <td colspan="3" style="width: 120px;"><label>სესხის ვალუტა: '.$res[name].'</label></td>
+                                   </tr>
+                                   <tr>
+                                       <td style="width: 120px;"><label>აირჩიე თარიღი</label></td>
+                                       <td style="width: 115px;"><input id="pay_datee1" class="idle" style="width: 100px;" type="text" value=""></td>
+                                       <td colspan="2"><button id="check_calculation_out">შემოწმება</button></td>
+                                   </tr>
+                                   <tr style="height:10px;"></tr>
+                                   <tr>
+                                       <td style="width: 120px;"><label>სულ შესატანი</label></td>
+                                       <td><input id="full_fee3" class="idle" style="width: 100px;" type="text" value="" disabled="disabled"></td>
+                                       <td style="width: 123px;"><label>სულ შეტანილი თანხა</label></td>
+                                       <td><input  id="full_pay3" class="idle" style="width: 100px;" type="text" value="" disabled="disabled"></td>
+                                   </tr>
+                                   <tr style="height:10px;"></tr>
+                                   <tr>
+                                       <td style="width: 120px;"><label>ძირი თანხა</label></td>
+                                       <td cospan="3"><input id="root_fee3" class="idle" style="width: 100px;" type="text" value="" disabled="disabled"></td>
+                                       
+                                   </tr>
+                                   <tr style="height:10px;"></tr>
+                                   <tr>
+                                       <td style="width: 120px;"><label>პროცენტი</label></td>
+                                       <td colspan="3"><input id="percent_fee3" class="idle" style="width: 100px;" type="text" value="" disabled="disabled"></td>
+                                   </tr>
+                                   <tr style="height:10px;"></tr>
+                                   <tr>
+                                       <td style="width: 120px;"><label>ჯარიმა</label></td>
+                                       <td colspan="3"><input id="penalty_fee3" class="idle" style="width: 100px;" type="text" value="" disabled="disabled"></td>
+                                   </tr>
+                                   <tr style="height:10px;"></tr>
+                                   <tr>
+                                       <td style="width: 120px;"><label>საკომისიო</label></td>
+                                       <td colspan="3"><input id="sakomiso" class="idle" style="width: 100px;" type="text" value="" disabled="disabled"></td>
+                                   </tr>
+                                   <tr style="height:10px;"></tr>
+                                   <tr>
+                                       <td style="width: 120px;"><label>ნასარგებლები<br>დღეები</label></td>
+                                       <td colspan="3"><input id="nasargeblebi" class="idle" style="width: 100px;" type="text" value="" disabled="disabled"></td>
+                                   </tr>
+                               </table>
+                            </fieldset>
+                        </div>
+                    </div>
+                 </div>';
+            $data = array('page' => $page);
+        break;
+        
+    case 'show_loan':
+        $hidde_idd	= $_REQUEST[hidde_id];
+        $res = mysql_fetch_assoc(mysql_query("SELECT client.id,
+                                        			 client_loan_agreement.datetime AS loan_agreement_datetime,
+                                                     client_loan_agreement.loan_type_id AS loan_type_id,
+                                                     client_loan_agreement.agreement_type_id AS agreement_type_id,
+                                                     client_loan_agreement.loan_amount AS loan_agreement_loan_amount,
+                                                     client_loan_agreement.loan_months AS loan_agreement_loan_months,
+                                                     client_loan_agreement.percent AS loan_agreement_percent,
+                                                     client_loan_agreement.monthly_pay AS loan_agreement_monthly_pay,
+                                                     client_loan_agreement.penalty_days AS loan_agreement_penalty_days,
+                                                     client_loan_agreement.penalty_percent AS loan_agreement_penalty_percent,
+                                                     client_loan_agreement.penalty_additional_percent AS loan_agreement_penalty_additional_percent,
+                                                     client_loan_agreement.insurance_fee AS loan_agreement_insurance_fee,
+                                                     client_loan_agreement.pledge_fee AS loan_agreement_pledge_fee,
+                                                     client_loan_agreement.loan_fee AS loan_agreement_loan_fee,
+                                                     client_loan_agreement.proceed_fee AS loan_agreement_proceed_fee,
+                                                     client_loan_agreement.rs_message_number AS loan_agreement_rs_message_number,
+                                                     client_loan_agreement.pay_day AS loan_agreement_pay_day,
+                                                     client_loan_agreement.exchange_rate AS loan_agreement_exchange_rate,
+                                                     client_loan_agreement.id AS loan_agreement_id,
+                                                     client_loan_agreement.status AS loan_agreement_actived_status,
+                                                     client_loan_agreement.proceed_percent AS loan_agreement_proceed_percent,
+                                                     client_loan_agreement.loan_currency_id AS loan_currency_id,
+                                                     client_loan_agreement.oris_code AS oris_code,
+                                                     client_loan_agreement.canceled_status AS canceled_status,
+                                                     client_loan_agreement.responsible_user_id AS responsible_user_id,
+                                                     client_loan_agreement.loan_beforehand_percent AS loan_beforehand_percent
+                                            FROM    `client`
+                                            LEFT JOIN client_loan_agreement ON client_loan_agreement.client_id = client.id
+                                            WHERE  client.id = $hidde_idd"));
+        
+        if ($res[loan_type_id] == 2) {
+            $input_hidde = "display:none;";
+        }else{
+            $input_hidde = "display:block;";
+        }
+        
+        if($res[agreement_type_id] == 1 || $res[agreement_type_id] == 4 || $res[agreement_type_id] == 6 || $res[agreement_type_id] == 8 || $res[agreement_type_id] == 9 || $res[agreement_type_id] == 11){
+            $check_shss = "";
+        }else{
+            $check_shss = "display:none;";
+        }
+        
+        $page = '<div id="dialog-form">
+                    <fieldset>
+                        <legend>ძირითადი ინფორმაცია</legend>
+                        <table style="width: 100%;">
+            			   <tr>
+                               <td style="width: 125px;"><label for="phone1">ხელშეკრ. N</label></td>
+                               <td style="width: 190px;"><label for="phone2">თარიღი</label></td>
+                               <td style="width: 203px;"><label for="loan_type">სესხის ტიპი</label></td>
+                               <td style="width: 335px;"><label for="client_surname">ხელშეკრულების ტიპი</label></td>
+        	               </tr>
+                           <tr>
+                               <td style="width: 125px;"><input class="idle" style="width: 113px;" id="agreement_number" type="text" value="'.$res[loan_agreement_id].'" disabled="disabled"></td>
+                               <td style="width: 190px;"><input class="idle" style="width: 180px;" id="agreement_date" type="text" value="'.$res[loan_agreement_datetime].'" disabled="disabled"></td>
+                               <td style="width: 203px;"><select class="idle" id="loan_agreement_type" style="width: 180px;">'.loan_type($res[loan_type_id]).'</select></td>
+                               <td style="width: 335px;"><select class="idle" id="agreement_type_id" style="width: 332px;">'.agreement_type($res[agreement_type_id],$res[loan_type_id]).'</select></td>
+                           </tr>
+                        </table>
+                        <table style="width: 100%;">          
+                           <tr style="height:18px"></tr>
+                           <tr>
+                               <td style="width: 130px;"><label for="phone1">სესხის ვალუტა</label></td>
+                               <td style="width: 130px;"><label for="client_name">სრული მოცულობა</label></td>
+                               <td style="width: 130px;"><label for="phone2">ყოველთ. პროცენტი</label></td>
+                               <td style="width: 130px;"><label for="client_surname">სარგებლობის ვადა</label></td>
+        	                   <td style="width: 130px;"><label for="phone1">გაცემის საკომისიო</label></td>
+                               <td style="width: 130px;"><label for="phone1">წინსწ.დაფარვის საკომ.</label></td>
+                           </tr>
+                           <tr>
+                               <td style="width: 130px;"><select class="idle" id="loan_currency" style="width: 130px;">'.loan_currency($res[loan_currency_id]).'</select></td>
+                               <td style="width: 130px;"><input class="idle" style="width: 129px;" id="loan_amount" type="text" value="'.$res[loan_agreement_loan_amount].'" disabled="disabled"></td>
+                               <td style="width: 130px;"><input class="idle" style="width: 129px;" id="month_percent" type="text" value="'.$res[loan_agreement_percent].'" disabled="disabled"></td>
+                               <td style="width: 130px;"><input class="idle" style="width: 129px;" id="loan_months" type="text" value="'.$res[loan_agreement_loan_months].'" disabled="disabled"></td>
+                               <td style="width: 130px;"><input class="idle" style="width: 129px;" id="loan_fee" type="text" value="'.$res[loan_agreement_loan_fee].'" disabled="disabled"></td>
+                               <td style="width: 130px;"><input class="idle" style="width: 129px;" id="loan_beforehand_percent" type="text" value="'.$res[loan_beforehand_percent].'" disabled="disabled"></td>
+                           </tr>
+                        </table>
+                        <table style="width: 100%;"> 
+                           <tr style="height:18px"></tr>
+                           <tr>
+                               <td style="width: 250px;"><label style="'.$input_hidde.'" class="label_label" for="phone2">ხელშკრ. გაგრძ. საფასური</label></td>
+                               <td style="width: 220px;"><label style="'.$input_hidde.'" class="label_label" for="client_name">პროცენტი</label></td>
+                               <td style="width: 220px;"><label for="client_surname">სადაზღვევო ხარჯი</label></td>
+        	                   <td style="width: 220px;"><label for="phone1">გირავნობის ხარჯი</label></td>
+                               
+                           </tr>
+                           <tr>
+                               <td style="width: 220px;"><input class="idle" style="width: 200px; '.$input_hidde.'" id="proceed_fee" type="text" value="'.$res[loan_agreement_proceed_fee].'" disabled="disabled"></td>
+                               <td style="width: 220px;"><input class="idle" style="width: 200px; '.$input_hidde.'" id="proceed_percent" type="text" value="'.$res[loan_agreement_proceed_percent].'" disabled="disabled"></td>
+                               <td style="width: 220px;"><input class="idle" style="width: 200px;" id="insurance_fee" type="text" value="'.$res[loan_agreement_insurance_fee].'" disabled="disabled"></td>
+                               <td style="width: 220px;"><input class="idle" style="width: 195px;" id="pledge_fee" type="text" value="'.$res[loan_agreement_pledge_fee].'" disabled="disabled"></td>
+                               
+                           </tr>
+                           <tr style="height:18px"></tr>
+                           <tr>
+                               <td style="width: 220px;"><label for="client_name">ყოველთვიურად შეს. თანხა</label></td>
+                               <td style="width: 220px;"><label class="rs_message_number" style="'.$check_shss.'" for="client_surname">შემოსავლების სამსახ. შეტყობ. N</label></td>
+                               <td style="width: 220px;"><label for="client_surname">ორისის კოდი</label></td>
+                               <td colspan="2" style="width: 220px;"><label for="phone2">ვალუტის კურსი</label></td>
+                           </tr>
+                           <tr>
+                               <td style="width: 220px;">
+                                   <table>
+                                       <tr>
+                                           <td>
+                                                <input class="idle" style="width: 110px;" id="monthly_pay" type="text" value="'.$res[loan_agreement_monthly_pay].'" disabled="disabled">
+                                           </td>
+                                           <td>
+                                                <button style="margin-left: 4px;" id="check_monthly_pay">შემოწმება</button>
+                                           </td>
+                                       </tr>
+                                   </table>
+                               </td>
+                               <td style="width: 220px;"><input class="idle" style="width: 200px; '.$check_shss.' " id="rs_message_number" type="text" value="'.$res[loan_agreement_rs_message_number].'" disabled="disabled"></td>
+                               <td style="width: 220px;"><input class="idle" style="width: 200px;" id="oris_code" type="text" value="'.$res[oris_code].'"></td>
+                               <td colspan="2" style="width: 220px;"><input class="idle" style="width: 195px;" id="exchange_rate" type="text" value="'.$res[loan_agreement_exchange_rate].'" disabled="disabled"></td>
+                           </tr>
+                           <tr style="height:18px"></tr>
+                           <tr>
+                               <td style="width: 220px;"><label for="client_name">ვადაგადაც. პირგასამტეხლო%</label></td>
+                               <td style="width: 220px;"><label for="client_surname">ვადაგადაცილებული დღეები</label></td>
+        	                   <td style="width: 220px;"><label for="phone1">ვადაგადაც. პირგასამტეხლო%</label></td>
+                               <td style="width: 220px;"><label for="phone1">ხელმომწერი პირი</label></td>
+                           </tr>
+                           <tr>
+                               <td style="width: 220px;"><input class="idle" style="width: 200px;" id="penalty_percent" type="text" value="'.$res[loan_agreement_penalty_percent].'" disabled="disabled"></td>
+                               <td style="width: 220px;">
+                                   <table style="width: 205px;">
+                                       <tr style="width: 100%;">
+                                           <td style="width: 25px;">
+                                                <label style="width: 25px; padding-top: 5px;">მდე-</label>
+                                           </td>
+                                           <td style="width: 138px;"><input class="idle" style="width: 138px;" id="penalty_days" type="text" value="'.$res[loan_agreement_penalty_days].'" disabled="disabled"></td>
+                                           <td style="width: 25px;">
+                                                <label style="width: 25px; padding-top: 5px;">-დან</label>
+                                           </td>
+                                       </tr>
+                                   </table>
+                               </td>
+                               <td style="width: 220px;"><input class="idle" style="width: 200px;" id="penalty_additional_percent" type="text" value="'.$res[loan_agreement_penalty_additional_percent].'" disabled="disabled"></td>
+                               <td style="width: 205px;"><select class="idle" id="responsible_user_id" style="width: 200px;">'.getresponsible($res['responsible_user_id']).'</select></td>
+                           </tr>
+                        </table>
+        	        </fieldset>
+                </div>';
+        
+        $data = array('page' => $page);
+        
+        break;
+    case 'check_calculation':
+    
+        $local_id  = $_REQUEST['local_id'];
+        $pay_datee = $_REQUEST['pay_datee'];
+    
+        $res = mysql_fetch_assoc(mysql_query("  SELECT      client_loan_schedule.id,
+                                                            client_loan_schedule.pay_amount,
+                                                            client_loan_schedule.root,
+                                                            client_loan_schedule.percent,
+                                                            CASE
+                                                               WHEN client_loan_agreement.loan_type_id =1 AND DATEDIFF('$pay_datee', client_loan_schedule.pay_date)>0 THEN ROUND(client_loan_schedule.percent/(DAY(LAST_DAY('$pay_datee')))*(DATEDIFF('$pay_datee', client_loan_schedule.pay_date)),2)
+                                                               WHEN client_loan_agreement.loan_type_id =2 AND DATEDIFF('$pay_datee', client_loan_schedule.pay_date)>0 AND DATEDIFF('$pay_datee', client_loan_schedule.pay_date) <= client_loan_agreement.penalty_days THEN ROUND((client_loan_schedule.remaining_root*(client_loan_agreement.penalty_percent/100))*(DATEDIFF('$pay_datee', client_loan_schedule.pay_date)),2)
+                                                               WHEN client_loan_agreement.loan_type_id =2 AND DATEDIFF('$pay_datee', client_loan_schedule.pay_date)>client_loan_agreement.penalty_days THEN ROUND((client_loan_schedule.remaining_root*(client_loan_agreement.penalty_additional_percent/100))*(DATEDIFF('$pay_datee', client_loan_schedule.pay_date)),2)
+                                                            END AS penalty,
+                                                            client_loan_agreement.status
+                                                 FROM      `client_loan_schedule`
+                                                 LEFT JOIN  client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
+                                                 JOIN       client ON client.id = client_loan_agreement.client_id
+                                                 WHERE      client_loan_schedule.actived = 1 AND client.id = $local_id AND client_loan_schedule.`status` != 1
+                                                 ORDER BY   pay_date ASC
+                                                 LIMIT 1"));
+        if ($res[status] == 1) {
+            $res1 = mysql_fetch_assoc(mysql_query("SELECT SUM(pay_amount) AS pay_amount
+                                                   FROM   money_transactions
+                                                   WHERE  money_transactions.client_loan_schedule_id = $res[id] AND money_transactions.status in(3) AND actived = 1"));
+    
+            $data = array('pay_amount' => $res[pay_amount]+$res[penalty], 'root' => $res[root], 'percent' => $res[percent], 'penalty' => $res[penalty], 'pay_amount1' => $res1[pay_amount]);
+        }else{
+            global  $error;
+            $error = 'ხელშეკრულება არ არის გააქტიურებული';
+        }
+    
+    
+        break;
+        
+    case 'check_calculation_out':
+    
+        $local_id  = $_REQUEST['local_id'];
+        $pay_datee = $_REQUEST['pay_datee1'];
+    
+        $res = mysql_query("SELECT   client_loan_schedule.id,
+                                     client_loan_agreement.status as st,
+                                     client_loan_schedule.pay_date,
+                    				 client_loan_schedule.`status`,
+                    				 ROUND(client_loan_schedule.percent,2) AS percent,
+                                     ROUND((client_loan_schedule.root + client_loan_schedule.remaining_root),2) AS remaining_root,
+                                     ROUND(((client_loan_schedule.root + client_loan_schedule.remaining_root)*client_loan_agreement.loan_beforehand_percent)/100, 2) AS sakomisio,
+                            		 CASE
+                						 WHEN client_loan_agreement.loan_type_id =1 AND DATEDIFF('$pay_datee', client_loan_schedule.pay_date)>0 THEN ROUND(client_loan_schedule.percent/(DAY(LAST_DAY('$pay_datee')))*(DATEDIFF('$pay_datee', client_loan_schedule.pay_date)),2)
+                						 WHEN client_loan_agreement.loan_type_id =2 AND DATEDIFF('$pay_datee', client_loan_schedule.pay_date)>0 AND DATEDIFF('$pay_datee', client_loan_schedule.pay_date) <= client_loan_agreement.penalty_days THEN ROUND((client_loan_schedule.remaining_root*(client_loan_agreement.penalty_percent/100))*(DATEDIFF('$pay_datee', client_loan_schedule.pay_date)),2)
+                						 WHEN client_loan_agreement.loan_type_id =2 AND DATEDIFF('$pay_datee', client_loan_schedule.pay_date)>client_loan_agreement.penalty_days THEN ROUND((client_loan_schedule.remaining_root*(client_loan_agreement.penalty_additional_percent/100))*(DATEDIFF('$pay_datee', client_loan_schedule.pay_date)),2)
+                    				 END AS penalty
+                            FROM     client_loan_schedule
+                            JOIN     client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
+                            WHERE    client_loan_agreement.client_id = '$local_id' AND client_loan_schedule.`status` = 0 AND client_loan_schedule.schedule_date <= '$pay_datee'
+                            ORDER BY client_loan_schedule.id ASC
+                            LIMIT 1");
+        
+        $check = mysql_num_rows($res);
+        
+        if ($check == 0) {
+            $res = mysql_query("SELECT   client_loan_schedule.id,
+                                         client_loan_agreement.status as st,
+                                         client_loan_schedule.pay_date,
+                        				 client_loan_schedule.`status`,
+                                         ROUND(((client_loan_schedule.root + client_loan_schedule.remaining_root)*client_loan_agreement.loan_beforehand_percent)/100,2) AS sakomisio,
+                        				 0 AS percent,
+                                         0 AS penalty,
+                                         ROUND(client_loan_schedule.remaining_root,2) AS remaining_root
+                                FROM     client_loan_schedule
+                                JOIN     client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
+                                WHERE    client_loan_agreement.client_id = '$local_id' AND client_loan_schedule.`status` = 1 AND client_loan_schedule.schedule_date <= '$pay_datee'
+                                ORDER BY client_loan_schedule.id DESC
+                                LIMIT 1");
+        }
+        
+        $result = mysql_fetch_assoc($res);
+        
+        $req = mysql_fetch_assoc(mysql_query("SELECT client_loan_schedule.id,
+                                                	 ROUND(DATEDIFF('$pay_datee', '$result[pay_date]')*(client_loan_schedule.percent/DAY(LAST_DAY(client_loan_schedule.pay_date))),2) AS nasargeblebebi
+                                              FROM   client_loan_schedule
+                                              JOIN   client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
+                                              WHERE  client_loan_agreement.client_id = $local_id AND client_loan_schedule.`id` = '$result[id]+1'"));
+        
+        if ($result[st] == 1) {
+            $res1 = mysql_fetch_assoc(mysql_query("SELECT SUM(pay_amount) AS pay_amount
+                                                   FROM   money_transactions
+                                                   WHERE  money_transactions.client_loan_schedule_id = $res[id] AND money_transactions.status in(3) AND actived = 1"));
+    
+            $data = array('pay_amount' => $result[root] + $result[percent] + $result[penalty] + $result[remaining_root] + $req[nasargeblebebi], 'root' => $result[remaining_root], 'percent' => $result[percent], 'penalty' => $result[penalty], 'pay_amount1' => $res1[pay_amount], 'nasargeblebebi' => $req[nasargeblebebi], 'sakomisio' => $result[sakomisio]);
+        }else{
+            global  $error;
+            $error = 'ხელშეკრულება არ არის გააქტიურებული';
+        }
+    
+    
+        break;
+        
+    case 'cancel_loan':
+        $hidde_idd	= $_REQUEST[hidde_id];
+    
+        mysql_query("UPDATE `client_loan_agreement` SET `status` = '1',
+                            `canceled_status` = '1'
+                     WHERE  `client_id` = '$hidde_idd' 
+                     AND     actived = 1");
+        break;
+    case 'get_difference':
+        $user_id = $_SESSION['USERID'];
+        $res = mysql_query("SELECT client.id AS client_id,
+                                   client_loan_schedule.id AS schedule_id,
+        			               client_loan_agreement.exchange_rate AS start_cource,
+                        		  (SELECT cource FROM cur_cource WHERE actived = 1 AND DATE(datetime) = DATE(NOW())) AS end_cource,
+                                   CASE
+                                      WHEN client_loan_agreement.loan_currency_id = 1 THEN ROUND(((client_loan_schedule.remaining_root/client_loan_agreement.exchange_rate) - (client_loan_schedule.remaining_root/(SELECT cource FROM cur_cource WHERE actived = 1 AND DATE(datetime) = DATE(NOW())))),2)
+                                      WHEN client_loan_agreement.loan_currency_id = 2 THEN ROUND(((client_loan_schedule.remaining_root*client_loan_agreement.exchange_rate) - (client_loan_schedule.remaining_root*(SELECT cource FROM cur_cource WHERE actived = 1 AND DATE(datetime) = DATE(NOW())))),2)
+                        		   END AS difference,
+                        		   client_loan_schedule.remaining_root
+                             FROM  client
+                             JOIN  client_loan_agreement ON client_loan_agreement.client_id = client.id
+                             JOIN  client_loan_schedule ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
+                             WHERE client.actived = 1 AND client_loan_agreement.`status` = 1 AND client_loan_agreement.canceled_status = 0
+                             AND   client_loan_schedule.actived = 1 AND DATE_FORMAT(client_loan_schedule.pay_date, '%Y-%m') = DATE_FORMAT(CURDATE(), '%Y-%m')
+                             AND   client_loan_schedule.remaining_root > 0");
+        
+        while ($row = mysql_fetch_array($res)) {
+            $check = mysql_num_rows(mysql_query("SELECT id
+                                                 FROM  `difference_cource`
+                                                 WHERE  cliet_loan_schedule_id = $row[schedule_id]"));
+            if ($check == 0) {
+                mysql_query("INSERT INTO `difference_cource` 
+                    					(`user_id`, `datetime`, `client_id`, `cliet_loan_schedule_id`, `start_cource`, `end_cource`, `remaining_root`, `difference`, `actived`) 
+                    		      VALUES 
+                    		            ('$user_id', NOW(), '$row[client_id]', '$row[schedule_id]', '$row[start_cource]', '$row[end_cource]', '$row[remaining_root]', '$row[difference]', '1')");
+            }
+            
+        }
+        
+        break;
 	default:
 		$error = 'Action is Null';
 }
@@ -762,6 +1370,70 @@ switch ($action) {
 $data['error'] = $error;
 
 echo json_encode($data);
+
+function loan_type($id){
+    $req = mysql_query("SELECT id,
+                              `name`
+                        FROM   loan_type");
+
+    $data .= '<option value="0" selected="selected">----</option>';
+    while( $res = mysql_fetch_assoc($req)){
+        if($res['id'] == $id){
+            $data .= '<option value="' . $res['id'] . '" selected="selected">' . $res['name'] . '</option>';
+        } else {
+            $data .= '<option value="' . $res['id'] . '">' . $res['name'] . '</option>';
+        }
+    }
+    return $data;
+}
+
+function agreement_type($id){
+    $req = mysql_query("SELECT id,
+                              `name`
+                        FROM   agreement_type");
+
+    $data .= '<option value="0" selected="selected">----</option>';
+    while( $res = mysql_fetch_assoc($req)){
+        if($res['id'] == $id){
+            $data .= '<option value="' . $res['id'] . '" selected="selected">' . $res['name'] . '</option>';
+        } else {
+            $data .= '<option value="' . $res['id'] . '">' . $res['name'] . '</option>';
+        }
+    }
+    return $data;
+}
+
+function loan_currency($id){
+    $req = mysql_query("SELECT id,
+                              `name`
+                        FROM   loan_currency");
+
+    while( $res = mysql_fetch_assoc($req)){
+        if($res['id'] == $id){
+            $data .= '<option value="' . $res['id'] . '" selected="selected">' . $res['name'] . '</option>';
+        } else {
+            $data .= '<option value="' . $res['id'] . '">' . $res['name'] . '</option>';
+        }
+    }
+    return $data;
+}
+
+function getresponsible($id){
+    $req = mysql_query("SELECT id,`name`
+                        FROM `user_info`
+                        WHERE NOT ISNULL(user_info.trust_number)");
+
+    $data .= '<option value="0" selected="selected">----</option>';
+    while( $res = mysql_fetch_assoc($req)){
+        if($res['id'] == $id){
+            $data .= '<option value="' . $res['id'] . '" selected="selected">' . $res['name'] . '</option>';
+        } else {
+            $data .= '<option value="' . $res['id'] . '">' . $res['name'] . '</option>';
+        }
+    }
+    return $data;
+}
+
 function check_sub_client($id){
     $res=mysql_fetch_assoc(mysql_query("SELECT IF(ISNULL(sub_client),0,sub_client) AS `sub_client`
                                         FROM  `client` 
@@ -986,9 +1658,9 @@ function GetPage($id){
         $dat.='<tr style="width:100%; border: 1px solid #000; '.$color.'">
                     <td style="width:5%; border-right: 1px solid #000;"><label style="font-size: 12px; text-align:center;">'.$row[number].'<label></td>
                     <td style="width:19%; border-right: 1px solid #000;"><label style="font-size: 12px; text-align:center;">'.$row[schedule_date].'</label></td>
+                    <td style="width:19%; border-right: 1px solid #000;"><label style="font-size: 12px; text-align:center;">'.$row[pay_amount].'</label></td>
                     <td style="width:19%; border-right: 1px solid #000;"><label style="font-size: 12px; text-align:center;">'.$row[root].'</label></td>
                     <td style="width:19%; border-right: 1px solid #000;"><label style="font-size: 12px; text-align:center;">'.$row[percent].'<label></td>
-                    <td style="width:19%; border-right: 1px solid #000;"><label style="font-size: 12px; text-align:center;">'.$row[pay_amount].'</label></td>
                     <td style="width:19%;"><label style="font-size: 12px; text-align:center;">'.$row[remaining_root].'</label></td>
                 </tr>';
     }
@@ -1002,6 +1674,7 @@ function GetPage($id){
                                 				DATE_FORMAT(client_loan_agreement.datetime,'%d') AS `day`,
                                 				CONCAT(client.`name`,' ',client.lastname) AS `name`,
                                                 client_loan_agreement.loan_type_id,
+                                                client_loan_agreement.canceled_status,
                                                client_loan_agreement.loan_currency_id
                                         FROM `client_loan_agreement`
                                         JOIN  client ON client.id = client_loan_agreement.client_id
@@ -1045,9 +1718,9 @@ function GetPage($id){
           $dat1.='<tr style="width:100%; border: 1px solid #000; '.$color1.'">
                         <td style="width:5%; border-right: 1px solid #000;"><label style="font-size: 12px; text-align:center;">'.$row1[number].'<label></td>
                         <td style="width:19%; border-right: 1px solid #000;"><label style="font-size: 12px; text-align:center;">'.$row1[schedule_date].'</label></td>
+                        <td style="width:19%; border-right: 1px solid #000;"><label style="font-size: 12px; text-align:center;">'.$row1[pay_amount].'</label></td>
                         <td style="width:19%; border-right: 1px solid #000;"><label style="font-size: 12px; text-align:center;">'.$row1[root].'</label></td>
                         <td style="width:19%; border-right: 1px solid #000;"><label style="font-size: 12px; text-align:center;">'.$row1[percent].'<label></td>
-                        <td style="width:19%; border-right: 1px solid #000;"><label style="font-size: 12px; text-align:center;">'.$row1[pay_amount].'</label></td>
                         <td style="width:19%;"><label style="font-size: 12px; text-align:center;">'.$row1[remaining_root].'</label></td>
                     </tr>';
       }
@@ -1075,7 +1748,6 @@ function GetPage($id){
   
  $data = '<div id="dialog-form" style="overflow-y: scroll; height: 550px;">
                 <fieldset>
-                    <legend>გრაფიკი</legend>
                     <div style="width:100%; font-size: 14px;">
                         <table style="width:100%;">
                             <tr style="width:100%;">
@@ -1134,11 +1806,11 @@ function GetPage($id){
                                             </tr>
                                             <tr style="width:100%; border: 1px solid #000; background: #e0e0e0;">
                                                 <td style="width:5%; border-right: 1px solid #000;"><label style="font-size: 12px; text-align:center;">#<label></td>
-                                                <td style="width:19%; border-right: 1px solid #000;"><label style="font-size: 12px; text-align:center;">თარიღი</label></td>
+                                                <td style="width:19%; border-right: 1px solid #000;"><label style="font-size: 12px; text-align:center;">თვე</label></td>
+                                                <td style="width:19%; border-right: 1px solid #000;"><label style="font-size: 12px; text-align:center;">ანუიტეტი</label></td>
                                                 <td style="width:19%; border-right: 1px solid #000;"><label style="font-size: 12px; text-align:center;">ძირი<label></td>
                                                 <td style="width:19%; border-right: 1px solid #000;"><label style="font-size: 12px; text-align:center;">პროცენტი</label></td>
-                                                <td style="width:19%; border-right: 1px solid #000;"><label style="font-size: 12px; text-align:center;">შესატანი</label></td>
-                                                <td style="width:19%;"><label style="font-size: 12px; text-align:center;">ნაშთი შენატანის შემდეგ</label></td>
+                                                <td style="width:19%;"><label style="font-size: 12px; text-align:center;">ნაშთი</label></td>
                                             </tr>';
                                 $data.=$dat1;
                                 $data.='
@@ -1194,10 +1866,10 @@ function GetPage($id){
                                         <tr style="width:100%; border: 1px solid #000; background: #e0e0e0;">
                                             <td style="width:5%; border-right: 1px solid #000;"><label style="font-size: 12px; text-align:center;">#<label></td>
                                             <td style="width:19%; border-right: 1px solid #000;"><label style="font-size: 12px; text-align:center;">თარიღი</label></td>
+                                            <td style="width:19%; border-right: 1px solid #000;"><label style="font-size: 12px; text-align:center;">ანუიტეტი</label></td>
                                             <td style="width:19%; border-right: 1px solid #000;"><label style="font-size: 12px; text-align:center;">ძირი<label></td>
                                             <td style="width:19%; border-right: 1px solid #000;"><label style="font-size: 12px; text-align:center;">პროცენტი</label></td>
-                                            <td style="width:19%; border-right: 1px solid #000;"><label style="font-size: 12px; text-align:center;">შესატანი</label></td>
-                                            <td style="width:19%;"><label style="font-size: 12px; text-align:center;">ნაშთი შენატანის შემდეგ</label></td>
+                                            <td style="width:19%;"><label style="font-size: 12px; text-align:center;">ნაშთი</label></td>
                                         </tr>';
                             $data.=$dat;
                             $data.='
@@ -1215,6 +1887,7 @@ function GetPage($id){
                </fieldset>
         <input type="hidden" id="id" value="' . $id . '" />
         <input type="hidden" id="loan_currency_id" value="' . $res[loan_currency_id] . '" />
+        <input type="hidden" id="canceled_status" value="' . $res[canceled_status] . '" />
     </div>
     ';
     return $data;

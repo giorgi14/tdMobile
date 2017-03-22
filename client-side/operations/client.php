@@ -77,7 +77,7 @@
     var aJaxURL_cl_guarantors = "server-side/operations/subtables/client_guarantors.action.php";
     var tName                 = "table_";
     var dialog                = "add-edit-form";
-    var colum_number          = 9;
+    var colum_number          = 10;
     var main_act              = "get_list";
     var change_colum_main     = "<'dataTable_buttons'T><'F'Cfipl>";
      
@@ -102,42 +102,7 @@
     function LoadDialog(fName){
         if(fName == 'add-edit-form'){
         	var buttons = {
-        			"calculation-dialog": {
-    		            text: "წინასწარი კალკულაცია",
-    		            id: "calculation-dialog",
-    		            click: function () {
-    		            	param 	       = new Object();
-    		        		param.act      = "get_calculation";
-    		        		param.hidde_id = $("#id_hidden").val();
-    		        		
-    		        		$.ajax({
-    		        	        url: aJaxURL,
-    		        		    data: param,
-    		        	        success: function(data) {       
-    		        				if(typeof(data.error) != "undefined"){
-    		        					if(data.error != ""){
-    		        						alert(data.error);
-    		        					}else{
-    		        						$("#add-edit-form-calculation").html(data.page);
-    		        						var buttons = {
-		        			    				"cancel": {
-		        			    		            text: "დახურვა",
-		        			    		            id: "cancel-dialog",
-		        			    		            click: function () {
-		        			    		            	$(this).dialog("close");
-		        			    		            }
-		        			    		        }
-		        			    		    };
-    		        			            GetDialog("add-edit-form-calculation", 521, "auto", buttons, 'left+43 top');
-    		        			            $("#check_calculation").button();
-    		        			            GetDate('pay_datee');
-    		        			            $("#pay_datee").blur();
-    		        			        }
-    		        				}
-    		        	    	}
-    		        	    });
-    		            }
-    		        },
+        			
         			"update-loan": {
     		            text: "სესხის რესტრუქტურიზაცია",
     		            id: "update-loan",
@@ -172,43 +137,6 @@
     		        			            $("#sub_check_monthly_pay").button();
     		        			            get_local_id('client', '1');
     		        					}
-    		        				}
-    		        	    	}
-    		        	    });
-    		            }
-    		        },
-        			"cancel-loan": {
-    		            text: "სესხის დახურვა",
-    		            id: "cancel-loan",
-    		            click: function () {
-    		            	param 	       = new Object();
-    		        		param.act      = "get_canceled-loan_dialog";
-    		        		param.hidde_id = $("#id_hidden").val();
-    		        		
-    		        		$.ajax({
-    		        	        url: aJaxURL,
-    		        		    data: param,
-    		        	        success: function(data) {       
-    		        				if(typeof(data.error) != "undefined"){
-    		        					if(data.error != ""){
-    		        						alert(data.error);
-    		        					}else{
-    		        						$("#add-edit-form-canceled").html(data.page);
-    		        						var buttons = {
-		        			    				"save": {
-		        			    		            text: "ხელშეკრულების დახურვა",
-		        			    		            id: "canceled_client_loan"
-		        			    		        },
-		        			    	        	"cancel": {
-		        			    		            text: "დახურვა",
-		        			    		            id: "cancel-dialog",
-		        			    		            click: function () {
-		        			    		            	$(this).dialog("close");
-		        			    		            }
-		        			    		        }
-		        			    		    };
-    		        			            GetDialog("add-edit-form-canceled", 300, "auto", buttons, 'center top');
-    		        			        }
     		        				}
     		        	    	}
     		        	    });
@@ -294,29 +222,31 @@
                 if($("#hidde_status").val()==1){
                 	$("#activate-dialog").button("disable");
     				$("#save-dialog").button("disable");
-    				$("#cancel-loan").button("enable");
     				$("#update-loan").button("enable");
     				$('#add-edit-form, .idle').attr('disabled', true);
     				$('#loan_agreement_type').prop('disabled', true).trigger("chosen:updated");
     				$('#agreement_type_id').prop('disabled', true).trigger("chosen:updated");
     				$('#car_type').prop('disabled', true).trigger("chosen:updated");
                 }else if($("#hidde_status").val()==0){
-                	$("#cancel-loan").button("disable");
     				$("#update-loan").button("disable");
                 }
             }
 
             if($("#hidde_canceled_status").val()==1){
-            	$("#cancel-loan").button("disable");
 				$("#update-loan").button("disable");
-				$("#calculation-dialog").button("disable");
             }
             
             if($("#car_insurance_info_hidde").val()==''){
             	$("#print_insurance").button("disable");
             	$("#download_insurance").button("disable");
             }
-            
+            $("#tld_responsible").chosen();
+            if($("input[class=client_type]:checked").val() == 2){
+                $("#tld_responsible_chosen").css('display', 'block');
+                $("#tld_responsible_chosen").css('width', '180px');
+            }else{
+            	$("#tld_responsible_chosen").css('display', 'none');
+            }
             setTimeout(function(){
          		LoadTable('person',3,main_act,"<'F'Cpl>",aJaxURL_cl_person, '', 'local_id='+$("#local_id").val());
          		$("#table_person_length").css('top', '2px');
@@ -544,6 +474,7 @@
 		param.jur_address         = $('#jur_address').val();
 		param.ltd_name	          = $('#ltd_name').val();
 		param.ltd_id              = $('#ltd_id').val();
+		param.tld_responsible     = $("#tld_responsible").val();
 		param.client_type         = $("input[class=client_type]:checked").val();
 		param.trust_pers_checkbox = $("input[id='trust_pers_checkbox']:checked").val();
 		
@@ -781,6 +712,7 @@
 		param.jur_address         = $('#jur_address').val();
 		param.ltd_name	          = $('#ltd_name').val();
 		param.ltd_id              = $('#ltd_id').val();
+		param.tld_responsible     = $("#tld_responsible").val();
 		param.client_type         = $("input[class=client_type]:checked").val();
 		param.trust_pers_checkbox = $("input[id='trust_pers_checkbox']:checked").val();
 		
@@ -870,28 +802,6 @@
 		}
 	});
 
-    $(document).on("click", "#canceled_client_loan", function () {
-    	param 	       = new Object();
-		param.act      = "cancel_loan";
-		param.hidde_id = $("#id_hidden").val();
-		
-		$.ajax({
-	        url: aJaxURL,
-		    data: param,
-	        success: function(data) {       
-				if(typeof(data.error) != "undefined"){
-					if(data.error != ""){
-						alert(data.error);
-					}else{
-						alert('ხელშეკრულება წარმატებით დაიხურა');
-						$("#add-edit-form").dialog("close");
-						LoadTable('index',colum_number,main_act,change_colum_main,aJaxURL,'','');
-					}
-				}
-	    	}
-	    });
-	});
-	
     $(document).on("click", "#check_monthly_pay", function () {
 		param 	  = new Object();
 		param.act = "check_monthly_pay";
@@ -1013,32 +923,7 @@
 	    	}
 	   });
 	});
-    $(document).on("click", "#check_calculation", function () {
-		param 	  = new Object();
-		param.act = "check_calculation";
-
-		param.local_id	= $("#local_id").val();
-		param.pay_datee	= $('#pay_datee').val();
-		
-		$.ajax({
-	        url: aJaxURL,
-		    data: param,
-	        success: function(data) {       
-				if(typeof(data.error) != "undefined"){
-					if(data.error != ""){
-						alert(data.error);
-					}else{
-						$("#full_fee2").val(data.pay_amount);
-						$("#root_fee2").val(data.root);
-						$("#percent_fee2").val(data.percent);
-						$("#penalty_fee2").val(data.penalty);
-						$("#full_pay2").val(data.pay_amount1);
-					}
-				}
-	    	}
-	   });
-	});
-
+	
     $(document).on("click", "#save-driver", function () {
 		param 	  = new Object();
 		param.act = "save_car_drivers";
@@ -1109,12 +994,15 @@
     	if($(this).val()==1){
     		$("#ltd_name").css('display','none');
     		$("#ltd_id").css('display','none');
+    		$("#tld_responsible_chosen").css('display','none');
     		$(".hidde_label").css('display','none');
-        }else{
+    	}else{
         	$("#ltd_name").css('display','block');
     		$("#ltd_id").css('display','block');
+    		$("#tld_responsible_chosen").css('display','');
+    		$("#tld_responsible_chosen").css('width','180px');
     		$(".hidde_label").css('display','block');
-        }
+    	}
     });
 
     $(document).on("click", "#trust_pers_checkbox", function () {
@@ -1562,6 +1450,17 @@
     $(document).on("click", "#file_upload", function () {
 	    $('#file_name1').click();
 	});
+
+    $(document).on("click", "#carsize", function () {
+    	if($(this).is(':checked')){
+        	$("#tech_test_price").css('display','');
+        	$("#hidde_label").css('display','');
+        	
+    	}else{
+    		$("#tech_test_price").css('display','none');
+    		$("#hidde_label").css('display','none');
+        }
+	});
 	
 	
     $(document).on("change", "#file_name1", function () {
@@ -1689,12 +1588,13 @@
                     <th>ID</th>
                     <th style="width: 46px;">№</th>
                     <th style="width: 13%;">თარიღი</th>
-                    <th style="width: 23%;">სახელი გვარი</th>
-                    <th style="width: 13%;">პირადი ნომერი</th>            
-                    <th style="width: 13%;">ტელეფონი</th>
-                    <th style="width: 13%;">ხელშეკრულების ნომერი</th>
-                    <th style="width: 13%;">კოდი</th>
+                    <th style="width: 16%;">სახელი გვარი</th>
+                    <th style="width: 11%;">პირადი ნომერი</th>            
+                    <th style="width: 11%;">ტელეფონი</th>
+                    <th style="width: 11%;">ხელშეკრულების ნომერი</th>
+                    <th style="width: 11%;">კოდი</th>
                     <th style="width: 12%;">სტატუსი</th>
+                    <th style="width: 15%;">თანამშრომელი</th>
                     <th style="width: 25px;">#</th>
                 </tr>
             </thead>
@@ -1727,6 +1627,9 @@
                     <th>
                         <input type="text" name="search_date" value="ფილტრი" class="search_init" />
                     </th>
+                    <th>
+                        <input type="text" name="search_date" value="ფილტრი" class="search_init" />
+                    </th>
                     <th style="border-right: 1px solid #A3D0E4;" >
                         <div class="callapp_checkbox">
                             <input type="checkbox" id="check-all" name="check-all" />
@@ -1745,6 +1648,4 @@
     <div id="add-edit-form-guarantors" class="form-dialog" title="თავდები პირი"></div>
     <div id="add-edit-form-other_doc" class="form-dialog" title="დამატებითი საბუტები"></div>
     <div id="add-edit-form-update_loan" class="form-dialog" title="ავტო ლომბარდი"></div>
-    <div id="add-edit-form-calculation" class="form-dialog" title="წინასწარი კალკულაცია"></div>
-    <div id="add-edit-form-canceled" class="form-dialog" title="დაანგარიშებული თანხა"></div>
 </body>

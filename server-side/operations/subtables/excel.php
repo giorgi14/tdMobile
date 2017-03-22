@@ -65,14 +65,14 @@ if ($file_type == 'payment_schedule') {
     					<ss:Data ss:Type="String">'.$row[schedule_date].'</ss:Data>
     				</ss:Cell>
     				<ss:Cell>
+    					<ss:Data ss:Type="String">'.$row[pay_amount].'</ss:Data>
+    				</ss:Cell>
+    				<ss:Cell>
     					<ss:Data ss:Type="String">'.$row[root].'</ss:Data>
     				</ss:Cell>
     				<ss:Cell>
     					<ss:Data ss:Type="String">'.$row[percent].'</ss:Data>
     				</ss:Cell>							
-    				<ss:Cell>
-    					<ss:Data ss:Type="String">'.$row[pay_amount].'</ss:Data>
-    				</ss:Cell>
     				<ss:Cell>
     					<ss:Data ss:Type="String">'.$row[remaining_root].'</ss:Data>
     				</ss:Cell>
@@ -354,6 +354,10 @@ $data = '
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 				<ss:Cell ss:StyleID="headercell">
+					<ss:Data ss:Type="String">ანუიტეტი</ss:Data>
+					<ss:NamedCell ss:Name="Print_Titles"/>
+				</ss:Cell>
+				<ss:Cell ss:StyleID="headercell">
 					<ss:Data ss:Type="String">ძირი</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
@@ -361,10 +365,6 @@ $data = '
 					<ss:Data ss:Type="String">პროცენტი</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>				
-				<ss:Cell ss:StyleID="headercell">
-					<ss:Data ss:Type="String">შენატანი</ss:Data>
-					<ss:NamedCell ss:Name="Print_Titles"/>
-				</ss:Cell>
 				<ss:Cell ss:StyleID="headercell">
 					<ss:Data ss:Type="String">ნაშთი შენატანის შემდეგ</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
