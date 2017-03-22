@@ -1181,6 +1181,7 @@
 		param.add_car_driver_check          = $("input[id='add_car_driver_check']:checked").val();
 		param.rename_payment_system_check   = $("input[id='rename_payment_system_check']:checked").val();
 		param.attachment_check              = $("input[id='attachment_check']:checked").val();
+		param.letter_debt_check             = $("input[id='letter_debt_check']:checked").val();
 		
     	$.ajax({
             url: aJaxURL,
