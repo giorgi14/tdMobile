@@ -1255,8 +1255,9 @@
     		            click: function () {
     		            	var local_id          = $("#local_id").val();
     		            	var acceptance_amount = $("#acceptance_amount").val();
+    		            	var client_debt       = $("#client_debt").val();
     		            	
-    		                local_id  = "&local_id="+local_id+"&file_type="+file_type+"&id_hidden="+$("#id_hidden").val()+"&acceptance_amount="+$("#acceptance_amount").val()+"&execution_pickup_datee="+$("#execution_pickup_datee").val();
+    		                local_id  = "&local_id="+local_id+"&file_type="+file_type+"&id_hidden="+$("#id_hidden").val()+"&acceptance_amount="+$("#acceptance_amount").val()+"&execution_pickup_datee="+$("#execution_pickup_datee").val()+"&client_debt=" + client_debt;
     		        		win=window.open("server-side/operations/subtables/print_documents.action.php?"+local_id, "" , "scrollbars=no,toolbar=no,screenx=0,screeny=0,location=no,titlebar=no,directories=no,status=no,menubar=no");
     		            }
     		        },
@@ -1265,7 +1266,8 @@
     		            id: "download-dialog",
     		            click: function () {
         		            if(file_type != 'payment_schedule'){
-        		            	URL="server-side/operations/subtables/download_doc.php?file_type="+file_type+"&local_id="+$("#local_id").val()+"&file_name="+file_name+"&acceptance_amount="+$("#acceptance_amount").val()+"&execution_pickup_datee="+$("#execution_pickup_datee").val();
+        		            	var client_debt = $("#client_debt").val();
+        		            	URL="server-side/operations/subtables/download_doc.php?file_type="+file_type+"&local_id="+$("#local_id").val()+"&file_name="+file_name+"&acceptance_amount="+$("#acceptance_amount").val()+"&execution_pickup_datee="+$("#execution_pickup_datee").val()+"&client_debt=" + client_debt;
         		            	open(URL);
         		            }else{
             		            
