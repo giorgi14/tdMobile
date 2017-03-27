@@ -1246,8 +1246,8 @@
             data: "act=show_document&file_type="+file_type+"&local_id="+$("#local_id").val()+"&id_hidden="+$("#id_hidden").val()+"&loan_agreement_type="+$("#loan_agreement_type").val(),
             success: function(data) {
             	$("#add-edit-form-document").html(data.documets_page);
-
-                var buttons = {
+            	
+            	var buttons = {
                     
             		"print": {
     		            text: "ბეჭდვა",
@@ -1256,8 +1256,7 @@
     		            	var local_id          = $("#local_id").val();
     		            	var acceptance_amount = $("#acceptance_amount").val();
     		            	var client_debt       = $("#client_debt").val();
-    		            	
-    		                local_id  = "&local_id="+local_id+"&file_type="+file_type+"&id_hidden="+$("#id_hidden").val()+"&acceptance_amount="+$("#acceptance_amount").val()+"&execution_pickup_datee="+$("#execution_pickup_datee").val()+"&client_debt=" + client_debt;
+    		                local_id  = "&local_id="+local_id+"&file_type="+file_type+"&id_hidden="+$("#id_hidden").val()+"&acceptance_amount="+$("#acceptance_amount").val()+"&execution_pickup_datee="+$("#execution_pickup_datee").val()+"&client_debt=" + client_debt+"&client_car_driver_name="+$("#client_car_driver_name").val()+"&client_car_driver_datetime="+$("#client_car_driver_datetime").val();
     		        		win=window.open("server-side/operations/subtables/print_documents.action.php?"+local_id, "" , "scrollbars=no,toolbar=no,screenx=0,screeny=0,location=no,titlebar=no,directories=no,status=no,menubar=no");
     		            }
     		        },
@@ -1267,7 +1266,7 @@
     		            click: function () {
         		            if(file_type != 'payment_schedule'){
         		            	var client_debt = $("#client_debt").val();
-        		            	URL="server-side/operations/subtables/download_doc.php?file_type="+file_type+"&local_id="+$("#local_id").val()+"&file_name="+file_name+"&acceptance_amount="+$("#acceptance_amount").val()+"&execution_pickup_datee="+$("#execution_pickup_datee").val()+"&client_debt=" + client_debt;
+        		            	URL="server-side/operations/subtables/download_doc.php?file_type="+file_type+"&local_id="+$("#local_id").val()+"&file_name="+file_name+"&acceptance_amount="+$("#acceptance_amount").val()+"&execution_pickup_datee="+$("#execution_pickup_datee").val()+"&client_debt=" + client_debt+"&client_car_driver_name="+$("#client_car_driver_name").val()+"&client_car_driver_datetime="+$("#client_car_driver_datetime").val();
         		            	open(URL);
         		            }else{
             		            
@@ -1299,6 +1298,8 @@
     		    };
                	GetDialog("add-edit-form-document", 1200, "auto", buttons, 'left+43 top');
                	GetDate('execution_pickup_datee');
+               	GetDate('client_car_driver_datetime');
+               	$("#client_car_driver_datetime").blur();
                	$("#execution_pickup_datee").blur();
     		}
         });
