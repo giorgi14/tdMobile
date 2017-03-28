@@ -492,6 +492,10 @@
 		param.trusting_notary_address   = $('#trusting_notary_address').val();
 		param.trusting_notary_phone     = $('#trusting_notary_phone').val();
 
+		param.client_trust_pid_number   = $('#client_trust_pid_number').val();
+		param.client_trust_pid_date     = $('#client_trust_pid_date').val();
+		param.client_trust_born_date    = $('#client_trust_born_date').val();
+
 		//მანქანის მონაცემები//
 		param.car_marc	              = $('#car_marc').val();
 		param.car_model	              = $('#car_model').val();
@@ -729,6 +733,10 @@
 		param.trusting_notary	        = $('#trusting_notary').val();
 		param.trusting_notary_address   = $('#trusting_notary_address').val();
 		param.trusting_notary_phone     = $('#trusting_notary_phone').val();
+
+		param.client_trust_pid_number   = $('#client_trust_pid_number').val();
+		param.client_trust_pid_date     = $('#client_trust_pid_date').val();
+		param.client_trust_born_date    = $('#client_trust_born_date').val();
 
 		//მანქანის მონაცემები//
 		param.car_marc	              = $('#car_marc').val();
@@ -1256,7 +1264,7 @@
     		            	var local_id          = $("#local_id").val();
     		            	var acceptance_amount = $("#acceptance_amount").val();
     		            	var client_debt       = $("#client_debt").val();
-    		                local_id  = "&local_id="+local_id+"&file_type="+file_type+"&id_hidden="+$("#id_hidden").val()+"&acceptance_amount="+$("#acceptance_amount").val()+"&execution_pickup_datee="+$("#execution_pickup_datee").val()+"&client_debt=" + client_debt+"&client_car_driver_name="+$("#client_car_driver_name").val()+"&client_car_driver_datetime="+$("#client_car_driver_datetime").val();
+    		                local_id  = "&local_id="+local_id+"&file_type="+file_type+"&id_hidden="+$("#id_hidden").val()+"&acceptance_amount="+$("#acceptance_amount").val()+"&execution_pickup_datee="+$("#execution_pickup_datee").val()+"&client_debt=" + client_debt+"&client_car_driver_name="+$("#client_car_driver_name").val()+"&client_car_driver_datetime="+$("#client_car_driver_datetime").val()+'&registering_a_car_mogo_date='+$("#registering_a_car_mogo_date").val();
     		        		win=window.open("server-side/operations/subtables/print_documents.action.php?"+local_id, "" , "scrollbars=no,toolbar=no,screenx=0,screeny=0,location=no,titlebar=no,directories=no,status=no,menubar=no");
     		            }
     		        },
@@ -1266,7 +1274,7 @@
     		            click: function () {
         		            if(file_type != 'payment_schedule'){
         		            	var client_debt = $("#client_debt").val();
-        		            	URL="server-side/operations/subtables/download_doc.php?file_type="+file_type+"&local_id="+$("#local_id").val()+"&file_name="+file_name+"&acceptance_amount="+$("#acceptance_amount").val()+"&execution_pickup_datee="+$("#execution_pickup_datee").val()+"&client_debt=" + client_debt+"&client_car_driver_name="+$("#client_car_driver_name").val()+"&client_car_driver_datetime="+$("#client_car_driver_datetime").val();
+        		            	URL="server-side/operations/subtables/download_doc.php?file_type="+file_type+"&local_id="+$("#local_id").val()+"&file_name="+file_name+"&acceptance_amount="+$("#acceptance_amount").val()+"&execution_pickup_datee="+$("#execution_pickup_datee").val()+"&client_debt=" + client_debt+"&client_car_driver_name="+$("#client_car_driver_name").val()+"&client_car_driver_datetime="+$("#client_car_driver_datetime").val()+'&registering_a_car_mogo_date='+$("#registering_a_car_mogo_date").val();
         		            	open(URL);
         		            }else{
             		            
