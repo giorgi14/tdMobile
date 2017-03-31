@@ -1264,7 +1264,7 @@
     		            	var local_id          = $("#local_id").val();
     		            	var acceptance_amount = $("#acceptance_amount").val();
     		            	var client_debt       = $("#client_debt").val();
-    		                local_id  = "&local_id="+local_id+"&file_type="+file_type+"&id_hidden="+$("#id_hidden").val()+"&acceptance_amount="+$("#acceptance_amount").val()+"&execution_pickup_datee="+$("#execution_pickup_datee").val()+"&client_debt=" + client_debt+"&client_car_driver_name="+$("#client_car_driver_name").val()+"&client_car_driver_datetime="+$("#client_car_driver_datetime").val()+'&registering_a_car_mogo_date='+$("#registering_a_car_mogo_date").val()+"&guarante_id="+guarante_id;
+    		                local_id  = "&local_id="+local_id+"&file_type="+file_type+"&id_hidden="+$("#id_hidden").val()+"&acceptance_amount="+$("#acceptance_amount").val()+"&execution_pickup_datee="+$("#execution_pickup_datee").val()+"&execution_pickup_datee1="+$("#execution_pickup_datee1").val()+"&client_debt=" + client_debt+"&client_car_driver_name="+$("#client_car_driver_name").val()+"&client_car_driver_datetime="+$("#client_car_driver_datetime").val()+'&registering_a_car_mogo_date='+$("#registering_a_car_mogo_date").val()+"&guarante_id="+guarante_id;
     		        		win=window.open("server-side/operations/subtables/print_documents.action.php?"+local_id, "" , "scrollbars=no,toolbar=no,screenx=0,screeny=0,location=no,titlebar=no,directories=no,status=no,menubar=no");
     		            }
     		        },
@@ -1274,7 +1274,7 @@
     		            click: function () {
         		            if(file_type != 'payment_schedule'){
         		            	var client_debt = $("#client_debt").val();
-        		            	URL="server-side/operations/subtables/download_doc.php?file_type="+file_type+"&local_id="+$("#local_id").val()+"&file_name="+file_name+"&acceptance_amount="+$("#acceptance_amount").val()+"&execution_pickup_datee="+$("#execution_pickup_datee").val()+"&client_debt=" + client_debt+"&client_car_driver_name="+$("#client_car_driver_name").val()+"&client_car_driver_datetime="+$("#client_car_driver_datetime").val()+'&registering_a_car_mogo_date='+$("#registering_a_car_mogo_date").val()+"&guarante_id="+guarante_id;
+        		            	URL="server-side/operations/subtables/download_doc.php?file_type="+file_type+"&local_id="+$("#local_id").val()+"&file_name="+file_name+"&acceptance_amount="+$("#acceptance_amount").val()+"&execution_pickup_datee="+$("#execution_pickup_datee").val()+"&execution_pickup_datee1="+$("#execution_pickup_datee1").val()+"&client_debt=" + client_debt+"&client_car_driver_name="+$("#client_car_driver_name").val()+"&client_car_driver_datetime="+$("#client_car_driver_datetime").val()+'&registering_a_car_mogo_date='+$("#registering_a_car_mogo_date").val()+"&guarante_id="+guarante_id;
         		            	open(URL);
         		            }else{
             		            
@@ -1305,7 +1305,6 @@
     		        }
     		    };
                	GetDialog("add-edit-form-document", 1200, "auto", buttons, 'left+43 top');
-               	GetDate('execution_pickup_datee');
                	GetDate('client_car_driver_datetime');
                	$("#client_car_driver_datetime").blur();
                	$("#execution_pickup_datee").blur();

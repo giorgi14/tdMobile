@@ -53,8 +53,8 @@ switch ($action) {
                 $row[] = $aRow[$i];
                 if($i == ($count - 1)){
                     $row[] = '<div class="callapp_checkbox">
-                                  <input type="checkbox" id="callapp_checkbox_'.$aRow[$hidden].'" name="check_'.$aRow[$hidden].'" value="'.$aRow[$hidden].'" class="check" />
-                                  <label for="callapp_checkbox_'.$aRow[$hidden].'"></label>
+                                  <input type="checkbox" id="callapp_checkbox1_'.$aRow[$hidden].'" name="check_'.$aRow[$hidden].'" value="'.$aRow[$hidden].'" class="check" />
+                                  <label for="callapp_checkbox1_'.$aRow[$hidden].'"></label>
                               </div>';
                 }
             }
