@@ -103,7 +103,7 @@
         if(fName == 'add-edit-form'){
         	var buttons = {
         			"client_new_loan": {
-    		            text: "დანართის გაკეტება",
+    		            text: "დანართის გაკეთება",
     		            id: "client_new_loan",
     		            click: function () {
     		            	param 	       = new Object();
