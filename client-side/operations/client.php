@@ -92,7 +92,7 @@
 
     	if(dataparam == undefined){dataparam = leng;}
     	if(tbl == 'person' || tbl == 'cardrivers' || tbl == 'guarantors'){dataparam = 'local_id='+$("#local_id").val();}
-    	GetDataTable(tName+tbl,URL,act,col_num,dataparam,0,"",1,"desc",total,change_colum);
+    	GetDataTable(tName+tbl,URL,act,col_num,dataparam,0,"",3,"desc",total,change_colum);
     	$("#table_person_length").css('top', '2px');
     	$("#table_cardrivers_length").css('top', '2px');
     	$("#table_guarantors_length").css('top', '2px');
@@ -102,7 +102,49 @@
     function LoadDialog(fName){
         if(fName == 'add-edit-form'){
         	var buttons = {
-        			
+        			"client_new_loan": {
+    		            text: "დანართის გაკეტება",
+    		            id: "client_new_loan",
+    		            click: function () {
+    		            	param 	       = new Object();
+    		        		param.act      = "get_new_dialog";
+    		        		param.hidde_id = $("#id_hidden").val();
+    		        		
+    		        		$.ajax({
+    		        	        url: aJaxURL,
+    		        		    data: param,
+    		        	        success: function(data) {       
+    		        				if(typeof(data.error) != "undefined"){
+    		        					if(data.error != ""){
+    		        						alert(data.error);
+    		        					}else{
+    		        						$("#add-edit-new_loan").html(data.page);
+    		        						var buttons = {
+		        			    				"save": {
+		        			    		            text: "შენახვა",
+		        			    		            id: "save-new_loan"
+		        			    		        },
+		        			    	        	"cancel": {
+		        			    		            text: "დახურვა",
+		        			    		            id: "cancel-dialog",
+		        			    		            click: function () {
+		        			    		            	$(this).dialog("close");
+		        			    		            }
+		        			    		        }
+		        			    		    };
+    		        			            GetDialog("add-edit-new_loan", 915, "auto", buttons, 'left+43 top');
+    		        			            $("#new_loan_currency").chosen();
+    		        			            $("#new_loan_agreement_type").chosen();
+    		        			            $("#new_responsible_user_id").chosen();
+    		        			            $("#new_agreement_type_id").chosen();
+    		        			            $("#check_new_monthly_pay").button();
+    		        			            get_local_id('client', '2');
+    		        					}
+    		        				}
+    		        	    	}
+    		        	    });
+    		            }
+    		        },
         			"update-loan": {
     		            text: "სესხის რესტრუქტურიზაცია",
     		            id: "update-loan",
@@ -345,6 +387,8 @@
 					}else{
 						if(status == 1){
 							$("#local_sub_id").val(data.local_id);
+						}else if(status == 2){
+							$("#local_new_id").val(data.local_id);
 						}else{
 							$("#local_id").val(data.local_id);
 						}
@@ -694,6 +738,7 @@
     	    });
 		}
 	});
+	
     $(document).on("click", "#save-sub_loan", function () {
 		   
 		param 			= new Object();
@@ -783,6 +828,7 @@
 		param.loan_currency               = $('#loan_currency').val();
 		param.oris_code                   = $('#oris_code').val();
 		param.loan_beforehand_percent     = $('#loan_beforehand_percent').val();
+		param.responsible_user_id         = $('#responsible_user_id').val();
 		
 		if(param.loan_amount == ''){
 			alert('შეავსეთ "სესხის მოცულობა"');
@@ -810,6 +856,124 @@
 		}
 	});
 
+    $(document).on("click", "#save-new_loan", function () {
+		   
+		param 			= new Object();
+		param.act		= "save_new_loan";
+
+		param.local_id	          = $('#local_id').val();
+		param.local_new_id	      = $('#local_new_id').val();
+		
+		//ცლიენტის მონაცემები//
+		param.name	              = $('#name').val();
+		param.surname	          = $('#surname').val();
+		param.born_date	          = $('#born_date').val();
+		param.tin	              = $('#tin').val();
+		param.tin_number          = $('#tin_number').val();
+		param.tin_date	          = $('#tin_date').val();
+		param.comment	          = $('#comment').val();
+		param.mail	              = $('#mail').val();
+		param.phone	              = $('#phone').val();
+		param.fact_address        = $('#fact_address').val();
+		param.jur_address         = $('#jur_address').val();
+		param.ltd_name	          = $('#ltd_name').val();
+		param.ltd_id              = $('#ltd_id').val();
+		param.tld_responsible     = $("#tld_responsible").val();
+		param.client_type         = $("input[class=client_type]:checked").val();
+		param.trust_pers_checkbox = $("input[id='new_trust_pers_checkbox']:checked").val();
+		
+		//მინდობილი პირის მონაცემები//
+		param.client_trust_name	        = $('#client_trust_name').val();
+		param.client_trust_surname	    = $('#client_trust_surname').val();
+		param.client_trust_tin	        = $('#client_trust_tin').val();
+		param.client_trust_phone	    = $('#client_trust_phone').val();
+		param.client_trust_mail	        = $('#client_trust_mail').val();
+		param.client_trust_fact_address = $('#client_trust_fact_address').val();
+		param.client_trust_jur_address  = $('#client_trust_jur_address').val();
+		param.trusting_number	        = $('#trusting_number').val();
+		param.trusting_date	            = $('#trusting_date').val();
+		param.trusting_notary	        = $('#trusting_notary').val();
+		param.trusting_notary_address   = $('#trusting_notary_address').val();
+		param.trusting_notary_phone     = $('#trusting_notary_phone').val();
+
+		param.client_trust_pid_number   = $('#client_trust_pid_number').val();
+		param.client_trust_pid_date     = $('#client_trust_pid_date').val();
+		param.client_trust_born_date    = $('#client_trust_born_date').val();
+
+		//მანქანის მონაცემები//
+		param.car_marc	              = $('#car_marc').val();
+		param.car_model	              = $('#car_model').val();
+		param.car_born	              = $('#car_born').val();
+		param.car_color	              = $('#car_color').val();
+		param.car_type	              = $('#car_type').val();
+		param.car_engine	          = $('#car_engine').val();
+		param.car_registration_number = $('#car_registration_number').val();
+		param.car_owner               = $('#car_owner').val();
+		param.car_ident               = $('#car_ident').val();
+		param.car_ertificate          = $('#car_ertificate').val();
+		param.car_wheel               = $('#car_wheel').val();
+		param.car_seats               = $('#car_seats').val();
+		param.car_price               = $('#car_price').val();
+		param.car_sale_date           = $('#car_sale_date').val();
+		param.car_insurance_price     = $('#car_insurance_price').val();
+		param.car_ins_start           = $('#car_ins_start').val();
+		param.car_ins_end             = $('#car_ins_end').val();
+		param.car_max_pledge          = $('#car_max_pledge').val();
+		param.shss_number             = $('#shss_number').val();
+		param.carsize                 = $("input[id='carsize']:checked").val();
+		
+		//ხელშეკრულების მონაცემები//
+		param.agreement_type_id           = $('#new_agreement_type_id').val();
+		param.loan_agreement_type	      = $('#new_loan_agreement_type').val();
+		param.agreement_number	          = $('#agreement_number').val();
+		param.agreement_date	          = $('#agreement_date').val();
+		param.loan_amount	              = $('#new_loan_amount').val();
+		param.loan_months                 = $('#new_loan_month').val();
+		param.insurance_fee               = $('#insurance_fee').val();
+		param.pledge_fee                  = $('#pledge_fee').val();
+		param.month_percent               = $('#new_month_percent').val();
+		param.monthly_pay                 = $('#new_monthly_pay').val();
+		param.rs_message_number           = $('#rs_message_number').val();
+		param.pay_day                     = $('#pay_day').val();
+		param.exchange_rate               = $('#exchange_rate').val();
+		param.penalty_days                = $('#new_penalty_days').val();
+		param.penalty_percent             = $('#new_penalty_percent').val();
+		param.penalty_additional_percent  = $('#new_penalty_additional_percent').val();
+		param.loan_fee                    = $('#new_loan_fee').val();
+		param.proceed_fee                 = $('#proceed_fee').val();
+		param.proceed_percent             = $('#proceed_percent').val();
+		param.loan_currency               = $('#new_loan_currency').val();
+		param.oris_code                   = $('#oris_code').val();
+		param.loan_beforehand_percent     = $('#new_loan_beforehand_percent').val();
+		param.responsible_user_id         = $('#new_responsible_user_id').val();
+		param.new_attachment_number       = $('#new_attachment_number').val();
+		
+		if(param.loan_amount == ''){
+			alert('შეავსეთ "სესხის მოცულობა"');
+		}else if(param.loan_months == ''){
+			alert('შეავსეთ "სესხის მოცულობა"');
+		}else if(param.monthly_pay == ''){
+			alert('შეავსეთ "ყოველთვიურად შეს. თანხა"');
+		}else{
+    		$.ajax({
+    	        url: aJaxURL,
+    		    data: param,
+    	        success: function(data) {       
+    				if(typeof(data.error) != "undefined"){
+    					if(data.error != ""){
+    						alert(data.error);
+    					}else{
+    						alert('ოპერაცია წარმატებით შესრულდა');
+    						LoadTable('index',colum_number,main_act,change_colum_main,aJaxURL);
+    						$("#add-edit-form-update_loan").dialog("close");
+    						$("#add-edit-form").dialog("close");
+    					}
+    				}
+    	    	}
+    	    });
+		}
+	});
+	
     $(document).on("click", "#check_monthly_pay", function () {
 		param 	  = new Object();
 		param.act = "check_monthly_pay";
@@ -875,6 +1039,40 @@
     	   });
 		}
 	});
+
+    $(document).on("click", "#check_new_monthly_pay", function () {
+		param 	  = new Object();
+		param.act = "check_monthly_pay";
+
+		param.loan_amount	      = $('#new_loan_amount').val();
+		param.month_percent	      = $("#new_month_percent").val();
+		param.loan_months	      = $('#new_loan_month').val();
+		param.loan_agreement_type = $('#new_loan_agreement_type').val();
+		if(param.loan_amount == ''){
+			alert('შეავსეთ "სესხის სრული მოცულობა"');
+		}else if(param.month_percent == ''){
+			alert('შეავსეთ "ყოველთვიური პროცენტი"');
+		}else if(param.loan_months == ''){
+			alert('შეავსეთ "სესხის სარგებლობის ვადა"');
+		}else if(param.loan_agreement_type==0){
+			alert('შეავსეთ "სესხის ტიპი"');
+		}else{
+    		$.ajax({
+    	        url: aJaxURL,
+    		    data: param,
+    	        success: function(data) {       
+    				if(typeof(data.error) != "undefined"){
+    					if(data.error != ""){
+    						alert(data.error);
+    					}else{
+    						$("#new_monthly_pay").val(data.monthly_pay);
+    					}
+    				}
+    	    	}
+    	   });
+		}
+	});
+	
     $(document).on("click", "#save-dialog-pers", function () {
 		param 			= new Object();
 		param.act		= "save_client_pers";
@@ -1021,6 +1219,39 @@
         }
     });
 
+    $(document).on("click", "#new_trust_pers_checkbox", function () {
+
+        
+        if($(this).prop("checked") == false){
+            $("#new_truste_table").css('display','none');
+            $("#overflow_height").css('height', '332px');
+       	}else{
+       		$("#overflow_height").css('height', '540px');
+       		$("#new_truste_table").css('display','block');
+       		
+        }
+    });
+
+	$(document).on("change", "#new_loan_agreement_type", function () {
+        
+        param1 			           = new Object();
+        param1.act                 = 'get_agreement';
+    	param1.loan_agreement_type = $(this).val();
+        $.ajax({
+            url: aJaxURL,
+    	    data: param1,
+            success: function(data) {
+            	if(typeof(data.error) != "undefined"){
+					if(data.error != ""){
+						alert(data.error);
+					}else{
+						$("#new_agreement_type_id").html(data.page).trigger("chosen:updated");
+					}
+				}
+    	    }
+        });
+	});
+	
     $(document).on("change", "#loan_agreement_type", function () {
         
         if($(this).val() == 2){
@@ -1305,10 +1536,7 @@
     		        }
     		    };
                	GetDialog("add-edit-form-document", 1200, "auto", buttons, 'left+43 top');
-               	GetDate('client_car_driver_datetime');
-               	$("#client_car_driver_datetime").blur();
-               	$("#execution_pickup_datee").blur();
-    		}
+            }
         });
     }
     function delete_document(value){
@@ -1659,4 +1887,5 @@
     <div id="add-edit-form-guarantors" class="form-dialog" title="თავდები პირი"></div>
     <div id="add-edit-form-other_doc" class="form-dialog" title="დამატებითი საბუტები"></div>
     <div id="add-edit-form-update_loan" class="form-dialog" title="ავტო ლომბარდი"></div>
+    <div id="add-edit-new_loan" class="form-dialog" title="ავტო ლომბარდი"></div>
 </body>
