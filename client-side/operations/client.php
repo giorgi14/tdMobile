@@ -164,7 +164,7 @@
     		        						$("#add-edit-form-update_loan").html(data.page);
     		        						var buttons = {
 		        			    				"save": {
-		        			    		            text: "შენახვა",
+		        			    		            text: "რესტრუქტურიზაცია",
 		        			    		            id: "save-sub_loan"
 		        			    		        },
 		        			    	        	"cancel": {
@@ -177,7 +177,11 @@
 		        			    		    };
     		        			            GetDialog("add-edit-form-update_loan", 422, "auto", buttons, 'left+43 top');
     		        			            $("#sub_check_monthly_pay").button();
+    		        			            $("#sub_loan_agreement_type").chosen();
+    		        			            $("#sub_agreement_type_id").chosen();
+    		        			            $("#sub_loan_currency").chosen();
     		        			            get_local_id('client', '1');
+    		        			            $('#add-edit-form-update_loan, .add-edit-form-update_loan-class').css('overflow','visible');
     		        					}
     		        				}
     		        	    	}
@@ -806,8 +810,8 @@
 		param.carsize                 = $("input[id='carsize']:checked").val();
 
 		//ხელშეკრულების მონაცემები//
-		param.agreement_type_id           = $('#agreement_type_id').val();
-		param.loan_agreement_type	      = $('#loan_agreement_type').val();
+		param.agreement_type_id           = $('#sub_agreement_type_id').val();
+		param.loan_agreement_type	      = $('#sub_loan_agreement_type').val();
 		param.agreement_number	          = $('#agreement_number').val();
 		param.agreement_date	          = $('#agreement_date').val();
 		param.loan_amount	              = $('#sub_loan_amount').val();
@@ -825,7 +829,7 @@
 		param.loan_fee                    = $('#loan_fee').val();
 		param.proceed_fee                 = $('#proceed_fee').val();
 		param.proceed_percent             = $('#proceed_percent').val();
-		param.loan_currency               = $('#loan_currency').val();
+		param.loan_currency               = $('#sub_loan_currency').val();
 		param.oris_code                   = $('#oris_code').val();
 		param.loan_beforehand_percent     = $('#loan_beforehand_percent').val();
 		param.responsible_user_id         = $('#responsible_user_id').val();
@@ -1232,6 +1236,26 @@
         }
     });
 
+	$(document).on("change", "#sub_loan_agreement_type", function () {
+        
+        param1 			           = new Object();
+        param1.act                 = 'get_agreement';
+    	param1.loan_agreement_type = $(this).val();
+        $.ajax({
+            url: aJaxURL,
+    	    data: param1,
+            success: function(data) {
+            	if(typeof(data.error) != "undefined"){
+					if(data.error != ""){
+						alert(data.error);
+					}else{
+						$("#sub_agreement_type_id").html(data.page).trigger("chosen:updated");
+					}
+				}
+    	    }
+        });
+	});
+	
 	$(document).on("change", "#new_loan_agreement_type", function () {
         
         param1 			           = new Object();

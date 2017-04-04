@@ -38,9 +38,23 @@ switch ($action) {
 		 
 		$rResult = mysql_query("  SELECT    client.id,
                         					DATE_FORMAT(client_loan_agreement.datetime,'%d/%m/%Y'),
-                        					client_car.model,
+                        					client_car.car_marc,
                         					client_loan_agreement.oris_code,
-                        					CONCAT('ს/ხ ',client_loan_agreement.id),
+		                                    IF(client.attachment_id = 0, 
+	  	                                        IF(ISNULL(client.sub_client),
+	  	                                            CONCAT('N',client_loan_agreement.id),
+	  	    
+	  	                                        CONCAT('N',client_loan_agreement.id,'/N',
+  	                                            (SELECT client_loan_agreement.id 
+                                                 FROM   client_loan_agreement 
+                                                 WHERE  client_loan_agreement.client_id = client.sub_client))),
+	  	    
+	  	                                    CONCAT('N',(SELECT client_loan_agreement.id 
+                                                              FROM   client_loan_agreement 
+                                                              WHERE  client_loan_agreement.client_id = client.attachment_id),
+	  	                                                      ' დანართი ',client_loan_agreement.attachment_number
+	  	                                    )),
+                        					
                         					IF(client_loan_agreement.loan_type_id =2,'გრაფიკი',client_loan_agreement.percent),
                         					ROUND(client_loan_agreement.loan_amount,2),
                         					client_loan_agreement.exchange_rate,
