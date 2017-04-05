@@ -318,11 +318,12 @@ function currency($id){
 }
 
 function client($id){
-    $req = mysql_query("SELECT client.id,
-                               concat(client.`name`,' ',lastname) AS `name`
-                        FROM   client
-                        JOIN   client_loan_agreement ON client.id = client_loan_agreement.client_id
-                        WHERE  client.actived=1 AND client_loan_agreement.status =1 AND client_loan_agreement.canceled_status = 0 ");
+    $req = mysql_query("SELECT   cl.id,
+			                     IF (cl.attachment_id=0, concat(cl.`name`, ' ', cl.lastname), concat(cl.`name`, ' ', cl.lastname, '/დანართი N', client_loan_agreement.attachment_number)) AS `name`
+                        FROM     client AS cl
+                        JOIN     client_loan_agreement ON cl.id = client_loan_agreement.client_id
+                        WHERE    cl.actived=1 AND client_loan_agreement.`status`=1 AND client_loan_agreement.canceled_status=0
+                        ORDER BY `name` ASC");
 
     $data .= '<option value="0" selected="selected">----</option>';
     while( $res = mysql_fetch_assoc($req)){
@@ -337,20 +338,21 @@ function client($id){
 
 function client_loan_number($id){
     $req = mysql_query("SELECT client_loan_agreement.id, 
-                               client_loan_agreement.id
+                        	   IF (client.attachment_id=0, concat(client_loan_agreement.id), concat((SELECT client_loan_agreement.id FROM client_loan_agreement WHERE client_loan_agreement.client_id = client.attachment_id), '/დანართი N', client_loan_agreement.attachment_number)) AS `name`
                         FROM   client_loan_agreement
                         JOIN   client ON client.id = client_loan_agreement.client_id
                         WHERE  client_loan_agreement.actived = 1 
                         AND    client_loan_agreement.`status` = 1
                         AND    client_loan_agreement.canceled_status = 0 
-                        AND    client.actived = 1");
+                        AND    client.actived = 1
+                        ORDER BY `name` ASC");
 
     $data .= '<option value="0" selected="selected">----</option>';
     while( $res = mysql_fetch_assoc($req)){
         if($res['id'] == $id){
-            $data .= '<option value="' . $res['id'] . '" selected="selected">' . $res['id'] . '</option>';
+            $data .= '<option value="' . $res['id'] . '" selected="selected">' . $res['name'] . '</option>';
         } else {
-            $data .= '<option value="' . $res['id'] . '">' . $res['id'] . '</option>';
+            $data .= '<option value="' . $res['id'] . '">' . $res['name'] . '</option>';
         }
     }
     return $data;
@@ -433,11 +435,11 @@ function GetPage($res = ''){
     					</td>
     					<td style="width: 70px;"><label calss="label" style="padding-top: 5px;" for="date">მსესხებელი</label></td>
     					<td style="width: 190px;">
-    						<select id="client_id" calss="label" style="width: 200px;">'.client($res[client_id]).'</select>
+    						<select id="client_id" calss="label" style="width: 260px;">'.client($res[client_id]).'</select>
     					</td>
     					<td style="width: 105px;"><label calss="label" style="padding-top: 5px; margin-left: 19px;" for="date">სესხის ნომერი</label></td>
     					<td style="width: 120px;">
-    						<select id="client_loan_number" calss="label" style="width: 120px;">'.client_loan_number($res[client_id]).'</select>
+    						<select id="client_loan_number" calss="label" style="width: 170px;">'.client_loan_number($res[client_id]).'</select>
     					</td>
     				</tr>
     				<tr style="height:15px;"></tr>

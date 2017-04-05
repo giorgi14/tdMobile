@@ -66,7 +66,7 @@
 		    };
 			/* Dialog Form Selector Name, Buttons Array */
 			if(fname=='add-edit-form'){
-    			GetDialog(fName, 800, "auto", buttons,"top");
+    			GetDialog(fName, 905, "auto", buttons,"top");
     			$('#type_id').chosen();
     	        $('#client_id').chosen();
     	        $('#currency_id').chosen();
