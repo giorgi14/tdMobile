@@ -420,10 +420,11 @@
         	param 	  = new Object();
     		param.act = "get_documentss";
 
-    		param.local_id = $("#local_id").val();
+    		param.local_id            = $("#local_id").val();
     		param.loan_agreement_type = $("#loan_agreement_type").val();
     		param.agreement_type_id   = $("#agreement_type_id").val();
     		param.loan_currency       = $("#loan_currency").val();
+    		param.hidde_attachment_id = $("#hidde_attachment_id").val();
     		param.car_type            = $("input[id='carsize']:checked").val();
     		
         	$.ajax({
