@@ -264,6 +264,7 @@
             	$("#activate-dialog").button("disable");
             	$("#cancel-loan").button("disable");
 				$("#update-loan").button("disable");
+				$("#client_new_loan").button("disable");
             }else{
                 if($("#hidde_status").val()==1){
                 	$("#activate-dialog").button("disable");
@@ -273,13 +274,16 @@
     				$('#loan_agreement_type').prop('disabled', true).trigger("chosen:updated");
     				$('#agreement_type_id').prop('disabled', true).trigger("chosen:updated");
     				$('#car_type').prop('disabled', true).trigger("chosen:updated");
+    				$("#client_new_loan").button("enable");
                 }else if($("#hidde_status").val()==0){
     				$("#update-loan").button("disable");
+    				$("#client_new_loan").button("disable");
                 }
             }
 
             if($("#hidde_canceled_status").val()==1){
 				$("#update-loan").button("disable");
+				$("#client_new_loan").button("disable");
             }
             
             if($("#car_insurance_info_hidde").val()==''){

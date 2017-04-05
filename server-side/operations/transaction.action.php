@@ -102,40 +102,6 @@ switch ($action) {
 		    $filt = "AND client_loan_agreement.client_id = $id";
 		}
 		
-// 		$res = mysql_fetch_assoc(mysql_query("SELECT client_loan_schedule.id,
-//                                                 	 client_loan_schedule.pay_amount,
-//                                                      client_loan_schedule.root,
-//                                                 	 client_loan_schedule.percent,
-//                                                 	 client_loan_agreement.insurance_fee,
-//                                                 	 client_loan_agreement.pledge_fee,
-//                                                 	 client_loan_agreement.loan_currency_id,
-//                                                 	 client_loan_agreement.id AS agrement_id,
-//                                                 	 client.id AS client_id,
-//                                                      CASE 
-// 			                                             WHEN DATEDIFF(CURDATE(), client_loan_schedule.pay_date)>0 AND DATEDIFF(CURDATE(), client_loan_schedule.pay_date) <= client_loan_agreement.penalty_days 
-// 		                                                 THEN   ROUND(((SELECT client_loan_schedule.remaining_root
-//             															FROM 			`client_loan_schedule`
-//             															LEFT JOIN  client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
-//             															JOIN  		 client ON client.id = client_loan_agreement.client_id
-//             															WHERE      client_loan_schedule.actived = 1 AND (client_loan_schedule.client_loan_agreement_id = client_loan_agreement.id OR client_loan_agreement.client_id = client.id) AND client_loan_schedule.`status` = 1
-//             															ORDER BY   pay_date DESC
-//             															LIMIT 1)*(client_loan_agreement.penalty_percent/100))*(DATEDIFF(CURDATE(), client_loan_schedule.pay_date)),2)
-// 			                                             WHEN DATEDIFF(CURDATE(), client_loan_schedule.pay_date)>client_loan_agreement.penalty_days 
-// 		                                                 THEN ROUND((( SELECT client_loan_schedule.remaining_root
-//             															FROM 			`client_loan_schedule`
-//             															LEFT JOIN  client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
-//             															JOIN  		 client ON client.id = client_loan_agreement.client_id
-//             															WHERE      client_loan_schedule.actived = 1 AND (client_loan_schedule.client_loan_agreement_id = client_loan_agreement.id OR client_loan_agreement.client_id = client.id) AND client_loan_schedule.`status` = 1
-//             															ORDER BY   pay_date DESC
-//             															LIMIT 1)*(client_loan_agreement.penalty_additional_percent/100))*(DATEDIFF(CURDATE(), client_loan_schedule.pay_date)),2)
-// 	                                                   END AS penalty
-//                                                  FROM `client_loan_schedule`
-//                                                  LEFT JOIN  client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
-//                                                  JOIN  client ON client.id = client_loan_agreement.client_id
-//                                                  WHERE client_loan_schedule.actived = 1 $filt AND client_loan_schedule.`status` != 1
-//                                                  ORDER BY pay_date ASC
-//                                                  LIMIT 1"));
-		
 		$res = mysql_fetch_assoc(mysql_query("  SELECT 	    client_loan_schedule.id,
                                         					client_loan_schedule.pay_amount,
                                         					client_loan_schedule.root,
