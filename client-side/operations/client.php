@@ -75,6 +75,7 @@
     var aJaxURL_cl_person     = "server-side/operations/subtables/client_person.action.php";
     var aJaxURL_cl_car_driver = "server-side/operations/subtables/client_car_drivers.action.php";
     var aJaxURL_cl_guarantors = "server-side/operations/subtables/client_guarantors.action.php";
+    var aJaxURL_b_letters     = "server-side/operations/subtables/b_letters.action.php";
     var tName                 = "table_";
     var dialog                = "add-edit-form";
     var colum_number          = 10;
@@ -83,6 +84,7 @@
      
     $(document).ready(function () {
     	GetButtons("add_button","delete_button");
+    	$("#b_letter").button();
     	LoadTable('index',colum_number,main_act,change_colum_main,aJaxURL,'','');
     	SetEvents("add_button", "delete_button", "check-all", tName+'index', dialog, aJaxURL,'','index',colum_number,main_act,change_colum_main,aJaxURL,'');
 
@@ -96,6 +98,7 @@
     	$("#table_person_length").css('top', '2px');
     	$("#table_cardrivers_length").css('top', '2px');
     	$("#table_guarantors_length").css('top', '2px');
+    	$("#table_b_letter_length").css('top', '2px');
     	setTimeout(function(){$('.ColVis, .dataTable_buttons').css('display','none');}, 50);
     }
 
@@ -362,7 +365,38 @@
              		$("#car_driver_born").val('');
              		
                 }
-        }else{
+        }else if(fName == 'add-edit-b_letter1'){
+        	var buttons = {
+        			"show-b_letter": {
+    		            text: "ჩვენება",
+    		            id: "show-b_letter"
+    		        },
+    				"save": {
+    		            text: "შენახვა",
+    		            id: "save-b_letter"
+    		        },
+    		        "save-print": {
+    		            text: "შენახვა+ბეჭდვა",
+    		            id: "save-print"
+    		        },
+    		        "save-download": {
+    		            text: "შენახვა+ჩამოტვირთვა",
+    		            id: "save-download"
+    		        },
+    	        	"cancel": {
+    		            text: "დახურვა",
+    		            id: "cancel-dialog",
+    		            click: function () {
+    		            	$(this).dialog("close");
+    		            }
+    		        }
+    		    };
+                GetDialog("add-edit-b_letter1", 930, "auto", buttons, 'left+43 top');
+                $("#client_agr_car_mark").chosen();
+                $("#b_letter_responsible_id").chosen();
+                $('#add-edit-b_letter1, .add-edit-b_letter1-class').css('overflow','visible');
+                $('#add-edit-b_letter1, .add-edit-b_letter1-class').css('min-height','275px');
+         }else{
             var buttons = {
 				"save": {
 		            text: "შენახვა",
@@ -1016,6 +1050,164 @@
 		}
 	});
 
+    $(document).on("click", "#save-b_letter", function () {
+		param 	  = new Object();
+		param.act = "save_b_letter";
+		
+		param.b_letter_hidde	               = $('#b_letter_hidde').val();
+		param.client_agr_car_mark	           = $('#client_agr_car_mark').val();
+		param.buyer_name	                   = $("#buyer_name").val();
+		param.buyer_pid	                       = $('#buyer_pid').val();
+		param.b_letter_car_mark                = $('#b_letter_car_mark').val();
+		param.b_letter_car_id	               = $('#b_letter_car_id').val();
+		param.b_letter_manufactur_date	       = $("#b_letter_manufactur_date").val();
+		param.b_letter_car_color	           = $('#b_letter_car_color').val();
+		param.b_letter_car_registracion_number = $('#b_letter_car_registracion_number').val();
+		param.b_letter_car_selling_price	   = $('#b_letter_car_selling_price').val();
+		param.b_letter_amount	               = $("#b_letter_amount").val();
+		param.b_letter_payment_date	           = $('#b_letter_payment_date').val();
+		param.b_letter_responsible_id          = $('#b_letter_responsible_id').val();
+		
+		$.ajax({
+	        url: aJaxURL_b_letters,
+		    data: param,
+	        success: function(data) {       
+				if(typeof(data.error) != "undefined"){
+					if(data.error != ""){
+						alert(data.error);
+					}else{
+						$("#add-edit-b_letter1").dialog("close");
+						LoadTable('b_letter', 8, main_act, "<'F'Cpl>", aJaxURL_b_letters, '', '');
+						$("#table_b_letter_length").css('top', '2px');
+					}
+				}
+	    	}
+	   });
+	});
+
+    $(document).on("click", "#save-print", function () {
+		param 	  = new Object();
+		param.act = "save_b_letter";
+		
+		param.b_letter_hidde	               = $('#b_letter_hidde').val();
+		param.client_agr_car_mark	           = $('#client_agr_car_mark').val();
+		param.buyer_name	                   = $("#buyer_name").val();
+		param.buyer_pid	                       = $('#buyer_pid').val();
+		param.b_letter_car_mark                = $('#b_letter_car_mark').val();
+		param.b_letter_car_id	               = $('#b_letter_car_id').val();
+		param.b_letter_manufactur_date	       = $("#b_letter_manufactur_date").val();
+		param.b_letter_car_color	           = $('#b_letter_car_color').val();
+		param.b_letter_car_registracion_number = $('#b_letter_car_registracion_number').val();
+		param.b_letter_car_selling_price	   = $('#b_letter_car_selling_price').val();
+		param.b_letter_amount	               = $("#b_letter_amount").val();
+		param.b_letter_payment_date	           = $('#b_letter_payment_date').val();
+		param.b_letter_responsible_id          = $('#b_letter_responsible_id').val();
+		
+		$.ajax({
+	        url: aJaxURL_b_letters,
+		    data: param,
+	        success: function(data) {       
+				if(typeof(data.error) != "undefined"){
+					if(data.error != ""){
+						alert(data.error);
+					}else{
+						$("#add-edit-b_letter1").dialog("close");
+						LoadTable('b_letter', 8, main_act, "<'F'Cpl>", aJaxURL_b_letters, '', '');
+						$("#table_b_letter_length").css('top', '2px');
+						
+						params  = "&file_type=b_agreement"+"&b_letter_hidde="+data.b_letter_id;
+		        		win=window.open("server-side/operations/subtables/print_documents.action.php?"+params, "" , "scrollbars=no,toolbar=no,screenx=0,screeny=0,location=no,titlebar=no,directories=no,status=no,menubar=no");
+					}
+				}
+	    	}
+	   });
+	});
+
+    $(document).on("click", "#save-download", function () {
+		param 	  = new Object();
+		param.act = "save_b_letter";
+		
+		param.b_letter_hidde	               = $('#b_letter_hidde').val();
+		param.client_agr_car_mark	           = $('#client_agr_car_mark').val();
+		param.buyer_name	                   = $("#buyer_name").val();
+		param.buyer_pid	                       = $('#buyer_pid').val();
+		param.b_letter_car_mark                = $('#b_letter_car_mark').val();
+		param.b_letter_car_id	               = $('#b_letter_car_id').val();
+		param.b_letter_manufactur_date	       = $("#b_letter_manufactur_date").val();
+		param.b_letter_car_color	           = $('#b_letter_car_color').val();
+		param.b_letter_car_registracion_number = $('#b_letter_car_registracion_number').val();
+		param.b_letter_car_selling_price	   = $('#b_letter_car_selling_price').val();
+		param.b_letter_amount	               = $("#b_letter_amount").val();
+		param.b_letter_payment_date	           = $('#b_letter_payment_date').val();
+		param.b_letter_responsible_id          = $('#b_letter_responsible_id').val();
+		
+		$.ajax({
+	        url: aJaxURL_b_letters,
+		    data: param,
+	        success: function(data) {       
+				if(typeof(data.error) != "undefined"){
+					if(data.error != ""){
+						alert(data.error);
+					}else{
+						$("#add-edit-b_letter1").dialog("close");
+						LoadTable('b_letter', 8, main_act, "<'F'Cpl>", aJaxURL_b_letters, '', '');
+						$("#table_b_letter_length").css('top', '2px');
+
+						URL="server-side/operations/subtables/download_doc.php?file_type=b_agreement"+"&b_letter_hidde="+data.b_letter_id+"&file_name=ბეს შეთანხმება";
+		            	open(URL);
+					}
+				}
+	    	}
+	   });
+	});
+	
+	$(document).on("click", "#show-b_letter", function () {
+		param 	             = new Object();
+		param.act            = "show_document";
+		param.b_letter_hidde = $('#b_letter_hidde').val();
+		param.file_type      = 'b_agreement';
+		$.ajax({
+	        url: aJaxURL,
+		    data: param,
+	        success: function(data) {       
+				if(typeof(data.error) != "undefined"){
+					if(data.error != ""){
+						alert(data.error);
+					}else{
+						$("#add-edit-b_letter_show").html(data.documets_page);
+
+						var buttons = {
+				    	       "print_b_agreement": {
+					            	text: "ბეჭდვა",
+					            	id: "print_b_agreement",
+					            	click: function () {
+					            		params  = "&file_type=b_agreement"+"&b_letter_hidde="+$("#b_letter_show_id").val();
+						        		win=window.open("server-side/operations/subtables/print_documents.action.php?"+params, "" , "scrollbars=no,toolbar=no,screenx=0,screeny=0,location=no,titlebar=no,directories=no,status=no,menubar=no");
+						            }
+					           },
+					           "download_b_agreement": {
+					              	text: "ჩამოტვირთვა",
+					              	id: "download_b_agreement",
+					              	click: function () {
+					              		URL="server-side/operations/subtables/download_doc.php?file_type=b_agreement"+"&b_letter_hidde="+$("#b_letter_show_id").val()+"&file_name=ბეს შეთანხმება";
+						            	open(URL);
+						            }
+					           },
+					        	"cancel": {
+						            text: "დახურვა",
+						            id: "cancel-dialog",
+						            click: function () {
+						            	$(this).dialog("close");
+						            }
+						        }
+						    };
+						GetDialog("add-edit-b_letter_show", 1159, "auto", buttons, 'left+43 top');
+					}
+				}
+	    	}
+	   });
+	});
+	
     $(document).on("click", "#sub_check_monthly_pay", function () {
 		param 	  = new Object();
 		param.act = "check_monthly_pay";
@@ -1241,6 +1433,40 @@
         }
     });
 
+    $(document).on("click", "#b_letter", function () {
+        
+        param1 			           = new Object();
+        param1.act                 = 'get_b_letter';
+    	param1.loan_agreement_type = $(this).val();
+        $.ajax({
+            url: aJaxURL,
+    	    data: param1,
+            success: function(data) {
+            	if(typeof(data.error) != "undefined"){
+					if(data.error != ""){
+						alert(data.error);
+					}else{
+						$("#add-edit-b_letter").html(data.page);
+						var buttons = {
+			    				"cancel": {
+			    		            text: "დახურვა",
+			    		            id: "cancel-dialog",
+			    		            click: function () {
+			    		            	$(this).dialog("close");
+			    		            }
+			    		        }
+			    		    };
+    			            GetDialog("add-edit-b_letter", 1160, "auto", buttons, 'left+43 top');
+    			            LoadTable('b_letter',8,main_act,"<'F'Cpl>",aJaxURL_b_letters, '', '');
+    		         		$("#table_b_letter_length").css('top', '2px');
+    		         		SetEvents("add_b_letter", "", "", tName+'b_letter', 'add-edit-b_letter1', aJaxURL_b_letters,'','b_letter',8,main_act,"<'F'Cpl>",aJaxURL_b_letters,'');
+    		            	GetButtons("add_b_letter","");
+					}
+				}
+    	    }
+        });
+	});
+	
 	$(document).on("change", "#sub_loan_agreement_type", function () {
         
         param1 			           = new Object();
@@ -1255,6 +1481,30 @@
 						alert(data.error);
 					}else{
 						$("#sub_agreement_type_id").html(data.page).trigger("chosen:updated");
+					}
+				}
+    	    }
+        });
+	});
+
+	$(document).on("change", "#client_agr_car_mark", function () {
+        
+        param 			= new Object();
+        param.act       ='get_client_car_mark';
+    	param.client_id = $(this).val();
+        $.ajax({
+            url: aJaxURL_b_letters,
+    	    data: param,
+            success: function(data) {
+            	if(typeof(data.error) != "undefined"){
+					if(data.error != ""){
+						alert(data.error);
+					}else{
+						$("#b_letter_car_mark").val(data.marc);
+						$("#b_letter_car_id").val(data.car_id);
+						$("#b_letter_manufactur_date").val(data.manufacturing_date);
+						$("#b_letter_car_color").val(data.color);
+						$("#b_letter_car_registracion_number").val(data.registration_number);
 					}
 				}
     	    }
@@ -1837,6 +2087,7 @@
         <div class="callapp_tabs"></div>
     	<button id="add_button" style="float: left;margin-bottom: 10px;">დამატება</button>
     	<button id="delete_button" style="float: left;margin-bottom: 10px;margin-left: 10px;">გაუქმება</button>
+    	<button id="b_letter" style="float: left;margin-bottom: 10px;margin-left: 10px;">ბეს შეთანხმება</button>
         <table id="table_right_menu">
             <tr>
                 <td>
@@ -1917,4 +2168,7 @@
     <div id="add-edit-form-other_doc" class="form-dialog" title="დამატებითი საბუტები"></div>
     <div id="add-edit-form-update_loan" class="form-dialog" title="ავტო ლომბარდი"></div>
     <div id="add-edit-new_loan" class="form-dialog" title="ავტო ლომბარდი"></div>
+    <div id="add-edit-b_letter" class="form-dialog" title="ბეს შეთანხმება"></div>
+    <div id="add-edit-b_letter1" class="form-dialog" title="ბეს შეთანხმება"></div>
+    <div id="add-edit-b_letter_show" class="form-dialog" title="ბეს შეთანხმება"></div>
 </body>
