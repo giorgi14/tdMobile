@@ -396,6 +396,12 @@
                 $("#b_letter_responsible_id").chosen();
                 $('#add-edit-b_letter1, .add-edit-b_letter1-class').css('overflow','visible');
                 $('#add-edit-b_letter1, .add-edit-b_letter1-class').css('min-height','275px');
+
+                if($("#b_letter_hidde").val()!=''){
+                    $("#show-b_letter").css('display', '');
+                }else{
+                	$("#show-b_letter").css('display', 'none');
+                }
          }else{
             var buttons = {
 				"save": {
