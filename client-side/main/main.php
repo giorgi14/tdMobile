@@ -56,7 +56,7 @@
  		});
         
 		function LoadTable(tbl,num,act,change_colum_main,aJaxURL){
-			var dLength = [[30, 50, -1], [30, 50, "ყველა"]];
+			var dLength = [[10, 30, 50, -1], [10, 30, 50, "ყველა"]];
 			
 			if(tbl == 'letter'){
 				var total =	[4,5,14];
