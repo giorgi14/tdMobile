@@ -76,6 +76,7 @@
     var aJaxURL_cl_car_driver = "server-side/operations/subtables/client_car_drivers.action.php";
     var aJaxURL_cl_guarantors = "server-side/operations/subtables/client_guarantors.action.php";
     var aJaxURL_b_letters     = "server-side/operations/subtables/b_letters.action.php";
+    var aJaxURL_show_letter   = "server-side/main.action.php";
     var tName                 = "table_";
     var dialog                = "add-edit-form";
     var colum_number          = 10;
@@ -105,6 +106,63 @@
     function LoadDialog(fName){
         if(fName == 'add-edit-form'){
         	var buttons = {
+        			"show_letter": {
+    		            text: "ბარათის ნახვა",
+    		            id: "show_letter",
+    		            click: function () {
+    		            	param 	  = new Object();
+    		        		param.act = "get_edit_page";
+    		        		param.id  = $("#id_hidden").val();
+    		        		
+    		        		$.ajax({
+    		        	        url: aJaxURL_show_letter,
+    		        		    data: param,
+    		        	        success: function(data) {       
+    		        				if(typeof(data.error) != "undefined"){
+    		        					if(data.error != ""){
+    		        						alert(data.error);
+    		        					}else{
+    		        						$("#add-edit-show_letter").html(data.page);
+    		        						var buttons = {
+		        			    				"cancel": {
+		        			    		            text: "დახურვა",
+		        			    		            id: "cancel-dialog",
+		        			    		            click: function () {
+		        			    		            	$(this).dialog("close");
+		        			    		            }
+		        			    		        }
+		        			    		    };
+    		        			            GetDialog("add-edit-show_letter", 1200, "auto", buttons, 'left+43 top');
+    		        			            $('#add-edit-show_letter, .add-edit-show_letter-class').css('overflow-y','scroll');
+    		        			            var dLength = [[10, 30, 50, -1], [10, 30, 50, "ყველა"]];
+    		        			            var total =	[4,5,14];
+    		        			            GetDataTable1("table_letter", aJaxURL_show_letter, "get_list1", 16, "&id="+param.id+"&loan_currency_id="+$("#loan_currency").val(), 0, dLength, 4, "desc", total, "<'F'Cpl>");
+											$("#table_letter_length").css('top','0px');
+    		        			            parame 		            = new Object();
+    		        					    parame.act	            = "gel_footer";
+    		        					    parame.id	            = $("#id").val();
+    		        					    parame.loan_currency_id	= $("#loan_currency_id").val();
+    		        					    
+    		        					    $.ajax({
+    		        		    		        url: aJaxURL_show_letter,
+    		        		    			    data: parame,
+    		        		    		        success: function(data) {			        
+    		        		    					if(typeof(data.error) != 'undefined'){
+    		        		    						if(data.error != ''){
+    		        		    							alert(data.error);
+    		        		    						}else{
+    		        		    							$("#remaining_root").html(data.remaining_root);
+    		        		    							$("#remaining_root_gel").html(data.remaining_root_gel);
+    		        		    						}
+    		        		    					}
+    		        		    			    }
+    		        		    		    });
+    		        			        }
+    		        				}
+    		        	    	}
+    		        	    });
+    		            }
+    		        },
         			"client_new_loan": {
     		            text: "დანართის გაკეთება",
     		            id: "client_new_loan",
@@ -273,6 +331,7 @@
                 	$("#activate-dialog").button("disable");
     				$("#save-dialog").button("disable");
     				$("#update-loan").button("enable");
+    				$("#show_letter").button("enable");
     				$('#add-edit-form, .idle').attr('disabled', true);
     				$('#loan_agreement_type').prop('disabled', true).trigger("chosen:updated");
     				$('#agreement_type_id').prop('disabled', true).trigger("chosen:updated");
@@ -281,6 +340,7 @@
                 }else if($("#hidde_status").val()==0){
     				$("#update-loan").button("disable");
     				$("#client_new_loan").button("disable");
+    				$("#show_letter").button("disable");
                 }
             }
 
@@ -2211,4 +2271,5 @@
     <div id="add-edit-b_letter" class="form-dialog" title="ბეს შეთანხმება"></div>
     <div id="add-edit-b_letter1" class="form-dialog" title="ბეს შეთანხმება"></div>
     <div id="add-edit-b_letter_show" class="form-dialog" title="ბეს შეთანხმება"></div>
+    <div id="add-edit-show_letter" class="form-dialog" title="ბარათი"></div>
 </body>

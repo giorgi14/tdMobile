@@ -1375,7 +1375,7 @@ switch ($action) {
             $penalty = $result[penalty];
         }
         $req = mysql_fetch_assoc(mysql_query("SELECT client_loan_schedule.id,
-                                                	 ROUND(DATEDIFF('$pay_datee', '$result[pay_date]')*(client_loan_schedule.percent/DAY(LAST_DAY(client_loan_schedule.pay_date))),2) AS nasargeblebebi
+                                                	 ROUND((DATEDIFF('$pay_datee', '$result[pay_date]')-1)*(client_loan_schedule.percent/DAY(LAST_DAY(client_loan_schedule.pay_date))),2) AS nasargeblebebi
                                               FROM   client_loan_schedule
                                               JOIN   client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
                                               WHERE  client_loan_agreement.client_id = $local_id AND client_loan_schedule.`id` = '$result[id]+1'"));

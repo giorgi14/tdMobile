@@ -112,7 +112,7 @@ switch ($action) {
                                         					client_loan_agreement.id AS agrement_id,
 		                                                    client_loan_agreement.loan_amount,
                                         					client.id AS client_id,
-                                        				    DATEDIFF(CURDATE(), client_loan_schedule.pay_date) AS gadacilebuli,
+                                        				    DATEDIFF(CURDATE(), client_loan_schedule.pay_date)-1 AS gadacilebuli,
                                         				   (SELECT     client_loan_schedule.remaining_root
                                     						FROM 		`client_loan_schedule`
                                     						LEFT JOIN  client_loan_agreement AS agr ON agr.id = client_loan_schedule.client_loan_agreement_id
@@ -336,6 +336,7 @@ function GetHolidays($id){
 	                                               money_transactions.course,
 	                                               money_transactions.currency_id,
 	                                               money_transactions.client_loan_schedule_id,
+	                                               money_transactions.datetime,
 	                                               money_transactions.status
                                             FROM  `money_transactions`
                                             JOIN   client_loan_schedule ON client_loan_schedule.id = money_transactions.client_loan_schedule_id
@@ -346,6 +347,7 @@ function GetHolidays($id){
 
 
 function GetPage($res = ''){
+    $today = date("Y-m-d H:i:s");
     
     if ($res[type_id] > 1) {
         $input_hidde = "display:none;";
@@ -367,8 +369,10 @@ function GetPage($res = ''){
                                               AND    DATE(datetime) = CURDATE() 
                                               LIMIT  1"));
         $cource = $req[cource];
+        $date = $today;
     }else{
         $cource = $res[course];
+        $date = $res[datetime];
     }
     $res1= mysql_fetch_assoc(mysql_query("SELECT client_loan_schedule.id,
                                                  client_loan_schedule.pay_amount,
@@ -418,8 +422,7 @@ function GetPage($res = ''){
     					<td style="width: 190px;">
     						<input style="width: 80px;" id="course" class="label" type="text" value="'.$cource.'" '.$disable.'>
     					</td>
-    					<td style="width: 70px;"></td>
-    					<td style="width: 120px;"></td>
+    					<td colspan="2" style="width: 70px;"><label style="padding-top: 5px; margin-left: 19px;">თარიღი: '.$date.'</label></td>
     				</tr>
 				</table>
     			<table>
