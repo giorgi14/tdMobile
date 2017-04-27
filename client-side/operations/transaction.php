@@ -23,19 +23,19 @@
         		LoadTable(tName,7,change_colum_main,aJaxURL);	
          	}else if(tab == 1){
          		GetButtons("add_button1", "");
-             	GetDataTable("example1", aJaxURL, 'get_list', 9, "tab=1", 0, "", 0, "desc", "", change_colum_main);
+             	GetDataTable("example1", aJaxURL, 'get_list', 10, "tab=1", 0, "", 0, "desc", "", change_colum_main);
              	SetEvents("", "", "", "example1", fName, aJaxURL,'',tName,10,change_colum_main,aJaxURL,'','','');
              	
              	setTimeout(function(){$('.ColVis, .dataTable_buttons').css('display','none');}, 90);
 			}else if(tab == 2){
 				GetButtons("add_button2", "");
-				GetDataTable("example2", aJaxURL, 'get_list', 9, "tab=2", 0, "", 0, "desc", "", change_colum_main);
+				GetDataTable("example2", aJaxURL, 'get_list', 10, "tab=2", 0, "", 0, "desc", "", change_colum_main);
 				SetEvents("", "", "", "example2", fName, aJaxURL,'',tName,10,change_colum_main,aJaxURL,'','','');
 				
 				setTimeout(function(){$('.ColVis, .dataTable_buttons').css('display','none');}, 90);
           	}else{
           		GetButtons("add_button3", "");
-          		GetDataTable("example3", aJaxURL, 'get_list', 9, "tab=3", 0, "", 0, "desc", "", change_colum_main);
+          		GetDataTable("example3", aJaxURL, 'get_list', 10, "tab=3", 0, "", 0, "desc", "", change_colum_main);
           		SetEvents("", "", "", "example3", fName, aJaxURL,'',tName,10,change_colum_main,aJaxURL,'','','');
           		
           		setTimeout(function(){$('.ColVis, .dataTable_buttons').css('display','none');}, 90);
@@ -66,10 +66,11 @@
 		    };
 			/* Dialog Form Selector Name, Buttons Array */
 			if(fname=='add-edit-form'){
-    			GetDialog(fName, 905, "auto", buttons,"top");
+    			GetDialog(fName, 710, "auto", buttons,"top");
     			$('#type_id').chosen();
     	        $('#client_id').chosen();
     	        $('#currency_id').chosen();
+    	        $('#received_currency_id').chosen();
     	        $('#client_loan_number').chosen();
     	        $('#add-edit-form, .add-edit-form-class').css('overflow','visible');
 				if($("#id").val()!=''){
@@ -85,29 +86,28 @@
 	    $(document).on("click", "#save-dialog", function () {
 		    param 		= new Object();
 		    
-			param.act	= "save_transaction";
-		    param.id	= $("#id").val();
+			param.act	               = "save_transaction";
+		    param.id	               = $("#id").val();
 		    
-		    param.diff		    = $("#month_fee1").val() - $("#month_fee").val();
-		    param.month_fee		= $("#month_fee").val();
-	    	param.root		    = $("#root").val();
-	    	param.percent		= $("#percent").val();
-	    	param.penalti_fee	= $("#penalti_fee").val();
-	    	param.surplus	    = $("#surplus").val();
-	    	param.type_id	    = $("#type_id").val();
-	    	param.client_id	    = $("#client_id").val();
+		    param.diff		           = $("#month_fee1").val() - $("#month_fee").val();
+		    param.month_fee		       = $("#month_fee").val();
+	    	param.root		           = $("#root").val();
+	    	param.percent		       = $("#percent").val();
+	    	param.penalti_fee	       = $("#penalti_fee").val();
+	    	param.surplus	           = $("#surplus").val();
+	    	param.type_id	           = $("#type_id").val();
+	    	param.client_id	           = $("#client_id").val();
 	    	
-	    	param.currency_id	= $("#currency_id").val();
-	    	param.course	    = $("#course").val();
+	    	param.currency_id	       = $("#currency_id").val();
+	    	param.received_currency_id = $('#received_currency_id').val();
+	    	param.course	           = $("#course").val();
 	    	
-	    	param.hidde_id		= $("#hidde_id").val();
+	    	param.hidde_id		       = $("#hidde_id").val();
 
 	    	if(param.type_id == 0){
 		    	alert('შეავსე ტიპი');
 			}else if(param.client_id == 0){
 		    	alert('შეავსე კლიენტი');
-			}else if(param.course == ''){
-		    	alert('შეავსე კურსი');
 			}else if(param.month_fee == ''){
 		    	alert('შეავსე ჩარიცხული თანხა');
 			}else{
@@ -521,13 +521,14 @@
                 <thead>
                     <tr id="datatable_header">
                         <th>ID</th>
-                        <th style="width: 12%;">თარიღი</th>
-                        <th style="width: 18%;">მსესხებელი</th>
-                        <th style="width: 12%;">ჩარიცხული<br>თანხა</th>
-                        <th style="width: 12%;">ვალუტა</th>
-                        <th style="width: 12%;">კურსი</th>
-                        <th style="width: 12%;">დაფარული<br>ძირი</th>
-                        <th style="width: 11%;">დაფარული<br>პროცენტი</th>
+                        <th style="width: 11%;">თარიღი</th>
+                        <th style="width: 10%;">კოდი</th>
+                        <th style="width: 14%;">მსესხებელი</th>
+                        <th style="width: 11%;">ჩარიცხული<br>თანხა</th>
+                        <th style="width: 11%;">ვალუტა</th>
+                        <th style="width: 11%;">კურსი</th>
+                        <th style="width: 11%;">დაფარული<br>ძირი</th>
+                        <th style="width: 10%;">დაფარული<br>პროცენტი</th>
                         <th style="width: 11%;">სხვაობა</th>
                         
                     </tr>
@@ -537,6 +538,9 @@
                         <th class="colum_hidden">
                             <input type="text" name="search_category" value="ფილტრი" class="search_init" />
                         </th>                
+                        <th>
+                            <input type="text" name="search_category" value="ფილტრი" class="search_init" />
+                        </th>
                         <th>
                             <input type="text" name="search_category" value="ფილტრი" class="search_init" />
                         </th>
@@ -584,7 +588,8 @@
                     <tr id="datatable_header">
                         <th>ID</th>
                         <th style="width: 12%;">თარიღი</th>
-                        <th style="width: 52%;">მსესხებელი</th>
+                        <th style="width: 10%;">კოდი</th>
+                        <th style="width: 42%;">მსესხებელი</th>
                         <th style="width: 12%;">ჩარიცხული<br>თანხა</th>
                         <th style="width: 12%;">ვალუტა</th>
                         <th style="width: 12%;">კურსი</th>
@@ -595,6 +600,9 @@
                         <th class="colum_hidden">
                             <input type="text" name="search_category" value="ფილტრი" class="search_init" />
                         </th>                
+                        <th>
+                            <input type="text" name="search_category" value="ფილტრი" class="search_init" />
+                        </th>
                         <th>
                             <input type="text" name="search_category" value="ფილტრი" class="search_init" />
                         </th>
@@ -633,7 +641,8 @@
                     <tr id="datatable_header">
                         <th>ID</th>
                         <th style="width: 12%;">თარიღი</th>
-                        <th style="width: 52%;">მსესხებელი</th>
+                        <th style="width: 10%;">კოდი</th>
+                        <th style="width: 42%;">მსესხებელი</th>
                         <th style="width: 12%;">ჩარიცხული<br>თანხა</th>
                         <th style="width: 12%;">ვალუტა</th>
                         <th style="width: 12%;">კურსი</th>
@@ -644,6 +653,9 @@
                         <th class="colum_hidden">
                             <input type="text" name="search_category" value="ფილტრი" class="search_init" />
                         </th>                
+                        <th>
+                            <input type="text" name="search_category" value="ფილტრი" class="search_init" />
+                        </th>
                         <th>
                             <input type="text" name="search_category" value="ფილტრი" class="search_init" />
                         </th>
