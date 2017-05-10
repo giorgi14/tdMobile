@@ -30,13 +30,14 @@ switch ($action) {
 		}
 		 
 		$rResult = mysql_query("SELECT    sent_sms.id,
-		                                  sent_sms.datetime,
-                        				  client.`name`,
-                        				  sent_sms.`address`,
-                        				  sent_sms.content,
-                        				  IF(sent_sms.status = 0, 'გასაგზავნი', 'გაგზავნილი')
+                    					  sent_sms.datetime,
+                    					  IF(sent_sms.guarantor_id>0,CONCAT(client.`name`,'/',client_quarantors.`name`),client.`name`),
+                    					  sent_sms.`address`,
+                    					  sent_sms.content,
+                    					  IF(sent_sms.`status` = 0, 'გასაგზავნი', 'გაგზავნილი')
                                 FROM      sent_sms
                                 LEFT JOIN client ON sent_sms.client_id = client.id
+                                LEFT JOIN client_quarantors ON client_quarantors.id = sent_sms.guarantor_id
                                 WHERE     sent_sms.actived = 1 $filt");
 
 		$data = array("aaData" => array());
