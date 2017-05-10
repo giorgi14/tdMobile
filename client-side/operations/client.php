@@ -398,7 +398,7 @@
     		            }
     		        }
     		    };
-                GetDialog("add-edit-form_sms_histori", 490, "auto", buttons, 'left+43 top');
+                GetDialog("add-edit-form_sms_histori", 760, "auto", buttons, 'left+43 top');
                 $("#get_number").css('display', 'none');
                 
         }else if(fName == 'add-edit-form-car_driver'){
