@@ -3,9 +3,8 @@ require_once('classes/core.php');
 
 $user	   = $_SESSION['USERID'];
 
-
 $result = mysql_query("SELECT DATE_FORMAT(client_loan_schedule.pay_date, '%d.%m.%Y') AS `pay_date`,
-                               CONCAT(client_loan_schedule.pay_amount,IF(client_loan_agreement.loan_currency_id = 1, ' GEL', ' $')) AS `pay_amount`,
+                               CONCAT(client_loan_schedule.pay_amount,IF(client_loan_agreement.loan_currency_id = 1, ' LARI', ' $')) AS `pay_amount`,
                         	   client.`name` AS cl_name,
                     		   client.id AS cl_id,
                                client.phone,
@@ -21,17 +20,19 @@ $result = mysql_query("SELECT DATE_FORMAT(client_loan_schedule.pay_date, '%d.%m.
 
 while ($row = mysql_fetch_array($result)) {
     
-   $result1 = mysql_query("SELECT  client_quarantors.id,
+    $result1 = mysql_query("SELECT  client_quarantors.id,
                                    client_quarantors.phone
                             FROM   client_quarantors 
                             WHERE  client_id = $row[cl_id] 
                             AND    client_quarantors.actived = 1 
                             AND    client_quarantors.sms_sent = 1");
-   
-   $text = 'TG MOBILE GATKOBINEBT ('.$row[cl_car_info].') GADASAXDELIA MIMDINARE DAVALIANEBA '.$row[pay_date].'-SHI . TANXA '.$row[pay_amount].'. AUCILEBLAD MIUTITED XELSHEKRULEBIS  N '.$row[agr_id].' DA GADAXDIS RICXVI. IQONIET GADAXDIS QVITARI. SAQARTVELOS BANKI (S/K ‎205270277) GE12BG0000000523102000 (DAZGVEVIS GADAXDA GIWEVT  06.05.2017-shi).';
-   $encodedtxt = urlencode($text);
-   $check 		= file_get_contents('http://msg.ge/bi/sendsms.php?username=calldato1&password=di48fj47sh0&client_id=330&service_id=0330&to='.$row[phone].'&text='.$encodedtxt.')');
-   
+    
+    $text = 'TG MOBILE GATKOBINEBT ('.$row[cl_car_info].') GADASAXDELIA MIMDINARE DAVALIANEBA '.$row[pay_date].'-SHI . TANXA '.$row[pay_amount].'. AUCILEBLAD MIUTITED XELSHEKRULEBIS  N '.$row[agr_id].' DA GADAXDIS RICXVI. IQONIET GADAXDIS QVITARI. SAQARTVELOS BANKI (S/K ‎205270277) GE12BG0000000523102000 (DAZGVEVIS GADAXDA GIWEVT  06.05.2017-shi).';
+    $encodedtxt = urlencode($text);
+    
+    
+    $check 		= file_get_contents('http://msg.ge/bi/sendsms.php?username=calldato1&password=di48fj47sh0&client_id=330&service_id=0330&to='.$row[phone].'&text='.$encodedtxt.')');
+    
     while ($row1 = mysql_fetch_array($result1)) {
         $check1 = file_get_contents('http://msg.ge/bi/sendsms.php?username=calldato1&password=di48fj47sh0&client_id=330&service_id=0330&to='.$row1[phone].'&text='.$encodedtxt.')');
         
@@ -49,7 +50,7 @@ while ($row = mysql_fetch_array($result)) {
     }
     
     if($check){
-    	mysql_query("INSERT INTO `sent_sms` 
+        mysql_query("INSERT INTO `sent_sms` 
     					        (`user_id`, `datetime`, `client_id`, `address`, `content`, `status`, `actived`) 
     		              VALUES 
     					        ('$user', NOW(), '$row[cl_id]', '$row[phone]', '$text', '1', '1')");
