@@ -76,6 +76,7 @@
     var aJaxURL_cl_car_driver = "server-side/operations/subtables/client_car_drivers.action.php";
     var aJaxURL_cl_guarantors = "server-side/operations/subtables/client_guarantors.action.php";
     var aJaxURL_b_letters     = "server-side/operations/subtables/b_letters.action.php";
+    var aJaxURL_sms_histori   = "server-side/operations/sms.action.php";
     var aJaxURL_show_letter   = "server-side/main.action.php";
     var tName                 = "table_";
     var dialog                = "add-edit-form";
@@ -94,7 +95,7 @@
     function LoadTable(tbl,col_num,act,change_colum,URL,leng,dataparam,total){
 
     	if(dataparam == undefined){dataparam = leng;}
-    	if(tbl == 'person' || tbl == 'cardrivers' || tbl == 'guarantors'){dataparam = 'local_id='+$("#local_id").val();}
+    	if(tbl == 'person' || tbl == 'cardrivers' || tbl == 'guarantors' || tbl == 'sms_histori'){dataparam = 'local_id='+$("#local_id").val();}
     	GetDataTable(tName+tbl,URL,act,col_num,dataparam,0,"",3,"desc",total,change_colum);
     	$("#table_person_length").css('top', '2px');
     	$("#table_cardrivers_length").css('top', '2px');
@@ -380,7 +381,26 @@
          		SetEvents("add_button_guarantors", "delete_button_guarantors", "check-all_guarantors", tName+'guarantors', 'add-edit-form-guarantors', aJaxURL_cl_guarantors,'','guarantors',6,main_act,"<'F'Cpl>",aJaxURL_cl_guarantors,'');
             	GetButtons("add_button_guarantors","delete_button_guarantors");
          	}, 50);
+
+            setTimeout(function(){
+         		LoadTable('sms_histori',4,'get_list_sms_histori',"<'F'Cpl>",aJaxURL, '', 'local_id='+$("#local_id").val());
+         		$("#table_sms_histori_length").css('top', '2px');
+         		SetEvents("", "", "", tName+'sms_histori', 'add-edit-form_sms_histori', aJaxURL_sms_histori);
+         	}, 50);
          	
+        }else if(fName == 'add-edit-form_sms_histori'){
+     		var buttons = {
+    	        	"cancel": {
+    		            text: "დახურვა",
+    		            id: "cancel-dialog",
+    		            click: function () {
+    		            	$(this).dialog("close");
+    		            }
+    		        }
+    		    };
+                GetDialog("add-edit-form_sms_histori", 490, "auto", buttons, 'left+43 top');
+                $("#get_number").css('display', 'none');
+                
         }else if(fName == 'add-edit-form-car_driver'){
      		var buttons = {
     				"save": {
@@ -593,6 +613,7 @@
         $(".papers").children('img').attr('src','media/images/icons/file.png');
         $(".documents").children('img').attr('src','media/images/icons/document.png');
         $(".client_insurance").children('img').attr('src','media/images/icons/car-insurance.png');
+        $(".sms_histori").children('img').attr('src','media/images/icons/sms_histori.png');
     }
 
     function show_main(id,my_this){
@@ -1379,6 +1400,7 @@
 		param.guarantor_address	= $('#guarantor_address').val();
 		param.guarantor_mail	= $('#guarantor_mail').val();
 		param.guarantor_phone   = $('#guarantor_phone').val();
+		param.sms_sent_checkbox = $("input[id='sms_sent_checkbox']:checked").val();
 		
 		$.ajax({
 	        url: aJaxURL_cl_guarantors,
@@ -2272,4 +2294,5 @@
     <div id="add-edit-b_letter1" class="form-dialog" title="ბეს შეთანხმება"></div>
     <div id="add-edit-b_letter_show" class="form-dialog" title="ბეს შეთანხმება"></div>
     <div id="add-edit-show_letter" class="form-dialog" title="ბარათი"></div>
+    <div id="add-edit-form_sms_histori" class="form-dialog" title="SMS"></div>
 </body>

@@ -1,33 +1,62 @@
 <?php
 require_once('classes/core.php');
 
-$phone  = $_REQUEST['phone'];
-$text   = $_REQUEST['text'];
-$user	= $_SESSION['USERID'];
+$error	   = '';
+$data	   = '';
+
+$id        = $_REQUEST['id'];
+$client_id = $_REQUEST['client_id'];
+$sms_phone = $_REQUEST['sms_phone'];
+$text      = $_REQUEST['sms_text'];
+$user	   = $_SESSION['USERID'];
+$status    = 0;
 
 $encodedtxt = urlencode($text);
-$check 		= file_get_contents('http://91.151.128.64:7777/pls/sms/phttp2sms.Process?src=12345&dst='.$phone.'&txt='.$encodedtxt);
+$check 		= file_get_contents('http://msg.ge/bi/sendsms.php?username=calldato1&password=di48fj47sh0&client_id=330&service_id=0330&to='.$sms_phone.'&text='.$encodedtxt.')');
 
 if($check){
 	$status = 1;
-	$sms_inc_increm_id	= $_REQUEST['sms_inc_increm_id'];
-	$sms_phone			= $_REQUEST['phone'];
-	$sms_text			= $_REQUEST['text'];
+	if ($id == '') {
+	    mysql_query("INSERT INTO `sent_sms` 
+    					        (`user_id`, `datetime`, `client_id`, `address`, `content`, `status`, `actived`) 
+    		              VALUES 
+    					        ('$user', NOW(), '$client_id', '$sms_phone', '$text', '$status', '1')");
+	}else{
+	    mysql_query("UPDATE `sent_sms`
+            	        SET `user_id`   = '$user',
+	                        `datetime`  =  NOW(),
+                	        `client_id` = '$client_id',
+                	        `address`   = '$sms_phone',
+                	        `content`   = '$text',
+	                        `status`    = '$status'
+            	     WHERE  `id`        = '$id'");
+	}
 	
-	$sms_hidde_id		= $_REQUEST['sms_hidde_id'];
-	$user	  			= $_SESSION['USERID'];
-	$c_date	  			= date('Y-m-d H:i:s');
-	
-	mysql_query("INSERT INTO `sent_sms`
-				(`user_id`, `incomming_call_id`, `date`, `phone`, `sms_id`, `content`, `status`, `actived`)
-				VALUES
-				('$user', '$sms_inc_increm_id', '$c_date', '$sms_phone', '$sms_hidde_id', '$sms_text', '$status', 1);");
-}else {
+	$data = array("status" => $status);
+}else{
 	$status = 0;
+	
+	if ($id=='') {
+	    mysql_query("INSERT INTO `sent_sms`
+                    	        (`user_id`, `datetime`, `client_id`, `address`, `content`, `status`, `actived`)
+                    	  VALUES
+                    	        ('$user', NOW(), '$client_id', '$sms_phone', '$text', '$status', '1')");
+	}else{
+	    mysql_query("UPDATE `sent_sms`
+        	            SET `user_id`   = '$user',
+	                        `datetime`  =  NOW(),
+                	        `client_id` = '$client_id',
+                	        `address`   = '$sms_phone',
+                	        `content`   = '$text',
+                	        `status`    = '$status'
+        	         WHERE  `id`        = '$id'");
+	}
+	
+	$data = array("status" => $status);
 }
 
+$data['error'] = $error;
 
-$data = array("status" => $status);
 
 echo json_encode($data);
 

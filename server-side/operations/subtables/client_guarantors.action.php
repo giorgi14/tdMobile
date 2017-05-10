@@ -17,6 +17,7 @@ $guarantor_pid      = $_REQUEST['guarantor_pid'];
 $guarantor_address  = $_REQUEST['guarantor_address'];
 $guarantor_mail     = $_REQUEST['guarantor_mail'];
 $guarantor_phone    = $_REQUEST['guarantor_phone'];
+$sms_sent_checkbox  = $_REQUEST['sms_sent_checkbox'];
 
 
 
@@ -68,9 +69,9 @@ switch ($action) {
         break;
     case 'save_guarantor':
         if($guarantor_hidde == ''){
-            insert($user_id, $local_id, $guarantor_name, $guarantor_pid, $guarantor_address,$guarantor_mail,$guarantor_phone);
+            insert($user_id, $local_id, $guarantor_name, $guarantor_pid, $guarantor_address,$guarantor_mail,$guarantor_phone, $sms_sent_checkbox);
         }else{
-            update($guarantor_hidde, $user_id, $guarantor_name, $guarantor_pid, $guarantor_address,$guarantor_mail,$guarantor_phone);
+            update($guarantor_hidde, $user_id, $guarantor_name, $guarantor_pid, $guarantor_address,$guarantor_mail,$guarantor_phone, $sms_sent_checkbox);
         }
         
         break;
@@ -82,14 +83,14 @@ $data['error'] = $error;
 
 echo json_encode($data);
 
-function insert($user_id, $local_id, $guarantor_name, $guarantor_pid, $guarantor_address,$guarantor_mail,$guarantor_phone){
+function insert($user_id, $local_id, $guarantor_name, $guarantor_pid, $guarantor_address,$guarantor_mail,$guarantor_phone, $sms_sent_checkbox){
     mysql_query("INSERT INTO `client_quarantors` 
-                            (`user_id`, `datetime`, `client_id`, `name`, `pid`, `address`, `email`, `phone`, `actived`) 
+                            (`user_id`, `datetime`, `client_id`, `name`, `pid`, `address`, `email`, `phone`, `sms_sent`, `actived`) 
                       VALUES 
-                            ('$user_id', NOW(), '$local_id', '$guarantor_name', '$guarantor_pid', '$guarantor_address', '$guarantor_mail', '$guarantor_phone', 1)");
+                            ('$user_id', NOW(), '$local_id', '$guarantor_name', '$guarantor_pid', '$guarantor_address', '$guarantor_mail', '$guarantor_phone', '$sms_sent_checkbox', 1)");
 }
 
-function update($car_driver_hidde, $user_id, $guarantor_name, $guarantor_pid, $guarantor_address,$guarantor_mail,$guarantor_phone){
+function update($car_driver_hidde, $user_id, $guarantor_name, $guarantor_pid, $guarantor_address,$guarantor_mail,$guarantor_phone, $sms_sent_checkbox){
    mysql_query("UPDATE `client_quarantors`
             	   SET `user_id`   = '$user_id',
             		   `datetime`  =  NOW(),
@@ -97,7 +98,8 @@ function update($car_driver_hidde, $user_id, $guarantor_name, $guarantor_pid, $g
             		   `pid`       = '$guarantor_pid',
             		   `address`   = '$guarantor_address',
             		   `email`     = '$guarantor_mail',
-            		   `phone`     = '$guarantor_phone'
+            		   `phone`     = '$guarantor_phone',
+                       `sms_sent`  = '$sms_sent_checkbox'
                 WHERE  `id`        = '$car_driver_hidde'");
 }
 
@@ -107,7 +109,8 @@ function GetClient($id){
                                                  pid,
                                         		 address,
                                                  email,
-                                                 phone
+                                                 phone,
+                                                 sms_sent
                                           FROM   client_quarantors
                                           WHERE  id = $id"));
     return $res;
@@ -115,6 +118,8 @@ function GetClient($id){
 
 
 function GetPage($res){
+    if($res[sms_sent] == 1){$checked = "checked";}else{$checked = "";}
+    
     $data  .= '
     	   <div id="dialog-form">
                 <fieldset style="width: 390px;  float: left;">
@@ -143,6 +148,10 @@ function GetPage($res){
                        <tr>
                            <td style="width: 100px;"><label for="pet_num">ტელეფონი</label></td>
                            <td style="width: 275px;"><input style="width: 275px;" id="guarantor_phone" type="text" value="'.$res[phone].'"></td>
+            	       </tr>
+                       <tr>
+                           <td style="width: 100px;"><label for="pet_num">sms</label></td>
+                           <td style="width: 275px;"><input type="checkbox" style="width: 23px; margin-left: 0px;" id="sms_sent_checkbox" type="text" value="1" '.$checked.'></td>
             	       </tr>
                    </table>
             </fieldset>

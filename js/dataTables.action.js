@@ -237,7 +237,12 @@ function GetDataTable1(tname, aJaxURL, action, count, data, hidden, length, sort
 	            {
 	            	for ( var j = 0 ; j < total.length ; j++ )
 	                {
-		                iTotal[j] += aaData[i][total[j]]*1;
+	            		if(aaData[i][total[j]] == ''){
+	            			
+	            		}else{
+		                iTotal[j] += parseInt(aaData[i][total[j]])*1;
+	            		}
+		                
 	                }
 	            }
 
@@ -246,7 +251,11 @@ function GetDataTable1(tname, aJaxURL, action, count, data, hidden, length, sort
 				{
 					for ( var j = 0 ; j < total.length ; j++ )
 	                {
-						iPage[j] += aaData[ aiDisplay[i] ][total[j]]*1;
+						if(aaData[ aiDisplay[i] ][total[j]] == ''){
+	            			
+	            		}else{
+						iPage[j] += parseInt(aaData[ aiDisplay[i] ][total[j]])*1;
+	            		}
 	                }
 				}
 

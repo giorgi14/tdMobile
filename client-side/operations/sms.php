@@ -2,22 +2,25 @@
 <head>
 	<script type="text/javascript">
 		var aJaxURL	          = "server-side/operations/sms.action.php";		//server side folder url
+		var aJaxURL_sms       = "includes/sendsms.php";
 		var tName	          = "example";	//table name
 		var fName	          = "add-edit-form"; //form name
 		var change_colum_main = "<'dataTable_buttons'T><'F'Cfipl>";
 		    	
 		$(document).ready(function () {        	
-			LoadTable(tName,4,change_colum_main,aJaxURL);	
+			LoadTable(tName,6,change_colum_main,aJaxURL);	
  						
 			/* Add Button ID, Delete Button ID */
 			GetButtons("add_button", "delete_button");
 			SetEvents("add_button", "delete_button", "check-all", tName, fName, aJaxURL,'',tName,4,change_colum_main,aJaxURL,'','','');
+			$("#status").chosen();
+			$("#status_chosen").css('margin-top', '-7px'); 
 		});
         
 		function LoadTable(tName,num,change_colum_main,aJaxURL){
 			
 			/* Table ID, aJaxURL, Action, Colum Number, Custom Request, Hidden Colum, Menu Array */
-			GetDataTable(tName, aJaxURL, 'get_list', num, "", 0, "", 1, "desc", "", change_colum_main);
+			GetDataTable(tName, aJaxURL, 'get_list', num, "status="+$("#status").val(), 0, "", 1, "desc", "", change_colum_main);
 			setTimeout(function(){$('.ColVis, .dataTable_buttons').css('display','none');}, 90);
 		}
 		
@@ -26,69 +29,41 @@
 			
 			if(fname=='add-edit-form'){
 				var buttons = {
-						"sent": {
-				            text: "გაგზავნა",
-				            id: "sent-dialog",
-				            click: function () {
-				            }
-				        },
-				        "save": {
-				            text: "შენახვა",
-				            id: "save-dialog",
-				            click: function () {
-				            }
-				        },
-			        	"cancel": {
-				            text: "დახურვა",
-				            id: "cancel-dialog",
-				            click: function () {
-				            	$(this).dialog("close");
-				            }
-				        }
+					"sent": {
+			            text: "გაგზავნა",
+			            id: "sent-dialog",
+			            click: function () {
+			            }
+			        },
+			        "save": {
+			            text: "შენახვა",
+			            id: "save-dialog",
+			            click: function () {
+			            }
+			        },
+		        	"cancel": {
+			            text: "დახურვა",
+			            id: "cancel-dialog",
+			            click: function () {
+			            	$(this).dialog("close");
+			            }
+			        }
 				};
-    			GetDialog(fName, 400, "auto", buttons, "top center");
+    			GetDialog(fName, 782, "auto", buttons, "top");
     			$("#get_number").button();
     			$("#get_shablons").button();
+    			$("#client_id,#client_phone").chosen();
+    			
+    			$('#add-edit-form, .add-edit-form-class').css('overflow','visible');
+
+    			if($("#h_status").val()==1){
+    				$("#sent-dialog").hide();
+    				$("#save-dialog").hide();
+        		}
 			}
 		}
 
 		$(document).on("click", "#get_number", function () {
-			param 	  = new Object();
-			param.act = "get_client_number";
-			$.ajax({
-		        url: aJaxURL,
-			    data: param,
-		        success: function(data) {			        
-					if(typeof(data.error) != 'undefined'){
-						if(data.error != ''){
-							alert(data.error);
-						}else{
-							$("#add-edit-form-phone").html(data.page);
-							var buttons = {
-									"update_phone": {
-							            text: "განახლება",
-							            id: "update_phone",
-							            click: function () {
-							            }
-							        },
-						        	"cancel": {
-							            text: "დახურვა",
-							            id: "cancel-dialog",
-							            click: function () {
-							            	$(this).dialog("close");
-							            }
-							        }
-							};
-							GetDialog('add-edit-form-phone', 400, "auto", buttons, "top center");
-							$(".copy_number").button();
-						}
-					}
-			    }
-		    });
-			
-		});
-
-		$(document).on("click", "#get_shablons", function () {
 			param 	  = new Object();
 			param.act = "get_client_number";
 			$.ajax({
@@ -144,6 +119,36 @@
 			    }
 		    });
 		});
+
+		$(document).on("change", "#client_id", function () {
+		    param 			= new Object();
+			param.act       = "get_client_phone";
+		    param.client_id = $(this).val();
+		    
+		    $.ajax({
+		        url: aJaxURL,
+			    data: param,
+		        success: function(data) {			        
+					if(typeof(data.error) != 'undefined'){
+						if(data.error != ''){
+							alert(data.error);
+						}else{
+							$("#client_phone").html(data.page).trigger("chosen:updated");
+						}
+					}
+			    }
+		    });
+		});
+
+		$(document).on("change", "#client_phone", function () {
+		    param 			= new Object();
+			
+		    $("#sms_phone").val($(this).val());
+		});
+		
+		$(document).on("change", "#status", function () {
+		    LoadTable(tName,6,change_colum_main,aJaxURL);
+		});
 		
 	    // Add - Save
 	    $(document).on("click", "#save-dialog", function () {
@@ -153,6 +158,7 @@
 	    	param.id		= $("#id").val();
 	    	param.sms_phone	= $("#sms_phone").val();
 	    	param.sms_text	= $("#sms_text").val();
+	    	param.client_id	= $("#client_id").val();
 	    	
 			if(param.sms_phone == ""){
 				alert("შეავსეთ ნომერი!");
@@ -167,7 +173,42 @@
 							if(data.error != ''){
 								alert(data.error);
 							}else{
-								LoadTable(tName,4,change_colum_main,aJaxURL);
+								LoadTable(tName,6,change_colum_main,aJaxURL);
+				        		CloseDialog(fName);
+							}
+						}
+				    }
+			    });
+			}
+		});
+
+	    $(document).on("click", "#sent-dialog", function () {
+		    param 			= new Object();
+
+		    param.id		= $("#id").val();
+	    	param.sms_phone	= $("#sms_phone").val();
+	    	param.sms_text	= $("#sms_text").val();
+	    	param.client_id	= $("#client_id").val();
+	    	
+			if(param.sms_phone == ""){
+				alert("შეავსეთ ნომერი!");
+			}else if(param.sms_text == ""){
+				alert("შეავსეთ ტექსტი!");
+			}else {
+			    $.ajax({
+			        url: aJaxURL_sms,
+				    data: param,
+			        success: function(data) {			        
+						if(typeof(data.error) != 'undefined'){
+							if(data.error != ''){
+								alert(data.error);
+							}else{
+								if(data.status==1){
+									alert('SMS წარმატებით გაიგზავნა');
+								}else{
+									alert('SMS არ გაიგზავნა');
+								}
+								LoadTable(tName,6,change_colum_main,aJaxURL);
 				        		CloseDialog(fName);
 							}
 						}
@@ -254,28 +295,38 @@
 <body>
 <div id="tabs">
 <div class="callapp_head">SMS<hr class="callapp_head_hr"></div>
-<div id="button_area">
-	<button id="add_button">ახალი SMS</button>
-	<button id="delete_button">წაშლა</button>
-</div>
-<table id="table_right_menu">
-<tr>
-<td style="cursor: pointer;padding: 4px;border-right: 1px solid #E6E6E6;background:#2681DC;"><img alt="table" src="media/images/icons/table_w.png" height="14" width="14">
-</td>
-<td style="cursor: pointer;padding: 4px;border-right: 1px solid #E6E6E6;"><img alt="log" src="media/images/icons/log.png" height="14" width="14">
-</td>
-<td style="cursor: pointer;padding: 4px;" id="show_copy_prit_exel" myvar="0"><img alt="link" src="media/images/icons/select.png" height="14" width="14">
-</td>
-</tr>
-</table>
+    <div id="button_area">
+    	<button id="add_button">ახალი SMS</button>
+    	<button id="delete_button">წაშლა</button>
+    	<select id="status" style="width: 200px;">
+    		<option value="0">ყველა</option>
+    		<option value="1">გასაგზავნი</option>
+    		<option value="2">გაგზავნილი</option>
+    	</select>
+    </div>
+    <table id="table_right_menu">
+        <tr>
+            <td style="cursor: pointer;padding: 4px;border-right: 1px solid #E6E6E6;background:#2681DC;">
+            	<img alt="table" src="media/images/icons/table_w.png" height="14" width="14">
+            </td>
+            <td style="cursor: pointer;padding: 4px;border-right: 1px solid #E6E6E6;">
+            	<img alt="log" src="media/images/icons/log.png" height="14" width="14">
+            </td>
+            <td style="cursor: pointer;padding: 4px;" id="show_copy_prit_exel" myvar="0">
+            	<img alt="link" src="media/images/icons/select.png" height="14" width="14">
+            </td>
+        </tr>
+    </table>
     <table class="display" id="example" >
         <thead>
             <tr id="datatable_header">
                 <th>ID</th>
-                <th style="width: 11%;">ნომერი</th>
-                <th style="width: 76%;">შინაარსი</th>
-                <th style="width: 10%;">სტატუსი</th>
-            	<th class="check" style="width: 3%;">#</th>
+                <th style="width: 14%;">თარიღი</th>
+                <th style="width: 20%;">კლიენტი</th>
+                <th style="width: 10%;">ნომერი</th>
+                <th style="width: 47%;">შინაარსი</th>
+                <th style="width: 9%;">სტატუსი</th>
+            	<th class="check" style="width: 20px;">#</th>
             </tr>
         </thead>
         <thead>
@@ -283,6 +334,12 @@
                 <th class="colum_hidden">
                     <input type="text" name="search_category" value="ფილტრი" class="search_init" />
                 </th>                
+                <th>
+                    <input type="text" name="search_category" value="ფილტრი" class="search_init" />
+                </th>
+                <th>
+                    <input type="text" name="search_category" value="ფილტრი" class="search_init" />
+                </th>
                 <th>
                     <input type="text" name="search_category" value="ფილტრი" class="search_init" />
                 </th>
