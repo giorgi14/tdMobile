@@ -12,7 +12,7 @@
  						
 			/* Add Button ID, Delete Button ID */
 			GetButtons("add_button", "delete_button");
-			SetEvents("add_button", "delete_button", "check-all", tName, fName, aJaxURL,'',tName,4,change_colum_main,aJaxURL,'','','');
+			SetEvents("add_button", "delete_button", "check-all", tName, fName, aJaxURL,'',tName,6,change_colum_main,aJaxURL,'','','');
 			$("#status").chosen();
 			$("#status_chosen").css('margin-top', '-7px'); 
 		});
