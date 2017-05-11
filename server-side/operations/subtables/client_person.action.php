@@ -13,6 +13,7 @@ $client_pers_hidde = $_REQUEST['client_pers_hidde'];
 $local_id          = $_REQUEST['local_id'];
 $client_pers	   = $_REQUEST['client_pers'];
 $client_pers_phone = $_REQUEST['client_pers_phone'];
+$sms_sent_checkbox = $_REQUEST['sms_sent_checkbox'];
 
 
 
@@ -61,9 +62,9 @@ switch ($action) {
         break;
     case 'save_client_pers':
         if($client_pers_hidde == ''){
-            insert($user_id, $local_id, $client_pers, $client_pers_phone);
+            insert($user_id, $local_id, $client_pers, $client_pers_phone, $sms_sent_checkbox);
         }else{
-            update($client_pers_hidde, $user_id, $local_id, $client_pers, $client_pers_phone);
+            update($client_pers_hidde, $user_id, $local_id, $client_pers, $client_pers_phone, $sms_sent_checkbox);
         }
         break;
     default:
@@ -74,32 +75,39 @@ $data['error'] = $error;
 
 echo json_encode($data);
 
-function insert($user_id, $local_id, $client_pers, $client_pers_phone){
+function insert($user_id, $local_id, $client_pers, $client_pers_phone, $sms_sent_checkbox){
     mysql_query("INSERT INTO `client_person` 
-					         (`user_id`, `client_id`, `datetime`, `person`, `phone`, `actived`) 
+					         (`user_id`, `client_id`, `datetime`, `person`, `phone`, `sms_sent`, `actived`) 
 		               VALUES 
-					         ('$user_id', '$local_id', NOW(), '$client_pers', '$client_pers_phone', 1)");
+					         ('$user_id', '$local_id', NOW(), '$client_pers', '$client_pers_phone', '$sms_sent_checkbox', 1)");
 }
 
-function update($client_pers_hidde, $user_id, $local_id, $client_pers, $client_pers_phone){
+function update($client_pers_hidde, $user_id, $local_id, $client_pers, $client_pers_phone, $sms_sent_checkbox){
     mysql_query("UPDATE `client_person`
                 	 SET `user_id`  = '$user_id',
                 		 `datetime` = NOW(),
                 	     `person`   = '$client_pers',
-                		 `phone`    = '$client_pers_phone'
+                		 `phone`    = '$client_pers_phone',
+                         `sms_sent` = '$sms_sent_checkbox'
                   WHERE  `id`       = '$client_pers_hidde' ");
 }
 
 function GetClient($id){
     $res = mysql_fetch_assoc(mysql_query("SELECT id,
                                                  person,
-                                        		 phone
+                                        		 phone,
+                                                 sms_sent
                                           FROM   client_person
                                           WHERE  id = $id"));
     return $res;
 }
 
 function GetPage($res){
+    $checked = "";
+    if ($res[sms_sent] == 1){
+        $checked="checked";
+    }
+    if ($res[id] == ''){$index = '995';}else{$index = '';}
     $data  .= '
     	   <div id="dialog-form">
                 <fieldset style="width: 400px;  float: left;">
@@ -112,7 +120,12 @@ function GetPage($res){
                        <tr style="height:20px;"></tr>
                        <tr>
                            <td style="width: 110px;"><label for="pet_num">ტელეფონი</label></td>
-                           <td style="width: 275px;"><input style="width: 275px;" id="client_pers_phone" type="text" value="'.$res[phone].'"></td>
+                           <td style="width: 275px;"><input placeholder="შეიყვანეთ ნომერი" onkeypress="{if (event.which != 8 &amp;&amp; event.which != 0 &amp;&amp; event.which!=46 &amp;&amp; (event.which < 48 || event.which > 57)) {$(\'#errmsg\').html(\'მხოლოდ ციფრი\').show().fadeOut(\'slow\'); return false;}}" type="text" id="client_pers_phone" class="idle" style="width: 275px;" value="'.$index.''.$res[phone].'"></td>
+                       </tr>
+                       <tr style="height:20px;"></tr>
+                       <tr>
+                           <td style="width: 100px;"><label for="pet_num">sms</label></td>
+                           <td style="width: 275px;"><input type="checkbox" style="width: 23px; margin-left: 0px;" id="sms_sent_person_checkbox" type="text" value="1" '.$checked.'></td>
             	       </tr>
                    </table>
             </fieldset>

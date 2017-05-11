@@ -651,6 +651,7 @@
 		param.tld_responsible     = $("#tld_responsible").val();
 		param.client_type         = $("input[class=client_type]:checked").val();
 		param.trust_pers_checkbox = $("input[id='trust_pers_checkbox']:checked").val();
+		param.client_sms          = $("input[id='client_sms']:checked").val();
 		
 		//მინდობილი პირის მონაცემები//
 		param.client_trust_name	        = $('#client_trust_name').val();
@@ -669,6 +670,7 @@
 		param.client_trust_pid_number   = $('#client_trust_pid_number').val();
 		param.client_trust_pid_date     = $('#client_trust_pid_date').val();
 		param.client_trust_born_date    = $('#client_trust_born_date').val();
+		param.client_trust_sms          = $("input[id='client_trust_sms']:checked").val();
 
 		//მანქანის მონაცემები//
 		param.car_marc	              = $('#car_marc').val();
@@ -748,6 +750,9 @@
 		}else if(param.phone == ''){
 			alert('შეავსეთ "ტელეფონი"');
 			$("#phone").css('border','1px solid #F44336');
+		}else if(param.phone.length != 12){
+			alert('შეავსეთ "ტელეფონი" სწორი ფორმატით');
+			$("#phone").css('border','1px solid #F44336');
 		}else if(param.fact_address == '' && param.jur_address == ''){
 			alert('შეავსეთ "მისამართი"');
 			$("#fact_address").css('border','1px solid #F44336');
@@ -769,6 +774,9 @@
 			$("#client_trust_tin").css('border','1px solid #F44336');
 		}else if(param.trust_pers_checkbox == 1 && param.client_trust_phone == ''){
 			alert('შეავსეთ "მ/პ ტელეფონი"');
+			$("#client_trust_phone").css('border','1px solid #F44336');
+		}else if(param.trust_pers_checkbox == 1 && param.client_trust_phone.length != 12){
+			alert('შეავსეთ "მ/პ ტელეფონი" სწორი ფორმატით');
 			$("#client_trust_phone").css('border','1px solid #F44336');
 		}else if(param.trust_pers_checkbox == 1 && param.client_trust_fact_address == '' && param.client_trust_jur_address == ''){
 			alert('შეავსეთ "მ/პ მისამართი"');
@@ -1370,22 +1378,26 @@
 		
 		param.client_pers	    = $('#client_pers').val();
 		param.client_pers_phone	= $('#client_pers_phone').val();
-		
-		$.ajax({
-	        url: aJaxURL_cl_person,
-		    data: param,
-	        success: function(data) {       
-				if(typeof(data.error) != "undefined"){
-					if(data.error != ""){
-						alert(data.error);
-					}else{
-						LoadTable('person',3,main_act,"<'F'Cpl>",aJaxURL_cl_person,'','local_id='+$("#local_id").val());
-						$("#table_person_length").css('top', '2px');
-					    CloseDialog("add-edit-form-pers");
-					}
-				}
-	    	}
-	   });
+		param.sms_sent_checkbox = $("input[id='sms_sent_person_checkbox']:checked").val();
+		if(param.client_pers_phone.length!=12){
+			alert('ნომერი არასწორი ფორმატითაა შეყვანილი');
+		}else{
+    		$.ajax({
+    	        url: aJaxURL_cl_person,
+    		    data: param,
+    	        success: function(data) {       
+    				if(typeof(data.error) != "undefined"){
+    					if(data.error != ""){
+    						alert(data.error);
+    					}else{
+    						LoadTable('person',3,main_act,"<'F'Cpl>",aJaxURL_cl_person,'','local_id='+$("#local_id").val());
+    						$("#table_person_length").css('top', '2px');
+    					    CloseDialog("add-edit-form-pers");
+    					}
+    				}
+    	    	}
+    	   });
+        }
 	});
 
     $(document).on("click", "#save-guarantor", function () {
@@ -1401,22 +1413,25 @@
 		param.guarantor_mail	= $('#guarantor_mail').val();
 		param.guarantor_phone   = $('#guarantor_phone').val();
 		param.sms_sent_checkbox = $("input[id='sms_sent_checkbox']:checked").val();
-		
-		$.ajax({
-	        url: aJaxURL_cl_guarantors,
-		    data: param,
-	        success: function(data) {       
-				if(typeof(data.error) != "undefined"){
-					if(data.error != ""){
-						alert(data.error);
-					}else{
-						LoadTable('guarantors',6,main_act,"<'F'Cpl>",aJaxURL_cl_guarantors,'','local_id='+$("#local_id").val());
-						$("#table_guarantors_length").css('top', '2px');
-					    CloseDialog("add-edit-form-guarantors");
-					}
-				}
-	    	}
-	   });
+		if(param.guarantor_phone.length!=12){
+			alert('ნომერი არასწორი ფორმატითაა შეყვანილი');
+		}else{	
+    		$.ajax({
+    	        url: aJaxURL_cl_guarantors,
+    		    data: param,
+    	        success: function(data) {       
+    				if(typeof(data.error) != "undefined"){
+    					if(data.error != ""){
+    						alert(data.error);
+    					}else{
+    						LoadTable('guarantors',6,main_act,"<'F'Cpl>",aJaxURL_cl_guarantors,'','local_id='+$("#local_id").val());
+    						$("#table_guarantors_length").css('top', '2px');
+    					    CloseDialog("add-edit-form-guarantors");
+    					}
+    				}
+    	    	}
+    	   });
+        }
 	});
 	
     $(document).on("click", "#save-driver", function () {
