@@ -27,6 +27,7 @@ $result = mysql_query("SELECT  DATE_FORMAT(client_loan_schedule.pay_date, '%d.%m
                         AND    client_loan_agreement.canceled_status = 0
                         AND    DATEDIFF(client_loan_schedule.pay_date,CURDATE()) IN(SELECT sent_day.count FROM sent_day WHERE sent_day.actived = 1)");
 
+
 while ($row = mysql_fetch_array($result)) {
     
     $avans = mysql_fetch_array(mysql_query("SELECT SUM(money_transactions.pay_amount) AS avansi,
