@@ -58,7 +58,7 @@ function GetDataTable(tname, aJaxURL, action, count, data, hidden, length, sorti
     oTable = $("#" + tname).dataTable({
         "bDestroy": true, 																				//Reinicialization table
         "bJQueryUI": true, 																				//Add jQuery ThemeRoller
-        "bStateSave": true, 																			//state saving
+        "bStateSave": false, 																			//state saving
         "sDom": colum_change,  
 		"oTableTools": imex,
         "sPaginationType": "full_numbers",
@@ -221,7 +221,7 @@ function GetDataTable1(tname, aJaxURL, action, count, data, hidden, length, sort
     oTable = $("#" + tname).dataTable({
         "bDestroy": true, 																				//Reinicialization table
         "bJQueryUI": true, 																				//Add jQuery ThemeRoller
-        "bStateSave": true, 																			//state saving
+        "bStateSave": false, 																			//state saving
         "sDom": colum_change,  
 		"oTableTools": imex,
         "sPaginationType": "full_numbers",

@@ -71,18 +71,19 @@
 </style>
 <script src="js/exporting.js"></script>
 <script type="text/javascript">
-    var aJaxURL               = "server-side/operations/client.action.php";
-    var aJaxURL_cl_person     = "server-side/operations/subtables/client_person.action.php";
-    var aJaxURL_cl_car_driver = "server-side/operations/subtables/client_car_drivers.action.php";
-    var aJaxURL_cl_guarantors = "server-side/operations/subtables/client_guarantors.action.php";
-    var aJaxURL_b_letters     = "server-side/operations/subtables/b_letters.action.php";
-    var aJaxURL_sms_histori   = "server-side/operations/sms.action.php";
-    var aJaxURL_show_letter   = "server-side/main.action.php";
-    var tName                 = "table_";
-    var dialog                = "add-edit-form";
-    var colum_number          = 10;
-    var main_act              = "get_list";
-    var change_colum_main     = "<'dataTable_buttons'T><'F'Cfipl>";
+    var aJaxURL                  = "server-side/operations/client.action.php";
+    var aJaxURL_cl_person        = "server-side/operations/subtables/client_person.action.php";
+    var aJaxURL_cl_car_driver    = "server-side/operations/subtables/client_car_drivers.action.php";
+    var aJaxURL_cl_car_insurance = "server-side/operations/subtables/client_car_insurance.action.php";
+    var aJaxURL_cl_guarantors    = "server-side/operations/subtables/client_guarantors.action.php";
+    var aJaxURL_b_letters        = "server-side/operations/subtables/b_letters.action.php";
+    var aJaxURL_sms_histori      = "server-side/operations/sms.action.php";
+    var aJaxURL_show_letter      = "server-side/main.action.php";
+    var tName                    = "table_";
+    var dialog                   = "add-edit-form";
+    var colum_number             = 10;
+    var main_act                 = "get_list";
+    var change_colum_main        = "<'dataTable_buttons'T><'F'Cfipl>";
      
     $(document).ready(function () {
     	GetButtons("add_button","delete_button");
@@ -387,6 +388,13 @@
          		$("#table_sms_histori_length").css('top', '2px');
          		SetEvents("", "", "", tName+'sms_histori', 'add-edit-form_sms_histori', aJaxURL_sms_histori);
          	}, 50);
+
+            setTimeout(function(){
+         		LoadTable('car_insurance',5,'get_list',"<'F'Cpl>",aJaxURL_cl_car_insurance, '', 'local_id='+$("#local_id").val());
+         		$("#table_car_insurance_length").css('top', '2px');
+         		GetButtons("add_button_car_insurance","delete_button_car_insurance");
+         		SetEvents("add_button_car_insurance", "delete_button_car_insurance", "check-all_car_insurance", tName+'car_insurance', 'add-edit-form_car_insurance', aJaxURL_cl_car_insurance,'','car_insurance',5,main_act,"<'F'Cpl>",aJaxURL_cl_car_insurance,'');
+         	}, 50);
          	
         }else if(fName == 'add-edit-form_sms_histori'){
      		var buttons = {
@@ -474,6 +482,42 @@
                 GetDialog("add-edit-b_letter1", 930, "auto", buttons, 'left+43 top');
                 $("#client_agr_car_mark").chosen();
                 $("#b_letter_responsible_id").chosen();
+                $('#add-edit-b_letter1, .add-edit-b_letter1-class').css('overflow','visible');
+                $('#add-edit-b_letter1, .add-edit-b_letter1-class').css('min-height','275px');
+
+                if($("#b_letter_hidde").val()!=''){
+                    $("#show-b_letter").css('display', '');
+                }else{
+                	$("#show-b_letter").css('display', 'none');
+                }
+         }else if(fName == 'add-edit-form_car_insurance'){
+        	var buttons = {
+        			"save": {
+    		            text: "შენახვა",
+    		            id: "save-car_insurance"
+    		        },
+    		        "save-print": {
+    		            text: "შენახვა+ბეჭდვა",
+    		            id: "save-print-car_insurance"
+    		        },
+    		        "save-download": {
+    		            text: "შენახვა+ჩამოტვირთვა",
+    		            id: "save-download-car_insurance"
+    		        },
+    	        	"cancel": {
+    		            text: "დახურვა",
+    		            id: "cancel-dialog",
+    		            click: function () {
+    		            	$(this).dialog("close");
+    		            }
+    		        }
+    		    };
+                GetDialog("add-edit-form_car_insurance", 490, "auto", buttons, 'left+43 top');
+                $("#client_agr_car_mark").chosen();
+                $("#b_letter_responsible_id").chosen();
+
+                GetDateTimes('car_insurance_start');
+                GetDateTimes('car_insurance_end');
                 $('#add-edit-b_letter1, .add-edit-b_letter1-class').css('overflow','visible');
                 $('#add-edit-b_letter1, .add-edit-b_letter1-class').css('min-height','275px');
 
@@ -1464,32 +1508,116 @@
 	   });
 	});
 	
-    $(document).on("click", "#save_insurance_info", function () {
+    $(document).on("click", "#save-car_insurance", function () {
 		param 			= new Object();
 		param.act		= "save_insurance_info";
 
-		param.local_id 								= $("#local_id").val();
-		param.car_insurance_info_hidde	            = $("#car_insurance_info_hidde").val();
+		param.local_id 					  = $("#local_id").val();
+		param.car_insurance_hidde	      = $("#car_insurance_hidde").val();
 		
-		param.insurance_price_gel	                = $('#insurance_price_gel').val();
-		param.insurance_price_usd	                = $('#insurance_price_usd').val();
-		param.insurance_start_date	                = $('#insurance_start_date').val();
-		param.insurance_end_date	                = $('#insurance_end_date').val();
+		param.car_loan_amount	          = $('#car_loan_amount').val();
+		param.car_real_price	          = $('#car_real_price').val();
+		param.car_ins_registration_number = $('#car_ins_registration_number').val();
+		param.car_insurance_amount	      = $('#car_insurance_amount').val();
+		param.car_insurance_start         = $('#car_insurance_start').val();
+		param.car_insurance_end	          = $('#car_insurance_end').val();
+		param.curent_courceee	          = $('#curent_courceee').val();
 		
 		$.ajax({
-	        url: aJaxURL,
+	        url: aJaxURL_cl_car_insurance,
 		    data: param,
 	        success: function(data) {       
 				if(typeof(data.error) != "undefined"){
 					if(data.error != ""){
 						alert(data.error);
 					}else{
-						alert('დაზღვევის მონაცემები წარმატებით შეინახა');
-						$("#print_insurance").button('enable');
-						$("#download_insurance").button('enable');
-						if(data.ins_hidde_id!=0){
-							$("#car_insurance_info_hidde").val(data.ins_hidde_id);
-						}
+						CloseDialog("add-edit-form_car_insurance");
+						LoadTable('car_insurance',5,main_act,"<'F'Cpl>",aJaxURL_cl_car_insurance,'','local_id='+$("#local_id").val());
+						$("#table_car_insurance_length").css('top', '2px');
+					}
+				}
+	    	}
+	   });
+	});
+
+    $(document).on("click", "#save-print-car_insurance", function () {
+    	param 			= new Object();
+		param.act		= "save_insurance_info";
+
+		param.local_id 					  = $("#local_id").val();
+		param.car_insurance_hidde	      = $("#car_insurance_hidde").val();
+		
+		param.car_loan_amount	          = $('#car_loan_amount').val();
+		param.car_real_price	          = $('#car_real_price').val();
+		param.car_ins_registration_number = $('#car_ins_registration_number').val();
+		param.car_insurance_amount	      = $('#car_insurance_amount').val();
+		param.car_insurance_start         = $('#car_insurance_start').val();
+		param.car_insurance_end	          = $('#car_insurance_end').val();
+		param.curent_courceee	          = $('#curent_courceee').val();
+		
+		$.ajax({
+	        url: aJaxURL_cl_car_insurance,
+		    data: param,
+	        success: function(data) {       
+				if(typeof(data.error) != "undefined"){
+					if(data.error != ""){
+						alert(data.error);
+					}else{
+						CloseDialog("add-edit-form_car_insurance");
+						LoadTable('car_insurance',5,main_act,"<'F'Cpl>",aJaxURL_cl_car_insurance,'','local_id='+$("#local_id").val());
+						$("#table_car_insurance_length").css('top', '2px');
+						
+						params  = "&file_type=car_insurance"+"&insurance_hidde="+data.insurance_id+"&local_id="+param.local_id;
+		        		win=window.open("server-side/operations/subtables/print_documents.action.php?"+params, "" , "scrollbars=no,toolbar=no,screenx=0,screeny=0,location=no,titlebar=no,directories=no,status=no,menubar=no");
+					}
+				}
+	    	}
+	   });
+	});
+
+    $(document).on("click", "#save-download-car_insurance", function () {
+    	param 	  = new Object();
+		param.act = "save_insurance_info";
+
+		param.local_id 					  = $("#local_id").val();
+		param.car_insurance_hidde	      = $("#car_insurance_hidde").val();
+		
+		param.car_loan_amount	          = $('#car_loan_amount').val();
+		param.car_real_price	          = $('#car_real_price').val();
+		param.car_ins_registration_number = $('#car_ins_registration_number').val();
+		param.car_insurance_amount	      = $('#car_insurance_amount').val();
+		param.car_insurance_start         = $('#car_insurance_start').val();
+		param.car_insurance_end	          = $('#car_insurance_end').val();
+		param.curent_courceee	          = $('#curent_courceee').val();
+		
+		$.ajax({
+	        url: aJaxURL_cl_car_insurance,
+		    data: param,
+	        success: function(data) {       
+				if(typeof(data.error) != "undefined"){
+					if(data.error != ""){
+						alert(data.error);
+					}else{
+						CloseDialog("add-edit-form_car_insurance");
+						LoadTable('car_insurance',5,main_act,"<'F'Cpl>",aJaxURL_cl_car_insurance,'','local_id='+$("#local_id").val());
+						$("#table_car_insurance_length").css('top', '2px');
+
+						parame 			  = new Object();
+		            	parame.local_id   = $("#local_id").val();
+		            	parame.file_type  = 'download_insurance';
+		            	parame.insurance_hidde=data.insurance_id;
+		            	
+						$.ajax({
+		                    url: 'server-side/operations/subtables/excel.php',
+		            	    data: parame,
+		                    success: function(data) {
+		            	        if(data == 1){
+		            		        alert('ჩანაწერი არ მოიძებნა');
+		            	        }else{
+		                    		SaveToDisk('server-side/operations/subtables/excel.xls', 'excel.xls');
+		            	        }
+		            	    }
+		                });
 					}
 				}
 	    	}
@@ -2310,4 +2438,5 @@
     <div id="add-edit-b_letter_show" class="form-dialog" title="ბეს შეთანხმება"></div>
     <div id="add-edit-show_letter" class="form-dialog" title="ბარათი"></div>
     <div id="add-edit-form_sms_histori" class="form-dialog" title="SMS"></div>
+    <div id="add-edit-form_car_insurance" class="form-dialog" title="დაზღვევა"></div>
 </body>

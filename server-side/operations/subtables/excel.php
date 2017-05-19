@@ -401,41 +401,33 @@ $data .='</ss:Table>
 		';
 
 }elseif ($file_type == 'download_insurance'){
-    
-    $row1 =mysql_fetch_assoc(mysql_query("SELECT    CONCAT(client.name, ' ', client.lastname) AS name,
-                                                    client.pid,
-                                                    client.actual_address,
-                                                    client.juridical_address,
-                                                    client.phone,
-                                                    client_loan_agreement.loan_amount,
-                                                    client_car.car_marc,
-                                                    client_car.car_wheel,
-                                                    client_car.car_seats,
-                                                    client_car.car_price,
-                                                    client_car.car_sale_date,
-                                                    client_car.car_insurance_price,
-                                                    client_car.car_ins_start,
-                                                    client_car.car_ins_end,
-                                                    client_car.model,
-                                                    client_car.car_id,
-                                                    client_car.manufacturing_date,
-                                                    client_car.color,
-                                                    client_car.registration_number,
-                                                    car_type.name AS car_type_name,
-                                                    client_car.engine_size,
-                                                    client_car.certificate_id,
-                                                    car_insurance_info.datetime AS car_insurance_info_datetime,
-                                                    car_insurance_info.id AS car_insurance_info_id,
-                                                    car_insurance_info.insurance_price_gel,
-                                                    car_insurance_info.insurance_price_usd,
-                                                    car_insurance_info.insurance_start_date,
-                                                    car_insurance_info.insurance_end_date
-                                         FROM       `client`
-                                         LEFT JOIN  client_loan_agreement ON client_loan_agreement.client_id = client.id
-                                         LEFT JOIN  client_car ON client_car.client_id = client.id
-                                         LEFT JOIN  car_type ON car_type.id = client_car.type_id
-                                         LEFT JOIN  car_insurance_info ON car_insurance_info.client_id = client.id
-                                         WHERE      client.id = '$local_id'"));
+    $insurance_hidde = $_REQUEST['insurance_hidde'];
+    $local_id        = $_REQUEST['local_id'];
+    $row1 =mysql_fetch_assoc(mysql_query("SELECT CONCAT(client.name, ' ', client.lastname) AS name,
+                                    			 client.pid,
+                                    			 client.juridical_address,
+                                    			 client.phone,
+                                    			 client_car.car_marc,
+                                    			 client_car.car_wheel,
+                                    			 car_type.`name` AS car_type_name,
+                                                 client_car.car_seats,
+                                    			 client_car.engine_size,
+                                    			 client_car.manufacturing_date,
+                                    			 client_car.registration_number,
+                                    			 client_car.car_sale_date,
+                                    			 car_insurance_info.car_real_price AS car_price,
+                                    			 car_insurance_info.car_loan_amount AS loan_amount,
+                                    			 car_insurance_info.car_insurance_amount AS insurance_price_usd,
+                                                 ROUND((car_insurance_info.cource * car_insurance_info.car_insurance_amount),2) AS insurance_price_gel,
+                                    			 car_insurance_info.car_insurance_start AS insurance_start_date,
+                                    			 car_insurance_info.car_insurance_end AS insurance_end_date,
+                                    			 car_insurance_info.datetime AS car_insurance_info_datetime
+                                            FROM car_insurance_info
+                                            JOIN client ON client.id = car_insurance_info.client_id
+                                            JOIN client_loan_agreement ON client.id = client_loan_agreement.client_id
+                                            JOIN client_car ON client.id = client_car.client_id
+                                            JOIN car_type ON car_type.id = client_car.type_id
+                                            WHERE car_insurance_info.id = '$insurance_hidde' AND car_insurance_info.actived = 1"));
     
     $req = mysql_query("SELECT `name`,
                 				born_date,
