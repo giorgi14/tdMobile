@@ -134,6 +134,7 @@ while ($row = mysql_fetch_array($result)) {
     if ($row[sms_sent] == 1 && $check_avans==0) {
         
         $check = file_get_contents('http://msg.ge/bi/sendsms.php?username=calldato1&password=di48fj47sh0&client_id=330&service_id=0330&to='.$row[phone].'&text='.$encodedtxt.'');
+    $check_sent = 1;
     }
     
     while ($row1 = mysql_fetch_array($result1)) {
@@ -178,4 +179,5 @@ while ($row = mysql_fetch_array($result)) {
     }
 }
 
+echo $check_sent;
 ?>
