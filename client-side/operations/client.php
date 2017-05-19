@@ -1423,9 +1423,9 @@
 		param.client_pers	    = $('#client_pers').val();
 		param.client_pers_phone	= $('#client_pers_phone').val();
 		param.sms_sent_checkbox = $("input[id='sms_sent_person_checkbox']:checked").val();
-		if(param.client_pers_phone.length!=12){
-			alert('ნომერი არასწორი ფორმატითაა შეყვანილი');
-		}else{
+// 		if(param.client_pers_phone.length!=12){
+// 			alert('ნომერი არასწორი ფორმატითაა შეყვანილი');
+// 		}else{
     		$.ajax({
     	        url: aJaxURL_cl_person,
     		    data: param,
@@ -1441,7 +1441,7 @@
     				}
     	    	}
     	   });
-        }
+        //}
 	});
 
     $(document).on("click", "#save-guarantor", function () {
