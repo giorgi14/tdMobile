@@ -130,16 +130,17 @@ while ($row = mysql_fetch_array($result)) {
     
     $text = 'TG MOBILE GATKOBINEBT ('.$row[cl_car_info].') GADASAXDELIA MIMDINARE DAVALIANEBA '.$row[pay_date].'-SHI . TANXA '.$gadasaxdeli.'. AUCILEBLAD MIUTITED XELSHEKRULEBIS  N '.$row[agr_id].' DA GADAXDIS RICXVI. IQONIET GADAXDIS QVITARI. SAQARTVELOS BANKI (S/K ‎205270277) GE12BG0000000523102000 '.$dazgvevis_shexseneba.'.';
     $encodedtxt = urlencode($text);
-    
+    $check_sent = 0;
     if ($row[sms_sent] == 1 && $check_avans==0) {
         
         $check = file_get_contents('http://msg.ge/bi/sendsms.php?username=calldato1&password=di48fj47sh0&client_id=330&service_id=0330&to='.$row[phone].'&text='.$encodedtxt.'');
-    $check_sent = 1;
+        $check_sent = 1;
     }
-    
+    $check_sent1 = 0;
     while ($row1 = mysql_fetch_array($result1)) {
         if ($check_avans==0){
             $check1 = file_get_contents('http://msg.ge/bi/sendsms.php?username=calldato1&password=di48fj47sh0&client_id=330&service_id=0330&to='.$row1[phone].'&text='.$encodedtxt.'');
+            $check_sent1 = 1;
         }
         
         
@@ -179,5 +180,5 @@ while ($row = mysql_fetch_array($result)) {
     }
 }
 
-echo $check_sent;
+echo $check_sent.'---'.$check_sent1;
 ?>
