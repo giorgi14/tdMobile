@@ -123,7 +123,7 @@ while ($row = mysql_fetch_array($result)) {
     }
     
     if ($row[pay_date] >= $ins[ins_pay_date]) {
-        $gadasaxdeli = $tanxa.'+'.$ins[inc_amount].'. (dazgvevas+procenti)';
+        $gadasaxdeli = $tanxa.'+'.$ins[inc_amount].'. (procenti + dazgveva)';
         $dazgvevis_shexseneba = '';
     }else{
         $gadasaxdeli = $tanxa;
