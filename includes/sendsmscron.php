@@ -133,12 +133,12 @@ while ($row = mysql_fetch_array($result)) {
     
     if ($row[sms_sent] == 1 && $check_avans==0) {
         
-        $check = file_get_contents('http://msg.ge/bi/sendsms.php?username=calldato1&password=di48fj47sh0&client_id=330&service_id=0330&to='.$row[phone].'&text='.$encodedtxt.')');
+        //$check = file_get_contents('http://msg.ge/bi/sendsms.php?username=calldato1&password=di48fj47sh0&client_id=330&service_id=0330&to='.$row[phone].'&text='.$encodedtxt.')');
     }
     
     while ($row1 = mysql_fetch_array($result1)) {
         if ($check_avans==0){
-            $check1 = file_get_contents('http://msg.ge/bi/sendsms.php?username=calldato1&password=di48fj47sh0&client_id=330&service_id=0330&to='.$row1[phone].'&text='.$encodedtxt.')');
+            //$check1 = file_get_contents('http://msg.ge/bi/sendsms.php?username=calldato1&password=di48fj47sh0&client_id=330&service_id=0330&to='.$row1[phone].'&text='.$encodedtxt.')');
         }
         
         
@@ -150,31 +150,31 @@ while ($row = mysql_fetch_array($result)) {
             $trusted_person_id = $row1[id];
         }
         
-        if($check1 && $check_avans==0){
-            mysql_query("INSERT INTO `sent_sms`
-                                    (`user_id`, `datetime`, `client_id`, `guarantor_id`, `person_id`, `trust_person_id`, `address`, `content`, `status`, `actived`)
-                              VALUES
-                                    ('$user', NOW(), '$row[cl_id]', '$guarantor_id', '$client_person_id', '$trusted_person_id', '$row1[phone]', '$text', '1', '1')");
-        }else{
-            mysql_query("INSERT INTO `sent_sms`
-                                    (`user_id`, `datetime`, `client_id`, `guarantor_id`, `person_id`, `trust_person_id`, `address`, `content`, `status`, `actived`)
-                              VALUES
-                                    ('$user', NOW(), '$row[cl_id]', '$guarantor_id', '$client_person_id', '$trusted_person_id', '$row1[phone]', '$text', '1', '1')");
-        }
+//         if($check1 && $check_avans==0){
+//             mysql_query("INSERT INTO `sent_sms`
+//                                     (`user_id`, `datetime`, `client_id`, `guarantor_id`, `person_id`, `trust_person_id`, `address`, `content`, `status`, `actived`)
+//                               VALUES
+//                                     ('$user', NOW(), '$row[cl_id]', '$guarantor_id', '$client_person_id', '$trusted_person_id', '$row1[phone]', '$text', '1', '1')");
+//         }else{
+//             mysql_query("INSERT INTO `sent_sms`
+//                                     (`user_id`, `datetime`, `client_id`, `guarantor_id`, `person_id`, `trust_person_id`, `address`, `content`, `status`, `actived`)
+//                               VALUES
+//                                     ('$user', NOW(), '$row[cl_id]', '$guarantor_id', '$client_person_id', '$trusted_person_id', '$row1[phone]', '$text', '1', '1')");
+//         }
     }
     
     if ($row[sms_sent] == 1 && $check_avans==1) {
-        if($check){
-            mysql_query("INSERT INTO `sent_sms` 
-        					        (`user_id`, `datetime`, `client_id`, `address`, `content`, `status`, `actived`) 
-        		              VALUES 
-        					        ('$user', NOW(), '$row[cl_id]', '$row[phone]', '$text', '1', '1')");
-        }else{
-        	mysql_query("INSERT INTO `sent_sms`
-                        	        (`user_id`, `datetime`, `client_id`, `address`, `content`, `status`, `actived`)
-                        	  VALUES
-                        	        ('$user', NOW(), '$client_id', '$sms_phone', '$text', '0', '1')");
-        }
+//         if($check){
+//             mysql_query("INSERT INTO `sent_sms` 
+//         					        (`user_id`, `datetime`, `client_id`, `address`, `content`, `status`, `actived`) 
+//         		              VALUES 
+//         					        ('$user', NOW(), '$row[cl_id]', '$row[phone]', '$text', '1', '1')");
+//         }else{
+//         	mysql_query("INSERT INTO `sent_sms`
+//                         	        (`user_id`, `datetime`, `client_id`, `address`, `content`, `status`, `actived`)
+//                         	  VALUES
+//                         	        ('$user', NOW(), '$client_id', '$sms_phone', '$text', '0', '1')");
+//         }
     }
 }
 
