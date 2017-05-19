@@ -1423,6 +1423,7 @@
 		param.client_pers	    = $('#client_pers').val();
 		param.client_pers_phone	= $('#client_pers_phone').val();
 		param.sms_sent_checkbox = $("input[id='sms_sent_person_checkbox']:checked").val();
+		alert(param.client_pers_phone.length);
 // 		if(param.client_pers_phone.length!=12){
 // 			alert('ნომერი არასწორი ფორმატითაა შეყვანილი');
 // 		}else{
