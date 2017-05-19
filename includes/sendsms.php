@@ -12,7 +12,7 @@ $user	   = $_SESSION['USERID'];
 $status    = 0;
 
 $encodedtxt = urlencode($text);
-$check 		= file_get_contents('http://msg.ge/bi/sendsms.php?username=calldato1&password=di48fj47sh0&client_id=330&service_id=0330&to='.$sms_phone.'&text='.$encodedtxt.')');
+$check 		= file_get_contents('http://msg.ge/bi/sendsms.php?username=calldato1&password=di48fj47sh0&client_id=330&service_id=0330&to='.$sms_phone.'&text='.$encodedtxt.'');
 
 if($check){
 	$status = 1;
