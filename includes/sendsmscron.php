@@ -112,6 +112,8 @@ while ($row = mysql_fetch_array($result)) {
                             AND       client_trusted_person.client_id = '$row[cl_id]'");
     if ($row[penalty] == '') {
         $penalti = 0;
+    }else{
+        $penalti = $row[penalty];
     }
     
     if ($row[loan_currency_id] == 1) {
