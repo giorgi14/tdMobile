@@ -31,7 +31,7 @@ while ($row = mysql_fetch_array($result)) {
     
     $avans = mysql_fetch_array(mysql_query("SELECT SUM(money_transactions.pay_amount) AS avansi,
                                                    money_transactions.received_currency_id,
-                                                   money_transactions.cource
+                                                   money_transactions.course
                                             FROM   money_transactions
                                             WHERE  money_transactions.client_loan_schedule_id = '$row[id]'
                                             AND    money_transactions.actived = 1
