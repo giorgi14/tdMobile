@@ -649,12 +649,8 @@ $data .='</ss:Table>
 					<ss:Data ss:Type="String">№</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
-		        <ss:Cell ss:StyleID="headercell">
-					<ss:Data ss:Type="String">ავტოტრანსპორტის მარკა</ss:Data>
-					<ss:NamedCell ss:Name="Print_Titles"/>
-				</ss:Cell>
-		        <ss:Cell ss:StyleID="headercell">
-					<ss:Data ss:Type="String">მოდელი</ss:Data>
+		        <ss:Cell ss:MergeAcross="1" ss:StyleID="headercell">
+					<ss:Data ss:Type="String">მარკა,მოდელი</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		        <ss:Cell ss:StyleID="headercell">
@@ -677,14 +673,10 @@ $data .='</ss:Table>
 		    </ss:Row>
 		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
 				<ss:Cell ss:StyleID="headercell">
-					<ss:Data ss:Type="String">'.$row1['car_marc'].'</ss:Data>
+					<ss:Data ss:Type="String">1</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
-		        <ss:Cell ss:StyleID="headercell">
-					<ss:Data ss:Type="String">'.$row1['model'].'</ss:Data>
-					<ss:NamedCell ss:Name="Print_Titles"/>
-				</ss:Cell>
-		        <ss:Cell ss:StyleID="headercell">
+		        <ss:Cell ss:MergeAcross="1" ss:StyleID="headercell">
 					<ss:Data ss:Type="String">'.$row1['car_marc'].'</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
