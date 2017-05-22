@@ -1522,7 +1522,7 @@
 		param.car_insurance_amount	      = $('#car_insurance_amount').val();
 		param.car_insurance_start         = $('#car_insurance_start').val();
 		param.car_insurance_end	          = $('#car_insurance_end').val();
-		param.curent_courceee	          = $('#curent_courceee').val();
+		param.ins_payy	                  = $('#ins_payy').val();
 		
 		$.ajax({
 	        url: aJaxURL_cl_car_insurance,
@@ -1554,7 +1554,7 @@
 		param.car_insurance_amount	      = $('#car_insurance_amount').val();
 		param.car_insurance_start         = $('#car_insurance_start').val();
 		param.car_insurance_end	          = $('#car_insurance_end').val();
-		param.curent_courceee	          = $('#curent_courceee').val();
+		param.ins_payy	                  = $('#ins_payy').val();
 		
 		$.ajax({
 	        url: aJaxURL_cl_car_insurance,
@@ -1589,7 +1589,7 @@
 		param.car_insurance_amount	      = $('#car_insurance_amount').val();
 		param.car_insurance_start         = $('#car_insurance_start').val();
 		param.car_insurance_end	          = $('#car_insurance_end').val();
-		param.curent_courceee	          = $('#curent_courceee').val();
+		param.ins_payy	                  = $('#ins_payy').val();
 		
 		$.ajax({
 	        url: aJaxURL_cl_car_insurance,

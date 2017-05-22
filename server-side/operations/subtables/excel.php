@@ -418,8 +418,7 @@ $data .='</ss:Table>
                                     			 car_insurance_info.car_real_price AS car_price,
                                     			 car_insurance_info.car_loan_amount AS loan_amount,
                                     			 car_insurance_info.car_insurance_amount AS insurance_price_usd,
-                                                 ROUND((car_insurance_info.cource * car_insurance_info.car_insurance_amount),2) AS insurance_price_gel,
-                                    			 car_insurance_info.car_insurance_start AS insurance_start_date,
+                                                 car_insurance_info.car_insurance_start AS insurance_start_date,
                                     			 car_insurance_info.car_insurance_end AS insurance_end_date,
                                     			 car_insurance_info.datetime AS car_insurance_info_datetime
                                             FROM car_insurance_info
@@ -1032,7 +1031,7 @@ $data .='</ss:Table>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		        <ss:Cell ss:StyleID="headercell">
-					<ss:Data ss:Type="String">'.$row1['insurance_price_gel'].'</ss:Data>
+					<ss:Data ss:Type="String"></ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		        <ss:Cell ss:StyleID="headercell">

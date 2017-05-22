@@ -37,7 +37,7 @@ while ($row = mysql_fetch_array($result)) {
                                             AND    money_transactions.actived = 1
                                             AND    money_transactions.`status` = 3"));
     
-    $ins = mysql_fetch_array(mysql_query("SELECT   CONCAT(car_insurance_info.car_insurance_amount,' $') AS inc_amount,
+    $ins = mysql_fetch_array(mysql_query("SELECT   CONCAT(car_insurance_info.ins_payy,' $') AS inc_amount,
                                             	   DATE_FORMAT(car_insurance_info.car_insurance_end, '%d.%m.%Y') AS ins_pay_date
                                           FROM     car_insurance_info 
                                           WHERE    car_insurance_info.client_id = '$row[cl_id]' AND car_insurance_info.actived = 1

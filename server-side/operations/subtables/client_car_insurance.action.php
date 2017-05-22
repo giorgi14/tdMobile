@@ -17,7 +17,7 @@ $car_ins_registration_number = $_REQUEST['car_ins_registration_number'];
 $car_insurance_amount        = $_REQUEST['car_insurance_amount'];
 $car_insurance_start         = $_REQUEST['car_insurance_start'];
 $car_insurance_end           = $_REQUEST['car_insurance_end'];
-$curent_courceee             = $_REQUEST['curent_courceee'];
+$ins_payy                    = $_REQUEST['ins_payy'];
 
 
 
@@ -69,10 +69,10 @@ switch ($action) {
     case 'save_insurance_info':
         
         if($car_insurance_hidde == ''){
-            insert($user_id, $local_id, $car_loan_amount, $car_real_price, $car_ins_registration_number, $car_insurance_amount, $curent_courceee, $car_insurance_start, $car_insurance_end);
+            insert($user_id, $local_id, $car_loan_amount, $car_real_price, $car_ins_registration_number, $car_insurance_amount, $ins_payy, $car_insurance_start, $car_insurance_end);
             $insurance_id = mysql_insert_id();
         }else{
-            update($car_insurance_hidde, $car_loan_amount, $car_real_price, $car_ins_registration_number, $car_insurance_amount, $curent_courceee, $car_insurance_start, $car_insurance_end);
+            update($car_insurance_hidde, $car_loan_amount, $car_real_price, $car_ins_registration_number, $car_insurance_amount, $ins_payy, $car_insurance_start, $car_insurance_end);
             $insurance_id = $car_insurance_hidde;
         }
         
@@ -86,21 +86,21 @@ $data['error'] = $error;
 
 echo json_encode($data);
 
-function insert($user_id, $local_id, $car_loan_amount, $car_real_price, $car_ins_registration_number, $car_insurance_amount, $curent_courceee, $car_insurance_start, $car_insurance_end){
+function insert($user_id, $local_id, $car_loan_amount, $car_real_price, $car_ins_registration_number, $car_insurance_amount, $ins_payy, $car_insurance_start, $car_insurance_end){
     mysql_query("INSERT INTO `car_insurance_info` 
-            				(`user_id`, `datetime`, `client_id`, `car_loan_amount`, `car_real_price`, `car_ins_registration_number`, `car_insurance_amount`, `cource`, `car_insurance_start`, `car_insurance_end`, `actived`) 
+            				(`user_id`, `datetime`, `client_id`, `car_loan_amount`, `car_real_price`, `car_ins_registration_number`, `car_insurance_amount`, `ins_payy`, `car_insurance_start`, `car_insurance_end`, `actived`) 
             		  VALUES 
-            				('$user_id', NOW(), '$local_id', '$car_loan_amount', '$car_real_price', '$car_ins_registration_number', '$car_insurance_amount', '$curent_courceee', '$car_insurance_start', '$car_insurance_end', 1)");
+            				('$user_id', NOW(), '$local_id', '$car_loan_amount', '$car_real_price', '$car_ins_registration_number', '$car_insurance_amount', '$ins_payy', '$car_insurance_start', '$car_insurance_end', 1)");
 }
 
-function update($car_insurance_hidde, $car_loan_amount, $car_real_price, $car_ins_registration_number, $car_insurance_amount, $curent_courceee, $car_insurance_start, $car_insurance_end){
+function update($car_insurance_hidde, $car_loan_amount, $car_real_price, $car_ins_registration_number, $car_insurance_amount, $ins_payy, $car_insurance_start, $car_insurance_end){
    mysql_query("UPDATE `car_insurance_info`
                    SET `user_id`                     = '$user_id',
         			   `car_loan_amount`             = '$car_loan_amount',
         			   `car_real_price`              = '$car_real_price',
         			   `car_ins_registration_number` = '$car_ins_registration_number',
         			   `car_insurance_amount`        = '$car_insurance_amount',
-                       `cource`                      = '$curent_courceee',
+                       `ins_payy`                    = '$ins_payy',
         			   `car_insurance_start`         = '$car_insurance_start',
         			   `car_insurance_end`           = '$car_insurance_end'
                 WHERE  `id`                          = '$car_insurance_hidde'");
@@ -114,7 +114,7 @@ function GetClient($id){
                                                  car_insurance_amount,
                                                  car_insurance_start,
                                                  car_insurance_end,
-                                                 cource
+                                                 ins_payy
                                           FROM   car_insurance_info
                                           WHERE  id = $id"));
     return $res;
@@ -148,8 +148,8 @@ function GetPage($res){
             	       </tr>
                        <tr style="height:15px;"></tr>
                        <tr>
-                           <td style="width: 150px;"><label for="pet_num">კურსი</label></td>
-                           <td style="width: 275px;"><input style="width: 275px;" id="curent_courceee" type="text" value="'.$res[cource].'"></td>
+                           <td style="width: 150px;"><label for="pet_num">სადაზღვევო ხარჯი</label></td>
+                           <td style="width: 275px;"><input style="width: 275px;" id="ins_payy" type="text" value="'.$res[ins_payy].'"></td>
             	       </tr>
                        <tr style="height:15px;"></tr>
                        <tr>
