@@ -297,7 +297,8 @@
     		        }
     		    };
             GetDialog(fName, 575, "auto", buttons, 'left+43 top');
-            GetDateTimes('datetime');
+
+            GetDate('datetime');
             $('.info').click();
             $('#name').focus();
             $('#datetime').blur();
@@ -307,9 +308,9 @@
      		GetDate('car_ins_end');
      		GetDate('born_date');
      		GetDate('tin_date');
-     		//GetDate('car_born');
      		GetDate('insurance_start_date');
      		GetDate('insurance_end_date');
+     		
             if($("#local_id").val()==''){
             	get_local_id('client');
             	$("#born_date").val('');
@@ -320,7 +321,9 @@
          		$("#car_sale_date").val('');
      			$("#car_ins_start").val('');
      			$("#car_ins_end").val('');
+     			$("#datetime").val('');
             }
+            
             if($("#id_hidden").val()==''){
             	$(".documents").css('filter','brightness(0.3)');
             	$(".client_insurance").css('filter','brightness(0.3)');
@@ -516,8 +519,8 @@
                 $("#client_agr_car_mark").chosen();
                 $("#b_letter_responsible_id").chosen();
 
-                GetDateTimes('car_insurance_start');
-                GetDateTimes('car_insurance_end');
+                GetDate('car_insurance_start');
+                GetDate('car_insurance_end');
                 $('#add-edit-b_letter1, .add-edit-b_letter1-class').css('overflow','visible');
                 $('#add-edit-b_letter1, .add-edit-b_letter1-class').css('min-height','275px');
 
@@ -644,8 +647,8 @@
         $('#print_insurance').button();
         $('#download_insurance').button();
         $('#save_insurance_info').button();
-        GetDateTimes('agreement_date');
-        GetDateTimes('trusting_date');
+        GetDate('agreement_date');
+        GetDate('trusting_date');
     }
 
     function hide_right_side(){
@@ -772,6 +775,7 @@
 		param.hidde_agreement_datetime    = $('#hidde_agreement_datetime').val();
 		param.hidde_agreement_percent     = $('#hidde_agreement_percent').val();
 		param.hidde_loan_type_id          = $('#hidde_loan_type_id').val();
+		param.agreement_no_standart       = $("input[id='agreement_no_standart']:checked").val();
 		
 		if(param.name == ''){
 			alert('შეავსეთ "სახელი"');
@@ -1011,6 +1015,7 @@
 		param.oris_code                   = $('#oris_code').val();
 		param.loan_beforehand_percent     = $('#loan_beforehand_percent').val();
 		param.responsible_user_id         = $('#responsible_user_id').val();
+		param.agreement_no_standart       = $("input[id='agreement_no_standart']:checked").val();
 		
 		if(param.loan_amount == ''){
 			alert('შეავსეთ "სესხის მოცულობა"');
@@ -1129,6 +1134,7 @@
 		param.loan_beforehand_percent     = $('#new_loan_beforehand_percent').val();
 		param.responsible_user_id         = $('#new_responsible_user_id').val();
 		param.new_attachment_number       = $('#new_attachment_number').val();
+		param.agreement_no_standart       = $("input[id='agreement_no_standart']:checked").val();
 		
 		if(param.loan_amount == ''){
 			alert('შეავსეთ "სესხის მოცულობა"');
