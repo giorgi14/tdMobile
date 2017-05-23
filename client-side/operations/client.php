@@ -448,7 +448,7 @@
     		            }
     		        }
     		    };
-                GetDialog("add-edit-form-guarantors", 438, "auto", buttons, 'left+43 top');
+                GetDialog("add-edit-form-guarantors", 466, "auto", buttons, 'left+43 top');
                 GetDate('car_driver_license_born');
                 GetDate('car_driver_born');
          		if($("#car_driver_hidde").val()==''){
@@ -1450,20 +1450,42 @@
     	   });
         }
 	});
+	
+    $(document).on("keypress", "#tin, #client_trust_tin, #trusting_notary_phone, #client_trust_tin, #guarantor_pid, #car_engine, #car_seats, #car_price, #car_insurance_price, #car_max_pledge, #tech_test_price, #month_percent, #loan_amount, #loan_months, #loan_fee, #loan_beforehand_percent, #proceed_fee, #proceed_percent, #insurance_fee, #pledge_fee, #exchange_rate, #penalty_percent, #penalty_days, #penalty_additional_percent, #car_loan_amount, #car_real_price, #car_insurance_amount, #ins_payy",  function (event) {
+        var ew = event.which;
+        if((48 <= ew && ew <= 57) || ew==46){
+        	return true;
+        }else{
+          alert('შეიყვანეთ სწორი სიმბოლო!');
+          return false;
+        }
+    });
 
+    $(document).on("keypress", "#mail, #client_trust_mail, #guarantor_mail", function(event){
+        var ew = event.which;
+        if(4304 <= ew && ew <= 4336){
+        	alert('გადაიყვანეთ ინგლისურზე!');
+        	return false;
+        }else{
+          return true;
+        }
+    });
+    
     $(document).on("click", "#save-guarantor", function () {
 		param 	  = new Object();
 		param.act = "save_guarantor";
 
-		param.guarantor_hidde	= $('#guarantor_hidde').val();
-		param.local_id	        = $("#local_id").val();
+		param.guarantor_hidde	     = $('#guarantor_hidde').val();
+		param.local_id	             = $("#local_id").val();
 		
-		param.guarantor_name	= $('#guarantor_name').val();
-		param.guarantor_pid	    = $('#guarantor_pid').val();
-		param.guarantor_address	= $('#guarantor_address').val();
-		param.guarantor_mail	= $('#guarantor_mail').val();
-		param.guarantor_phone   = $('#guarantor_phone').val();
-		param.sms_sent_checkbox = $("input[id='sms_sent_checkbox']:checked").val();
+		param.guarantor_name	     = $('#guarantor_name').val();
+		param.guarantor_pid	         = $('#guarantor_pid').val();
+		param.guarantor_address	     = $('#guarantor_address').val();
+		param.guarantor_fact_address = $('#guarantor_fact_address').val();
+		param.guarantor_mail	     = $('#guarantor_mail').val();
+		param.guarantor_phone        = $('#guarantor_phone').val();
+		param.sms_sent_checkbox      = $("input[id='sms_sent_checkbox']:checked").val();
+		
 		if(param.guarantor_phone.length!=12){
 			alert('ნომერი არასწორი ფორმატითაა შეყვანილი');
 		}else{	

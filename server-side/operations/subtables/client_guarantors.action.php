@@ -11,15 +11,14 @@ $user_id = $_SESSION['USERID'];
 $id		            = $_REQUEST['id'];
 $guarantor_hidde    = $_REQUEST['guarantor_hidde'];
 
-$local_id           = $_REQUEST['local_id'];
-$guarantor_name	    = $_REQUEST['guarantor_name'];
-$guarantor_pid      = $_REQUEST['guarantor_pid'];
-$guarantor_address  = $_REQUEST['guarantor_address'];
-$guarantor_mail     = $_REQUEST['guarantor_mail'];
-$guarantor_phone    = $_REQUEST['guarantor_phone'];
-$sms_sent_checkbox  = $_REQUEST['sms_sent_checkbox'];
-
-
+$local_id               = $_REQUEST['local_id'];
+$guarantor_name	        = $_REQUEST['guarantor_name'];
+$guarantor_pid          = $_REQUEST['guarantor_pid'];
+$guarantor_address      = $_REQUEST['guarantor_address'];
+$guarantor_fact_address = $_REQUEST['guarantor_fact_address'];
+$guarantor_mail         = $_REQUEST['guarantor_mail'];
+$guarantor_phone        = $_REQUEST['guarantor_phone'];
+$sms_sent_checkbox      = $_REQUEST['sms_sent_checkbox'];
 
 switch ($action) {
     case 'get_add_page':
@@ -69,9 +68,9 @@ switch ($action) {
         break;
     case 'save_guarantor':
         if($guarantor_hidde == ''){
-            insert($user_id, $local_id, $guarantor_name, $guarantor_pid, $guarantor_address,$guarantor_mail,$guarantor_phone, $sms_sent_checkbox);
+            insert($user_id, $local_id, $guarantor_name, $guarantor_pid, $guarantor_address, $guarantor_fact_address, $guarantor_mail,$guarantor_phone, $sms_sent_checkbox);
         }else{
-            update($guarantor_hidde, $user_id, $guarantor_name, $guarantor_pid, $guarantor_address,$guarantor_mail,$guarantor_phone, $sms_sent_checkbox);
+            update($guarantor_hidde, $user_id, $guarantor_name, $guarantor_pid, $guarantor_address, $guarantor_fact_address, $guarantor_mail,$guarantor_phone, $sms_sent_checkbox);
         }
         
         break;
@@ -83,24 +82,25 @@ $data['error'] = $error;
 
 echo json_encode($data);
 
-function insert($user_id, $local_id, $guarantor_name, $guarantor_pid, $guarantor_address,$guarantor_mail,$guarantor_phone, $sms_sent_checkbox){
+function insert($user_id, $local_id, $guarantor_name, $guarantor_pid, $guarantor_address, $guarantor_fact_address, $guarantor_mail,$guarantor_phone, $sms_sent_checkbox){
     mysql_query("INSERT INTO `client_quarantors` 
-                            (`user_id`, `datetime`, `client_id`, `name`, `pid`, `address`, `email`, `phone`, `sms_sent`, `actived`) 
+                            (`user_id`, `datetime`, `client_id`, `name`, `pid`, `address`, `fact_address`, `email`, `phone`, `sms_sent`, `actived`) 
                       VALUES 
-                            ('$user_id', NOW(), '$local_id', '$guarantor_name', '$guarantor_pid', '$guarantor_address', '$guarantor_mail', '$guarantor_phone', '$sms_sent_checkbox', 1)");
+                            ('$user_id', NOW(), '$local_id', '$guarantor_name', '$guarantor_pid', '$guarantor_address', '$guarantor_fact_address', '$guarantor_mail', '$guarantor_phone', '$sms_sent_checkbox', 1)");
 }
 
-function update($car_driver_hidde, $user_id, $guarantor_name, $guarantor_pid, $guarantor_address,$guarantor_mail,$guarantor_phone, $sms_sent_checkbox){
+function update($car_driver_hidde, $user_id, $guarantor_name, $guarantor_pid, $guarantor_address, $guarantor_fact_address, $guarantor_mail,$guarantor_phone, $sms_sent_checkbox){
    mysql_query("UPDATE `client_quarantors`
-            	   SET `user_id`   = '$user_id',
-            		   `datetime`  =  NOW(),
-            		   `name`      = '$guarantor_name',
-            		   `pid`       = '$guarantor_pid',
-            		   `address`   = '$guarantor_address',
-            		   `email`     = '$guarantor_mail',
-            		   `phone`     = '$guarantor_phone',
-                       `sms_sent`  = '$sms_sent_checkbox'
-                WHERE  `id`        = '$car_driver_hidde'");
+            	   SET `user_id`      = '$user_id',
+            		   `datetime`     =  NOW(),
+            		   `name`         = '$guarantor_name',
+            		   `pid`          = '$guarantor_pid',
+            		   `address`      = '$guarantor_address',
+                       `fact_address` = '$guarantor_fact_address',
+            		   `email`        = '$guarantor_mail',
+            		   `phone`        = '$guarantor_phone',
+                       `sms_sent`     = '$sms_sent_checkbox'
+                WHERE  `id`           = '$car_driver_hidde'");
 }
 
 function GetClient($id){
@@ -108,6 +108,7 @@ function GetClient($id){
                                                  name,
                                                  pid,
                                         		 address,
+                                                 fact_address,
                                                  email,
                                                  phone,
                                                  sms_sent
@@ -122,36 +123,41 @@ function GetPage($res){
     if ($res[id] == ''){$index = '995';}else{$index = '';}
     $data  .= '
     	   <div id="dialog-form">
-                <fieldset style="width: 390px;  float: left;">
+                <fieldset style="float: left;">
                    <input id="guarantor_hidde" type="hidden" value="'.$res['id'].'">
                    <table class="dialog-form-table">
             	       <tr>
-                           <td style="width: 100px;"><label for="datetime">სახელი, გვარი</label></td>
-                           <td style="width: 275px;"><input style="width: 275px;" id="guarantor_name" type="text" value="'.$res[name].'"></td>
+                           <td style="width: 132px;"><label for="datetime">სახელი, გვარი</label></td>
+                           <td style="width: 275px;"><input style="width: 275px;" id="guarantor_name" onkeypress="myFunction()" type="text" value="'.$res[name].'"></td>
             	       </tr>
                        <tr style="height:15px;"></tr>
                        <tr>
-                           <td style="width: 100px;"><label for="pet_num">პირადი ნომერი</label></td>
-                           <td style="width: 275px;"><input style="width: 275px;" id="guarantor_pid" type="text" value="'.$res[pid].'"></td>
+                           <td style="width: 132px;"><label for="pet_num">პირადი ნომერი</label></td>
+                           <td style="width: 275px;"><input style="width: 275px;" id="guarantor_pid" onKeyDown="if(this.value.length==11) return false;" type="text" value="'.$res[pid].'"></td>
             	       </tr>
                        <tr style="height:15px;"></tr>
                        <tr>
-                           <td style="width: 100px;"><label for="pet_num">მისამართი</label></td>
+                           <td style="width: 132px;"><label for="pet_num">იურიდიული მისამართი</label></td>
                            <td style="width: 275px;"><input style="width: 275px;" id="guarantor_address" type="text" value="'.$res[address].'"></td>
             	       </tr>
                        <tr style="height:15px;"></tr>
                        <tr>
-                           <td style="width: 100px;"><label for="pet_num">ელ-ფოსტა</label></td>
+                           <td style="width: 132px;"><label for="pet_num">ფაქტიური მისამართი</label></td>
+                           <td style="width: 275px;"><input style="width: 275px;" id="guarantor_fact_address" type="text" value="'.$res[fact_address].'"></td>
+            	       </tr>
+                       <tr style="height:15px;"></tr>
+                       <tr>
+                           <td style="width: 132px;"><label for="pet_num">ელ-ფოსტა</label></td>
                            <td style="width: 275px;"><input style="width: 275px;" id="guarantor_mail" type="text" value="'.$res[email].'"></td>
             	       </tr>
                        <tr style="height:15px;"></tr>
                        <tr>
-                           <td style="width: 100px;"><label for="pet_num">ტელეფონი</label></td>
+                           <td style="width: 132px;"><label for="pet_num">ტელეფონი</label></td>
                                
-                           <td style="width: 275px;"><input placeholder="შეიყვანეთ ნომერი" onkeypress="{if (event.which != 8 &amp;&amp; event.which != 0 &amp;&amp; event.which!=46 &amp;&amp; (event.which < 48 || event.which > 57)) {$(\'#errmsg\').html(\'მხოლოდ ციფრი\').show().fadeOut(\'slow\'); return false;}}" type="text" id="guarantor_phone" class="idle" style="width: 275px;" value="'.$index.''.$res[phone].'"></td>
+                           <td style="width: 275px;"><input placeholder="შეიყვანეთ ნომერი" onKeyDown="if(this.value.length==12) return false;" onkeypress="{if (event.which != 8 &amp;&amp; event.which != 0 &amp;&amp; event.which!=46 &amp;&amp; (event.which < 48 || event.which > 57)) {$(\'#errmsg\').html(\'მხოლოდ ციფრი\').show().fadeOut(\'slow\'); return false;}}" type="text" id="guarantor_phone" class="idle" style="width: 275px;" value="'.$index.''.$res[phone].'"></td>
             	       </tr>
                        <tr>
-                           <td style="width: 100px;"><label for="pet_num">sms</label></td>
+                           <td style="width: 132px;"><label for="pet_num">sms</label></td>
                            <td style="width: 275px;"><input type="checkbox" style="width: 23px; margin-left: 0px;" id="sms_sent_checkbox" type="text" value="1" '.$checked.'></td>
             	       </tr>
                    </table>

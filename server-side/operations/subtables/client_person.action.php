@@ -120,7 +120,7 @@ function GetPage($res){
                        <tr style="height:20px;"></tr>
                        <tr>
                            <td style="width: 110px;"><label for="pet_num">ტელეფონი</label></td>
-                           <td style="width: 275px;"><input placeholder="შეიყვანეთ ნომერი" onkeypress="{if (event.which != 8 &amp;&amp; event.which != 0 &amp;&amp; event.which!=46 &amp;&amp; (event.which < 48 || event.which > 57)) {$(\'#errmsg\').html(\'მხოლოდ ციფრი\').show().fadeOut(\'slow\'); return false;}}" type="text" id="client_pers_phone" class="idle" style="width: 275px;" value="'.$index.''.$res[phone].'"></td>
+                           <td style="width: 275px;"><input placeholder="შეიყვანეთ ნომერი" onKeyDown="if(this.value.length==11) return false;" onkeypress="{if (event.which != 8 &amp;&amp; event.which != 0 &amp;&amp; event.which!=46 &amp;&amp; (event.which < 48 || event.which > 57)) {$(\'#errmsg\').html(\'მხოლოდ ციფრი\').show().fadeOut(\'slow\'); return false;}}" type="text" id="client_pers_phone" class="idle" style="width: 275px;" value="'.$index.''.$res[phone].'"></td>
                        </tr>
                        <tr style="height:20px;"></tr>
                        <tr>
