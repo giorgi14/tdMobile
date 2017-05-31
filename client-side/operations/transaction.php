@@ -1,7 +1,8 @@
 <html>
 <head>
 	<script type="text/javascript">
-		var aJaxURL	          = "server-side/operations/transaction.action.php";		//server side folder url
+		var aJaxURL	          = "server-side/operations/transaction.action.php";
+		var aJaxURL_det	      = "server-side/operations/transaction_detail.action.php";		//server side folder url
 		var tName	          = "example";													//table name
 		var fName	          = "add-edit-form";	
 		var tbName		      = "tabs1";											//form name
@@ -9,7 +10,7 @@
 		    	
 		$(document).ready(function () {  
 			GetTabs(tbName);       	
-			LoadTable(tName,7,change_colum_main,aJaxURL);	
+			LoadTable(tName,8,change_colum_main,aJaxURL);	
 			$(".ui-widget-content").css('border', '0px solid #aaaaaa');
  						
 			/* Add Button ID, Delete Button ID */
@@ -20,7 +21,7 @@
 		$(document).on("tabsactivate", "#tabs1", function() {
         	tab = GetSelectedTab(tbName);
         	if (tab == 0) {
-        		LoadTable(tName,7,change_colum_main,aJaxURL);	
+        		LoadTable(tName,8,change_colum_main,aJaxURL);	
          	}else if(tab == 1){
          		GetButtons("add_button1", "");
              	GetDataTable("example1", aJaxURL, 'get_list', 10, "tab=1", 0, "", 0, "desc", "", change_colum_main);
@@ -44,7 +45,6 @@
         
 		function LoadTable(tName,num,change_colum_main,aJaxURL){
 			
-			/* Table ID, aJaxURL, Action, Colum Number, Custom Request, Hidden Colum, Menu Array */
 			GetDataTable(tName, aJaxURL, 'get_list', num, "tab=0", 0, "", 0, "desc", "", change_colum_main);
 			setTimeout(function(){$('.ColVis, .dataTable_buttons').css('display','none');}, 90);
 		}
@@ -54,7 +54,7 @@
 			var buttons = {
 				"save": {
 		            text: "დადასტურება",
-		            id: "save-dialog"
+		            id: "save-dialog1"
 		        },
 	        	"cancel": {
 		            text: "დახურვა",
@@ -66,14 +66,45 @@
 		    };
 			/* Dialog Form Selector Name, Buttons Array */
 			if(fname=='add-edit-form'){
-    			GetDialog(fName, 710, "auto", buttons,"top");
-    			$('#type_id').chosen();
-    	        $('#client_id').chosen();
-    	        $('#currency_id').chosen();
+    			GetDialog(fName, 1180, "auto", buttons,"top");
+    			
+    			$('#currency_id').chosen();
     	        $('#received_currency_id').chosen();
-    	        $('#client_loan_number').chosen();
     	        $('#add-edit-form, .add-edit-form-class').css('overflow','visible');
-				if($("#id").val()!=''){
+    	        
+				GetDataTable("table_transaction_detail", aJaxURL_det, 'get_list', 7, "&transaction_id="+$("#hidde_transaction_id").val(), 0, "", 0, "desc", "", "<'F'Cpl>");
+				setTimeout(function(){$('.ColVis, .dataTable_buttons').css('display','none');}, 50);
+				$("#table_transaction_detail_length").css('top', '2px');
+				GetButtons("add_button_dettail","");
+         		//SetEvents("add_button_dettail", "", "", tName+'transaction_detail', 'add-edit-form-det', aJaxURL_det, '', tName+'transaction_detail', 4, "get_list", "<'F'Cpl>", aJaxURL_det, '');
+         		SetEvents("add_button_dettail", "", "", 'table_transaction_detail', 'add-edit-form-det', aJaxURL_det);
+    	        
+         		if($('#client_amount').val() != '' && $('#course').val() != ''){
+			        $('#add_button_dettail').button("enable");
+			    }else{
+			    	$('#add_button_dettail').button("disable");
+				}
+			}else if(fname=='add-edit-form-det'){
+				var buttons = {
+						"save": {
+				            text: "შენახვა",
+				            id: "save-dialog"
+				        },
+			        	"cancel": {
+				            text: "დახურვა",
+				            id: "cancel-dialog",
+				            click: function () {
+				            	$(this).dialog("close");
+				            }
+				        }
+				    };
+				GetDialog("add-edit-form-det", 700, "auto", buttons,"top");
+				$('#type_id').chosen();
+    	        $('#client_id').chosen();
+    	        $('#client_loan_number').chosen();
+
+    	        $("#month_fee").val($('#client_amount').val());
+    	        if($("#id").val()!=''){
 					$('#currency_id').prop('disabled', true).trigger("chosen:updated");
         	        $('#client_id').prop('disabled', true).trigger("chosen:updated");
         	        $('#type_id').prop('disabled', true).trigger("chosen:updated");
@@ -88,8 +119,8 @@
 		    
 			param.act	               = "save_transaction";
 		    param.id	               = $("#id").val();
+		    param.tr_id	               = $("#tr_id").val();
 		    
-		    param.diff		           = $("#month_fee1").val() - $("#month_fee").val();
 		    param.month_fee		       = $("#month_fee").val();
 	    	param.root		           = $("#root").val();
 	    	param.percent		       = $("#percent").val();
@@ -103,6 +134,10 @@
 	    	param.course	           = $("#course").val();
 	    	
 	    	param.hidde_id		       = $("#hidde_id").val();
+	    	param.hidde_transaction_id = $("#hidde_transaction_id").val();
+	    	param.hidde_status         = $("#hidde_status").val();
+
+	    	param.client_id            = $("#client_id").val();
 
 	    	if(param.type_id == 0){
 		    	alert('შეავსე ტიპი');
@@ -112,15 +147,19 @@
 		    	alert('შეავსე ჩარიცხული თანხა');
 			}else{
     	    	$.ajax({
-    		        url: aJaxURL,
+    		        url: aJaxURL_det,
     			    data: param,
     		        success: function(data) {			        
     					if(typeof(data.error) != 'undefined'){
     						if(data.error != ''){
     							alert(data.error);
     						}else{
-    							LoadTable(tName,10,change_colum_main,aJaxURL);
-    			        		CloseDialog(fName);
+    							$("#tr_id").val(data.tr_id);
+    							GetDataTable("table_transaction_detail", aJaxURL_det, 'get_list', 7, "&transaction_id="+$("#tr_id").val(), 0, "", 0, "desc", "", "<'F'Cpl>");
+    							setTimeout(function(){$('.ColVis, .dataTable_buttons').css('display','none');}, 50);
+    							$("#table_transaction_detail_length").css('top', '2px');
+    			        		CloseDialog('add-edit-form-det');
+    			        		
     						}
     					}
     			    }
@@ -128,6 +167,35 @@
     	    }
 		});
 
+	    $(document).on("click", "#save-dialog1", function () {
+		    param = new Object();
+		    
+			param.act	= "save_transaction";
+		    param.tr_id	= $("#tr_id").val();
+		    
+		    param.client_amount		   = $("#client_amount").val();
+	    	param.received_currency_id = $("#received_currency_id").val();
+	    	
+			if(param.tr_id == ''){
+		    	alert('ჩარიცხული თანხა არაა გადანაწილებული!');
+			}else{
+    	    	$.ajax({
+    		        url: aJaxURL,
+    			    data: param,
+    		        success: function(data) {			        
+    					if(typeof(data.error) != 'undefined'){
+    						if(data.error != ''){
+    							alert(data.error);
+    						}else{
+    							LoadTable(tName,8,change_colum_main,aJaxURL);
+    							CloseDialog('add-edit-form');
+    			        	}
+    					}
+    			    }
+    		    });
+    	    }
+		});
+		
 	    $(document).on("change", "#type_id", function () {
 	        
 	        if($(this).val() > 1 ){
@@ -268,6 +336,7 @@
 		    param.act     = "get_shedule";
 		    param.status  = 1;
 		    param.id      =  $(this).val();
+		    param.type_id =  $('#type_id').val();
 		    
 		    $.ajax({
 		        url: aJaxURL,
@@ -305,6 +374,7 @@
 
     							$("#hidde_id").val(data.id);
     							$('#currency_id').prop('disabled', false).trigger("chosen:updated");
+    							$('#client_loan_number').html(data.agrement_data).trigger("chosen:updated");
     						}else if(data.status==3){
 		    					$("#month_fee1").val(data.pledge_fee);
 		    					$("#root1").val('');
@@ -330,6 +400,7 @@
 		    param.act     = "get_shedule";
 		    param.agr_id  =  $(this).val();
 		    param.status  = 2;
+		    param.type_id =  $('#type_id').val();
 		    
 		    $.ajax({
 		        url: aJaxURL,
@@ -367,6 +438,7 @@
 
     							$("#hidde_id").val(data.id);
     							$('#currency_id').prop('disabled', false).trigger("chosen:updated");
+    							$('#client_id').html(data.client_data).trigger("chosen:updated");
     						}else if(data.status==3){
 		    					$("#month_fee1").val(data.pledge_fee);
 		    					$("#root1").val('');
@@ -386,6 +458,25 @@
 			    }
 		    });
     	});
+
+		$(document).on("keypress", "#client_amount, #course",  function (event) {
+	        var ew = event.which;
+	        if((48 <= ew && ew <= 57) || ew==46){
+				if($('#client_amount').val() != '' && $('#course').val() != ''){
+			        $('#add_button_dettail').button("enable");
+			    }
+	        	return true;
+	        }else{
+	          alert('შეიყვანეთ სწორი სიმბოლო!');
+	          return false;
+	        }
+	    });
+
+		$(document).on("keydown", "#client_amount, #course",  function (event) {
+	        if($('#client_amount').val() == '' || $('#course').val() == ''){
+    	        $('#add_button_dettail').button("disable");
+    	    }
+	    });
 	    
 	    $(document).on("click", "#show_copy_prit_exel", function () {
 	        if($(this).attr('myvar') == 0){
@@ -468,12 +559,13 @@
                 <thead>
                     <tr id="datatable_header">
                         <th>ID</th>
-                        <th style="width: 10%;">თარიღი</th>
-                        <th style="width: 50%;">მსესხებელი</th>
+                        <th style="width: 12%;">თარიღი</th>
+                        <th style="width: 8%;">კოდი</th>
+                        <th style="width: 40%;">მსესხებელი</th>
                         <th style="width: 10%;">ჩარიცხული თანხა</th>
-                        <th style="width: 10%;">ვალუტა</th>
-                        <th style="width: 10%;">კურსი</th>
-                        <th style="width: 10%;">ტიპი</th>
+                        <th style="width: 8%;">ვალუტა</th>
+                        <th style="width: 8%;">კურსი</th>
+                        <th style="width: 12%;">სტატუსი</th>
                     </tr>
                 </thead>
                 <thead>
@@ -481,6 +573,9 @@
                         <th class="colum_hidden">
                             <input type="text" name="search_category" value="ფილტრი" class="search_init" />
                         </th>                
+                        <th>
+                            <input type="text" name="search_category" value="ფილტრი" class="search_init" />
+                        </th>
                         <th>
                             <input type="text" name="search_category" value="ფილტრი" class="search_init" />
                         </th>
@@ -678,6 +773,9 @@
     </div>
     <!-- jQuery Dialog -->
     <div id="add-edit-form" class="form-dialog" title="ძირითადი ველები">
+    	<!-- aJax -->
+	</div>
+	<div id="add-edit-form-det" class="form-dialog" title="განაწილება">
     	<!-- aJax -->
 	</div>
 </body>
