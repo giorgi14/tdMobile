@@ -88,6 +88,7 @@
     $(document).ready(function () {
     	GetButtons("add_button","delete_button");
     	$("#b_letter").button();
+    	$("#add_exel").button();
     	LoadTable('index',colum_number,main_act,change_colum_main,aJaxURL,'','');
     	SetEvents("add_button", "delete_button", "check-all", tName+'index', dialog, aJaxURL,'','index',colum_number,main_act,change_colum_main,aJaxURL,'');
 
@@ -2373,6 +2374,45 @@
 		    }
 	    }
 
+    $(document).on("click", "#add_exel", function () {
+    	$("#hard_choose_file").click();
+    });
+    
+   $(document).on("change", "#hard_choose_file", function () {
+	   
+        var file  = $(this).val();
+       
+        var path  = "../../media/uploads/images/client/";
+
+        var ext = file.split('.').pop().toLowerCase();
+           if($.inArray(ext, ['xls']) == -1) { //echeck file type
+            	alert('ფაილის გაფართოება არასწორია.');
+                this.value = '';
+           }else{
+            	img_name = name + "." + ext;
+           		$.ajaxFileUpload({
+    	          url: 'includes/hard_import.php',
+    	          secureuri: false,
+    	          fileElementId: "hard_choose_file",
+    	          dataType: 'json',
+    	          data:{
+    		          act: "upload_file",
+				      path: path,
+				      file_name:name,
+				      type: ext
+    		      },
+    		      complete: function(data){
+    		    	 if(data.responseText==1){
+    	    		  	alert('ფაილი  აიტვირთა');
+    	    	        LoadTable('index',colum_number,main_act,change_colum_main,aJaxURL,'','');
+    		    	 }else{
+    		    	 	alert('ფაილი არ აიტვირთა');
+    		    	 	LoadTable('index',colum_number,main_act,change_colum_main,aJaxURL,'','');
+    		    	 }
+    		    },
+             });
+		  }
+    });
 </script>
 </head>
 <body>
@@ -2382,7 +2422,8 @@
     	<button id="add_button" style="float: left;margin-bottom: 10px;">დამატება</button>
     	<button id="delete_button" style="float: left;margin-bottom: 10px;margin-left: 10px;">გაუქმება</button>
     	<button id="b_letter" style="float: left;margin-bottom: 10px;margin-left: 10px;">ბეს შეთანხმება</button>
-        <table id="table_right_menu">
+    	<input id="hard_choose_file" type="file" name="choose_file" class="input" value="" style="display: none; "><button style="  width: 136px; margin-left:74px;" id="add_exel" value="">EXEL ატვირთვა</button>		
+    	<table id="table_right_menu">
             <tr>
                 <td>
                 	<img alt="table" src="media/images/icons/table_w.png" height="14" width="14">

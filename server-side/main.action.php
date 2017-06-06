@@ -55,10 +55,10 @@ switch ($action) {
 	  	                                                      ' დანართი ',client_loan_agreement.attachment_number
 	  	                                    )),
                         					
-                        					IF(client_loan_agreement.loan_type_id =2,'გრაფიკი',client_loan_agreement.percent),
-                        					ROUND(client_loan_agreement.loan_amount,2),
+                        					IF(client_loan_agreement.loan_type_id =2,'გრაფიკი','ჩვეულებრივი'),
+                        					ROUND(IF(client_loan_agreement.loan_currency_id = 1, client_loan_agreement.loan_amount, client_loan_agreement.loan_amount/client_loan_agreement.exchange_rate),2),
                         					client_loan_agreement.exchange_rate,
-                        					ROUND(client_loan_agreement.loan_amount*client_loan_agreement.exchange_rate,2),
+                        					ROUND(IF(client_loan_agreement.loan_currency_id = 1, client_loan_agreement.loan_amount*client_loan_agreement.exchange_rate, client_loan_agreement.loan_amount),2),
 		                                    CASE 
                     							WHEN client_loan_agreement.loan_currency_id = 1 
                     							THEN (SELECT ROUND(SUM(client_loan_schedule.percent/client_loan_agreement.exchange_rate),2)
@@ -646,7 +646,7 @@ switch ($action) {
                                     				'' AS pledge
                                             FROM    difference_cource
                                             JOIN    client_loan_schedule ON client_loan_schedule.id = difference_cource.cliet_loan_schedule_id
-                                            WHERE   difference_cource.client_id = '$id' client_loan_schedule.actived=1 AND client_loan_schedule.actived = 1
+                                            WHERE   difference_cource.client_id = '$id' AND client_loan_schedule.actived=1 AND client_loan_schedule.actived = 1
     	                                    UNION ALL
                             				SELECT  client_loan_agreement.client_id,
                     								client_loan_schedule.id AS `id`,
@@ -674,7 +674,7 @@ switch ($action) {
                                             JOIN money_transactions_detail ON money_transactions_detail.transaction_id = money_transactions.id
                             				JOIN   client_loan_schedule ON client_loan_schedule.id = money_transactions.client_loan_schedule_id
                             				JOIN   client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
-                            				WHERE  client_loan_agreement.client_id = '$id' client_loan_schedule.actived=1 AND money_transactions_detail.actived=1 AND money_transactions_detail.`status` = 2
+                            				WHERE  client_loan_agreement.client_id = '$id' AND client_loan_schedule.actived=1 AND money_transactions_detail.actived=1 AND money_transactions_detail.`status` = 2
                                             UNION ALL
 	                                        SELECT  client_loan_agreement.client_id,
                                         			client_loan_agreement.id AS `id`,
