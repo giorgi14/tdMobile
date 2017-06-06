@@ -170,7 +170,7 @@ switch ($action) {
     					$metoba_cource = $data->val($i,'T');
     					$cource_id     = $data->val($i,'I');
     					
-    					$mont_pay = insert_shedule($client_loan_agreement_id, $loan_date, $loan_agreement_type, $loan_amount, $month_percent, $loan_months, $metoba_tanxa, $metoba_date, $metoba_cource, $cource_id);
+    					//$mont_pay = insert_shedule($client_loan_agreement_id, $loan_date, $loan_agreement_type, $loan_amount, $month_percent, $loan_months, $metoba_tanxa, $metoba_date, $metoba_cource, $cource_id);
     					
     					mysqli_query("UPDATE `client_loan_agreement`
                                          SET `monthly_pay` = '$mont_pay'
