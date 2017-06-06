@@ -145,8 +145,8 @@ switch ($action) {
     					}
     					
     					// ხელშეკრულება
-    					$time = strtotime($data->val($i,'H'));
-    					$loan_date = date('Y-m-d',$time);
+//     					$time = strtotime($data->val($i,'H'));
+//     					$loan_date = date('Y-m-d',$time);
     					
     					$client_agreement = mysql_query("INSERT INTO `client_loan_agreement` 
                                                                     (`user_id`, `datetime`, `attachment_number`, `client_id`, `loan_type_id`, `loan_currency_id`, `oris_code`, `loan_amount`, `loan_months`, `percent`, `penalty_days`, `penalty_percent`, `loan_beforehand_percent`, `penalty_additional_percent`,  `proceed_fee`, `exchange_rate`, `status`, `canceled_status`, `actived`) 
