@@ -163,8 +163,8 @@ switch ($action) {
     					$month_percent       = $data->val($i,'N');
     					$loan_months         = $data->val($i,'O');
     					
-    					$metoba_date   = strtotime($data->val($i,'S'));
-    					$metoba_date   = date('Y-m-d',$metoba_date);
+//     					$metoba_date   = strtotime($data->val($i,'S'));
+//     					$metoba_date   = date('Y-m-d',$metoba_date);
     					
     					$metoba_tanxa  = $data->val($i,'R');
     					$metoba_cource = $data->val($i,'T');
