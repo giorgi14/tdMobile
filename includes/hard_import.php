@@ -145,8 +145,8 @@ switch ($action) {
     					}
     					
     					// ხელშეკრულება
-//     					$time = strtotime($data->val($i,'H'));
-//     					$loan_date = date('Y-m-d',$time);
+    					$time = strtotime($data->val($i,'H'));
+    					$loan_date = date('Y-m-d',$time);
     					
     					$client_agreement = mysql_query("INSERT INTO `client_loan_agreement` 
                                                                     (`user_id`, `datetime`, `attachment_number`, `client_id`, `loan_type_id`, `loan_currency_id`, `oris_code`, `loan_amount`, `loan_months`, `percent`, `penalty_days`, `penalty_percent`, `loan_beforehand_percent`, `penalty_additional_percent`,  `proceed_fee`, `exchange_rate`, `status`, `canceled_status`, `actived`) 
@@ -163,14 +163,14 @@ switch ($action) {
     					$month_percent       = $data->val($i,'N');
     					$loan_months         = $data->val($i,'O');
     					
-//     					$metoba_date   = strtotime($data->val($i,'S'));
-//     					$metoba_date   = date('Y-m-d',$metoba_date);
+    					$metoba_date   = strtotime($data->val($i,'S'));
+    					$metoba_date   = date('Y-m-d',$metoba_date);
     					
     					$metoba_tanxa  = $data->val($i,'R');
     					$metoba_cource = $data->val($i,'T');
     					$cource_id     = $data->val($i,'I');
     					
-    					//$mont_pay = insert_shedule($client_loan_agreement_id, $loan_date, $loan_agreement_type, $loan_amount, $month_percent, $loan_months, $metoba_tanxa, $metoba_date, $metoba_cource, $cource_id);
+    					$mont_pay = insert_shedule($client_loan_agreement_id, $loan_date, $loan_agreement_type, $loan_amount, $month_percent, $loan_months, $metoba_tanxa, $metoba_date, $metoba_cource, $cource_id);
     					
     					mysqli_query("UPDATE `client_loan_agreement`
                                          SET `monthly_pay` = '$mont_pay'
@@ -179,7 +179,6 @@ switch ($action) {
     					$i++;
     			}
 				echo 1;
-				
 				if (file_exists($path)) {
 					unlink($path);
 				}
