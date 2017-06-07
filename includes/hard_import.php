@@ -68,7 +68,17 @@ switch ($action) {
 				
 				while ($i<=$r){
 					$status=1;
-					if (!empty($data->val($i,'A'))) {
+					if (!empty($data->val($i,'A')) || !empty($data->val($i,'C'))) {
+					    
+					    $afphone = '995'.$data->val($i,'AF');
+					    $client_sms = 0;
+					    if ($data->val($i,'AG') == 1) {
+					        $client_sms = 1;
+					    }
+					    
+					    if (!empty($data->val($i,'C'))) {
+					        $type = "2";
+					    }
     					//კლიენტი
     					$check_atachment = mysql_fetch_array(mysql_query("SELECT client.id 
                                                                           FROM   client 
@@ -76,43 +86,35 @@ switch ($action) {
                                                                           LIMIT 1"));
     					
     					$client = mysql_query("INSERT INTO `client` 
-                                                          (`user_id`, `exel_agreement_id`, `attachment_id`, `ltd_responsible`, `datetme`,  `name`, `lastname`, `phone`,   `ltd_name`, `sms_sent`, `actived`) 
+                                                          (`user_id`, `exel_agreement_id`, `attachment_id`, `datetme`, `type`, `name`, `lastname`, `phone`,   `ltd_name`, `sms_sent`, `actived`) 
                                                     VALUES 
-                                                          ('1', '".$data->val($i,'E')."', '$check_atachment[id]', '".$data->val($i,'E')."', NOW(),  '".$data->val($i,'A')."', '".$data->val($i,'B')."', '".$data->val($i,'AB')."', '".$data->val($i,'C')."', '1', '1')");
+                                                          ('1', '".$data->val($i,'E')."', '$check_atachment[id]', NOW(), '$type', '".$data->val($i,'A')."', '".$data->val($i,'B')."', '$afphone', '".$data->val($i,'C')."', '$client_sms', '1')");
     					$client_id = mysql_insert_id();
     					
-    					//მინდობილი პირი
-    					if ($data->val($i,'AF') != '') {
-        					$client_trusted = mysql_query("INSERT INTO `client_trusted_person` 
-                                                                      (`user_id`, `datetime`, `client_id`, `phone`, `sent_sms`, `actived`) 
-                                                                VALUES 
-                                                                      ('1', NOW(), '$client_id', '".$data->val($i,'AF')."', '1', '1')");
-    					}
     					//საკონტქტო პირი
-    					$contact_sms = 0;
-    					if ($data->val($i,'AG') == 1) {
-    					    $contact_sms = 1;
-    					}
     					
     					if ($data->val($i,'AC') != '') {
+    					    $ac_phone = '995'.$data->val($i,'AC');
         					$client_contact = mysql_query("INSERT INTO `client_person`
                                                 					  (`user_id`, `client_id`, `datetime`, `phone`, `sms_sent`, `actived`)
                                                 			    VALUES
-                                                					  ('1', '$client_id', NOW(), '".$data->val($i,'AC')."', '$contact_sms', '1')");
+                                                					  ('1', '$client_id', NOW(), '$ac_phone', '1', '1')");
     					}
     					
     					if ($data->val($i,'AD') != '') {
+    					    $ad_phone = '995'.$data->val($i,'AD');
         					$client_contact = mysql_query("INSERT INTO `client_person`
                                                 					  (`user_id`, `client_id`, `datetime`, `phone`, `sms_sent`, `actived`)
                                                 			    VALUES
-                                                					  ('1', '$client_id', NOW(), '".$data->val($i,'AD')."', '$contact_sms', '1')");
+                                                					  ('1', '$client_id', NOW(), '$ad_phone', '1', '1')");
     					}
     					
     					if ($data->val($i,'AE') != '') {
+    					    $ae_phone = '995'.$data->val($i,'AE');
         					$client_contact = mysql_query("INSERT INTO `client_person`
                                             					      (`user_id`, `client_id`, `datetime`, `phone`, `sms_sent`, `actived`)
                                             					VALUES
-                                            					      ('1', '$client_id', NOW(), '".$data->val($i,'AE')."', '$contact_sms', '1')");
+                                            					      ('1', '$client_id', NOW(), '$ae_phone', '1', '1')");
     					}
     					
     					// თავდები პირი
@@ -120,12 +122,13 @@ switch ($action) {
     					if ($data->val($i,'AI') == 1) {
     					    $guarantor_sms = 1;
     					}
-    					
+    					 
     					if ($data->val($i,'AH') != '') {
+    					    $ah_phone = '995'.$data->val($i,'AH');
         					$client_guarantor = mysql_query("INSERT INTO `client_quarantors` 
                                                                         (`user_id`, `datetime`, `client_id`, `phone`, `sms_sent`, `actived`) 
                                                                   VALUES 
-                                                                        ('1', NOW(), '$client_id', '".$data->val($i,'AH')."', '$guarantor_sms', '1')");
+                                                                        ('1', NOW(), '$client_id', '$ah_phone', '$guarantor_sms', '1')");
     					}
     					
     					// კლიენტის მანქანა
@@ -137,11 +140,18 @@ switch ($action) {
     					
     					// მანქანის დაზღვევა
     					
-    					if ($data->val($i,'AJ') != '' && $data->val($i,'AK') != '' && $data->val($i,'AM') && $data->val($i,'AN')) {
+    					if ($data->val($i,'AJ') != '' && $data->val($i,'AK') != '' && $data->val($i,'AN') && $data->val($i,'AO')) {
+    					    
+    					    $start = strtotime($data->val($i,'AN'));
+    					    $start = date('Y-m-d',$start);
+    					    
+    					    $end = strtotime($data->val($i,'AO'));
+    					    $end = date('Y-m-d',$end);
+    					    
         					$car_insurance = mysql_query("INSERT INTO `car_insurance_info` 
-                                                                     (`user_id`, `datetime`, `client_id`, `car_loan_amount`, `car_real_price`,  `ins_payy`, `car_insurance_start`, `car_insurance_end`, `status`, `actived`) 
+                                                                     (`user_id`, `datetime`, `client_id`, `car_loan_amount`, `car_real_price`, `car_insurance_amount`, `ins_payy`, `car_insurance_start`, `car_insurance_end`, `status`, `actived`) 
                                                                VALUES 
-                                                                     ('1', NOW(), '$client_id', '".$data->val($i,'AL')."', '".$data->val($i,'AJ')."',  '".$data->val($i,'AK')."', '".$data->val($i,'AM')."', '".$data->val($i,'AN')."', '0', '1')");
+                                                                     ('1', NOW(), '$client_id', '".$data->val($i,'AL')."', '".$data->val($i,'AJ')."',  '".$data->val($i,'AK')."', '".$data->val($i,'AL')."', '$start', '$end', '0', '1')");
     					}
     					
     					// ხელშეკრულება

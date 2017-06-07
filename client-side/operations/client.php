@@ -2422,7 +2422,7 @@
     	<button id="add_button" style="float: left;margin-bottom: 10px;">დამატება</button>
     	<button id="delete_button" style="float: left;margin-bottom: 10px;margin-left: 10px;">გაუქმება</button>
     	<button id="b_letter" style="float: left;margin-bottom: 10px;margin-left: 10px;">ბეს შეთანხმება</button>
-    	<input id="hard_choose_file" type="file" name="choose_file" class="input" value="" style="display: none; "><button style="  width: 136px; margin-left:74px;" id="add_exel" value="">EXEL ატვირთვა</button>		
+    	<input id="hard_choose_file" type="file" name="choose_file" class="input" value="" style="display: none; "><button style="display:none; width: 136px; margin-left:74px;" id="add_exel" value="">EXEL ატვირთვა</button>		
     	<table id="table_right_menu">
             <tr>
                 <td>
