@@ -38,21 +38,21 @@ switch ($action) {
 		 
 		$rResult = mysql_query("  SELECT    client.id,
                         					DATE_FORMAT(client_loan_agreement.datetime,'%d/%m/%Y'),
-                        					client_car.car_marc,
+                        					concat(client_car.car_marc, ' / ', client_car.registration_number),
                         					client_loan_agreement.oris_code,
 		                                    IF(client.attachment_id = 0, 
 	  	                                        IF(ISNULL(client.sub_client),
-	  	                                            CONCAT('N',client_loan_agreement.id),
-	  	    
-	  	                                        CONCAT('N',client_loan_agreement.id,'/N',
-  	                                            (SELECT client_loan_agreement.id 
-                                                 FROM   client_loan_agreement 
-                                                 WHERE  client_loan_agreement.client_id = client.sub_client))),
-	  	    
-	  	                                    CONCAT('N',(SELECT client_loan_agreement.id 
-                                                              FROM   client_loan_agreement 
-                                                              WHERE  client_loan_agreement.client_id = client.attachment_id),
-	  	                                                      ' დანართი ',client_loan_agreement.attachment_number
+	  	                                        CONCAT('N',IF(client.id<286, client.exel_agreement_id, client_loan_agreement.id)),
+	  	                                        CONCAT('N',IF(client.id<286, client.exel_agreement_id, client_loan_agreement.id),'/N',
+  	                                           (SELECT IF(clt.id<286, clt.exel_agreement_id, client_loan_agreement.id) 
+                                                FROM   client_loan_agreement 
+		                                        join   client AS clt ON clt.id = client_loan_agreement.client_id
+                                                WHERE  client_loan_agreement.client_id = client.sub_client))),
+	  	                                        CONCAT('N',(SELECT IF(cl.id<286, cl.exel_agreement_id, client_loan_agreement.id) 
+                                                            FROM   client_loan_agreement 
+                                                            join client AS cl ON cl.id = client_loan_agreement.client_id
+    	                                                    WHERE  client_loan_agreement.client_id = client.attachment_id),
+	  	                                                    ' დანართი ',client_loan_agreement.attachment_number
 	  	                                    )),
                         					
                         					IF(client_loan_agreement.loan_type_id =2,'გრაფიკი','ჩვეულებრივი'),
@@ -89,7 +89,7 @@ switch ($action) {
                     					    END AS daricxuli_lari,
                         					CASE 
                     							WHEN client_loan_agreement.loan_currency_id = 1 
-                    							THEN ''
+                    							THEN '0.00'
                     							WHEN client_loan_agreement.loan_currency_id = 2 
                     							THEN (SELECT   ROUND(client_loan_schedule.remaining_root,2)
                                                       FROM     client_loan_agreement
@@ -100,7 +100,7 @@ switch ($action) {
                     					    END AS darchenili_vali_dolari,
 		                                    CASE 
                     							WHEN client_loan_agreement.loan_currency_id = 1 
-                    							THEN '' 
+                    							THEN '0.00' 
                     							WHEN client_loan_agreement.loan_currency_id = 2 
                     							THEN (SELECT   ROUND(client_loan_schedule.remaining_root,2)
                                                       FROM     client_loan_agreement
@@ -118,7 +118,7 @@ switch ($action) {
                                                       ORDER BY client_loan_schedule.id DESC
                                                       LIMIT 1) 
                     							WHEN client_loan_agreement.loan_currency_id = 2 
-                    							THEN '' 
+                    							THEN '0.00' 
                     					    END AS darchenili_vali_lari,
                         					CASE 
                     							WHEN client_loan_agreement.loan_currency_id = 1 
@@ -129,12 +129,13 @@ switch ($action) {
                                                       ORDER BY client_loan_schedule.id DESC
                                                       LIMIT 1) 
                     							WHEN client_loan_agreement.loan_currency_id = 2 
-                    							THEN '' 
+                    							THEN '0.00' 
                     					    END AS darchenili_dziri_lari,
                         					'',
 		                                    ROUND((SELECT SUM(difference) 
-                                                  FROM difference_cource
-                                                  WHERE difference_cource.client_id = `client`.id AND YEAR(difference_cource.datetime) = '$filt_year'),2) AS dsf
+                                                   FROM   difference_cource
+                                                   WHERE  difference_cource.client_id = `client`.id 
+		                                           AND    YEAR(difference_cource.datetime) = '$filt_year'),2) AS dsf
                                     FROM     `client`
                                     LEFT JOIN client_loan_agreement ON client_loan_agreement.client_id = `client`.id 
                                     LEFT JOIN client_car ON client_car.client_id = `client`.id 

@@ -176,8 +176,8 @@ switch ($action) {
     					$metoba_date   = strtotime($data->val($i,'S'));
     					$metoba_date   = date('Y-m-d',$metoba_date);
     					
-    					$metoba_tanxa  = $data->val($i,'R');
-    					$metoba_cource = $data->val($i,'T');
+    					$metoba_tanxa  = $data->val($i,'U')+$data->val($i,'V');
+    					$metoba_cource = $data->val($i,'X');
     					$cource_id     = $data->val($i,'I');
     					
     					$mont_pay = insert_shedule($client_loan_agreement_id, $loan_date, $loan_agreement_type, $loan_amount, $month_percent, $loan_months, $metoba_tanxa, $metoba_date, $metoba_cource, $cource_id);
@@ -284,22 +284,35 @@ function insert_shedule($client_loan_agreement_id, $agreement_date, $loan_agreem
                                     (`user_id`, `datetime`, `client_loan_agreement_id`, `number`, `pay_date`, `schedule_date`, `root`, `percent`, `pay_amount`, `remaining_root`, `actived`, `status`)
                               VALUES
                                     ('$user_id', NOW(), '$client_loan_agreement_id', '$i', '$pay_date', '$date', '$ziri', '$percent', '$P', '$PV', 1, '$shedule_status');");
-            $schedule_id = mysql_insert_id();
-            if ($metoba_date == $date && $metoba_tanxa != 0) {
-                mysql_query("INSERT INTO `money_transactions` 
-                                        (`datetime`, `user_id`, `client_loan_schedule_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `type_id`, `status`, `actived`) 
-                                  VALUES 
-                                        ('$metoba_date', '1', '$schedule_id', '$metoba_date', '$metoba_tanxa', '$metoba_cource', '$cource_id', '$cource_id', '1', '1', '1')");
-                
-                $transaction_id = mysql_insert_id();
-                
-                mysql_query("INSERT INTO `money_transactions_detail` 
-                                        (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `type_id`, `status`, `actived`) 
-                                  VALUES 
-                                        ('$metoba_date', '1', '$transaction_id', '$metoba_date', '$metoba_tanxa', '$metoba_cource', '$cource_id', '$cource_id', '1', '3', '1')");
-            }
         }
         
+        if($metoba_tanxa != 0){
+            $res_check_metoba = mysql_fetch_array(mysql_query(" SELECT MAX(id) AS shedule_id
+                                                                FROM   client_loan_schedule
+                                                                WHERE  client_loan_agreement_id = '$client_loan_agreement_id'
+                                                                AND   `status` = 1
+                                                                AND    actived = 1"));
+            
+            if ($res_check_metoba[shedule_id] == '') {
+                $res_check_metoba = mysql_fetch_array(mysql_query(" SELECT MIN(id) AS shedule_id
+                                                                    FROM   client_loan_schedule
+                                                                    WHERE  client_loan_agreement_id = '$client_loan_agreement_id'
+                                                                    AND   `status` = 0
+                                                                    AND    actived = 1"));
+            }
+            
+            mysql_query("INSERT INTO `money_transactions`
+                                    (`datetime`, `user_id`, `client_loan_schedule_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `type_id`, `status`, `actived`)
+                              VALUES
+                                    ('$metoba_date', '1', '$res_check_metoba[shedule_id]', '$metoba_date', '$metoba_tanxa', '$metoba_cource', '$cource_id', '$cource_id', '1', '1', '1')");
+            
+            $transaction_id = mysql_insert_id();
+            
+            mysql_query("INSERT INTO `money_transactions_detail`
+                                    (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `type_id`, `status`, `actived`)
+                              VALUES
+                                    ('$metoba_date', '1', '$transaction_id', '$metoba_date', '$metoba_tanxa', '$metoba_cource', '$cource_id', '$cource_id', '1', '3', '1')");
+        }
         return $P;
 }
 

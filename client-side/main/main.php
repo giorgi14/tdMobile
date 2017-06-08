@@ -83,7 +83,7 @@
     			    }
     		    });
 			}else{
-				GetDataTable(tName+tbl, aJaxURL, act, num, "&id="+$("#id").val()+"&filt_year="+$("#filt_year").val(), 0, dLength, 4, "desc", "", change_colum_main);
+				GetDataTable(tName+tbl, aJaxURL, act, num, "&id="+$("#id").val()+"&filt_year="+$("#filt_year").val(), 0, dLength, 4, "asc", "", change_colum_main);
 			}
 			$("#table_letter_length").css('top', '2px');
 			setTimeout(function(){$('.ColVis, .dataTable_buttons').css('display','none');}, 90);
@@ -456,7 +456,7 @@
 </head>
 
 <body>
-<div id="tabs" style="width: 95%">
+<div id="tabs" style="width: 1500px">
 <div class="callapp_head">მთავარი<hr class="callapp_head_hr"></div>
 <div id="button_area">
 	<table>
@@ -501,26 +501,26 @@
 </td>
 </tr>
 </table>
-    <table class="display" id="table_example" >
+    <table class="display" id="table_example" style="width: 100%;">
         <thead>
             <tr id="datatable_header">
                 <th>ID</th>
                 <th style="width: 6%;">თარიღი</th>
-                <th style="width: 8%;">მარკა</th>
-                <th style="width: 5%;">კოდი</th>
-                <th style="width: 6%;">ს/ხ</th>
+                <th style="width: 16%;">მარკა</th>
+                <th style="width: 6%;">კოდი</th>
+                <th style="width: 8%;">ს/ხ</th>
                 <th style="width: 7%;">პროცენტი</th>
-                <th style="width: 6%;">ფასი<br>$</th>
+                <th style="width: 5%;">ფასი<br>$</th>
                 <th style="width: 5%;">კურსი</th>
-                <th style="width: 6%;">ფასი<br>ლ</th>
-                <th style="width: 7%;">დარიცხ.%<br>$</th>
-                <th style="width: 7%;">დარიცხ.%<br>ლ</th>
-                <th style="width: 6%;">დარჩე-<br>ნილი<br>ვალი<br>$</th>
-                <th style="width: 6%;">დარჩე-<br>ნილი<br>ძირი<br>$</th>
-                <th style="width: 6%;">დარჩე-<br>ნილი<br>ვალი<br>ლ</th>
-                <th style="width: 6%;">დარჩე-<br>ნილი<br>ძირი<br>ლ</th>
+                <th style="width: 5%;">ფასი<br>ლ</th>
+                <th style="width: 5%;">დარიცხ.%<br>$</th>
+                <th style="width: 5%;">დარიცხ.%<br>ლ</th>
+                <th style="width: 5%;">დარჩე-<br>ნილი<br>ვალი<br>$</th>
+                <th style="width: 5%;">დარჩე-<br>ნილი<br>ძირი<br>$</th>
+                <th style="width: 5%;">დარჩე-<br>ნილი<br>ვალი<br>ლ</th>
+                <th style="width: 5%;">დარჩე-<br>ნილი<br>ძირი<br>ლ</th>
                 <th style="width: 6%;">გაყვანა</th>
-                <th style="width: 6%;">ნაშთი<br>ლარში</th>
+                <th style="width: 5%;">ნაშთი<br>ლარში</th>
             </tr>
         </thead>
         <thead>
