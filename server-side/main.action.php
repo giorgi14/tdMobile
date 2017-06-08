@@ -65,34 +65,31 @@ switch ($action) {
                     								  FROM   client_loan_agreement
                     								  JOIN   client_loan_schedule ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
                     								  WHERE  client_loan_agreement.client_id = client.id 
-                    								  AND client_loan_schedule.actived = 1 AND client_loan_schedule.`status` = 1 AND YEAR(client_loan_schedule.datetime) = '$filt_year') 
+                    								  AND client_loan_schedule.actived = 1 AND client_loan_schedule.`status` = 0 AND YEAR(client_loan_schedule.datetime) = '$filt_year' AND client_loan_schedule.schedule_date = DATE(NOW())) 
                     							WHEN client_loan_agreement.loan_currency_id = 2 
                     							THEN (SELECT ROUND(SUM(client_loan_schedule.percent),2)
                     								  FROM   client_loan_agreement
                     								  JOIN   client_loan_schedule ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
                     								  WHERE  client_loan_agreement.client_id = client.id 
-                    								  AND client_loan_schedule.actived = 1 AND client_loan_schedule.`status` = 1 AND YEAR(client_loan_schedule.datetime) = '$filt_year') 
+                    								  AND client_loan_schedule.actived = 1 AND client_loan_schedule.`status` = 0 AND YEAR(client_loan_schedule.datetime) = '$filt_year' AND client_loan_schedule.schedule_date = DATE(NOW())) 
                     					    END AS daricxuli_dolari,
                     					    CASE 
                     							WHEN client_loan_agreement.loan_currency_id = 1 
                     							THEN (SELECT ROUND(SUM(client_loan_schedule.percent),2)
                     								  FROM   client_loan_agreement
                     								  JOIN   client_loan_schedule ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
-                    								  WHERE  client_loan_agreement.client_id = client.id AND client_loan_schedule.actived = 1 AND client_loan_schedule.`status` = 1 AND YEAR(client_loan_schedule.datetime) = '$filt_year') 
+                    								  WHERE  client_loan_agreement.client_id = client.id 
+		                                              AND    client_loan_schedule.actived = 1 AND client_loan_schedule.`status` = 0 AND YEAR(client_loan_schedule.datetime) = '$filt_year' AND client_loan_schedule.schedule_date = DATE(NOW())) 
                     							WHEN client_loan_agreement.loan_currency_id = 2 
                     							THEN (SELECT ROUND(SUM(client_loan_schedule.percent*client_loan_agreement.exchange_rate),2)
                 									  FROM   client_loan_agreement
                 									  JOIN   client_loan_schedule ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
-                									  WHERE  client_loan_agreement.client_id = client.id AND client_loan_schedule.actived = 1 AND client_loan_schedule.`status` = 1 AND YEAR(client_loan_schedule.datetime) = '$filt_year') 
+                									  WHERE  client_loan_agreement.client_id = client.id 
+		                                              AND    client_loan_schedule.actived = 1 AND client_loan_schedule.`status` = 0 AND YEAR(client_loan_schedule.datetime) = '$filt_year' AND client_loan_schedule.schedule_date = DATE(NOW())) 
                     					    END AS daricxuli_lari,
                         					CASE 
                     							WHEN client_loan_agreement.loan_currency_id = 1 
-                    							THEN (SELECT   ROUND(client_loan_schedule.remaining_root/client_loan_agreement.exchange_rate,2)
-                                                      FROM     client_loan_agreement
-                                                      JOIN     client_loan_schedule ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
-                                                      WHERE    client_loan_agreement.client_id = client.id AND client_loan_schedule.`status` = 1 AND client_loan_schedule.actived = 1 AND YEAR(client_loan_schedule.datetime) = '$filt_year'
-                                                      ORDER BY client_loan_schedule.id DESC
-                                                      LIMIT 1) 
+                    							THEN ''
                     							WHEN client_loan_agreement.loan_currency_id = 2 
                     							THEN (SELECT   ROUND(client_loan_schedule.remaining_root,2)
                                                       FROM     client_loan_agreement
@@ -103,28 +100,7 @@ switch ($action) {
                     					    END AS darchenili_vali_dolari,
 		                                    CASE 
                     							WHEN client_loan_agreement.loan_currency_id = 1 
-                    							THEN (SELECT   ROUND(client_loan_schedule.remaining_root,2)
-                                                      FROM     client_loan_agreement
-                                                      JOIN     client_loan_schedule ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
-                                                      WHERE    client_loan_agreement.client_id = client.id AND client_loan_schedule.`status` = 1 AND client_loan_schedule.actived = 1 AND YEAR(client_loan_schedule.datetime) = '$filt_year'
-                                                      ORDER BY client_loan_schedule.id DESC
-                                                      LIMIT 1) 
-                    							WHEN client_loan_agreement.loan_currency_id = 2 
-                    							THEN (SELECT   ROUND(client_loan_schedule.remaining_root*client_loan_agreement.exchange_rate,2)
-                                                      FROM     client_loan_agreement
-                                                      JOIN     client_loan_schedule ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
-                                                      WHERE    client_loan_agreement.client_id = client.id AND client_loan_schedule.`status` = 1 AND client_loan_schedule.actived = 1 AND YEAR(client_loan_schedule.datetime) = '$filt_year'
-                                                      ORDER BY client_loan_schedule.id DESC
-                                                      LIMIT 1) 
-                    					    END AS darchenili_vali_lari,
-                        					CASE 
-                    							WHEN client_loan_agreement.loan_currency_id = 1 
-                    							THEN (SELECT   ROUND(client_loan_schedule.remaining_root/client_loan_agreement.exchange_rate,2)
-                                                      FROM     client_loan_agreement
-                                                      JOIN     client_loan_schedule ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
-                                                      WHERE    client_loan_agreement.client_id = client.id AND client_loan_schedule.`status` = 1 AND client_loan_schedule.actived = 1 AND YEAR(client_loan_schedule.datetime) = '$filt_year'
-                                                      ORDER BY client_loan_schedule.id DESC
-                                                      LIMIT 1) 
+                    							THEN '' 
                     							WHEN client_loan_agreement.loan_currency_id = 2 
                     							THEN (SELECT   ROUND(client_loan_schedule.remaining_root,2)
                                                       FROM     client_loan_agreement
@@ -142,12 +118,18 @@ switch ($action) {
                                                       ORDER BY client_loan_schedule.id DESC
                                                       LIMIT 1) 
                     							WHEN client_loan_agreement.loan_currency_id = 2 
-                    							THEN (SELECT   ROUND(client_loan_schedule.remaining_root*client_loan_agreement.exchange_rate,2)
+                    							THEN '' 
+                    					    END AS darchenili_vali_lari,
+                        					CASE 
+                    							WHEN client_loan_agreement.loan_currency_id = 1 
+                    							THEN (SELECT   ROUND(client_loan_schedule.remaining_root,2)
                                                       FROM     client_loan_agreement
                                                       JOIN     client_loan_schedule ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
                                                       WHERE    client_loan_agreement.client_id = client.id AND client_loan_schedule.`status` = 1 AND client_loan_schedule.actived = 1 AND YEAR(client_loan_schedule.datetime) = '$filt_year'
                                                       ORDER BY client_loan_schedule.id DESC
                                                       LIMIT 1) 
+                    							WHEN client_loan_agreement.loan_currency_id = 2 
+                    							THEN '' 
                     					    END AS darchenili_dziri_lari,
                         					'',
 		                                    ROUND((SELECT SUM(difference) 

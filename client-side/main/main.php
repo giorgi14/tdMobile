@@ -16,7 +16,7 @@
 			  
 			LoadTable("example",colum_number,'get_list',change_colum_main,aJaxURL);	
 			SetEvents("", "", "", tName+'example', dialog, aJaxURL,'','example',colum_number,main_act,change_colum_main,aJaxURL,'');
-
+			
 			param 	       = new Object();
     		param.act      = "get_add_page";
     		param.status   = 1;
@@ -52,6 +52,7 @@
     				}
     	    	}
     	    });
+    	    
 			
  		});
         
@@ -83,7 +84,7 @@
     		    });
 			}else{
 				
-				GetDataTable(tName+tbl, aJaxURL, act, num, "&id="+$("#id").val()+"&filt_year="+$("#filt_year").val(), 0, dLength, 1, "asc", "", change_colum_main);
+				GetDataTable(tName+tbl, aJaxURL, act, num, "&id="+$("#id").val()+"&filt_year="+$("#filt_year").val(), 0, dLength, 4, "asc", "", change_colum_main);
 			}
 			$("#table_letter_length").css('top', '2px');
 			setTimeout(function(){$('.ColVis, .dataTable_buttons').css('display','none');}, 90);
@@ -516,8 +517,8 @@
                 <th style="width: 7%;">დარიცხ.%<br>$</th>
                 <th style="width: 7%;">დარიცხ.%<br>ლ</th>
                 <th style="width: 6%;">დარჩე-<br>ნილი<br>ვალი<br>$</th>
-                <th style="width: 6%;">დარჩე-<br>ნილი<br>ვალი<br>ლ</th>
                 <th style="width: 6%;">დარჩე-<br>ნილი<br>ძირი<br>$</th>
+                <th style="width: 6%;">დარჩე-<br>ნილი<br>ვალი<br>ლ</th>
                 <th style="width: 6%;">დარჩე-<br>ნილი<br>ძირი<br>ლ</th>
                 <th style="width: 6%;">გაყვანა</th>
                 <th style="width: 6%;">ნაშთი<br>ლარში</th>
