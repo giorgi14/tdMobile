@@ -141,7 +141,7 @@
 	    		        			            $('#loan_currency').prop('disabled', true).trigger("chosen:updated");
 	    		        			            $('#agreement_type_id').prop('disabled', true).trigger("chosen:updated");
 	    		        			            $('#responsible_user_id').prop('disabled', true).trigger("chosen:updated");
-	    		        			            $("#add-edit-form-loan").css('position','fixed');
+	    		        			            
 	    		        			        }
 	    		        				}
 	    		        	    	}
@@ -265,6 +265,7 @@
 		        	$("#calculation-dialog").button("enable");
 	            	$("#cancel-loan").button("enable");
 			    }
+	            $(".add-edit-form-class").css('position','fixed');
 	            LoadTable('letter', 16, 'get_list1', "<'F'Cpl>", aJaxURL, '');
 	            
 	        }
