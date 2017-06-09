@@ -29,10 +29,11 @@ $result = mysql_query("SELECT  DATE_FORMAT(client_loan_schedule.pay_date, '%d.%m
 
 while ($row = mysql_fetch_array($result)) {
     
-    $avans = mysql_fetch_array(mysql_query("SELECT SUM(money_transactions.pay_amount) AS avansi,
-                                                   money_transactions.received_currency_id,
-                                                   money_transactions.course
+    $avans = mysql_fetch_array(mysql_query("SELECT SUM(money_transactions_detail.pay_amount) AS avansi,
+                                                   money_transactions_detail.received_currency_id,
+                                                   money_transactions_detail.course
                                             FROM   money_transactions
+                                            JOIN   money_transactions_detail ON money_transactions_detail.transaction_id = money_transactions.id
                                             WHERE  money_transactions.client_loan_schedule_id = '$row[id]'
                                             AND    money_transactions.actived = 1
                                             AND    money_transactions.`status` = 3"));

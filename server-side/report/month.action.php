@@ -16,25 +16,25 @@ switch ($action) {
                         				 DATE(client_loan_agreement.datetime),
                         				 CONCAT(client.`name`,' ',client.lastname) AS `name`,
                         				 client_loan_agreement.oris_code,
-                        				 CONCAT('ს\ხ ', client_loan_agreement.id),
+                        				 CONCAT('ს\ხ ', IF(client.id<286, client.exel_agreement_id, client_loan_agreement.id)),
                         				 client_loan_schedule.remaining_root,
                         				 client_loan_schedule.pay_date,
                         				 client_loan_schedule.percent,
                         				 DATE((SELECT MAX(money_transactions_detail.pay_datetime) AS pay_date
                                                FROM  `money_transactions`
-                                               JOIN money_transactions_detail ON money_transactions.id = money_transactions_detail.transaction_id
+                                               JOIN   money_transactions_detail ON money_transactions.id = money_transactions_detail.transaction_id
                                                WHERE  money_transactions.client_loan_schedule_id = client_loan_schedule.id AND money_transactions_detail.`status` = 1)) AS pay_date_percent,
                         				 ROUND((SELECT SUM(money_transactions_detail.pay_percent) AS pay_percent
-                                                FROM  `money_transactions`
-                                                JOIN   money_transactions_detail ON money_transactions_detail.transaction_id = money_transactions.id
-                                                WHERE  money_transactions.client_loan_schedule_id = client_loan_schedule.id AND money_transactions_detail.`status` = 1),2) AS pay_percent,
+                                                FROM `money_transactions`
+                                                JOIN  money_transactions_detail ON money_transactions_detail.transaction_id = money_transactions.id
+                                                WHERE money_transactions.client_loan_schedule_id = client_loan_schedule.id AND money_transactions_detail.`status` = 1),2) AS pay_percent,
                         				 DATE((SELECT MAX(money_transactions_detail.pay_datetime) AS pay_date
                                                FROM  `money_transactions`
                                                JOIN   money_transactions_detail ON money_transactions_detail.transaction_id = money_transactions.id
                                                WHERE  money_transactions.client_loan_schedule_id = client_loan_schedule.id AND money_transactions_detail.`status` = 1)) AS pay_date_root,
                                          ROUND((SELECT SUM(money_transactions_detail.pay_root)AS pay_percent
                                                 FROM  `money_transactions`
-                                                JOIN money_transactions_detail ON money_transactions_detail.transaction_id = money_transactions.id
+                                                JOIN   money_transactions_detail ON money_transactions_detail.transaction_id = money_transactions.id
                                                 WHERE  money_transactions.client_loan_schedule_id = client_loan_schedule.id AND money_transactions_detail.`status` = 1),2) AS pay_root,
                                 		 ROUND(client_loan_schedule.remaining_root)
                                 FROM     client_loan_schedule

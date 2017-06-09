@@ -1725,9 +1725,11 @@ function GetPage($id){
                                 				CONCAT(client.`name`,' ',client.lastname) AS `name`,
                                                 client_loan_agreement.loan_type_id,
                                                 client_loan_agreement.canceled_status,
-                                               client_loan_agreement.loan_currency_id
+                                                client_loan_agreement.loan_currency_id,
+                                                loan_currency.name AS loan_name
                                         FROM `client_loan_agreement`
                                         JOIN  client ON client.id = client_loan_agreement.client_id
+                                        JOIN loan_currency ON loan_currency.id = client_loan_agreement.loan_currency_id
                                         WHERE client.actived = 1 AND client.id = '$id'"));
   if ($res[sub_client] > 0) {
       $dis = '';
@@ -1739,9 +1741,11 @@ function GetPage($id){
                                                      DATE_FORMAT(client_loan_agreement.datetime,'%d') AS `day`,
                                                      CONCAT(client.`name`,' ',client.lastname) AS `name`,
                                                      client_loan_agreement.loan_type_id,
-                                                     client_loan_agreement.loan_currency_id
+                                                     client_loan_agreement.loan_currency_id,
+                                                     loan_currency.name AS loan_cource
                                               FROM  `client_loan_agreement`
                                               JOIN   client ON client.id = client_loan_agreement.client_id
+                                              JOIN   loan_currency ON loan_currency.id = client_loan_agreement.loan_currency_id
                                               WHERE  client.actived = 1 AND client.id = '$res[sub_client]'"));
       
       $req1 = mysql_query("SELECT client_loan_schedule.number,
@@ -1802,7 +1806,9 @@ function GetPage($id){
                         <table style="width:100%;">
                             <tr style="width:100%;">
                                 <td style="width:12%;"><label style="font-size: 14px;">კლიენტის სახელი:<label></td>
-                                <td style="width:88%;"><label style="font-size: 14px;">'.$res[name].'</label></td>
+                                <td style="width:38%;"><label style="font-size: 14px;">'.$res[name].'</label></td>
+                                <td style="width:10%;"><label style="font-size: 14px;">სესხის ვალუტა:</label></td>
+                                <td style="width:40%;"><label style="font-size: 14px;">'.$res[loan_name].'</label></td>
                             </tr>
                         </table> 
                     </div>
