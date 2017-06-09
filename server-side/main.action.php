@@ -35,6 +35,7 @@ switch ($action) {
 		$count	   = $_REQUEST['count'];
 		$hidden	   = $_REQUEST['hidden'];
 		$filt_year = $_REQUEST['filt_year'];
+		
 		 
 		$rResult = mysql_query("  SELECT    client.id,
                         					DATE_FORMAT(client_loan_agreement.datetime,'%d/%m/%Y'),
@@ -56,9 +57,9 @@ switch ($action) {
 	  	                                    )),
                         					
                         					IF(client_loan_agreement.loan_type_id =2,'გრაფიკი','ჩვეულებრივი'),
-                        					ROUND(IF(client_loan_agreement.loan_currency_id = 1, client_loan_agreement.loan_amount, client_loan_agreement.loan_amount/client_loan_agreement.exchange_rate),2),
+                        					ROUND(IF(client_loan_agreement.loan_currency_id = 1, client_loan_agreement.loan_amount/client_loan_agreement.exchange_rate, client_loan_agreement.loan_amount),2),
                         					client_loan_agreement.exchange_rate,
-                        					ROUND(IF(client_loan_agreement.loan_currency_id = 1, client_loan_agreement.loan_amount*client_loan_agreement.exchange_rate, client_loan_agreement.loan_amount),2),
+                        					ROUND(IF(client_loan_agreement.loan_currency_id = 1, client_loan_agreement.loan_amount,client_loan_agreement.loan_amount*client_loan_agreement.exchange_rate),2),
 		                                    CASE 
                     							WHEN client_loan_agreement.loan_currency_id = 1 
                     							THEN (SELECT ROUND(SUM(client_loan_schedule.percent/client_loan_agreement.exchange_rate),2)
