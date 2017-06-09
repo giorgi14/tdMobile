@@ -121,11 +121,7 @@ function Add($hidde_transaction_id, $hidde_id, $month_fee, $course, $currency_id
                                           AND     money_transactions_detail.actived = 1"));
 	
 	$res1 = mysql_fetch_assoc(mysql_query("SELECT  client_loan_schedule.pay_amount,
-                                            	   CASE
-	                                                   WHEN client_loan_agreement.loan_type_id = 1 AND DATEDIFF(CURDATE(), client_loan_schedule.pay_date)>0 THEN ROUND(client_loan_schedule.percent/(DAY(LAST_DAY(CURDATE())))*(DATEDIFF(CURDATE(), client_loan_schedule.pay_date)),2)
-                                                	   WHEN client_loan_agreement.loan_type_id = 2 AND DATEDIFF(CURDATE(), client_loan_schedule.pay_date)>0 AND DATEDIFF(CURDATE(), client_loan_schedule.pay_date) < client_loan_agreement.penalty_days THEN ROUND((client_loan_schedule.remaining_root*(client_loan_agreement.penalty_percent/100))*(DATEDIFF(CURDATE(), client_loan_schedule.pay_date)),2)
-                                                	   WHEN client_loan_agreement.loan_type_id = 2 AND DATEDIFF(CURDATE(), client_loan_schedule.pay_date)>client_loan_agreement.penalty_days THEN ROUND((client_loan_schedule.remaining_root*(client_loan_agreement.penalty_additional_percent/100))*(DATEDIFF(CURDATE(), client_loan_schedule.pay_date)),2)
-                                            	   END AS penalty,
+                                            	   client_loan_schedule.penalty AS penalty,
 	                                               client_loan_schedule.id
                                     	   FROM   `client_loan_schedule`
 	                                       JOIN    client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
@@ -358,11 +354,16 @@ function currency($id){
 }
 
 function client($id){
-    $req = mysql_query("SELECT   cl.id,
-			                     IF (cl.attachment_id=0, concat(cl.`name`, ' ', cl.lastname), concat(cl.`name`, ' ', cl.lastname, '/დანართი N', client_loan_agreement.attachment_number)) AS `name`
-                        FROM     client AS cl
-                        JOIN     client_loan_agreement ON cl.id = client_loan_agreement.client_id
-                        WHERE    cl.actived=1 AND client_loan_agreement.`status`=1 AND client_loan_agreement.canceled_status=0
+    $req = mysql_query("SELECT    cl.id,
+                                  CASE
+                        			  WHEN cl.attachment_id = 0 AND cl.`name` != '' THEN concat(cl.`name`, ' ', cl.lastname)
+                                      WHEN cl.attachment_id = 0 AND cl.`name` = '' THEN cl.ltd_name
+                                      WHEN cl.attachment_id != 0 AND cl.`name` = '' THEN cl.ltd_name
+                                      WHEN cl.attachment_id != 0 AND cl.`name` != '' THEN concat(cl.`name`, ' ', cl.lastname, '/დანართი N', client_loan_agreement.attachment_number)
+                                  END AS `name`
+                        FROM      client AS cl
+                        JOIN      client_loan_agreement ON cl.id = client_loan_agreement.client_id
+                        WHERE     cl.actived=1 AND client_loan_agreement.`status`=1 AND client_loan_agreement.canceled_status=0
                         ORDER BY `name` ASC");
 
     $data .= '<option value="0" selected="selected">----</option>';
@@ -377,15 +378,20 @@ function client($id){
 }
 
 function client_loan_number($id){
-    $req = mysql_query("SELECT client_loan_agreement.id, 
-                        	   IF (client.attachment_id=0, concat(client_loan_agreement.id), concat((SELECT client_loan_agreement.id FROM client_loan_agreement WHERE client_loan_agreement.client_id = client.attachment_id), '/დანართი N', client_loan_agreement.attachment_number)) AS `name`
-                        FROM   client_loan_agreement
-                        JOIN   client ON client.id = client_loan_agreement.client_id
-                        WHERE  client_loan_agreement.actived = 1 
-                        AND    client_loan_agreement.`status` = 1
-                        AND    client_loan_agreement.canceled_status = 0 
-                        AND    client.actived = 1
-                        ORDER BY `name` ASC");
+    $req = mysql_query("SELECT  client_loan_agreement.id,
+                                CASE
+                        		   WHEN client.attachment_id = 0 AND client.id<286 THEN CONCAT('ს/ხ ',client.exel_agreement_id)
+                                   WHEN client.attachment_id = 0 AND client.id>=286 THEN CONCAT('ს/ხ ',client_loan_agreement.id)
+            					   WHEN client.attachment_id != 0 AND client.id<286 THEN concat('ს/ხ ',(SELECT client.exel_agreement_id FROM client WHERE client.id = client.attachment_id), '/დანართი N', client_loan_agreement.attachment_number)
+            					   WHEN client.attachment_id != 0 AND client.id>=286 THEN concat('ს/ხ ',(SELECT client_loan_agreement.id FROM client_loan_agreement WHERE client_loan_agreement.client_id = client.attachment_id), '/დანართი N', client_loan_agreement.attachment_number)
+                        	    END AS `name` 
+                         FROM   client_loan_agreement
+                         JOIN   client ON client.id = client_loan_agreement.client_id
+                         WHERE  client_loan_agreement.actived = 1 
+                         AND    client_loan_agreement.`status` = 1
+                         AND    client_loan_agreement.canceled_status = 0 
+                         AND    client.actived = 1
+                         ORDER BY `name` ASC");
 
     $data .= '<option value="0" selected="selected">----</option>';
     while( $res = mysql_fetch_assoc($req)){
