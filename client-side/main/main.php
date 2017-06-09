@@ -141,6 +141,7 @@
 	    		        			            $('#loan_currency').prop('disabled', true).trigger("chosen:updated");
 	    		        			            $('#agreement_type_id').prop('disabled', true).trigger("chosen:updated");
 	    		        			            $('#responsible_user_id').prop('disabled', true).trigger("chosen:updated");
+	    		        			            $("#add-edit-form-loan").css('position','fixed');
 	    		        			        }
 	    		        				}
 	    		        	    	}
