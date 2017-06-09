@@ -13,11 +13,7 @@ $result = mysql_query("SELECT  DATE_FORMAT(client_loan_schedule.pay_date, '%d.%m
                     		   client_loan_agreement.id AS agr_id,
                     		   CONCAT(client_car.car_marc,' ',client_car.registration_number) AS cl_car_info,
                                client.sms_sent,
-                               CASE
-        						   WHEN client_loan_agreement.loan_type_id = 1 AND DATEDIFF(CURDATE(), client_loan_schedule.pay_date)>0 THEN ROUND(client_loan_schedule.percent/(DAY(LAST_DAY(CURDATE())))*(DATEDIFF(CURDATE(), client_loan_schedule.pay_date)),2)
-        						   WHEN client_loan_agreement.loan_type_id = 2 AND DATEDIFF(CURDATE(), client_loan_schedule.pay_date)>0 AND DATEDIFF(CURDATE(), client_loan_schedule.pay_date) < client_loan_agreement.penalty_days THEN ROUND((client_loan_schedule.remaining_root*(client_loan_agreement.penalty_percent/100))*(DATEDIFF(CURDATE(), client_loan_schedule.pay_date)),2)
-        						   WHEN client_loan_agreement.loan_type_id = 2 AND DATEDIFF(CURDATE(), client_loan_schedule.pay_date)>client_loan_agreement.penalty_days THEN ROUND((client_loan_schedule.remaining_root*(client_loan_agreement.penalty_additional_percent/100))*(DATEDIFF(CURDATE(), client_loan_schedule.pay_date)),2)
-        					   END AS penalty
+                               client_loan_schedule.penalty AS penalty
                         FROM   client_loan_schedule
                         JOIN   client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
                         JOIN   client ON client.id = client_loan_agreement.client_id

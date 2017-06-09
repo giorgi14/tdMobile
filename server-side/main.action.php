@@ -1720,6 +1720,8 @@ function GetPage($id){
                                                 client_loan_agreement.loan_months,
                                 				client_loan_agreement.loan_amount,
                                 				client_loan_agreement.percent,
+                                                CONCAT(client_loan_agreement.penalty_percent,' -',client_loan_agreement.penalty_days,'დღე+ ', client_loan_agreement.penalty_additional_percent) AS penalty_info,
+			                                    IF(ISNULL(client_loan_agreement.loan_beforehand_percent),0,client_loan_agreement.loan_beforehand_percent) AS loan_beforehand_percent,
                                 				DATE_FORMAT(client_loan_agreement.datetime,'%m') AS `month_id`,
                                 				DATE_FORMAT(client_loan_agreement.datetime,'%Y') AS `year`,
                                 				DATE_FORMAT(client_loan_agreement.datetime,'%d') AS `day`,
@@ -1727,16 +1729,20 @@ function GetPage($id){
                                                 client_loan_agreement.loan_type_id,
                                                 client_loan_agreement.canceled_status,
                                                 client_loan_agreement.loan_currency_id,
-                                                loan_currency.name AS loan_name
+                                                loan_currency.name AS loan_name,
+                                                CONCAT(' / ',client_car.car_marc,' / ',client_car.registration_number) AS cl_car_info
                                         FROM `client_loan_agreement`
                                         JOIN  client ON client.id = client_loan_agreement.client_id
                                         JOIN loan_currency ON loan_currency.id = client_loan_agreement.loan_currency_id
+                                        JOIN client_car ON client_car.client_id = client.id
                                         WHERE client.actived = 1 AND client.id = '$id'"));
   if ($res[sub_client] > 0) {
       $dis = '';
       $res1 = mysql_fetch_assoc(mysql_query(" SELECT client_loan_agreement.loan_months,
                                                      client_loan_agreement.loan_amount,
                                                      client_loan_agreement.percent,
+                                                     CONCAT(client_loan_agreement.penalty_percent,' -',client_loan_agreement.penalty_days,'დღე+ ', client_loan_agreement.penalty_additional_percent) AS penalty_info,
+			                                         IF(ISNULL(client_loan_agreement.loan_beforehand_percent),0,client_loan_agreement.loan_beforehand_percent) AS loan_beforehand_percent,
                                                      DATE_FORMAT(client_loan_agreement.datetime,'%m') AS `month_id`,
                                                      DATE_FORMAT(client_loan_agreement.datetime,'%Y') AS `year`,
                                                      DATE_FORMAT(client_loan_agreement.datetime,'%d') AS `day`,
@@ -1807,9 +1813,9 @@ function GetPage($id){
                         <table style="width:100%;">
                             <tr style="width:100%;">
                                 <td style="width:12%;"><label style="font-size: 14px;">კლიენტის სახელი:<label></td>
-                                <td style="width:38%;"><label style="font-size: 14px;">'.$res[name].'</label></td>
+                                <td style="width:50%;"><label style="font-size: 14px;">'.$res[name].$res[cl_car_info].'</label></td>
                                 <td style="width:10%;"><label style="font-size: 14px;">სესხის ვალუტა:</label></td>
-                                <td style="width:40%;"><label style="font-size: 14px;">'.$res[loan_name].'</label></td>
+                                <td style="width:28%;"><label style="font-size: 14px;">'.$res[loan_name].'</label></td>
                             </tr>
                         </table> 
                     </div>
@@ -1840,15 +1846,15 @@ function GetPage($id){
                                                 <td style="width:15%;"><label style="font-size: 12px; text-align:center;">'.$res1[day].'</label></td>
                                             </tr>
                                             <tr style="width:100%;border: 1px solid #000;">
-                                                <td style="width:30%;border-right: 1px solid #000;"><label style="font-size: 12px;">საშეღავათო პერიოდი:<label></td>
-                                                <td style="width:20%;border-right: 1px solid #000;"><label style="font-size: 12px;"></label></td>
+                                                <td style="width:30%;border-right: 1px solid #000;"><label style="font-size: 12px;">ჯარიმის პირობები:<label></td>
+                                                <td style="width:20%;border-right: 1px solid #000;"><label style="font-size: 12px;">'.$res1[penalty_info].'</label></td>
                                                 <td style="width:20%;border-right: 1px solid #000;"><label style="font-size: 12px;"></label></td>
                                                 <td style="width:15%;border-right: 1px solid #000;"><label style="font-size: 12px; text-align:center;">წელი</label></td>
                                                 <td style="width:15%;"><label style="font-size: 12px; text-align:center;">'.$res1[year].'</label></td>
                                             </tr>
                                             <tr style="width:100%;border: 1px solid #000;">
-                                                <td style="width:20%; border-right: 1px solid #000;"><label style="font-size: 12px;">საკომისიო წინასწარ(%):<label></td>
-                                                <td colspan="4" style="width:20%;"><label style="font-size: 12px;"><label></td>
+                                                <td style="width:20%; border-right: 1px solid #000;"><label style="font-size: 12px;">წინსწ. დაფარვის საკომისიო:<label></td>
+                                                <td colspan="4" style="width:20%;"><label style="font-size: 12px;"><label>'.$res1[loan_beforehand_percent].'</td>
                                             </tr>
                                         </table>
                                     </div>
@@ -1899,15 +1905,15 @@ function GetPage($id){
                                             <td style="width:15%;"><label style="font-size: 12px; text-align:center;">'.$res[day].'</label></td>
                                         </tr>
                                         <tr style="width:100%;border: 1px solid #000;">
-                                            <td style="width:30%;border-right: 1px solid #000;"><label style="font-size: 12px;">საშეღავათო პერიოდი:<label></td>
-                                            <td style="width:20%;border-right: 1px solid #000;"><label style="font-size: 12px;"></label></td>
+                                            <td style="width:30%;border-right: 1px solid #000;"><label style="font-size: 12px;">ჯარიმის პირობები:<label></td>
+                                            <td style="width:20%;border-right: 1px solid #000;"><label style="font-size: 12px;">'.$res[penalty_info].'</label></td>
                                             <td style="width:20%;border-right: 1px solid #000;"><label style="font-size: 12px;"></label></td>
                                             <td style="width:15%;border-right: 1px solid #000;"><label style="font-size: 12px; text-align:center;">წელი</label></td>
                                             <td style="width:15%;"><label style="font-size: 12px; text-align:center;">'.$res[year].'</label></td>
                                         </tr>
                                         <tr style="width:100%;border: 1px solid #000;">
-                                            <td style="width:20%; border-right: 1px solid #000;"><label style="font-size: 12px;">საკომისიო წინასწარ(%):<label></td>
-                                            <td colspan="4" style="width:20%;"><label style="font-size: 12px;"><label></td>
+                                            <td style="width:20%; border-right: 1px solid #000;"><label style="font-size: 12px;">წინსწ. დაფარვის საკომისიო:<label></td>
+                                            <td colspan="4" style="width:20%;"><label style="font-size: 12px;">'.$res[loan_beforehand_percent].'<label></td>
                                         </tr>
                                     </table>
                                 </div>
