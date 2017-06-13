@@ -33,7 +33,7 @@ switch ($action) {
     	                                                    WHERE  client_loan_agreement.client_id = client.attachment_id),
 	  	                                                    ' დ.',client_loan_agreement.attachment_number
 	  	                                 )),
-                        				 client_loan_schedule.remaining_root,
+                        				 CONCAT(client_loan_agreement.loan_amount, IF(client_loan_agreement.loan_currency_id = 1,' GEL',' USD')),
                         				 client_loan_schedule.pay_date,
                         				 client_loan_schedule.percent,
                         				 DATE((SELECT MAX(money_transactions_detail.pay_datetime) AS pay_date

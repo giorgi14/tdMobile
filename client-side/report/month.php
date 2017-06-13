@@ -150,10 +150,10 @@
             <tr id="datatable_header">
                 <th>ID</th>
                 <th style="width: 6%;">თარიღი</th>
-                <th style="width: 32%;">სახელი, გვარი</th>
+                <th style="width: 30%;">სახელი, გვარი</th>
                 <th style="width: 6%;">კოდი</th>
                 <th style="width: 6%;">ს/ხ</th>
-                <th style="width: 6%;">სესხი</th>
+                <th style="width: 8%;">სესხი</th>
                 <th style="width: 6%;">დარიცხვის<br>თარიღი</th>
                 <th style="width: 7%;">დარიცხული<br>პროცენტი</th>
                 <th style="width: 6%;">გადახდის<br>თარიღი</th>
