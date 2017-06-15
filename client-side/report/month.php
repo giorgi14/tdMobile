@@ -15,7 +15,7 @@
 		
         function LoadTable(tbl,num,act,change_colum_main,aJaxURL){
 			var dLength = [[50, -1], [50, "ყველა"]];
-			GetDataTable1(tName+tbl, aJaxURL, act, num, "&filt_month="+$("#filt_month").val()+"&filt_year="+$("#filt_year").val(), 0, dLength, 1, "asc", "", change_colum_main);
+			GetDataTable(tName+tbl, aJaxURL, act, num, "&filt_month="+$("#filt_month").val()+"&filt_year="+$("#filt_year").val(), 0, dLength, 3, "asc", "", change_colum_main);
 			$("#table_letter_length").css('top', '2px');
 			setTimeout(function(){$('.ColVis, .dataTable_buttons').css('display','none');}, 90);
 		}
@@ -83,7 +83,7 @@
 
 <body>
 <div id="tabs" style="width: 95%">
-<div class="callapp_head">თვეების მიხედვით<hr class="callapp_head_hr"></div>
+<div class="callapp_head">თვეების მიხედვით (ლარში)<hr class="callapp_head_hr"></div>
 <div id="button_area">
 	<select id="filt_month" style="width:  130px;">
 		<?php 
@@ -150,17 +150,17 @@
             <tr id="datatable_header">
                 <th>ID</th>
                 <th style="width: 6%;">თარიღი</th>
-                <th style="width: 30%;">სახელი, გვარი</th>
+                <th style="width: 17%;">სახელი, გვარი</th>
                 <th style="width: 6%;">კოდი</th>
-                <th style="width: 6%;">ს/ხ</th>
-                <th style="width: 8%;">სესხი</th>
-                <th style="width: 6%;">დარიცხვის<br>თარიღი</th>
-                <th style="width: 7%;">დარიცხული<br>პროცენტი</th>
-                <th style="width: 6%;">გადახდის<br>თარიღი</th>
-                <th style="width: 7%;">გადახდილი<br>თანხა</th>
-                <th style="width: 6%;">ძირის<br>დაფარვის<br>თარიღი</th>
-                <th style="width: 6%;">ძირის<br>თანხა</th>
-                <th style="width: 6%;">ნაშთი</th>
+                <th style="width: 10%;">ს/ხ</th>
+                <th style="width: 8%;">დარჩენილი <br>ვალი</th>
+                <th style="width: 8%;">დარიცხვის<br>თარიღი</th>
+                <th style="width: 8%;">დარიცხული<br>პროცენტი</th>
+                <th style="width: 8%;">გადახდის<br>თარიღი</th>
+                <th style="width: 8%;">გადახდილი<br>თანხა</th>
+                <th style="width: 7%;">ძირის<br>დაფარვის<br>თარიღი</th>
+                <th style="width: 7%;">ძირის<br>თანხა</th>
+                <th style="width: 7%;">ნაშთი</th>
             </tr>
         </thead>
         <thead>
