@@ -11,25 +11,26 @@ switch ($action) {
 		$hidden	    = $_REQUEST['hidden'];
 		$filt_month	= $_REQUEST['filt_month'];
 		$filt_year	= $_REQUEST['filt_year'];
+		$filt_month1 = $filt_month+1;
 		$filt_day	= $_REQUEST['filt_day'];
 		$AND        = '';
 		if ($filt_day > 0) {
 		    $AND = "AND DAY(client_loan_agreement.datetime) ='$filt_day'";
 		}
 		
-		$rResult = mysql_query("SELECT client_loan_schedule.id,
+		$rResult = mysql_query("SELECT MIN(client_loan_schedule.id),
                             		   DATE_FORMAT(client_loan_agreement.datetime,'%d/%m/%Y') AS loan_date,
                                        IF(client_loan_agreement.no_standart = 1,CONCAT('<div title=\"არასტანდარტული ხელშეკრულება\" style=\"background: #009688;\">',IF(client.`name` = '',client.ltd_name,CONCAT(client.`name`,' ',client.lastname)), '</div>'),CONCAT(IF(client.`name` = '',client.ltd_name,CONCAT(client.`name`,' ',client.lastname)))) AS cl_name,
                             		   client_loan_agreement.oris_code,
                                        IF(client.attachment_id = 0, 
                             				IF(ISNULL(client.sub_client),
-                            					CONCAT('N',IF(client.id<286, client.exel_agreement_id, client_loan_agreement.id)),
-                            					CONCAT('N',IF(client.id<286, client.exel_agreement_id, client_loan_agreement.id),'/N',
-                            				   (SELECT IF(clt.id<286, clt.exel_agreement_id, client_loan_agreement.id) 
+                            					CONCAT('N',IF(client.id<293, client.exel_agreement_id, client_loan_agreement.id)),
+                            					CONCAT('N',IF(client.id<293, client.exel_agreement_id, client_loan_agreement.id),'/N',
+                            				   (SELECT IF(clt.id<293, clt.exel_agreement_id, client_loan_agreement.id) 
                             					FROM   client_loan_agreement 
                             					join   client AS clt ON clt.id = client_loan_agreement.client_id
                             					WHERE  client_loan_agreement.client_id = client.sub_client))),
-                            					CONCAT('N',(SELECT IF(cl.id<286, cl.exel_agreement_id, client_loan_agreement.id) 
+                            					CONCAT('N',(SELECT IF(cl.id<293, cl.exel_agreement_id, client_loan_agreement.id) 
                             								FROM   client_loan_agreement 
                             								join client AS cl ON cl.id = client_loan_agreement.client_id
                             								WHERE  client_loan_agreement.client_id = client.attachment_id),' დ.',client_loan_agreement.attachment_number
@@ -78,10 +79,11 @@ switch ($action) {
                                 JOIN   client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
                                 JOIN   client ON client.id = client_loan_agreement.client_id
                                 WHERE  client_loan_schedule.actived = 1
-                                AND    MONTH(client_loan_schedule.pay_date) = '$filt_month'
-                                AND    YEAR(client_loan_schedule.pay_date) = '$filt_year'
+                                AND    (MONTH(client_loan_schedule.pay_date) = '$filt_month' OR (client_loan_schedule.`status` = 0 AND MONTH(client_loan_schedule.pay_date) < '$filt_month') OR (MONTH(client_loan_schedule.pay_date) = '$filt_month1' AND DAY(client_loan_schedule.pay_date) = '1' AND DAY(client_loan_agreement.datetime) !='1'))
+                                AND    YEAR(client_loan_schedule.pay_date) <= '$filt_year'
                                 AND    client_loan_agreement.canceled_status = 0
-                                AND    client.actived = 1 $AND");
+                                AND    client.actived = 1 $AND
+		                        GROUP BY client_loan_schedule.client_loan_agreement_id");
 
 		$data = array("aaData"	=> array());
 
