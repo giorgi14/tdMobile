@@ -132,10 +132,10 @@ function Disable($id){
 function get_client($id){
 
     $req = mysql_query("SELECT client.id,
-                               client.`name`
+                               CONCAT(client.`name`,' ',client.lastname) AS name
                         FROM   client
                         JOIN   client_loan_agreement ON client.id = client_loan_agreement.client_id
-                        WHERE  client.actived = 1 AND client_loan_agreement.`status` = 1 AND client_loan_agreement.canceled_status = 1");
+                        WHERE  client.actived = 1 AND client_loan_agreement.`status` = 1 AND client_loan_agreement.canceled_status = 0");
     $data .= '<option value="0" selected="selected">აირჩიე კლიენტი</option>';
     while( $res = mysql_fetch_assoc($req)){
         if($res['id'] == $id){
@@ -149,31 +149,31 @@ function get_client($id){
 
 function get_phone($id, $phone){
     $req = mysql_query("SELECT  client.phone,
-                                CONCAT(client.`name`,'/',client.phone) AS name
+                                CONCAT(client.`name`,' ',client.lastname,'/',client.phone) AS name
                         FROM    client
                         JOIN    client_loan_agreement ON client.id = client_loan_agreement.client_id
-                        WHERE   client.actived = 1 AND client_loan_agreement.`status` = 1 AND client_loan_agreement.canceled_status = 1 AND client.id = '$id'
+                        WHERE   client.actived = 1 AND client_loan_agreement.`status` = 1 AND client_loan_agreement.canceled_status = 0 AND client.id = '$id'
                         UNION ALL
                         SELECT  client_person.phone,
                                 CONCAT('საკონტ. პ./', client_person.person,'/', client_person.phone) AS name
                         FROM    client_person
                         JOIN    client ON client.id = client_person.client_id
                         JOIN    client_loan_agreement ON client.id = client_loan_agreement.client_id
-                        WHERE   client.actived = 1 AND client_person.actived = 1 AND client.id = '$id' AND client_loan_agreement.`status` = 1 AND client_loan_agreement.canceled_status = 1
+                        WHERE   client.actived = 1 AND client_person.actived = 1 AND client.id = '$id' AND client_loan_agreement.`status` = 1 AND client_loan_agreement.canceled_status = 0
                         UNION ALL
                         SELECT client_quarantors.phone,
                                 CONCAT('თავდ. პ./', client_quarantors.`name`,'/', client_quarantors.phone) AS name
                         FROM    client_quarantors
                         JOIN    client ON client.id = client_quarantors.client_id
                         JOIN    client_loan_agreement ON client.id = client_loan_agreement.client_id
-                        WHERE   client.actived = 1 AND client_quarantors.actived = 1 AND client.id = '$id' AND client_loan_agreement.`status` = 1 AND client_loan_agreement.canceled_status = 1
+                        WHERE   client.actived = 1 AND client_quarantors.actived = 1 AND client.id = '$id' AND client_loan_agreement.`status` = 1 AND client_loan_agreement.canceled_status = 0
                         UNION ALL
                         SELECT  client_trusted_person.phone,
                                 CONCAT('მინდობ. პ./', client_trusted_person.`name`,'/',client_trusted_person.phone) AS name
                         FROM    client_trusted_person
                         JOIN    client ON client.id = client_trusted_person.client_id
                         JOIN    client_loan_agreement ON client.id = client_loan_agreement.client_id
-                        WHERE   client.actived = 1 AND client_trusted_person.actived = 1 AND client.id = '$id' AND client_loan_agreement.`status` = 1 AND client_loan_agreement.canceled_status = 1");
+                        WHERE   client.actived = 1 AND client_trusted_person.actived = 1 AND client.id = '$id' AND client_loan_agreement.`status` = 1 AND client_loan_agreement.canceled_status = 0");
 
     $data .= '<option value="0" selected="selected">აირჩიე ნომერი</option>';
     while( $res = mysql_fetch_assoc($req)){

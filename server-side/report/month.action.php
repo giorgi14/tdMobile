@@ -11,10 +11,15 @@ switch ($action) {
 		$hidden	    = $_REQUEST['hidden'];
 		$filt_month	= $_REQUEST['filt_month'];
 		$filt_year	= $_REQUEST['filt_year'];
+		$filt_day	= $_REQUEST['filt_day'];
+		$AND        = '';
+		if ($filt_day > 0) {
+		    $AND = "AND DAY(client_loan_agreement.datetime) ='$filt_day'";
+		}
 		
 		$rResult = mysql_query("SELECT client_loan_schedule.id,
                             		   DATE_FORMAT(client_loan_agreement.datetime,'%d/%m/%Y') AS loan_date,
-                                       IF(client.`name` = '',client.ltd_name,CONCAT(client.`name`,' ',client.lastname)) AS cl_name,
+                                       IF(client_loan_agreement.no_standart = 1,CONCAT('<div title=\"არასტანდარტული ხელშეკრულება\" style=\"background: #009688;\">',IF(client.`name` = '',client.ltd_name,CONCAT(client.`name`,' ',client.lastname)), '</div>'),CONCAT(IF(client.`name` = '',client.ltd_name,CONCAT(client.`name`,' ',client.lastname)))) AS cl_name,
                             		   client_loan_agreement.oris_code,
                                        IF(client.attachment_id = 0, 
                             				IF(ISNULL(client.sub_client),
@@ -30,17 +35,10 @@ switch ($action) {
                             								WHERE  client_loan_agreement.client_id = client.attachment_id),' დ.',client_loan_agreement.attachment_number
                             		   )) AS agreement_number,
                                 	   CASE
-                                		   WHEN client_loan_schedule.number = 1 AND client_loan_schedule.`status` = 1 AND client_loan_agreement.loan_currency_id = 1 THEN client_loan_schedule.remaining_root
-                                           WHEN client_loan_schedule.number = 1 AND client_loan_schedule.`status` = 1 AND client_loan_agreement.loan_currency_id = 2 THEN ROUND(client_loan_schedule.remaining_root*client_loan_agreement.exchange_rate,2)
-                                
-                                		   WHEN client_loan_schedule.number = 1 AND client_loan_schedule.`status` = 0 AND client_loan_agreement.loan_currency_id = 1 THEN client_loan_agreement.loan_amount
-                                           WHEN client_loan_schedule.number = 1 AND client_loan_schedule.`status` = 0 AND client_loan_agreement.loan_currency_id = 2 THEN ROUND(client_loan_agreement.loan_amount*client_loan_agreement.exchange_rate,2)
-                                
-                                           WHEN client_loan_schedule.number > 1 AND client_loan_schedule.`status` = 1 AND client_loan_agreement.loan_currency_id = 1 THEN client_loan_schedule.remaining_root
-                                           WHEN client_loan_schedule.number > 1 AND client_loan_schedule.`status` = 1 AND client_loan_agreement.loan_currency_id = 2 THEN ROUND(client_loan_schedule.remaining_root*client_loan_agreement.exchange_rate,2)
-                                
-                                           WHEN client_loan_schedule.number > 1 AND client_loan_schedule.`status` = 0 AND client_loan_agreement.loan_currency_id = 1 THEN client_loan_schedule.remaining_root+client_loan_schedule.root
-                                           WHEN client_loan_schedule.number > 1 AND client_loan_schedule.`status` = 0 AND client_loan_agreement.loan_currency_id = 2 THEN ROUND((client_loan_schedule.remaining_root+client_loan_schedule.root)*client_loan_agreement.exchange_rate,2)
+                                		   WHEN client_loan_schedule.`status` = 1 AND client_loan_agreement.loan_currency_id = 1 THEN client_loan_schedule.remaining_root
+                                           WHEN client_loan_schedule.`status` = 1 AND client_loan_agreement.loan_currency_id = 2 THEN ROUND(client_loan_schedule.remaining_root*client_loan_agreement.exchange_rate,2)
+                                           WHEN client_loan_schedule.`status` = 0 AND client_loan_agreement.loan_currency_id = 1 THEN client_loan_schedule.remaining_root+client_loan_schedule.root
+                                           WHEN client_loan_schedule.`status` = 0 AND client_loan_agreement.loan_currency_id = 2 THEN ROUND((client_loan_schedule.remaining_root+client_loan_schedule.root)*client_loan_agreement.exchange_rate,2)
                                 	   END AS darchenili_vali,
                                        DATE_FORMAT(client_loan_schedule.schedule_date,'%d/%m/%Y') AS daricxvis_tarigi,
                                 	   IF(client_loan_schedule.schedule_date <= CURDATE(), IF(client_loan_agreement.loan_currency_id = 1, ROUND(client_loan_schedule.percent+IF(ISNULL(client_loan_schedule.penalty),0,client_loan_schedule.penalty),2),ROUND((client_loan_schedule.percent*client_loan_agreement.exchange_rate)+IF(ISNULL(client_loan_schedule.penalty),0,client_loan_schedule.penalty*client_loan_agreement.exchange_rate),2)),'0.00') AS percent,
@@ -83,7 +81,7 @@ switch ($action) {
                                 AND    MONTH(client_loan_schedule.pay_date) = '$filt_month'
                                 AND    YEAR(client_loan_schedule.pay_date) = '$filt_year'
                                 AND    client_loan_agreement.canceled_status = 0
-                                AND    client.actived = 1");
+                                AND    client.actived = 1 $AND");
 
 		$data = array("aaData"	=> array());
 
