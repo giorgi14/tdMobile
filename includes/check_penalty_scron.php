@@ -12,13 +12,7 @@ $result = mysql_query("SELECT    MIN(client_loan_schedule.id) AS schedule_id,
                                  client_loan_agreement.penalty_days,
                                  client_loan_agreement.penalty_percent,
                                  client_loan_agreement.penalty_additional_percent,
-                                (SELECT    client_loan_schedule.remaining_root
-                				 FROM 	   `client_loan_schedule`
-                				 LEFT JOIN client_loan_agreement AS agr ON agr.id = client_loan_schedule.client_loan_agreement_id
-                				 JOIN  	client ON client.id = agr.client_id
-                				 WHERE     client_loan_schedule.actived = 1 AND client_loan_schedule.client_loan_agreement_id = client_loan_agreement.id AND client_loan_schedule.`status` = 1
-                				 ORDER BY  pay_date DESC
-                				 LIMIT 1) AS remaining_root,
+                                 client_loan_schedule.root + client_loan_schedule.remaining_root AS remaining_root,
                                  CONCAT(client.`name`,' ',client.lastname) AS `name`
                         FROM     client_loan_schedule
                         JOIN     client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id

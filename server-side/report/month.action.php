@@ -72,7 +72,7 @@ switch ($action) {
                                        AND    money_transactions_detail.actived = 1
                                        AND    money_transactions_detail.`status` = 1
                                        AND    money_transactions_detail.type_id = 1) AS gadaxdili_dziri,
-                                       0.00 AS nashti
+                                       client_loan_schedule.status AS status
                                 
                                 FROM   client_loan_schedule
                                 JOIN   client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
@@ -95,7 +95,12 @@ switch ($action) {
 			        if ($aRow[gadaxdili_procenti] != '') {
 			            $gadaxdili_procenti = $aRow[gadaxdili_procenti];
 			        }
-			        $row[] = round($darechenili_dziri + $daricxuli_procenti - $gadaxdili_procenti,2);
+			        
+			        if($aRow[status] == 0){
+			             $row[] = round($darechenili_dziri + $daricxuli_procenti - $gadaxdili_procenti,2);
+			        }else{
+			             $row[] = $darechenili_dziri;
+			        }
 			    }else{
 				   $row[] = $aRow[$i];
 			    }
