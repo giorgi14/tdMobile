@@ -239,8 +239,8 @@ switch ($action) {
 	                                                 '' AS pledge
                                     		FROM     client_loan_schedule
                                     		JOIN     client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
-                                    		JOIN     money_transactions ON money_transactions.client_loan_schedule_id = client_loan_schedule.id
-                                    		WHERE    client_loan_agreement.client_id = '$id' AND client_loan_schedule.actived=1 AND money_transactions.status = 1
+                                    		LEFT JOIN money_transactions ON money_transactions.client_loan_schedule_id = client_loan_schedule.id
+                                    		WHERE    client_loan_agreement.client_id = '$id' AND client_loan_schedule.actived=1 AND client_loan_schedule.pay_date <= CURDATE()
                                     		GROUP BY money_transactions.client_loan_schedule_id
                                     		UNION ALL 
                                     		SELECT  client_loan_agreement.client_id,
@@ -544,8 +544,8 @@ switch ($action) {
 	                                                 '' AS pledge
                                     		FROM     client_loan_schedule
                                     		JOIN     client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
-                                    		JOIN     money_transactions ON money_transactions.client_loan_schedule_id = client_loan_schedule.id
-                                    		WHERE    client_loan_agreement.client_id = '$id' AND client_loan_schedule.actived=1 AND money_transactions.status = 1
+                                    		LEFT JOIN money_transactions ON money_transactions.client_loan_schedule_id = client_loan_schedule.id
+                                    		WHERE    client_loan_agreement.client_id = '$id' AND client_loan_schedule.actived=1 AND client_loan_schedule.pay_date <= CURDATE()
                                     		GROUP BY money_transactions.client_loan_schedule_id
                                     		UNION ALL 
                                     		SELECT  client_loan_agreement.client_id,
