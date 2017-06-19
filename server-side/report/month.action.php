@@ -51,15 +51,15 @@ switch ($action) {
                                            WHEN client_loan_schedule.`status` = 0 AND client_loan_agreement.loan_currency_id = 1 THEN ROUND(client_loan_schedule.remaining_root + client_loan_schedule.root + (SELECT IFNULL(SUM(client_loan_schedule.percent),0) FROM client_loan_schedule WHERE client_loan_schedule.actived = 1 AND client_loan_schedule.`status` = 0 AND client_loan_schedule.client_loan_agreement_id = client_loan_agreement.id AND MONTH(client_loan_schedule.pay_date) <'$filt_month' AND YEAR(client_loan_schedule.pay_date)<='$filt_year'),2)
                                            WHEN client_loan_schedule.`status` = 0 AND client_loan_agreement.loan_currency_id = 2 THEN ROUND((client_loan_schedule.remaining_root + client_loan_schedule.root + (SELECT IFNULL(SUM(client_loan_schedule.percent),0) FROM client_loan_schedule WHERE client_loan_schedule.actived = 1 AND client_loan_schedule.`status` = 0 AND client_loan_schedule.client_loan_agreement_id = client_loan_agreement.id AND MONTH(client_loan_schedule.pay_date) <'$filt_month' AND YEAR(client_loan_schedule.pay_date)<='$filt_year'))*client_loan_agreement.exchange_rate,2)
                                 	   END AS darchenili_vali,
-                                       DATE_FORMAT(client_loan_schedule.schedule_date,'%d/%m/%Y') AS daricxvis_tarigi,
+                                       DATE_FORMAT(MAX(client_loan_schedule.schedule_date),'%d/%m/%Y') AS daricxvis_tarigi,
 		                               IFNULL(CASE
-                                                 WHEN MONTH(client_loan_schedule.schedule_date) = '$filt_month' AND DAY(client_loan_schedule.schedule_date) <= $day AND client_loan_agreement.loan_currency_id = 1 THEN ROUND(client_loan_schedule.percent+IF(client_loan_schedule.penalty>0 AND client_loan_schedule.`status` = 1,client_loan_schedule.penalty,0),2)
-                                                 WHEN MONTH(client_loan_schedule.schedule_date) = '$filt_month' AND DAY(client_loan_schedule.schedule_date) <= $day AND client_loan_agreement.loan_currency_id = 2 THEN ROUND((client_loan_schedule.percent+IF(client_loan_schedule.penalty>0 AND client_loan_schedule.`status` = 1,client_loan_schedule.penalty,0))*client_loan_agreement.exchange_rate,2)
+                                                 WHEN MONTH(MAX(client_loan_schedule.schedule_date)) = '$filt_month' AND DAY(MAX(client_loan_schedule.schedule_date)) <= $day AND client_loan_agreement.loan_currency_id = 1 THEN ROUND(MIN(client_loan_schedule.percent)+IF(MAX(client_loan_schedule.penalty)>0 AND (SELECT sshh.`status` FROM client_loan_schedule AS sshh WHERE sshh.id = MAX(client_loan_schedule.id) AND sshh.actived = 1) = 1,MAX(client_loan_schedule.penalty),0),2)
+                                                 WHEN MONTH(MAX(client_loan_schedule.schedule_date)) = '$filt_month' AND DAY(MAX(client_loan_schedule.schedule_date)) <= $day AND client_loan_agreement.loan_currency_id = 2 THEN ROUND((MIN(client_loan_schedule.percent)+IF(MAX(client_loan_schedule.penalty)>0 AND (SELECT sshh.`status` FROM client_loan_schedule AS sshh WHERE sshh.id = MAX(client_loan_schedule.id) AND sshh.actived = 1) = 1,MAX(client_loan_schedule.penalty),0))*client_loan_agreement.exchange_rate,2)
                                               END,'0.00') AS percent,
                                       (SELECT DATE_FORMAT(money_transactions_detail.pay_datetime,'%d/%m/%Y')
                                        FROM   money_transactions
                                        JOIN   money_transactions_detail ON money_transactions.id = money_transactions_detail.transaction_id
-                                       WHERE  money_transactions.client_loan_schedule_id = client_loan_schedule.id 
+                                       WHERE  money_transactions.client_loan_schedule_id = MAX(client_loan_schedule.id) 
                                        AND    money_transactions_detail.actived = 1
                                        AND    money_transactions_detail.`status` = 1
                                        AND    money_transactions_detail.type_id = 1
@@ -67,14 +67,14 @@ switch ($action) {
                                       (SELECT ROUND(SUM(IF(client_loan_agreement.loan_currency_id = 1,money_transactions_detail.pay_percent+money_transactions_detail.pay_amount,(money_transactions_detail.pay_percent*money_transactions_detail.course)+(money_transactions_detail.pay_amount*money_transactions_detail.course))),2)
                                        FROM   money_transactions
                                        JOIN   money_transactions_detail ON money_transactions.id = money_transactions_detail.transaction_id
-                                       WHERE  money_transactions.client_loan_schedule_id = client_loan_schedule.id 
+                                       WHERE  money_transactions.client_loan_schedule_id = MAX(client_loan_schedule.id) 
                                        AND    money_transactions_detail.actived = 1
                                        AND    money_transactions_detail.`status` IN(1,2)
                                        AND    money_transactions_detail.type_id = 1) AS gadaxdili_procenti,
                                       (SELECT DATE_FORMAT(money_transactions_detail.pay_datetime,'%d/%m/%Y')
                                        FROM   money_transactions
                                        JOIN   money_transactions_detail ON money_transactions.id = money_transactions_detail.transaction_id
-                                       WHERE  money_transactions.client_loan_schedule_id = client_loan_schedule.id 
+                                       WHERE  money_transactions.client_loan_schedule_id = MAX(client_loan_schedule.id)
                                        AND    money_transactions_detail.actived = 1
                                        AND    money_transactions_detail.`status` = 1
                                        AND    money_transactions_detail.type_id = 1
@@ -82,7 +82,7 @@ switch ($action) {
                                       (SELECT ROUND(SUM(IF(client_loan_agreement.loan_currency_id = 1,money_transactions_detail.pay_root,money_transactions_detail.pay_root*money_transactions_detail.course)),2)
                                        FROM   money_transactions
                                        JOIN   money_transactions_detail ON money_transactions.id = money_transactions_detail.transaction_id
-                                       WHERE  money_transactions.client_loan_schedule_id = client_loan_schedule.id 
+                                       WHERE  money_transactions.client_loan_schedule_id = MAX(client_loan_schedule.id) 
                                        AND    money_transactions_detail.actived = 1
                                        AND    money_transactions_detail.`status` = 1
                                        AND    money_transactions_detail.type_id = 1) AS gadaxdili_dziri,

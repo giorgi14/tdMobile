@@ -83,7 +83,8 @@
     			    }
     		    });
 			}else{
-				GetDataTable(tName+tbl, aJaxURL, act, num, "&id="+$("#id").val()+"&filt_year="+$("#filt_year").val(), 0, dLength, 3, "asc", "", change_colum_main);
+				var total =	[6,8,9,10,11,12,13,14,16];
+				GetDataTable(tName+tbl, aJaxURL, act, num, "&id="+$("#id").val()+"&filt_year="+$("#filt_year").val(), 0, dLength, 3, "asc", total, change_colum_main);
 			}
 			$("#table_letter_length").css('top', '2px');
 			setTimeout(function(){$('.ColVis, .dataTable_buttons').css('display','none');}, 90);
@@ -580,6 +581,27 @@
                 </th>
             </tr>
         </thead>
+        <tfoot>
+            <tr>
+                <th>&nbsp;</th>
+                <th>&nbsp;</th>
+                <th>&nbsp;</th>
+                <th>&nbsp;</th>
+                <th>&nbsp;</th>
+                <th style="text-align: left; font-weight: bold;"><p align="right">ჯამი <br> სულ ჯამი</p></th>
+                <th>&nbsp;</th>
+                <th>&nbsp;</th>
+                <th>&nbsp;</th>
+                <th>&nbsp;</th>
+                <th>&nbsp;</th>
+                <th>&nbsp;</th>
+                <th>&nbsp;</th>
+                <th>&nbsp;</th>
+                <th>&nbsp;</th>
+                <th>&nbsp;</th>
+                <th>&nbsp;</th>
+            </tr>
+        </tfoot>
     </table>
 </body>
 </html>
