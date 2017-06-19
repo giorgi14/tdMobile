@@ -14,6 +14,15 @@ switch ($action) {
 		$filt_month1 = $filt_month+1;
 		$filt_month2 = $filt_month+2;
 		$filt_day	= $_REQUEST['filt_day'];
+		$today      = date("Y-m");
+		$c_day        = date("d");
+		if ($filt_month<10) {
+		    $filt_month = '0'.$filt_month;
+		}
+		$filt_date  = $filt_year.'-'.$filt_month;
+		
+		if ($filt_date == $today) {$day = $c_day;}else{$day = 31;}
+		
 		$AND        = '';
 		if ($filt_day > 0) {
 		    $AND = "AND DAY(client_loan_agreement.datetime) ='$filt_day'";
@@ -44,8 +53,8 @@ switch ($action) {
                                 	   END AS darchenili_vali,
                                        DATE_FORMAT(client_loan_schedule.schedule_date,'%d/%m/%Y') AS daricxvis_tarigi,
 		                               IFNULL(CASE
-                                                 WHEN MONTH(client_loan_schedule.schedule_date) = '$filt_month' AND client_loan_schedule.schedule_date<=curdate() AND client_loan_agreement.loan_currency_id = 1 THEN ROUND(client_loan_schedule.percent+IF(client_loan_schedule.penalty>0 AND client_loan_schedule.`status` = 1,client_loan_schedule.penalty,0),2)
-                                                 WHEN MONTH(client_loan_schedule.schedule_date) = '$filt_month' AND client_loan_schedule.schedule_date<=curdate() AND client_loan_agreement.loan_currency_id = 2 THEN ROUND((client_loan_schedule.percent+IF(client_loan_schedule.penalty>0 AND client_loan_schedule.`status` = 1,client_loan_schedule.penalty,0))*client_loan_agreement.exchange_rate,2)
+                                                 WHEN MONTH(client_loan_schedule.schedule_date) = '$filt_month' AND DAY(client_loan_schedule.schedule_date) <= $day AND client_loan_agreement.loan_currency_id = 1 THEN ROUND(client_loan_schedule.percent+IF(client_loan_schedule.penalty>0 AND client_loan_schedule.`status` = 1,client_loan_schedule.penalty,0),2)
+                                                 WHEN MONTH(client_loan_schedule.schedule_date) = '$filt_month' AND DAY(client_loan_schedule.schedule_date) <= $day AND client_loan_agreement.loan_currency_id = 2 THEN ROUND((client_loan_schedule.percent+IF(client_loan_schedule.penalty>0 AND client_loan_schedule.`status` = 1,client_loan_schedule.penalty,0))*client_loan_agreement.exchange_rate,2)
                                               END,'0.00') AS percent,
                                       (SELECT DATE_FORMAT(money_transactions_detail.pay_datetime,'%d/%m/%Y')
                                        FROM   money_transactions
