@@ -92,7 +92,7 @@ switch ($action) {
                                 JOIN   client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
                                 JOIN   client ON client.id = client_loan_agreement.client_id
                                 WHERE  client_loan_schedule.actived = 1
-                                AND    (MONTH(client_loan_schedule.pay_date) = '$filt_month' OR MONTH(client_loan_agreement.datetime) = '$filt_month' OR (client_loan_schedule.status = 0 AND MONTH(client_loan_schedule.pay_date) <='$filt_month') OR (MONTH(client_loan_schedule.pay_date) = '$filt_month1' AND DAY(client_loan_schedule.pay_date) = '1' AND DAY(client_loan_agreement.datetime) !='1') OR (MONTH(client_loan_schedule.pay_date) = '$filt_month2' AND DAY(client_loan_schedule.pay_date) = '1' AND DAY(client_loan_agreement.datetime) !='1'))
+                                AND    (MONTH(client_loan_schedule.pay_date) = '$filt_month' OR date_format(client_loan_agreement.datetime, '%Y-%m') = '$filt_date' OR (client_loan_schedule.status = 0 AND MONTH(client_loan_schedule.pay_date) <='$filt_month') OR (MONTH(client_loan_schedule.pay_date) = '$filt_month1' AND DAY(client_loan_schedule.pay_date) = '1' AND DAY(client_loan_agreement.datetime) !='1') OR (MONTH(client_loan_schedule.pay_date) = '$filt_month2' AND DAY(client_loan_schedule.pay_date) = '1' AND DAY(client_loan_agreement.datetime) !='1'))
                                 AND    YEAR(client_loan_schedule.pay_date) <= '$filt_year'
                                 AND    client_loan_agreement.canceled_status = 0
                                 AND    client.actived = 1 $AND
@@ -112,9 +112,9 @@ switch ($action) {
 			        }
 			        
 			        if($aRow[status] == 0){
-			             $row[] = round($darechenili_dziri + $daricxuli_procenti - $gadaxdili_procenti,2);
+			             $row[] = round(($darechenili_dziri + $daricxuli_procenti - $gadaxdili_procenti),2);
 			        }else{
-			             $row[] = $darechenili_dziri;
+			             $row[] = round($darechenili_dziri,2);
 			        }
 			    }else{
 				   $row[] = $aRow[$i];
