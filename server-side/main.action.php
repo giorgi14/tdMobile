@@ -1730,7 +1730,7 @@ function GetPage($id){
                                                 client_loan_agreement.canceled_status,
                                                 client_loan_agreement.loan_currency_id,
                                                 loan_currency.name AS loan_name,
-                                                CONCAT(' / ',client_car.car_marc,' / ',client_car.registration_number) AS cl_car_info
+                                                CONCAT(' / ',client_car.car_marc,' / ',client_car.registration_number, ' / ს/ხ', IF(client.id<302, client.exel_agreement_id, client_loan_agreement.id), ' / ორისის კოდი:', client_loan_agreement.oris_code) AS cl_car_info
                                         FROM `client_loan_agreement`
                                         JOIN  client ON client.id = client_loan_agreement.client_id
                                         JOIN loan_currency ON loan_currency.id = client_loan_agreement.loan_currency_id
@@ -1812,8 +1812,8 @@ function GetPage($id){
                     <div style="width:100%; font-size: 14px;">
                         <table style="width:100%;">
                             <tr style="width:100%;">
-                                <td style="width:12%;"><label style="font-size: 14px;">კლიენტის სახელი:<label></td>
-                                <td style="width:50%;"><label style="font-size: 14px;">'.$res[name].$res[cl_car_info].'</label></td>
+                                <td style="width:7%;"><label style="font-size: 14px;">კლიენტის:<label></td>
+                                <td style="width:55%;"><label style="font-size: 14px;">'.$res[name].$res[cl_car_info].'</label></td>
                                 <td style="width:10%;"><label style="font-size: 14px;">სესხის ვალუტა:</label></td>
                                 <td style="width:28%;"><label style="font-size: 14px;">'.$res[loan_name].'</label></td>
                             </tr>
