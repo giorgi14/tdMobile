@@ -241,7 +241,7 @@ switch ($action) {
                                     		JOIN     client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
                                     		LEFT JOIN money_transactions ON money_transactions.client_loan_schedule_id = client_loan_schedule.id
                                     		WHERE    client_loan_agreement.client_id = '$id' AND client_loan_schedule.actived=1 AND client_loan_schedule.pay_date <= CURDATE()
-                                    		GROUP BY money_transactions.client_loan_schedule_id
+                                    		GROUP BY client_loan_schedule.id
                                     		UNION ALL 
                                     		SELECT  client_loan_agreement.client_id,
                                     				client_loan_schedule.id AS `id`,
@@ -381,9 +381,9 @@ switch ($action) {
 	                                                 '' AS pledge
                                 			FROM     client_loan_schedule
                                 			JOIN     client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
-                                			JOIN     money_transactions ON money_transactions.client_loan_schedule_id = client_loan_schedule.id
-                                			WHERE    client_loan_agreement.client_id = '$sub_client' AND client_loan_schedule.actived=1 AND money_transactions.status = 1
-                                			GROUP BY money_transactions.client_loan_schedule_id
+                                			LEFT JOIN     money_transactions ON money_transactions.client_loan_schedule_id = client_loan_schedule.id
+                                			WHERE    client_loan_agreement.client_id = '$sub_client' AND client_loan_schedule.actived=1 AND client_loan_schedule.pay_date <= CURDATE()
+                                			GROUP BY client_loan_schedule.id
                                 			UNION ALL 
                                 			SELECT  client_loan_agreement.client_id,
                                 					client_loan_schedule.id AS `id`,
@@ -546,7 +546,7 @@ switch ($action) {
                                     		JOIN     client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
                                     		LEFT JOIN money_transactions ON money_transactions.client_loan_schedule_id = client_loan_schedule.id
                                     		WHERE    client_loan_agreement.client_id = '$id' AND client_loan_schedule.actived=1 AND client_loan_schedule.pay_date <= CURDATE()
-                                    		GROUP BY money_transactions.client_loan_schedule_id
+                                    		GROUP BY client_loan_schedule.id
                                     		UNION ALL 
                                     		SELECT  client_loan_agreement.client_id,
                             						client_loan_schedule.id AS `id`,
@@ -708,10 +708,10 @@ switch ($action) {
 	                                                 '' AS difference,
 	                                                 '' AS pledge
                                 			FROM     client_loan_schedule
-                                			JOIN     client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
+                                			LEFT JOIN  client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
                                 			JOIN     money_transactions ON money_transactions.client_loan_schedule_id = client_loan_schedule.id
-                                			WHERE    client_loan_agreement.client_id = '$sub_client' AND client_loan_schedule.actived=1 AND money_transactions.status = 1
-                                			GROUP BY money_transactions.client_loan_schedule_id
+                                			WHERE    client_loan_agreement.client_id = '$sub_client' AND client_loan_schedule.actived=1 AND client_loan_schedule.pay_date <= CURDATE()
+                                			GROUP BY client_loan_schedule.id
                                 			UNION ALL 
                                 			SELECT  client_loan_agreement.client_id,
                         							client_loan_schedule.id AS `id`,
@@ -1702,9 +1702,11 @@ function GetPage($id){
         
         $color        = "";
         
-        if ($row[status] == 1) {
+         $curdate=date("Y-m-d");
+          
+         if ($row[schedule_date] <= $curdate) {
             $color = 'background: #4CAF50;';
-        }
+         }
         
         $dat.='<tr style="width:100%; border: 1px solid #000; '.$color.'">
                     <td style="width:5%; border-right: 1px solid #000;"><label style="font-size: 12px; text-align:center;">'.$row[number].'<label></td>
@@ -1771,8 +1773,9 @@ function GetPage($id){
           $sum_P1       += $row1[pay_amount];
       
           $color1        = "";
-      
-          if ($row1[status] == 1) {
+          $curdate=date("Y-m-d");
+          
+          if ($row1[schedule_date] <= $curdate) {
               $color1 = 'background: #4CAF50;';
           }
       
