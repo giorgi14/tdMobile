@@ -40,7 +40,7 @@ function GetDataTable(tname, aJaxURL, action, count, data, hidden, length, sorti
     var oTable = "";
 
     //Defoult Length
-    var dLength = [[15, 30, 50, -1], [15, 30, 50, "ყველა"]];
+    var dLength = [[-1], ["ყველა"]];
 
     if (!empty(length))
         dLength = length;
@@ -203,7 +203,7 @@ function GetDataTable1(tname, aJaxURL, action, count, data, hidden, length, sort
     var oTable = "";
 
     //Defoult Length
-    var dLength = [[10, 30, 50, -1], [10, 30, 50, "ყველა"]];
+    var dLength = [[-1], ["ყველა"]];
 
     if (!empty(length))
         dLength = length;

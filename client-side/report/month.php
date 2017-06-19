@@ -15,7 +15,7 @@
 		});
 		
         function LoadTable(tbl,num,act,change_colum_main,aJaxURL){
-			var dLength = [[50, -1], [50, "ყველა"]];
+			var dLength = [[-1], ["ყველა"]];
 			var total =	[5,7,8,9,10,11,12];
 			GetDataTable(tName+tbl, aJaxURL, act, num, "&filt_month="+$("#filt_month").val()+"&filt_year="+$("#filt_year").val()+"&filt_day="+$("#filt_day").val(), 0, dLength, 3, "asc", total, change_colum_main);
 			$("#table_letter_length").css('top', '2px');
