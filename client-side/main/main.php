@@ -5,7 +5,7 @@
 		var aJaxURL1	      = "server-side/view/cource.action.php";		//server side folder url
 		var tName	          = "table_";													//table name
 		var dialog	          = "add-edit-form";												//form name
-		var colum_number      = 17;
+		var colum_number      = 18;
 	    var main_act          = "get_list";
 	    var tbName            = 'tabs1';
 	    var change_colum_main = "<'dataTable_buttons'T><'F'Cfipl>"; 
@@ -78,6 +78,7 @@
     						}else{
     							$("#remaining_root").html(data.remaining_root);
     							$("#remaining_root_gel").html(data.remaining_root_gel);
+    							$("#delta").html(data.delta);
     						}
     					}
     			    }
@@ -267,7 +268,7 @@
 	            	$("#cancel-loan").button("enable");
 			    }
 	            $(".add-edit-form-class").css('position','fixed');
-	            LoadTable('letter', 16, 'get_list1', "<'F'Cpl>", aJaxURL, '');
+	            LoadTable('letter', 18, 'get_list1', "<'F'Cpl>", aJaxURL, '');
 	            
 	        }
 	    }

@@ -15,7 +15,7 @@
 		});
         
 		function LoadTable(tName,num,change_colum_main,aJaxURL){
-			GetDataTable(tName, aJaxURL, 'get_list', num, "", 0, "", 1, "desc", "", change_colum_main);
+			GetDataTable(tName, aJaxURL, 'get_list', num, "", 0, "", 0, "desc", "", change_colum_main);
 			setTimeout(function(){$('.ColVis, .dataTable_buttons').css('display','none');}, 90);
 		}
 		
@@ -23,6 +23,8 @@
 			var id		= $("#id").val();
 			if(fname=='add-edit-form'){
     			GetDialog(fName, 270, "auto", "", 'canter top');
+    			GetDate('cource_date');
+    			$("#cource").focus();
     		}
 		}
 
@@ -30,9 +32,10 @@
 	    $(document).on("click", "#save-dialog", function () {
 		    param 			= new Object();
 
-		    param.act	 = "save_cource";
-	    	param.id	 = $("#id").val();
-	    	param.cource = $("#cource").val();
+		    param.act	      = "save_cource";
+	    	param.id	      = $("#id").val();
+	    	param.cource      = $("#cource").val();
+	    	param.cource_date = $("#cource_date").val();
 	    	
 			if(param.cource == ""){
 				alert("შეავსეთ ველი!");

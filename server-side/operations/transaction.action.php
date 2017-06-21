@@ -26,32 +26,39 @@ switch ($action) {
 		}
 		 
 		if ($tab == 1) {
-		    $val = 'money_transactions.pay_root,
-                    money_transactions.pay_percent,
-                    money_transactions.diff';
+		    $val = '(SELECT SUM(money_transactions_detail.pay_root) FROM money_transactions_detail WHERE money_transactions_detail.transaction_id = money_transactions.id AND money_transactions_detail.status = 1 AND NOT ISNULL(money_transactions_detail.pay_root)),
+				    (SELECT SUM(money_transactions_detail.pay_percent) FROM money_transactions_detail WHERE money_transactions_detail.transaction_id = money_transactions.id AND money_transactions_detail.status = 1 AND NOT ISNULL(money_transactions_detail.pay_root)),
+                    IFNULL((SELECT SUM(money_transactions_detail.pay_percent) FROM money_transactions_detail WHERE money_transactions_detail.transaction_id = money_transactions.id AND money_transactions_detail.status = 3 AND NOT ISNULL(money_transactions_detail.pay_amount)),0.00),';
 		}else{
-		    $val = 'transaction_type.`name`';
+		    $val = '';
 		    if ($tab==0) {
 		        $where_status = 'AND money_transactions.status = 0';
 		    }
 		    
 		}
 		
-		$rResult = mysql_query("SELECT  money_transactions.id,
-                                    	money_transactions.datetime,
-		                                client_loan_agreement.oris_code,
-                                    	client.`name`,
-                                    	money_transactions.pay_amount,
-                                        loan_currency.name,
-		                                money_transactions.course,
-                                        IF(money_transactions.`status` = 0,'დაუდასტურებელი','დადასტურებული')
-                                FROM  `money_transactions`
-                                JOIN   client_loan_schedule ON client_loan_schedule.id = money_transactions.client_loan_schedule_id
-                                JOIN   client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
-		                        LEFT JOIN   loan_currency ON loan_currency.id = money_transactions.currency_id
-		                        JOIN transaction_type ON transaction_type.id = money_transactions.type_id
-                                JOIN   client ON client.id = client_loan_agreement.client_id 
-		                        WHERE money_transactions.type_id != 4 $where_status $where");
+		$rResult = mysql_query("SELECT     money_transactions.id,
+                                    	   DATE_FORMAT(money_transactions.datetime,'%d/%m/%Y'),
+		                                   client_loan_agreement.oris_code,
+                                    	   CASE
+                                               WHEN client.id >= 302 THEN CONCAT(client.`name`, ' ', client.lastname, ' / ს/ხ', client_loan_agreement.id, ' / ', client_car.car_marc, ' / ', client_car.registration_number)
+                                               WHEN client.id < 302 THEN CONCAT(client.`name`, ' ', client.lastname, ' / ს/ხ', client.exel_agreement_id, ' / ', client_car.car_marc, ' / ', client_car.registration_number)
+                                           END AS `name`,
+                                    	   money_transactions.pay_amount,
+                                           loan_currency.name,
+		                                   money_transactions.course,
+		                                   $val
+                                           IF(money_transactions.`status` = 0,'დაუდასტურებელი','დადასტურებული'),
+		                                   user_info.`name`
+                                 FROM     `money_transactions`
+                                 JOIN      client_loan_schedule ON client_loan_schedule.id = money_transactions.client_loan_schedule_id
+                                 JOIN      client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
+		                         LEFT JOIN loan_currency ON loan_currency.id = money_transactions.currency_id
+		                         JOIN      transaction_type ON transaction_type.id = money_transactions.type_id
+                                 JOIN      client ON client.id = client_loan_agreement.client_id
+		                         JOIN      client_car ON client_car.client_id = client.id
+		                         JOIN      user_info ON user_info.user_id = money_transactions.user_id
+		                         WHERE     money_transactions.type_id != 4 $where_status $where AND money_transactions.id>67");
 
 		$data = array("aaData"	=> array());
 
@@ -90,30 +97,27 @@ switch ($action) {
 		    $filt = "AND client_loan_agreement.client_id = $id";
 		}
 		
-		$res = mysql_fetch_assoc(mysql_query("  SELECT 	    client_loan_schedule.id,
-		                                                    client_loan_schedule.pay_amount,
-                                        					client_loan_schedule.root,
-                                        					client_loan_schedule.percent,
-                                        				    client_loan_schedule.penalty,
-		    
-                                        					client_loan_agreement.pledge_fee,
-                                        					client_loan_agreement.loan_currency_id,
-		    
-                                        					client_loan_agreement.id AS agrement_id,
-		                                                    client_loan_agreement.loan_amount,
-                                        					client.id AS client_id,
-		    
-                                        				    (SELECT  car_insurance_info.ins_payy 
-                                                            FROM   `car_insurance_info`
-                                                            WHERE   car_insurance_info.client_id = client.id 
-                                                            AND     car_insurance_info.actived = 1
-                                                            AND     DATE(car_insurance_info.car_insurance_end) = CURDATE()) AS insurance_fee
-                                                 FROM 	   `client_loan_schedule`
-                                                 LEFT JOIN  client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
-                                                 JOIN       client ON client.id = client_loan_agreement.client_id
-                                                 WHERE      client_loan_schedule.actived = 1 $filt AND client_loan_schedule.`status` != 1
-                                                 ORDER BY   pay_date ASC
-                                                 LIMIT 1"));
+		$res = mysql_fetch_assoc(mysql_query("SELECT 	 client_loan_schedule.id,
+		                                                 client_loan_schedule.pay_amount,
+                                        			     client_loan_schedule.root,
+                                        				 client_loan_schedule.percent,
+                                        				 client_loan_schedule.penalty,
+		                                                 client_loan_agreement.pledge_fee,
+                                        			     client_loan_agreement.loan_currency_id,
+		                                                 client_loan_agreement.id AS agrement_id,
+		                                                 client_loan_agreement.loan_amount,
+                                        				 client.id AS client_id,
+		                                                (SELECT  car_insurance_info.ins_payy 
+                                                         FROM   `car_insurance_info`
+                                                         WHERE   car_insurance_info.client_id = client.id 
+                                                         AND     car_insurance_info.actived = 1
+                                                         AND     DATE(car_insurance_info.car_insurance_end) = CURDATE()) AS insurance_fee
+                                               FROM 	`client_loan_schedule`
+                                               LEFT JOIN client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
+                                               JOIN      client ON client.id = client_loan_agreement.client_id
+                                               WHERE     client_loan_schedule.actived = 1 $filt AND client_loan_schedule.`status` != 1
+                                               ORDER BY  pay_date ASC
+                                               LIMIT 1"));
 		
 		$res1 = mysql_fetch_assoc(mysql_query("SELECT  SUM(money_transactions_detail.pay_amount) AS pay_amount
                                                FROM    money_transactions_detail
@@ -123,19 +127,9 @@ switch ($action) {
                                                WHERE   client_loan_agreement.client_id = '$res[client_id]' 
                                                AND     money_transactions_detail.`status` = 3
                                                AND     money_transactions_detail.actived = 1"));
-// 		if ($res[remaining_root]==0) {
-// 		    $remainig_root = $res[loan_amount];
-// 		}else{
-// 		    $remainig_root = $res[remaining_root];
-// 		}
-		
-// 		if ($res[gadacilebuli]>0 && $res[gadacilebuli]<=$res[penalty_days]) {
-// 		    $penalty = round(($remainig_root * ($res[penalty_percent]/100))*$res[gadacilebuli],2);
-// 		}elseif ($res[gadacilebuli]>0 && $res[gadacilebuli]>$res[penalty_days]){
-		    $penalty = $res[penalty];
-//		}
-		
-		
+
+		$penalty = $res[penalty];
+
 		if ($type_id == 1 || $type_id == 0) {	
     		$data = array('status' => 1, 'id' => $res[id],'pay_amount' => $res[pay_amount] + $penalty, 'root' => $res[root], 'percent' => $res[percent], 'penalty' => $penalty, 'client_data' => client($res[client_id]), 'agrement_data' => client_loan_number($res[agrement_id]), 'currenc' => currency($res[loan_currency_id]),'pay_amount1' => $res1[pay_amount], 'root1' => $res1[pay_root], 'percent1' => $res1[pay_percent], 'penalty1' => $res1[pay_penalty]);
 		}elseif ($type_id == 2){
@@ -143,8 +137,6 @@ switch ($action) {
 		}elseif ($type_id == 3){
 		    $data = array('status' => 3, 'id' => $res[id],'pledge_fee' => $res[pledge_fee]);
 		}
-		
-		
 		
 		break;
 	default:
@@ -274,6 +266,7 @@ function GetHolidays($id){
 	                                               money_transactions.currency_id,
 	                                               money_transactions.client_loan_schedule_id,
 	                                               money_transactions.datetime,
+	                                               money_transactions.pay_datetime,
 	                                               money_transactions.received_currency_id,
 	                                               money_transactions.status
                                             FROM  `money_transactions`
@@ -331,6 +324,7 @@ function GetPage($res = ''){
     					<td style="width: 180px;"><label calss="label" style="padding-top: 5px;" for="name">დღევანდელი კურსი</label></td>
 	                    <td style="width: 180px;"><label calss="label" style="padding-top: 5px;" for="name">ჩარიცხული თანხა</label></td>
     					<td style="width: 180px;"><label calss="label" style="padding-top: 5px;" for="name">ჩარიცხულის ვალუტა</label></td>
+	                    <td style="width: 180px;"><label calss="label" style="padding-top: 5px;" for="name">ჩარიცხვის თარიღი</label></td>
 	                </tr>
     				<tr>
 	                    <td style="width: 180px;">
@@ -344,6 +338,9 @@ function GetPage($res = ''){
     					</td>
     					<td style="width: 180px;">
     						<select id="received_currency_id" calss="label" style="width: 155px;">'.currency($res[received_currency_id]).'</select>
+    					</td>
+    				    <td style="width: 180px;">
+    						<input style="width: 200px;" id="transaction_date" class="label" type="text" value="'.$res[pay_datetime].'">
     					</td>
     				</tr>
     				<tr style="height:20px"></tr>
@@ -396,6 +393,7 @@ function GetPage($res = ''){
 			<!-- ID -->
 			<input type="hidden" id="tr_id" value="' . $res['id'] . '" />
 			<input type="hidden" id="hidde_id" value="" />
+			<input type="hidden" id="hidde_cl_id" value="'.$res[client_id].'" />
 			<input type="hidden" id="hidde_transaction_id" value="'.$hidde_id.'" />
         </fieldset>
     </div>

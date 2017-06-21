@@ -12,22 +12,33 @@ switch ($action) {
     
         break;
     case 'gel_footer':
-        $id	              = $_REQUEST['id'];
+        $id	= $_REQUEST['id'];
         
         $req = mysql_fetch_array(mysql_query("SELECT   client_loan_agreement.loan_currency_id,
-                                                       ROUND(client_loan_schedule.remaining_root,2) AS remaining_root,
-                                        			   CASE 
-                                        				   WHEN client_loan_agreement.loan_currency_id = 1 THEN ROUND(client_loan_schedule.remaining_root / client_loan_agreement.exchange_rate,2)
-                                        				   WHEN client_loan_agreement.loan_currency_id = 2 THEN ROUND(client_loan_schedule.remaining_root * client_loan_agreement.exchange_rate,2)
+                                                       CASE 
+                                        				   WHEN client_loan_schedule.status = 0 THEN ROUND(client_loan_schedule.remaining_root + client_loan_schedule.root,2)
+                                        				   WHEN client_loan_schedule.status = 1 THEN ROUND(client_loan_schedule.remaining_root,2)
+                                                       END AS remaining_root,
+                                                       CASE 
+                                        				   WHEN client_loan_agreement.loan_currency_id = 1 AND client_loan_schedule.status = 0 THEN ROUND((client_loan_schedule.remaining_root + client_loan_schedule.root) / client_loan_agreement.exchange_rate,2)
+                                        				   WHEN client_loan_agreement.loan_currency_id = 2 AND client_loan_schedule.status = 0 THEN ROUND((client_loan_schedule.remaining_root + client_loan_schedule.root)* client_loan_agreement.exchange_rate,2)
+                                                           WHEN client_loan_agreement.loan_currency_id = 1 AND client_loan_schedule.status = 1 THEN ROUND(client_loan_schedule.remaining_root / client_loan_agreement.exchange_rate,2)
+                                        				   WHEN client_loan_agreement.loan_currency_id = 2 AND client_loan_schedule.status = 1 THEN ROUND(client_loan_schedule.remaining_root * client_loan_agreement.exchange_rate,2)
                                         			   END AS remaining_root_gel,
                                                        ROUND(client_loan_agreement.insurance_fee,2) AS insurance_fee
                                               FROM     client_loan_schedule
                                               JOIN     client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
-                                              WHERE    client_loan_agreement.client_id = $id AND client_loan_schedule.`status` = 0
-                                              ORDER BY client_loan_schedule.pay_date asc
+                                              WHERE    client_loan_agreement.client_id = $id AND client_loan_schedule.`pay_date` <= curdate()
+                                              ORDER BY client_loan_schedule.pay_date DESC
                                               LIMIT 1"));
         
-        $data = array("remaining_root" => $req[remaining_root], "remaining_root_gel" => $req[remaining_root_gel], "insurance_fee" => $req[insurance_fee], "loan_currency_id" => $req[loan_currency_id]);
+        $req1 = mysql_fetch_array(mysql_query("SELECT IFNULL(MAX(client_loan_schedule.remaining_root),0.00) AS remaining_root
+                                               FROM   client_loan_schedule
+                                               JOIN   client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
+                                               WHERE  client_loan_agreement.client_id = $id AND client_loan_schedule.`status` = 0 AND client_loan_schedule.actived = 1 AND client_loan_schedule.`pay_date` <= curdate()
+                                               LIMIT 1"));
+        
+        $data = array("remaining_root" => $req[remaining_root], "remaining_root_gel" => $req[remaining_root_gel], "insurance_fee" => $req[insurance_fee], "loan_currency_id" => $req[loan_currency_id], 'delta' => $req1[remaining_root]);
         
     
         break;
@@ -239,6 +250,7 @@ switch ($action) {
                             				 ROUND(letter.exchange,4),
                             				 letter.loan_amount,
                             				 letter.loan_amount_gel,
+	                                         '' AS delta,
                             				 letter.percent,
                             				 letter.percent_gel,
                             				 letter.percent1,
@@ -544,6 +556,7 @@ switch ($action) {
                             				 ROUND(letter.exchange,4),
                             				 letter.loan_amount,
                             				 letter.loan_amount_gel,
+    	                                     '' AS delta,
                             				 letter.percent,
                             				 letter.percent_gel,
                             				 letter.percent1,
@@ -859,42 +872,42 @@ switch ($action) {
 	            if ($j>1 && $i>3 && $i<6) {
 	                $row[] = '';
 	            }else{
-	               if ($i == 6) {
+	               if ($i == 7) {
 	                   $sumpercent+=$aRow[$i];
 	                   if($aRow[sort1]==2){
 	                       $row[] = '<div title="'.$aRow[loan_amount_gel].' დღის ჯარიმა" style="background: #009688;  color: #fff;">'.$aRow[$i].'</div>';
 	                   }else{
     	                   $row[] = $aRow[$i];
     	               }
-	               }else if ($i == 7){
+	               }else if ($i == 8){
 	                   $sumpercent1+=$aRow[$i];
 	                   if($aRow[sort1]==2){
 	                       $row[] = '<div title="'.$aRow[loan_amount_gel].' დღის ჯარიმა" style="background: #009688; color: #fff;">'.$aRow[$i].'</div>';
 	                   }else{
 	                       $row[] = $aRow[$i];
 	                   }
-	               }elseif ($i == 8){
+	               }elseif ($i == 9){
 	                   $sumpercent2+=$aRow[$i];
 	                   if($aRow[sort1]==4){
 	                       $row[] = '<div title="წინა თვის მეტობა" style="background: #F44336; color: #fff;">'.$aRow[$i].'</div>';
 	                   }else{
 	                       $row[] = $aRow[$i];
 	                   } 
-	               }elseif ($i == 9){
+	               }elseif ($i == 10){
 	                   $sumpercent3+=$aRow[$i];
 	                   if($aRow[sort1]==4){
 	                       $row[] = '<div title="წინა თვის მეტობა" style="background: #F44336; color: #fff;">'.$aRow[$i].'</div>';
 	                   }else{
 	                       $row[] = $aRow[$i];
 	                   }
-	               }elseif ($i == 10){
+	               }elseif ($i == 11){
 	                   $sumpercent4+=$aRow[$i];
 	                   if($aRow[sort1]==4){
 	                       $row[] = '<div title="წინა თვის მეტობა" style="background: #F44336; color: #fff;">'.$aRow[$i].'</div>';
 	                   }else{
 	                       $row[] = $aRow[$i];
 	                   }
-	               }elseif ($i == 11){
+	               }elseif ($i == 12){
 	                   $sumpercent5+=$aRow[$i];
 	                   if($aRow[sort1]==4){
 	                       $row[] = '<div title="წინა თვის მეტობა" style="background: #F44336; color: #fff;">'.$aRow[$i].'</div>';
@@ -1543,23 +1556,27 @@ function GetPage($id){
                         <th style="width: 30px;">#</th>
                         <th style="width: 7%;">რიცხვი</th>
                         <th style="width: 6%;">კურსი</th>
-                        <th style="width: 7%;">სესხის<br>გაცემა<br>ლარი</th>
+                        <th style="width: 6%;">სესხის<br>გაცემა<br>ლარი</th>
                         <th style="width: 7%;">სესხის<br>გაცემა<br>დოლარი</th>
-                        <th style="width: 8%;">დარიცხვა%<br>ლარი</th>
-                        <th style="width: 8%;">დარიცხვა%<br>დოლარი</th>
+                        <th style="width: 6%;">ნაშთი</th>
+                        <th style="width: 7%;">დარიცხვა%<br>ლარი</th>
+                        <th style="width: 7%;">დარიცხვა%<br>დოლარი</th>
                         <th style="width: 7%;">გადახდა%<br>ლარი</th>
                         <th style="width: 7%;">გადახდა%<br>დოლარი</th>
-                        <th style="width: 7%;">ძირის<br>გადახდა<br>ლარი</th>
+                        <th style="width: 6%;">ძირის<br>გადახდა<br>ლარი</th>
                         <th style="width: 7%;">ძირის<br>გადახდა<br>დოლარი</th>
-                        <th style="width: 7%;">ვალდე-<br>ბულება<br>ლარი</th>
+                        <th style="width: 6%;">ვალდე-<br>ბულება<br>ლარი</th>
                         <th style="width: 7%;">ვალდე-<br>ბულება<br>დოლარი</th>
-                        <th style="width: 7%;">კურსთა<br>შორისი<br>სხვაობა</th>
+                        <th style="width: 6%;">კურსთა<br>შორისი<br>სხვაობა</th>
                         <th style="width: 7%;">დაზღვევა</th>
                     </tr>
                 </thead>
                 <thead>
                     <tr class="search_header">
                         <th class="colum_hidden">
+                            <input type="text" name="search_category" value="ფილტრი" class="search_init" />
+                        </th>
+                        <th>
                             <input type="text" name="search_category" value="ფილტრი" class="search_init" />
                         </th>
                         <th>
@@ -1617,6 +1634,7 @@ function GetPage($id){
                         <th style="text-align: left; font-weight: bold;"><p align="right">სულ</th>
                         <th id ="gacema_lari" style="text-align: left; font-weight: bold;">&nbsp;</th>
                         <th style="text-align: left; font-weight: bold;">&nbsp;</th>
+                        <th id ="delta" style="text-align: left; font-weight: bold;">&nbsp;</th>
                         <th id ="daricxva_lari" style="text-align: left; font-weight: bold;">&nbsp;</th>
                         <th id ="daricxva_lari1" style="text-align: left; font-weight: bold;">&nbsp;</th>
                         <th id ="procenti_lari" style="text-align: left; font-weight: bold;">&nbsp;</th>
@@ -1637,17 +1655,18 @@ function GetPage($id){
                         <th style="width: 7%;">რიცხვი</th>
                         <th style="width: 6%;">კურსი</th>
                         <th style="width: 7%;">სესხის<br>გაცემა<br>დოლარი</th>
-                        <th style="width: 7%;">სესხის<br>გაცემა<br>ლარი</th>
-                        <th style="width: 8%;">დარიცხვა%<br>დოლარი</th>
-                        <th style="width: 8%;">დარიცხვა%<br>ლარი</th>
+                        <th style="width: 6%;">სესხის<br>გაცემა<br>ლარი</th>
+                        <th style="width: 6%;">ნაშთი</th>
+                        <th style="width: 7%;">დარიცხვა%<br>დოლარი</th>
+                        <th style="width: 7%;">დარიცხვა%<br>ლარი</th>
                         <th style="width: 7%;">გადახდა%<br>დოლარი</th>
-                        <th style="width: 7%;">გადახდა%<br>ლარი</th>
+                        <th style="width: 6%;">გადახდა%<br>ლარი</th>
                         <th style="width: 7%;">ძირის<br>გადახდა<br>დოლარი</th>
-                        <th style="width: 7%;">ძირის<br>გადახდა<br>ლარი</th>
+                        <th style="width: 6%;">ძირის<br>გადახდა<br>ლარი</th>
                         <th style="width: 7%;">ვალდე-<br>ბულება<br>დოლარი</th>
                         <th style="width: 7%;">ვალდე-<br>ბულება<br>ლარი</th>
-                        <th style="width: 7%;">კურსთა<br>შორისი<br>სხვაობა</th>
-                        <th style="width: 7%;">დაზღვევა</th>
+                        <th style="width: 6%;">კურსთა<br>შორისი<br>სხვაობა</th>
+                        <th style="width: 6%;">დაზღვევა</th>
         
                     </tr>
                 </thead>
@@ -1701,6 +1720,9 @@ function GetPage($id){
                         <th>
                             <input type="text" name="search_category" value="ფილტრი" class="search_init" />
                         </th>
+                        <th>
+                            <input type="text" name="search_category" value="ფილტრი" class="search_init" />
+                        </th>
                     </tr>
                 </thead>
                 <tfoot>
@@ -1711,6 +1733,7 @@ function GetPage($id){
                         <th style="text-align: left; font-weight: bold;"><p align="right">სულ</th>
                         <th id ="gacema_lari" style="text-align: left; font-weight: bold;">&nbsp;</th>
                         <th style="text-align: left; font-weight: bold;">&nbsp;</th>
+                        <th id ="delta" style="text-align: left; font-weight: bold;">&nbsp;</th>
                         <th id ="daricxva_lari" style="text-align: left; font-weight: bold;">&nbsp;</th>
                         <th id ="daricxva_lari1" style="text-align: left; font-weight: bold;">&nbsp;</th>
                         <th id ="procenti_lari" style="text-align: left; font-weight: bold;">&nbsp;</th>
@@ -1726,12 +1749,13 @@ function GetPage($id){
     }
   
     $req = mysql_query(" SELECT client_loan_schedule.number,
-                                client_loan_schedule.schedule_date,
+                                DATE_FORMAT(client_loan_schedule.schedule_date, '%d/%m/%Y') AS schedule_date,
                                 client_loan_schedule.root,
                                 client_loan_schedule.percent,
                                 client_loan_schedule.pay_amount,
                                 client_loan_schedule.remaining_root,
-                                client_loan_schedule.status
+                                client_loan_schedule.status,
+                                client_loan_schedule.schedule_date AS Sched_date
                          FROM   client_loan_schedule
                          JOIN   client_loan_agreement ON client_loan_schedule.client_loan_agreement_id = client_loan_agreement.id
                          WHERE  client_loan_agreement.client_id = $id AND client_loan_schedule.actived=1");
@@ -1744,7 +1768,7 @@ function GetPage($id){
         
          $curdate=date("Y-m-d");
           
-         if ($row[schedule_date] <= $curdate) {
+         if ($row[Sched_date] <= $curdate) {
             $color = 'background: #4CAF50;';
          }
         
@@ -1798,12 +1822,13 @@ function GetPage($id){
                                               WHERE  client.actived = 1 AND client.id = '$res[sub_client]'"));
       
       $req1 = mysql_query("SELECT client_loan_schedule.number,
-                                  client_loan_schedule.schedule_date,
+                                  DATE_FORMAT(client_loan_schedule.schedule_date, '%d/%m/%Y') AS schedule_date,
                                   client_loan_schedule.root,
                                   client_loan_schedule.percent,
                                   client_loan_schedule.pay_amount,
                                   client_loan_schedule.remaining_root,
-                                  client_loan_schedule.status
+                                  client_loan_schedule.status,
+                                  client_loan_schedule.schedule_date AS Sched_date
                            FROM   client_loan_schedule
                            JOIN   client_loan_agreement ON client_loan_schedule.client_loan_agreement_id = client_loan_agreement.id
                            WHERE  client_loan_agreement.client_id = '$res[sub_client]' AND client_loan_schedule.actived=1");
@@ -1815,7 +1840,7 @@ function GetPage($id){
           $color1        = "";
           $curdate=date("Y-m-d");
           
-          if ($row1[schedule_date] <= $curdate) {
+          if ($row1[Sched_date] <= $curdate) {
               $color1 = 'background: #4CAF50;';
           }
       
@@ -1856,9 +1881,9 @@ function GetPage($id){
                         <table style="width:100%;">
                             <tr style="width:100%;">
                                 <td style="width:7%;"><label style="font-size: 14px;">კლიენტის:<label></td>
-                                <td style="width:55%;"><label style="font-size: 14px;">'.$res[name].$res[cl_car_info].'</label></td>
-                                <td style="width:10%;"><label style="font-size: 14px;">სესხის ვალუტა:</label></td>
-                                <td style="width:28%;"><label style="font-size: 14px;">'.$res[loan_name].'</label></td>
+                                <td style="width:60%;"><label style="font-size: 14px;">'.$res[name].$res[cl_car_info].'</label></td>
+                                <td style="width:15%;"><label style="font-size: 14px;">სესხის ვალუტა:</label></td>
+                                <td style="width:18%;"><label style="font-size: 14px;">'.$res[loan_name].'</label></td>
                             </tr>
                         </table> 
                     </div>

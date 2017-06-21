@@ -36,7 +36,7 @@ switch ($action) {
 		$hidden	= $_REQUEST['hidden'];
 		 
 		$rResult = mysql_query("SELECT cur_cource.id,
-		                               DATE_FORMAT(datetime,'%Y-%m-%d') AS `date`,
+		                               DATE_FORMAT(datetime,'%d/%m/%Y') AS `date`,
                         			   cur_cource.`cource`
                                 FROM   cur_cource
                                 WHERE  cur_cource.actived = 1");
@@ -61,13 +61,25 @@ switch ($action) {
 
 		break;
 	case 'save_cource':
-		$id 	= $_REQUEST['id'];
-		$cource = $_REQUEST['cource'];
+		$id 	     = $_REQUEST['id'];
+		$cource      = $_REQUEST['cource'];
+		$cource_date = $_REQUEST['cource_date'];
 
 		if ($id == '') {
-            Addcource($cource);
-        }else {
-			Savecource($id, $cource);
+		    $res = mysql_query("SELECT datetime 
+                		        FROM   cur_cource 
+                		        WHERE  DATE(datetime) = '$cource_date' 
+		                        AND actived = 1");
+		    
+		    $check = mysql_num_rows($res); 
+		    if ($check == 0) {
+		        Addcource($cource_date, $cource);
+		    }else{
+		        global $error;
+		        $error = 'მოცემულ თარიღში კურსი უკვე დამატებულია!';
+		    }
+        }else{
+			Savecource($id, $cource_date, $cource);
 		}
 		
 		
@@ -91,33 +103,35 @@ echo json_encode($data);
 * ******************************
 */
 
-function Addcource($cource){
+function Addcource($cource_date, $cource){
     
 	$user_id = $_SESSION['USERID'];
 	mysql_query("INSERT INTO `cur_cource` 
             		        (`user_id`, `datetime`, `cource`, `actived`) 
             		  VALUES 
-            		        ('$user_id', NOW(), '$cource', 1)");
+            		        ('$user_id', '$cource_date', '$cource', 1)");
 }
 
-function Savecource($id, $cource){
+function Savecource($id, $cource_date, $cource){
     
 	$user_id = $_SESSION['USERID'];
 	mysql_query("UPDATE `cur_cource`
                     SET `user_id`  = '$user_id',
+	                    `datetime` = '$cource_date',
                         `cource`   = '$cource'
                  WHERE  `id`       = '$id'");
 }
 
 function DisableHolidays($id){
-	mysql_query("	UPDATE `cur_cource`
-					SET    `actived` = 0
-					WHERE  `id`      = $id");
+	mysql_query("UPDATE `cur_cource`
+				 SET    `actived` = 0
+				 WHERE  `id`      = $id");
 }
 
 function Getcource($id){
 	$res = mysql_fetch_assoc(mysql_query("	SELECT  cur_cource.id,
-                                    				cur_cource.`cource`
+                                    				cur_cource.`cource`,
+	                                                cur_cource.datetime
                                             FROM    cur_cource
 											WHERE   cur_cource.`id` = $id" ));
 
@@ -130,6 +144,13 @@ function GetPage($res = ''){
 	$data = '  <div id="dialog-form">
             	    <fieldset>
             	    	<table class="dialog-form-table">
+	                        <tr>
+            					<td style="width: 170px;"><label for="name">თარიღი</label></td>
+            					<td>
+            						<input type="text" id="cource_date" value="' . $res['datetime'] . '" />
+            					</td>
+            				</tr>
+            			    <tr style="height:10px;"></tr>
             				<tr>
             					<td style="width: 170px;"><label for="name">კურსი</label></td>
             					<td>

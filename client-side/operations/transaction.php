@@ -1,12 +1,13 @@
 <html>
 <head>
 	<script type="text/javascript">
-		var aJaxURL	          = "server-side/operations/transaction.action.php";
-		var aJaxURL_det	      = "server-side/operations/transaction_detail.action.php";		//server side folder url
-		var tName	          = "example";													//table name
-		var fName	          = "add-edit-form";	
-		var tbName		      = "tabs1";											//form name
-		var change_colum_main = "<'dataTable_buttons'T><'F'Cfipl>";
+		var aJaxURL	            = "server-side/operations/transaction.action.php";
+		var aJaxURL_det	        = "server-side/operations/transaction_detail.action.php";
+		var aJaxURL_show_letter = "server-side/main.action.php";		//server side folder url
+		var tName	            = "example";													//table name
+		var fName	            = "add-edit-form";	
+		var tbName		        = "tabs1";											//form name
+		var change_colum_main   = "<'dataTable_buttons'T><'F'Cfipl>";
 		    	
 		$(document).ready(function () {  
 			GetTabs(tbName);       	
@@ -24,19 +25,19 @@
         		LoadTable(tName,8,change_colum_main,aJaxURL);	
          	}else if(tab == 1){
          		GetButtons("add_button1", "");
-             	GetDataTable("example1", aJaxURL, 'get_list', 10, "tab=1", 0, "", 0, "desc", "", change_colum_main);
+             	GetDataTable("example1", aJaxURL, 'get_list', 12, "tab=1", 0, "", 0, "desc", "", change_colum_main);
              	SetEvents("", "", "", "example1", fName, aJaxURL,'',tName,10,change_colum_main,aJaxURL,'','','');
              	
              	setTimeout(function(){$('.ColVis, .dataTable_buttons').css('display','none');}, 90);
 			}else if(tab == 2){
 				GetButtons("add_button2", "");
-				GetDataTable("example2", aJaxURL, 'get_list', 10, "tab=2", 0, "", 0, "desc", "", change_colum_main);
+				GetDataTable("example2", aJaxURL, 'get_list', 11, "tab=2", 0, "", 0, "desc", "", change_colum_main);
 				SetEvents("", "", "", "example2", fName, aJaxURL,'',tName,10,change_colum_main,aJaxURL,'','','');
 				
 				setTimeout(function(){$('.ColVis, .dataTable_buttons').css('display','none');}, 90);
           	}else{
           		GetButtons("add_button3", "");
-          		GetDataTable("example3", aJaxURL, 'get_list', 10, "tab=3", 0, "", 0, "desc", "", change_colum_main);
+          		GetDataTable("example3", aJaxURL, 'get_list', 11, "tab=3", 0, "", 0, "desc", "", change_colum_main);
           		SetEvents("", "", "", "example3", fName, aJaxURL,'',tName,10,change_colum_main,aJaxURL,'','','');
           		
           		setTimeout(function(){$('.ColVis, .dataTable_buttons').css('display','none');}, 90);
@@ -51,21 +52,79 @@
 		
 		function LoadDialog(fname){
 			var id		= $("#id").val();
-			var buttons = {
-				"save": {
-		            text: "დადასტურება",
-		            id: "save-dialog1"
-		        },
-	        	"cancel": {
-		            text: "დახურვა",
-		            id: "cancel-dialog",
-		            click: function () {
-		            	$(this).dialog("close");
-		            }
-		        }
-		    };
-			/* Dialog Form Selector Name, Buttons Array */
 			if(fname=='add-edit-form'){
+    			var buttons = {
+    				"show_letter": {
+    		            text: "ბარათის ნახვა",
+    		            id: "show_letter",
+    		            click: function () {
+    		            	param 	  = new Object();
+    		        		param.act = "get_edit_page";
+    		        		param.id  = $("#hidde_cl_id").val();
+    		        		
+    		        		$.ajax({
+    		        	        url: aJaxURL_show_letter,
+    		        		    data: param,
+    		        	        success: function(data) {       
+    		        				if(typeof(data.error) != "undefined"){
+    		        					if(data.error != ""){
+    		        						alert(data.error);
+    		        					}else{
+    		        						$("#add-edit-show_letter").html(data.page);
+    		        						var buttons = {
+		        			    				"cancel": {
+		        			    		            text: "დახურვა",
+		        			    		            id: "cancel-dialog",
+		        			    		            click: function () {
+		        			    		            	$(this).dialog("close");
+		        			    		            }
+		        			    		        }
+		        			    		    };
+    		        			            GetDialog("add-edit-show_letter", 1200, "auto", buttons, 'left+43 top');
+    		        			            $('#add-edit-show_letter, .add-edit-show_letter-class').css('overflow-y','scroll');
+    		        			            var dLength = [[10, 30, 50, -1], [10, 30, 50, "ყველა"]];
+    		        			            var total =	[4,5,14];
+    		        			            GetDataTable1("table_letter", aJaxURL_show_letter, "get_list1", 16, "&id="+param.id+"&loan_currency_id="+$("#loan_currency").val(), 0, dLength, 4, "desc", total, "<'F'Cpl>");
+											$("#table_letter_length").css('top','0px');
+    		        			            parame 		            = new Object();
+    		        					    parame.act	            = "gel_footer";
+    		        					    parame.id	            = $("#id").val();
+    		        					    parame.loan_currency_id	= $("#loan_currency_id").val();
+    		        					    
+    		        					    $.ajax({
+    		        		    		        url: aJaxURL_show_letter,
+    		        		    			    data: parame,
+    		        		    		        success: function(data) {			        
+    		        		    					if(typeof(data.error) != 'undefined'){
+    		        		    						if(data.error != ''){
+    		        		    							alert(data.error);
+    		        		    						}else{
+    		        		    							$("#remaining_root").html(data.remaining_root);
+    		        		    							$("#remaining_root_gel").html(data.remaining_root_gel);
+    		        		    						}
+    		        		    					}
+    		        		    			    }
+    		        		    		    });
+    		        			        }
+    		        				}
+    		        	    	}
+    		        	    });
+    		            }
+    		        },
+    		        "save": {
+    		            text: "დადასტურება",
+    		            id: "save-dialog1"
+    		        },
+    	        	"cancel": {
+    		            text: "დახურვა",
+    		            id: "cancel-dialog",
+    		            click: function () {
+    		            	$(this).dialog("close");
+    		            }
+    		        }
+    		    };
+				/* Dialog Form Selector Name, Buttons Array */
+			
     			GetDialog(fName, 1180, "auto", buttons,"top");
     			
     			$('#currency_id').chosen();
@@ -76,14 +135,15 @@
 				setTimeout(function(){$('.ColVis, .dataTable_buttons').css('display','none');}, 50);
 				$("#table_transaction_detail_length").css('top', '2px');
 				GetButtons("add_button_dettail","");
-         		//SetEvents("add_button_dettail", "", "", tName+'transaction_detail', 'add-edit-form-det', aJaxURL_det, '', tName+'transaction_detail', 4, "get_list", "<'F'Cpl>", aJaxURL_det, '');
          		SetEvents("add_button_dettail", "", "", 'table_transaction_detail', 'add-edit-form-det', aJaxURL_det);
+    	        GetDateTimes('transaction_date');
+
+    	        if($('#transaction_date').val() != ''){
+    		        $('#add_button_dettail').button("enable");
+    		    }else{
+    		    	$('#add_button_dettail').button("disable");
+    			}
     	        
-         		if($('#client_amount').val() != '' && $('#course').val() != ''){
-			        $('#add_button_dettail').button("enable");
-			    }else{
-			    	$('#add_button_dettail').button("disable");
-				}
 			}else if(fname=='add-edit-form-det'){
 				var buttons = {
 						"save": {
@@ -113,6 +173,14 @@
 			}
 		}
 
+		$(document).on("change", "#transaction_date",  function (event) {
+			if($('#transaction_date').val() != ''){
+		        $('#add_button_dettail').button("enable");
+		    }else{
+		    	$('#add_button_dettail').button("disable");
+			}
+	    });
+	    
 		// Add - Save
 	    $(document).on("click", "#save-dialog", function () {
 		    param 		= new Object();
@@ -132,6 +200,7 @@
 	    	param.currency_id	       = $("#currency_id").val();
 	    	param.received_currency_id = $('#received_currency_id').val();
 	    	param.course	           = $("#course").val();
+	    	param.transaction_date	   = $("#transaction_date").val();
 	    	
 	    	param.hidde_id		       = $("#hidde_id").val();
 	    	param.hidde_transaction_id = $("#hidde_transaction_id").val();
@@ -155,6 +224,7 @@
     							alert(data.error);
     						}else{
     							$("#tr_id").val(data.tr_id);
+    							$("#hidde_cl_id").val($("#client_id").val());
     							GetDataTable("table_transaction_detail", aJaxURL_det, 'get_list', 7, "&transaction_id="+$("#tr_id").val(), 0, "", 0, "desc", "", "<'F'Cpl>");
     							setTimeout(function(){$('.ColVis, .dataTable_buttons').css('display','none');}, 50);
     							$("#table_transaction_detail_length").css('top', '2px');
@@ -559,13 +629,14 @@
                 <thead>
                     <tr id="datatable_header">
                         <th>ID</th>
-                        <th style="width: 12%;">თარიღი</th>
+                        <th style="width: 10%;">თარიღი</th>
                         <th style="width: 8%;">კოდი</th>
-                        <th style="width: 40%;">მსესხებელი</th>
-                        <th style="width: 10%;">ჩარიცხული თანხა</th>
+                        <th style="width: 36%;">მსესხებელი</th>
+                        <th style="width: 8%;">ჩარიცხული თანხა</th>
                         <th style="width: 8%;">ვალუტა</th>
                         <th style="width: 8%;">კურსი</th>
-                        <th style="width: 12%;">სტატუსი</th>
+                        <th style="width: 10%;">სტატუსი</th>
+                        <th style="width: 10%;">user</th>
                     </tr>
                 </thead>
                 <thead>
@@ -583,6 +654,9 @@
                             <input type="text" name="search_category" value="ფილტრი" class="search_init" />
                         </th>
                        	<th>
+                            <input type="text" name="search_category" value="ფილტრი" class="search_init" />
+                        </th>
+                        <th>
                             <input type="text" name="search_category" value="ფილტრი" class="search_init" />
                         </th>
                         <th>
@@ -616,16 +690,17 @@
                 <thead>
                     <tr id="datatable_header">
                         <th>ID</th>
-                        <th style="width: 11%;">თარიღი</th>
-                        <th style="width: 10%;">კოდი</th>
-                        <th style="width: 14%;">მსესხებელი</th>
-                        <th style="width: 11%;">ჩარიცხული<br>თანხა</th>
-                        <th style="width: 11%;">ვალუტა</th>
-                        <th style="width: 11%;">კურსი</th>
-                        <th style="width: 11%;">დაფარული<br>ძირი</th>
-                        <th style="width: 10%;">დაფარული<br>პროცენტი</th>
-                        <th style="width: 11%;">სხვაობა</th>
-                        
+                        <th style="width: 7%;">თარიღი</th>
+                        <th style="width: 6%;">კოდი</th>
+                        <th style="width: 30%;">მსესხებელი</th>
+                        <th style="width: 6%;">ჩარიც.<br>თანხა</th>
+                        <th style="width: 7%;">ვალუტა</th>
+                        <th style="width: 5%;">კურსი</th>
+                        <th style="width: 6%;">დაფარ.<br>ძირი</th>
+                        <th style="width: 6%;">დაფარ.<br>პროცენტი</th>
+                        <th style="width: 6%;">მეტობა</th>
+                        <th style="width: 8%;">სტატუსი</th>
+                        <th style="width: 9%;">user</th>
                     </tr>
                 </thead>
                 <thead>
@@ -643,6 +718,12 @@
                             <input type="text" name="search_category" value="ფილტრი" class="search_init" />
                         </th>
                        	<th>
+                            <input type="text" name="search_category" value="ფილტრი" class="search_init" />
+                        </th>
+                        <th>
+                            <input type="text" name="search_category" value="ფილტრი" class="search_init" />
+                        </th>
+                        <th>
                             <input type="text" name="search_category" value="ფილტრი" class="search_init" />
                         </th>
                         <th>
@@ -682,12 +763,13 @@
                 <thead>
                     <tr id="datatable_header">
                         <th>ID</th>
-                        <th style="width: 12%;">თარიღი</th>
+                        <th style="width: 10%;">თარიღი</th>
                         <th style="width: 10%;">კოდი</th>
-                        <th style="width: 42%;">მსესხებელი</th>
-                        <th style="width: 12%;">ჩარიცხული<br>თანხა</th>
-                        <th style="width: 12%;">ვალუტა</th>
-                        <th style="width: 12%;">კურსი</th>
+                        <th style="width: 40%;">მსესხებელი</th>
+                        <th style="width: 10%;">ჩარიცხული<br>თანხა</th>
+                        <th style="width: 10%;">ვალუტა</th>
+                        <th style="width: 10%;">კურსი</th>
+                        <th style="width: 10%;">user</th>
                     </tr>
                 </thead>
                 <thead>
@@ -705,6 +787,9 @@
                             <input type="text" name="search_category" value="ფილტრი" class="search_init" />
                         </th>
                        	<th>
+                            <input type="text" name="search_category" value="ფილტრი" class="search_init" />
+                        </th>
+                        <th>
                             <input type="text" name="search_category" value="ფილტრი" class="search_init" />
                         </th>
                         <th>
@@ -735,12 +820,13 @@
                 <thead>
                     <tr id="datatable_header">
                         <th>ID</th>
-                        <th style="width: 12%;">თარიღი</th>
+                        <th style="width: 10%;">თარიღი</th>
                         <th style="width: 10%;">კოდი</th>
-                        <th style="width: 42%;">მსესხებელი</th>
-                        <th style="width: 12%;">ჩარიცხული<br>თანხა</th>
-                        <th style="width: 12%;">ვალუტა</th>
-                        <th style="width: 12%;">კურსი</th>
+                        <th style="width: 40%;">მსესხებელი</th>
+                        <th style="width: 10%;">ჩარიცხული<br>თანხა</th>
+                        <th style="width: 10%;">ვალუტა</th>
+                        <th style="width: 10%;">კურსი</th>
+                        <th style="width: 12%;">user</th>
                     </tr>
                 </thead>
                 <thead>
@@ -766,6 +852,9 @@
                         <th>
                             <input type="text" name="search_category" value="ფილტრი" class="search_init" />
                         </th>
+                        <th>
+                            <input type="text" name="search_category" value="ფილტრი" class="search_init" />
+                        </th>
                     </tr>
                 </thead>
             </table>
@@ -778,6 +867,7 @@
 	<div id="add-edit-form-det" class="form-dialog" title="განაწილება">
     	<!-- aJax -->
 	</div>
+	<div id="add-edit-show_letter" class="form-dialog" title="ბარათი"></div>
 </body>
 </html>
 
