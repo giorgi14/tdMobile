@@ -21,7 +21,7 @@ switch ($action) {
 		$hidden	= $_REQUEST['hidden'];
 		 
 		$rResult = mysql_query("SELECT  holidays.id,
-		                                DATE_FORMAT(date,'%Y-%m-%d') AS `date`,
+		                                DATE_FORMAT(date,'%d/%m/%Y') AS `date`,
                         				holidays.`name`
                                 FROM    holidays
                                 WHERE holidays.actived = 1");
@@ -151,11 +151,9 @@ function GetPage($res = '')
 	$data = '
 	<div id="dialog-form">
 	    <fieldset>
-	    	<legend>ძირითადი ინფორმაცია</legend>
-
 	    	<table class="dialog-form-table">
 				<tr>
-					<td style="width: 170px;"><label for="name">სახელი</label></td>
+					<td style="width: 170px;"><label for="name">დასახელება</label></td>
 					<td>
 						<input type="text" id="name" value="' . $res['name'] . '" />
 					</td>

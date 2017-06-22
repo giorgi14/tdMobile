@@ -2,8 +2,8 @@
 <head>
 	<script type="text/javascript">
 		var aJaxURL	          = "server-side/view/holidays.action.php";		//server side folder url
-		var tName	          = "example";													//table name
-		var fName	          = "add-edit-form";												//form name
+		var tName	          = "example";									//table name
+		var fName	          = "add-edit-form";							//form name
 		var change_colum_main = "<'dataTable_buttons'T><'F'Cfipl>";
 		    	
 		$(document).ready(function () {        	
@@ -12,58 +12,22 @@
 			/* Add Button ID, Delete Button ID */
 			GetButtons("add_button", "delete_button");
 			GetButtons("add_cat", "");
-			SetEvents("add_button", "delete_button", "check-all", tName, fName, aJaxURL,'',tName,4,change_colum_main,aJaxURL,'','','');
+			SetEvents("add_button", "delete_button", "check-all", tName, fName, aJaxURL,'',tName,3,change_colum_main,aJaxURL,'','','');
 		});
         
 		function LoadTable(tName,num,change_colum_main,aJaxURL){
-			
-			/* Table ID, aJaxURL, Action, Colum Number, Custom Request, Hidden Colum, Menu Array */
 			GetDataTable(tName, aJaxURL, 'get_list', num, "", 0, "", 1, "desc", "", change_colum_main);
-			setTimeout(function(){
-    	    	$('.ColVis, .dataTable_buttons').css('display','none');
-  	    	}, 90);
+			setTimeout(function(){$('.ColVis, .dataTable_buttons').css('display','none');}, 90);
 		}
 		
 		function LoadDialog(fname){
-			var id		= $("#id").val();
-			
-			/* Dialog Form Selector Name, Buttons Array */
 			if(fname=='add-edit-form'){
-    			GetDialog(fName, 600, "auto", "");
+    			GetDialog(fName, 300, "auto", "","top");
     			GetDate1('date');
-			}
-			if(fname=='add-edit-form-cat-add'){
-				var buttons = {
-						"save": {
-				            text: "შენახვა",
-				            id: "save-cat"
-				        },
-			        	"cancel": {
-				            text: "დახურვა",
-				            id: "cancel-dialog",
-				            click: function () {
-				            	$(this).dialog("close");
-				            }
-				        }
-				    };
-    			GetDialog('add-edit-form-cat-add', 400, "auto", buttons);
 			}
 		}
 
-		$(document).on("click", "#add_cat", function () {
-			var buttons = {
-		        	"cancel": {
-			            text: "დახურვა",
-			            id: "cancel-dialog",
-			            click: function () {
-			            	$(this).dialog("close");
-			            }
-			        }
-			};
-			GetDialog('add-edit-form-cat', 800, "auto", buttons);
-		});
-		
-	    // Add - Save
+		// Add - Save
 	    $(document).on("click", "#save-dialog", function () {
 		    param 			= new Object();
 
@@ -84,7 +48,7 @@
 							if(data.error != ''){
 								alert(data.error);
 							}else{
-								LoadTable(tName,4,change_colum_main,aJaxURL);
+								LoadTable(tName,3,change_colum_main,aJaxURL);
 				        		CloseDialog(fName);
 							}
 						}
@@ -93,32 +57,6 @@
 			}
 		});
 
-	    $(document).on("click", "#save-cat", function () {
-		    param 			= new Object();
-
-		    param.act		                = "save_cat";
-	    	param.id		                = $("#id").val();
-	    	param.name		                = $("#name").val();
-	    	
-			if(param.name == ""){
-				alert("შეავსეთ ველი!");
-			}else {
-			    $.ajax({
-			        url: aJaxURLCT,
-				    data: param,
-			        success: function(data) {			        
-						if(typeof(data.error) != 'undefined'){
-							if(data.error != ''){
-								alert(data.error);
-							}else{
-								LoadTable('example-cat',2,"<'F'lip>",aJaxURLCT);
-				        		CloseDialog('add-edit-form-cat-add');
-							}
-						}
-				    }
-			    });
-			}
-		});
 	    $(document).on("click", "#show_copy_prit_exel", function () {
 	        if($(this).attr('myvar') == 0){
 	            $('.ColVis,.dataTable_buttons').css('display','block');
@@ -190,7 +128,7 @@
             <tr id="datatable_header">
                 <th>ID</th>
                 <th style="width: 50%;">თარიღი</th>
-                <th style="width: 48%;">სახელი</th>
+                <th style="width: 48%;">დასახელება</th>
             	<th class="check" style="width: 30px;">#</th>
             </tr>
         </thead>
@@ -215,7 +153,7 @@
         </thead>
     </table>
     <!-- jQuery Dialog -->
-    <div id="add-edit-form" class="form-dialog" title="დასვენების დღეები">
+    <div id="add-edit-form" class="form-dialog" title="დასვენების დღე">
     	<!-- aJax -->
 	</div>
 </body>
