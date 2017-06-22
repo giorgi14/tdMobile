@@ -9,7 +9,6 @@
 		$(document).ready(function () {        	
 			LoadTable(tName,3,change_colum_main,aJaxURL);	
  						
-			/* Add Button ID, Delete Button ID */
 			GetButtons("add_button", "delete_button");
 			GetButtons("add_cat", "");
 			SetEvents("add_button", "delete_button", "check-all", tName, fName, aJaxURL,'',tName,3,change_colum_main,aJaxURL,'','','');
@@ -29,17 +28,17 @@
 
 		// Add - Save
 	    $(document).on("click", "#save-dialog", function () {
-		    param 			= new Object();
+		    param = new Object();
 
-		    param.act		                = "save_holidays";
-	    	param.id		                = $("#id").val();
-	    	param.date		                = $("#date").val();
-	    	param.name		                = $("#name").val();
-	    	param.holidays_category_id		= $("#holidays_category_id").val();
+		    param.act		           = "save_holidays";
+	    	param.id		           = $("#id").val();
+	    	param.date		           = $("#date").val();
+	    	param.name		           = $("#name").val();
+	    	param.holidays_category_id = $("#holidays_category_id").val();
 	    	
 			if(param.name == ""){
 				alert("შეავსეთ ველი!");
-			}else {
+			}else{
 			    $.ajax({
 			        url: aJaxURL,
 				    data: param,
@@ -82,7 +81,6 @@
         	border: 1px solid #E6E6E6;
         	padding: 4px;
         }
-        
         .ColVis, .dataTable_buttons{
         	z-index: 100;
         }
@@ -108,54 +106,57 @@
 
 <body>
 <div id="tabs">
-<div class="callapp_head">დასვენების დღეები<hr class="callapp_head_hr"></div>
-<div id="button_area">
-	<button id="add_button">დამატება</button>
-	<button id="delete_button">წაშლა</button>
-</div>
-<table id="table_right_menu">
-<tr>
-<td style="cursor: pointer;padding: 4px;border-right: 1px solid #E6E6E6;background:#2681DC;"><img alt="table" src="media/images/icons/table_w.png" height="14" width="14">
-</td>
-<td style="cursor: pointer;padding: 4px;border-right: 1px solid #E6E6E6;"><img alt="log" src="media/images/icons/log.png" height="14" width="14">
-</td>
-<td style="cursor: pointer;padding: 4px;" id="show_copy_prit_exel" myvar="0"><img alt="link" src="media/images/icons/select.png" height="14" width="14">
-</td>
-</tr>
-</table>
-    <table class="display" id="example">
-        <thead>
-            <tr id="datatable_header">
-                <th>ID</th>
-                <th style="width: 50%;">თარიღი</th>
-                <th style="width: 48%;">დასახელება</th>
-            	<th class="check" style="width: 30px;">#</th>
+    <div class="callapp_head">დასვენების დღეები<hr class="callapp_head_hr"></div>
+        <div id="button_area">
+        	<button id="add_button">დამატება</button>
+        	<button id="delete_button">წაშლა</button>
+        </div>
+        <table id="table_right_menu">
+            <tr>
+                <td style="cursor: pointer;padding: 4px;border-right: 1px solid #E6E6E6;background:#2681DC;">
+                	<img alt="table" src="media/images/icons/table_w.png" height="14" width="14">
+                </td>
+                <td style="cursor: pointer;padding: 4px;border-right: 1px solid #E6E6E6;">
+                	<img alt="log" src="media/images/icons/log.png" height="14" width="14">
+                </td>
+                <td style="cursor: pointer;padding: 4px;" id="show_copy_prit_exel" myvar="0">
+                	<img alt="link" src="media/images/icons/select.png" height="14" width="14">
+                </td>
             </tr>
-        </thead>
-        <thead>
-            <tr class="search_header">
-                <th class="colum_hidden">
-                    <input type="text" name="search_category" value="ფილტრი" class="search_init" />
-                </th>                
-                <th>
-                    <input type="text" name="search_category" value="ფილტრი" class="search_init" />
-                </th>
-                <th>
-                    <input type="text" name="search_category" value="ფილტრი" class="search_init" />
-                </th>
-                <th>
-                	<div class="callapp_checkbox">
-                        <input type="checkbox" id="check-all" name="check-all" />
-                        <label for="check-all"></label>
-                    </div>
-                </th>
-            </tr>
-        </thead>
-    </table>
-    <!-- jQuery Dialog -->
-    <div id="add-edit-form" class="form-dialog" title="დასვენების დღე">
-    	<!-- aJax -->
-	</div>
+        </table>
+        <table class="display" id="example">
+            <thead>
+                <tr id="datatable_header">
+                    <th>ID</th>
+                    <th style="width: 50%;">თარიღი</th>
+                    <th style="width: 48%;">დასახელება</th>
+                	<th class="check" style="width: 30px;">#</th>
+                </tr>
+            </thead>
+            <thead>
+                <tr class="search_header">
+                    <th class="colum_hidden">
+                        <input type="text" name="search_category" value="ფილტრი" class="search_init" />
+                    </th>                
+                    <th>
+                        <input type="text" name="search_category" value="ფილტრი" class="search_init" />
+                    </th>
+                    <th>
+                        <input type="text" name="search_category" value="ფილტრი" class="search_init" />
+                    </th>
+                    <th>
+                    	<div class="callapp_checkbox">
+                            <input type="checkbox" id="check-all" name="check-all" />
+                            <label for="check-all"></label>
+                        </div>
+                    </th>
+                </tr>
+            </thead>
+        </table>
+        <!-- jQuery Dialog -->
+        <div id="add-edit-form" class="form-dialog" title="დასვენების დღე">
+        	<!-- aJax -->
+        </div>
 </body>
 </html>
 
