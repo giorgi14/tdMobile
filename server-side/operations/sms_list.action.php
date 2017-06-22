@@ -24,20 +24,28 @@ switch ($action) {
 		if ($status == 0) {
 		    $filt="";
 		}elseif ($status == 1){
-		    $filt=" AND status=0";
+		    $filt=" AND sent_list.status = 0";
 		}else{
-		    $filt="AND status=1";
+		    $filt="AND sent_list.status = 1";
 		}
 		 
-        $rResult = mysql_query(" SELECT     sms_list.id,
-                    					    sms_list.datetime,
-                        					client.name,
-                        					sms_list.`phone`,
-                        					sms_list.text,
-                                            IF(sms_list.`status` = 0, 'გასაგზავნი', 'გაგზავნილი')
-                                  FROM      sms_list
-                                  LEFT JOIN client ON sms_list.client_id = client.id
-                                  WHERE     sms_list.actived = 1 $filt");
+        $rResult = mysql_query("SELECT  sent_list.id,
+                    					sent_list.datetime,
+                    					CASE 
+                    						WHEN sent_list.client_id > 0 AND sent_list.guarantor_id = 0 AND sent_list.person_id = 0 AND sent_list.trust_person_id = 0 THEN concat(client.`name`, ' ', client.lastname)
+                    						WHEN sent_list.guarantor_id > 0 THEN CONCAT(client.`name`, ' ', client.lastname, '/თავ.პ./',IFNULL(client_quarantors.`name`,'...'))
+                    						WHEN sent_list.person_id > 0 THEN CONCAT(client.`name`, ' ', client.lastname, '/საკ.პ./',IFNULL(client_person.`person`,'...'))
+                    						WHEN sent_list.trust_person_id > 0 THEN CONCAT(client.`name`, ' ', client.lastname, '/მინდ.პ./',IFNULL(client_trusted_person.`name`,'...'))
+                    					END AS `name`,
+                    					sent_list.`address`,
+                    					sent_list.content,
+                                        IF(sent_list.`status` = 0, 'გასაგზავნი', 'გაგზავნილი')
+                              FROM      sent_list
+                              LEFT JOIN client ON sent_list.client_id = client.id
+                              LEFT JOIN client_quarantors ON client_quarantors.id = sent_list.guarantor_id
+                              LEFT JOIN client_person ON client_person.id = sent_list.person_id
+                              LEFT JOIN client_trusted_person ON client_trusted_person.id = sent_list.trust_person_id
+                              WHERE     sent_list.actived = 1 $filt");
 
 		$data = array("aaData" => array());
 
@@ -90,8 +98,8 @@ echo json_encode($data);
 function Add($sms_phone, $sms_text){
     
 	$user_id = $_SESSION['USERID'];
-	mysql_query("INSERT INTO `sms_list` 
-					        (`redactor_user_id`, `datetime`, `phone`, `text`) 
+	mysql_query("INSERT INTO `sent_list` 
+					        (`user_id`, `datetime`, `address`, `content`) 
 		              VALUES 
 					        ('$user_id', NOW(), '$sms_phone', '$sms_text')");
 }
@@ -99,29 +107,29 @@ function Add($sms_phone, $sms_text){
 function Save($id, $sms_phone, $sms_text){
     
 	$user_id = $_SESSION['USERID'];
-	mysql_query("UPDATE `sms_list`
-                    SET `redactor_user_id` = '$user_id',
-	                    `datetime`         =  NOW(),
-	                    `client_id`        = '$client_id',
-                        `phone`            = '$sms_phone',
-                        `text`             = '$sms_text'
-                  WHERE `id`               = '$id'");
+	mysql_query("UPDATE `sent_list`
+                    SET `user_id`   = '$user_id',
+	                    `datetime`  =  NOW(),
+	                    `address`   = '$sms_phone',
+                        `content`   = '$sms_text'
+                  WHERE `id`        = '$id'");
 }
 
 function Disable($id){
-	mysql_query("UPDATE `sms_list`
+	mysql_query("UPDATE `sent_list`
 					SET `actived` = 0
 				 WHERE  `id`      = '$id'");
 }
 
 
 function Get($id){
-	$res = mysql_fetch_assoc(mysql_query("SELECT  sms_list.id,
-                                    			  sms_list.`phone`,
-	                                              sms_list.`status`,
-	                                              sms_list.`text`
-                                          FROM    sms_list
-										  WHERE   sms_list.`id` = '$id'" ));
+	$res = mysql_fetch_assoc(mysql_query("SELECT  sent_list.id,
+	                                              sent_list.client_id,
+                                    			  sent_list.`address`,
+	                                              sent_list.`status`,
+	                                              sent_list.`content`
+                                          FROM    sent_list
+										  WHERE   sent_list.`id` = '$id'" ));
 
 	return $res;
 }
@@ -135,7 +143,7 @@ function GetPage($res = ''){
         	    	<table class="dialog-form-table" style="width: 100%;">
                         <tr>
                             <td style="width: 210px;">
-                             <input placeholder="შეიყვანეთ ნომერი" onkeypress="{if (event.which != 8 &amp;&amp; event.which != 0 &amp;&amp; event.which!=46 &amp;&amp; (event.which < 48 || event.which > 57)) {$(\'#errmsg\').html(\'მხოლოდ ციფრი\').show().fadeOut(\'slow\'); return false;}}" type="text" id="sms_phone" class="idle" onblur="this.className=\'idle\'" onfocus="this.className=\'activeField\'" value="'.$res[phone].'" '.$diss.'>   
+                             <input placeholder="შეიყვანეთ ნომერი" onkeypress="{if (event.which != 8 &amp;&amp; event.which != 0 &amp;&amp; event.which!=46 &amp;&amp; (event.which < 48 || event.which > 57)) {$(\'#errmsg\').html(\'მხოლოდ ციფრი\').show().fadeOut(\'slow\'); return false;}}" type="text" id="sms_phone" class="idle" onblur="this.className=\'idle\'" onfocus="this.className=\'activeField\'" value="'.$res[address].'" '.$diss.'>   
                             </td>
                             <td style="width: 335px;">
                                
@@ -147,7 +155,7 @@ function GetPage($res = ''){
         			    <tr style="height:5px"></tr>
         				<tr>
                             <td colspan="3">
-        					   <textarea maxlength="150" placeholder="შეიყვანეთ ტექსტი" class="idle" id="sms_text" style="resize: vertical;width: 99%;height: 85px;" '.$diss.'>'.$res['text'].'</textarea>
+        					   <textarea maxlength="350" placeholder="შეიყვანეთ ტექსტი" class="idle" id="sms_text" style="resize: vertical;width: 99%;height: 85px;" '.$diss.'>'.$res['content'].'</textarea>
         					</td>
                         </tr>
         				<tr>
