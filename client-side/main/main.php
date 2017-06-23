@@ -62,27 +62,33 @@
 			if(tbl == 'letter'){
 				var total =	[4,5,14];
 				GetDataTable1(tName+tbl, aJaxURL, act, num, "&id="+$("#id").val()+"&loan_currency_id="+$("#loan_currency_id").val()+"&loan_currency_id="+$("#loan_currency_id").val(), 0, dLength, 4, "desc", total, change_colum_main);
-				
-				param 		            = new Object();
-			    param.act	            = "gel_footer";
-			    param.id	            = $("#id").val();
-			    param.loan_currency_id	= $("#loan_currency_id").val();
-			    
-			    $.ajax({
-    		        url: aJaxURL,
-    			    data: param,
-    		        success: function(data) {			        
-    					if(typeof(data.error) != 'undefined'){
-    						if(data.error != ''){
-    							alert(data.error);
-    						}else{
-    							$("#remaining_root").html(data.remaining_root);
-    							$("#remaining_root_gel").html(data.remaining_root_gel);
-    							$("#delta").html(data.delta);
-    						}
-    					}
-    			    }
-    		    });
+				setTimeout(function(){
+    				param 		            = new Object();
+    			    param.act	            = "gel_footer";
+    			    param.id	            = $("#id").val();
+    			    param.loan_currency_id	= $("#loan_currency_id").val();
+    			    
+    			    $.ajax({
+        		        url: aJaxURL,
+        			    data: param,
+        		        success: function(data) {			        
+        					if(typeof(data.error) != 'undefined'){
+        						if(data.error != ''){
+        							alert(data.error);
+        						}else{
+        							$("#remaining_root").html(data.remaining_root);
+        							$("#remaining_root_gel").html(data.remaining_root_gel);
+        							daricxva_lari = $("#daricxva_lari").html();
+        							procenti_lari = $("#procenti_lari").html();
+        							var delta = parseFloat(data.delta) + parseFloat(daricxva_lari) - parseFloat(procenti_lari);
+        							//$("#delta").html(delta);
+        							$("#delta").html(delta);
+        							
+        						}
+        					}
+        			    }
+        		    });
+				}, 90);
 			}else{
 				var total =	[6,8,9,10,11,12,13,14,16];
 				GetDataTable(tName+tbl, aJaxURL, act, num, "&id="+$("#id").val()+"&filt_year="+$("#filt_year").val(), 0, dLength, 3, "asc", total, change_colum_main);

@@ -32,10 +32,10 @@ switch ($action) {
                                               ORDER BY client_loan_schedule.pay_date DESC
                                               LIMIT 1"));
         
-        $req1 = mysql_fetch_array(mysql_query("SELECT IFNULL(MAX(client_loan_schedule.remaining_root),0.00) AS remaining_root
+        $req1 = mysql_fetch_array(mysql_query("SELECT IFNULL(MAX(client_loan_schedule.remaining_root+client_loan_schedule.root),0.00) AS remaining_root
                                                FROM   client_loan_schedule
                                                JOIN   client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
-                                               WHERE  client_loan_agreement.client_id = $id AND client_loan_schedule.`status` = 0 AND client_loan_schedule.actived = 1 AND client_loan_schedule.`pay_date` <= curdate()
+                                               WHERE  client_loan_agreement.client_id = $id AND client_loan_schedule.`status` = 0 AND client_loan_schedule.actived = 1
                                                LIMIT 1"));
         
         $data = array("remaining_root" => $req[remaining_root], "remaining_root_gel" => $req[remaining_root_gel], "insurance_fee" => $req[insurance_fee], "loan_currency_id" => $req[loan_currency_id], 'delta' => $req1[remaining_root]);
