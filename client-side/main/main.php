@@ -80,10 +80,8 @@
         							$("#remaining_root_gel").html(data.remaining_root_gel);
         							daricxva_lari = $("#daricxva_lari").html();
         							procenti_lari = $("#procenti_lari").html();
-        							var delta = parseFloat(data.delta) + parseFloat(daricxva_lari) - parseFloat(procenti_lari);
-        							//$("#delta").html(delta);
+        							var delta = (parseFloat(data.delta) + parseFloat(daricxva_lari) - parseFloat(procenti_lari)).toFixed(2);
         							$("#delta").html(delta);
-        							
         						}
         					}
         			    }
