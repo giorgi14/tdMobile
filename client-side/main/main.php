@@ -5,7 +5,7 @@
 		var aJaxURL1	      = "server-side/view/cource.action.php";		//server side folder url
 		var tName	          = "table_";													//table name
 		var dialog	          = "add-edit-form";												//form name
-		var colum_number      = 18;
+		var colum_number      = 19;
 	    var main_act          = "get_list";
 	    var tbName            = 'tabs1';
 	    var change_colum_main = "<'dataTable_buttons'T><'F'Cfipl>"; 
@@ -60,7 +60,7 @@
 			var dLength = [[-1], ["ყველა"]];
 			
 			if(tbl == 'letter'){
-				var total =	[4,5,14];
+				var total =	[4,5,6,7];
 				GetDataTable1(tName+tbl, aJaxURL, act, num, "&id="+$("#id").val()+"&loan_currency_id="+$("#loan_currency_id").val()+"&loan_currency_id="+$("#loan_currency_id").val(), 0, dLength, 4, "desc", total, change_colum_main);
 				setTimeout(function(){
     				param 		            = new Object();
@@ -80,8 +80,12 @@
         							$("#remaining_root_gel").html(data.remaining_root_gel);
         							daricxva_lari = $("#daricxva_lari").html();
         							procenti_lari = $("#procenti_lari").html();
-        							var delta = (parseFloat(data.delta) + parseFloat(daricxva_lari) - parseFloat(procenti_lari)).toFixed(2);
-        							$("#delta").html(delta);
+        							procenti_lari1 = $("#procenti_lari1").html();
+        							daricxva_lari1 = $("#daricxva_lari1").html();
+        							var delta  = (parseFloat(data.delta) + parseFloat(daricxva_lari) - parseFloat(procenti_lari)).toFixed(2);
+        							var delta1 = (parseFloat(data.remaining_root_gel) + parseFloat(daricxva_lari1) - parseFloat(procenti_lari1)).toFixed(2);
+        							$("#remaining_root").html(delta);
+        							$("#remaining_root_gel").html(delta1);
         						}
         					}
         			    }
