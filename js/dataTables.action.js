@@ -240,7 +240,7 @@ function GetDataTable1(tname, aJaxURL, action, count, data, hidden, length, sort
 	            		if(aaData[i][total[j]] == ''){
 	            			
 	            		}else{
-		                iTotal[j] += parseInt(aaData[i][total[j]])*1;
+		                iTotal[j] += parseFloat(aaData[i][total[j]])*1;
 	            		}
 		                
 	                }
@@ -254,7 +254,7 @@ function GetDataTable1(tname, aJaxURL, action, count, data, hidden, length, sort
 						if(aaData[ aiDisplay[i] ][total[j]] == ''){
 	            			
 	            		}else{
-						iPage[j] += parseInt(aaData[ aiDisplay[i] ][total[j]])*1;
+						iPage[j] += parseFloat(aaData[ aiDisplay[i] ][total[j]])*1;
 	            		}
 	                }
 				}
@@ -262,7 +262,7 @@ function GetDataTable1(tname, aJaxURL, action, count, data, hidden, length, sort
 	            var nCells = nRow.getElementsByTagName('th');
 	            for ( var k = 0 ; k < total.length ; k++ )
 	            {
-	            	nCells[total[k]].innerHTML = (parseInt(iTotal[k] * 100) / 100).toFixed(2) + ' ';
+	            	nCells[total[k]].innerHTML = (parseFloat(iTotal[k] * 100) / 100).toFixed(2) + ' ';
 	            }
         	}
         	
