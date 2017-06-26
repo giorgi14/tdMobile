@@ -258,6 +258,30 @@
 	    		        	    });
 	    		            }
 	    		        },
+	    		        "save_comment": {
+	    		            text: "შენახვა",
+	    		            id: "save_comment",
+	    		            click: function () {
+	    		            	param 	             = new Object();
+	    		        		param.act            = "save_comment";
+	    		        		param.hidde_id       = $("#hidde_cl_id").val();
+	    		        		param.letter_comment = $("#letter_comment").val();
+	    		        		
+	    		        		$.ajax({
+	    		        	        url: aJaxURL,
+	    		        		    data: param,
+	    		        	        success: function(data) {       
+	    		        				if(typeof(data.error) != "undefined"){
+	    		        					if(data.error != ""){
+	    		        						alert(data.error);
+	    		        					}else{
+	    		        						$("#add-edit-form").dialog("close");
+	    		        			        }
+	    		        				}
+	    		        	    	}
+	    		        	    });
+	    		            }
+	    		        },
 	        			"cancel": {
 	    		            text: "დახურვა",
 	    		            id: "cancel-dialog",

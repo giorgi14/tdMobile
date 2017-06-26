@@ -28,6 +28,16 @@ switch ($action) {
         
     
         break;
+    case 'save_comment':
+        
+        $id	            = $_REQUEST['hidde_id'];
+        $letter_comment	= $_REQUEST['letter_comment'];
+    
+        mysql_query("UPDATE client
+                        SET letter_comment = '$letter_comment'
+                     WHERE  id = '$id'");
+    
+        break;
 	case 'get_list' :
 		$count	   = $_REQUEST['count'];
 		$hidden	   = $_REQUEST['hidden'];
@@ -1950,7 +1960,9 @@ function GetPage($id){
                                                 client_loan_agreement.canceled_status,
                                                 client_loan_agreement.loan_currency_id,
                                                 loan_currency.name AS loan_name,
-                                                CONCAT(' / ',client_car.car_marc,' / ',client_car.registration_number, ' / ს/ხ', IF(client.id<302, client.exel_agreement_id, client_loan_agreement.id), ' / ორისის კოდი:', client_loan_agreement.oris_code) AS cl_car_info
+                                                CONCAT(' / ',client_car.car_marc,' / ',client_car.registration_number, ' / ს/ხ', IF(client.id<302, client.exel_agreement_id, client_loan_agreement.id), ' / ორისის კოდი:', client_loan_agreement.oris_code) AS cl_car_info,
+                                                client.letter_comment,
+                                                client.id AS cl_hidde_id
                                         FROM `client_loan_agreement`
                                         JOIN  client ON client.id = client_loan_agreement.client_id
                                         JOIN loan_currency ON loan_currency.id = client_loan_agreement.loan_currency_id
@@ -2162,6 +2174,17 @@ function GetPage($id){
                             </div> 
                       </td>
                   </tr>
+                  <tr style="height:10px;"></tr>
+                  <tr>
+                       <td>
+                           <label>კომენტარი</label>
+                       </td>
+                  </tr>
+                  <tr>
+                       <td>
+                           <textarea class="idle" id="letter_comment" style="resize: vertical;width: 100%;height: 40px;">'.$res['letter_comment'].'</textarea>
+                       </td>
+                  </tr>
                 </table>
                </fieldset>
         	   <fieldset>
@@ -2171,6 +2194,7 @@ function GetPage($id){
                    </table>
                </fieldset>
         <input type="hidden" id="id" value="' . $id . '" />
+        <input type="hidden" id="hidde_cl_id" value="' .$res[cl_hidde_id]. '" />
         <input type="hidden" id="loan_currency_id" value="' . $res[loan_currency_id] . '" />
         <input type="hidden" id="canceled_status" value="' . $res[canceled_status] . '" />
     </div>
