@@ -84,10 +84,11 @@ switch ($action) {
 		break;
 		
 	case 'get_shedule':
-		$id	     = $_REQUEST['id'];
-		$type_id = $_REQUEST['type_id'];
-		$agr_id  = $_REQUEST['agr_id'];
-		$status  = $_REQUEST['status'];
+		$id	               = $_REQUEST['id'];
+		$type_id           = $_REQUEST['type_id'];
+		$agr_id            = $_REQUEST['agr_id'];
+		$status            = $_REQUEST['status'];
+		$transaction_date  = $_REQUEST['transaction_date'];
 		
 		if ($status == 1) {
 		    $filt = "AND client_loan_agreement.client_id = $id";
@@ -95,6 +96,41 @@ switch ($action) {
 		    $filt = "AND client_loan_agreement.id = $agr_id";
 		}else{
 		    $filt = "AND client_loan_agreement.client_id = $id";
+		}
+		
+		
+		$check_penalty = mysql_fetch_array(mysql_query("SELECT   client_loan_schedule.id AS schedule_id,
+                                                				 client_loan_schedule.schedule_date,
+                                                				 client.id AS client_id,
+                                                				 DATEDIFF('$transaction_date',client_loan_schedule.pay_date) AS datediff,
+                                                				 client_loan_agreement.penalty_days,
+                                                				 client_loan_agreement.penalty_percent,
+                                                				 client_loan_agreement.penalty_additional_percent,
+                                                				 client_loan_schedule.root + client_loan_schedule.remaining_root AS remaining_root
+                                                            				 
+                                                        FROM     client_loan_schedule
+                                                        JOIN     client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
+                                                        JOIN     client ON client.id = client_loan_agreement.client_id
+                                                        WHERE    client_loan_schedule.actived = 1 AND client_loan_schedule.`status` = 0
+                                                        AND      client_loan_schedule.schedule_date < CURDATE() AND DATEDIFF(CURDATE(),client_loan_schedule.pay_date)>=1
+                                                        AND      client_loan_agreement.`status` = 1 AND client_loan_agreement.canceled_status = 0
+                                                                 $filt
+		                                                LIMIT 1"));
+		
+		$remaining_root = $check_penalty[remaining_root];
+		
+		if ($check_penalty[datediff]>0 && $check_penalty[datediff]<=$check_penalty[penalty_days]) {
+		    $penalty = round(($remaining_root * ($check_penalty[penalty_percent]/100))*$check_penalty[datediff],2);
+		}elseif ($check_penalty[datediff]>0 && $check_penalty[datediff]>$check_penalty[penalty_days] && $check_penalty[penalty_additional_percent] > 0){
+		    $penalty = round((($remaining_root * ($check_penalty[penalty_percent]/100))*$check_penalty[penalty_days])+($remaining_root * ($check_penalty[penalty_additional_percent]/100))*($check_penalty[datediff]-$check_penalty[penalty_days]),2);
+		}else{
+		    $penalty = round(($remaining_root * ($check_penalty[penalty_percent]/100))*$check_penalty[datediff],2);
+		}
+		
+		if ($penalty != ''){
+		    mysql_query("UPDATE `client_loan_schedule`
+        		            SET `penalty` = '$penalty'
+        		         WHERE  `id`      = '$check_penalty[schedule_id]'");
 		}
 		
 		$res = mysql_fetch_assoc(mysql_query("SELECT 	 client_loan_schedule.id,

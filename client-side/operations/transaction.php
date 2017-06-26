@@ -280,6 +280,7 @@
     		    
     		    param.id      =  $("#client_id").val();
     		    param.agr_id  =  $("#client_loan_number").val();
+    		    param.transaction_date  =  $("#transaction_date").val();
     		    param.type_id =  $(this).val();
     			$.ajax({
     		        url: aJaxURL,
@@ -339,9 +340,10 @@
 	        		param         =  new Object();
 	    		    param.act     = "get_shedule";
 	    		    
-	    		    param.id      =  $("#client_id").val();
-	    		    param.agr_id  =  $("#client_loan_number").val();
-	    		    param.type_id =  $(this).val();
+	    		    param.id                =  $("#client_id").val();
+	    		    param.agr_id            =  $("#client_loan_number").val();
+	    		    param.transaction_date  =  $("#transaction_date").val();
+	    		    param.type_id           =  $(this).val();
 	    			$.ajax({
 	    		        url: aJaxURL,
 	    			    data: param,
@@ -407,6 +409,7 @@
 		    param.status  = 1;
 		    param.id      =  $(this).val();
 		    param.type_id =  $('#type_id').val();
+		    param.transaction_date  =  $("#transaction_date").val();
 		    
 		    $.ajax({
 		        url: aJaxURL,
@@ -471,6 +474,7 @@
 		    param.agr_id  =  $(this).val();
 		    param.status  = 2;
 		    param.type_id =  $('#type_id').val();
+		    param.transaction_date  =  $("#transaction_date").val();
 		    
 		    $.ajax({
 		        url: aJaxURL,
