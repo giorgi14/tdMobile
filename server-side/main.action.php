@@ -2029,7 +2029,7 @@ function GetPage($id){
 
   
   
- $data = '<div id="dialog-form" style="overflow-y: scroll; height: 550px;">
+ $data = '<div id="dialog-form" style="overflow-y: scroll; height: 530px;">
                 <fieldset>
                     <div style="width:100%; font-size: 14px;">
                         <table style="width:100%;">
