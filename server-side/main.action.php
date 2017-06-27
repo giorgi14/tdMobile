@@ -1474,8 +1474,10 @@ switch ($action) {
         
         if ($res[gadacilebuli]>0 && $res[gadacilebuli]<=$res[penalty_days]) {
             $penalty = round(($remainig_root * ($res[penalty_percent]/100))*$res[gadacilebuli],2);
-        }elseif ($res[gadacilebuli]>0 && $res[gadacilebuli]>$res[penalty_days]){
+        }elseif ($res[gadacilebuli]>0 && $res[gadacilebuli]>$res[penalty_days] && $res[penalty_additional_percent]>0){
             $penalty = round((($remainig_root * ($res[penalty_percent]/100))*$res[penalty_days])+($remainig_root * ($res[penalty_additional_percent]/100))*($res[gadacilebuli]-$res[penalty_days]),2);
+        }else{
+            $penalty = round(($remainig_root * ($res[penalty_percent]/100))*$res[gadacilebuli],2);
         }
        
         if ($res[status] == 1) {
@@ -1483,7 +1485,7 @@ switch ($action) {
                                                    FROM   money_transactions
                                                    WHERE  money_transactions.client_loan_schedule_id = $res[id] AND money_transactions.status in(3) AND actived = 1"));
     
-            $data = array('pay_amount' => $res[pay_amount]+$res[penalty], 'root' => $res[root], 'percent' => $res[percent], 'penalty' => $penalty, 'pay_amount1' => $res1[pay_amount]);
+            $data = array('pay_amount' => $res[pay_amount]+$penalty, 'root' => $res[root], 'percent' => $res[percent], 'penalty' => $penalty, 'pay_amount1' => $res1[pay_amount]);
         }else{
             global  $error;
             $error = 'ხელშეკრულება არ არის გააქტიურებული';
