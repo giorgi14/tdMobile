@@ -1476,7 +1476,7 @@ switch ($action) {
             $penalty = round(($remainig_root * ($res[penalty_percent]/100))*$res[gadacilebuli],2);
         }elseif ($res[gadacilebuli]>0 && $res[gadacilebuli]>$res[penalty_days] && $res[penalty_additional_percent]>0){
             $penalty = round((($remainig_root * ($res[penalty_percent]/100))*$res[penalty_days])+($remainig_root * ($res[penalty_additional_percent]/100))*($res[gadacilebuli]-$res[penalty_days]),2);
-        }else{
+        }elseif($res[gadacilebuli]>0 && $res[penalty_additional_percent] <= 0){
             $penalty = round(($remainig_root * ($res[penalty_percent]/100))*$res[gadacilebuli],2);
         }
        

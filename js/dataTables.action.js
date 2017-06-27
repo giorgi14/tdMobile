@@ -79,19 +79,10 @@ function GetDataTable(tname, aJaxURL, action, count, data, hidden, length, sorti
 	                }
 	            }
 
-	            var iPage = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-				for ( var i = iStart ; i < iEnd ; i++ )
-				{
-					for ( var j = 0 ; j < total.length ; j++ )
-	                {
-						iPage[j] += aaData[ aiDisplay[i] ][total[j]]*1;
-	                }
-				}
-
 	            var nCells = nRow.getElementsByTagName('th');
 	            for ( var k = 0 ; k < total.length ; k++ )
 	            {
-	            	nCells[total[k]].innerHTML = (parseInt(iPage[k] * 100) / 100).toFixed(2) + '<br />' + (parseInt(iTotal[k] * 100) / 100).toFixed(2) + ' ';
+	            	nCells[total[k]].innerHTML = (parseInt(iTotal[k] * 100) / 100).toFixed(2) + ' ';
 	            }
         	}
 		},

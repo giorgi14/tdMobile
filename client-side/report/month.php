@@ -16,7 +16,7 @@
 		
         function LoadTable(tbl,num,act,change_colum_main,aJaxURL){
 			var dLength = [[-1], ["ყველა"]];
-			var total =	[5,7,8,9,10,11,12];
+			var total =	[5,7,9,11,12];
 			GetDataTable(tName+tbl, aJaxURL, act, num, "&filt_month="+$("#filt_month").val()+"&filt_year="+$("#filt_year").val()+"&filt_day="+$("#filt_day").val(), 0, dLength, 3, "asc", total, change_colum_main);
 			$("#table_letter_length").css('top', '2px');
 			setTimeout(function(){$('.ColVis, .dataTable_buttons').css('display','none');}, 90);
@@ -252,7 +252,7 @@
                 <th>&nbsp;</th>
                 <th>&nbsp;</th>
                 <th>&nbsp;</th>
-                <th style="text-align: left; font-weight: bold;"><p align="right">ჯამი <br> სულ ჯამი</p></th>
+                <th style="text-align: left; font-weight: bold;"><p align="right">სულ ჯამი</p></th>
                 <th>&nbsp;</th>
                 <th>&nbsp;</th>
                 <th>&nbsp;</th>
