@@ -11,7 +11,7 @@
 		    	
 		$(document).ready(function () {  
 			GetTabs(tbName);       	
-			LoadTable(tName,8,change_colum_main,aJaxURL);	
+			LoadTable(tName,9,change_colum_main,aJaxURL);	
 			$(".ui-widget-content").css('border', '0px solid #aaaaaa');
  						
 			/* Add Button ID, Delete Button ID */
@@ -22,7 +22,7 @@
 		$(document).on("tabsactivate", "#tabs1", function() {
         	tab = GetSelectedTab(tbName);
         	if (tab == 0) {
-        		LoadTable(tName,8,change_colum_main,aJaxURL);	
+        		LoadTable(tName,9,change_colum_main,aJaxURL);	
          	}else if(tab == 1){
          		GetButtons("add_button1", "");
              	GetDataTable("example1", aJaxURL, 'get_list', 12, "tab=1", 0, "", 0, "desc", "", change_colum_main);
