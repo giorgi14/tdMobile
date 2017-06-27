@@ -84,7 +84,7 @@
     		        			            $('#add-edit-show_letter, .add-edit-show_letter-class').css('overflow-y','scroll');
     		        			            var dLength = [[10, 30, 50, -1], [10, 30, 50, "ყველა"]];
     		        			            var total =	[4,5,14];
-    		        			            GetDataTable1("table_letter", aJaxURL_show_letter, "get_list1", 16, "&id="+param.id+"&loan_currency_id="+$("#loan_currency").val(), 0, dLength, 4, "desc", total, "<'F'Cpl>");
+    		        			            GetDataTable1("table_letter", aJaxURL_show_letter, "get_list1", 18, "&id="+param.id+"&loan_currency_id="+$("#loan_currency").val(), 0, dLength, 4, "desc", total, "<'F'Cpl>");
 											$("#table_letter_length").css('top','0px');
     		        			            parame 		            = new Object();
     		        					    parame.act	            = "gel_footer";
@@ -100,7 +100,15 @@
     		        		    							alert(data.error);
     		        		    						}else{
     		        		    							$("#remaining_root").html(data.remaining_root);
-    		        		    							$("#remaining_root_gel").html(data.remaining_root_gel);
+    		        	        							$("#remaining_root_gel").html(data.remaining_root_gel);
+    		        	        							daricxva_lari = $("#daricxva_lari").html();
+    		        	        							procenti_lari = $("#procenti_lari").html();
+    		        	        							procenti_lari1 = $("#procenti_lari1").html();
+    		        	        							daricxva_lari1 = $("#daricxva_lari1").html();
+    		        	        							var delta  = (parseFloat(data.delta) + parseFloat(daricxva_lari) - parseFloat(procenti_lari)).toFixed(2);
+    		        	        							var delta1 = (parseFloat(data.remaining_root_gel) + parseFloat(daricxva_lari1) - parseFloat(procenti_lari1)).toFixed(2);
+    		        	        							$("#remaining_root").html(delta);
+    		        	        							$("#remaining_root_gel").html(delta1);
     		        		    						}
     		        		    					}
     		        		    			    }
@@ -174,6 +182,30 @@
 		}
 
 		$(document).on("change", "#transaction_date",  function (event) {
+			param 	                = new Object();
+		    
+			param.act               = "get_cource";
+		    param.transaction_date  = $(this).val();
+		    
+			$.ajax({
+		        url: aJaxURL,
+			    data: param,
+		        success: function(data) {			        
+					if(typeof(data.error) != 'undefined'){
+						if(data.error != ''){
+							alert(data.error);
+						}else{
+							$("#tr_id").val(data.tr_id);
+							$("#hidde_cl_id").val($("#client_id").val());
+							GetDataTable("table_transaction_detail", aJaxURL_det, 'get_list', 7, "&transaction_id="+$("#tr_id").val(), 0, "", 0, "desc", "", "<'F'Cpl>");
+							setTimeout(function(){$('.ColVis, .dataTable_buttons').css('display','none');}, 50);
+							$("#table_transaction_detail_length").css('top', '2px');
+			        		CloseDialog('add-edit-form-det');
+			        		
+						}
+					}
+			    }
+		    });
 			if($('#transaction_date').val() != ''){
 		        $('#add_button_dettail').button("enable");
 		    }else{
