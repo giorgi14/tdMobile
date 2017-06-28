@@ -12,8 +12,8 @@ switch ($action) {
 		break;
 	case 'get_edit_page':
 		$id		= $_REQUEST['id'];
-	    $page		= GetPage(GetHolidays($id));
-        $data		= array('page'	=> $page);
+	    $page	= GetPage(GetHolidays($id));
+        $data	= array('page'	=> $page);
 
 		break;
 	case 'get_list' :
@@ -38,7 +38,7 @@ switch ($action) {
 		}
 		
 		$rResult = mysql_query("SELECT     money_transactions.id,
-                                    	   DATE_FORMAT(money_transactions.datetime,'%d/%m/%Y'),
+                                    	   DATE_FORMAT(money_transactions.pay_datetime,'%d/%m/%Y'),
 		                                   client_loan_agreement.oris_code,
                                     	   CASE
                                                WHEN client.id >= 302 THEN CONCAT(client.`name`, ' ', client.lastname, ' / ს/ხ', client_loan_agreement.id, ' / ', client_car.car_marc, ' / ', client_car.registration_number)
@@ -78,11 +78,19 @@ switch ($action) {
 		$tr_id 		          = $_REQUEST['tr_id'];
 		$client_amount        = $_REQUEST['client_amount'];
 		$received_currency_id = $_REQUEST['received_currency_id'];
+		$transaction_date     = $_REQUEST['transaction_date'];
 		
-		save($tr_id, $client_amount, $received_currency_id);
+		save($tr_id, $client_amount, $transaction_date, $received_currency_id);
         
 		break;
 		
+	case 'get_cource':
+	    $transaction_date = $_REQUEST['transaction_date'];
+	    $cource = mysql_fetch_array(mysql_query("SELECT cource FROM cur_cource WHERE DATE(datetime) = DATE('$transaction_date')"));
+	
+	    $data	= array('cource' => $cource[cource]);
+	    break;
+	    
 	case 'get_shedule':
 		$id	               = $_REQUEST['id'];
 		$type_id           = $_REQUEST['type_id'];
@@ -155,7 +163,7 @@ switch ($action) {
                                                ORDER BY  pay_date ASC
                                                LIMIT 1"));
 		
-		$res1 = mysql_fetch_assoc(mysql_query("SELECT  SUM(money_transactions_detail.pay_amount) AS pay_amount
+		$res1 = mysql_fetch_assoc(mysql_query("SELECT  IFNULL(SUM(money_transactions_detail.pay_amount),0) AS pay_amount
                                                FROM    money_transactions_detail
                                                JOIN    money_transactions ON money_transactions.id = money_transactions_detail.transaction_id
                                                JOIN    client_loan_schedule ON client_loan_schedule.id = money_transactions.client_loan_schedule_id
@@ -163,15 +171,29 @@ switch ($action) {
                                                WHERE   client_loan_agreement.client_id = '$res[client_id]' 
                                                AND     money_transactions_detail.`status` = 3
                                                AND     money_transactions_detail.actived = 1"));
-
+		
+		$month_fee_trasaction = $_REQUEST['month_fee_trasaction'];
+		$receivedd_currency_id = $_REQUEST['received_currency_id'];
+		$loan_cource_id       = $res[loan_currency_id];
+		$course               = $_REQUEST['course'];
+		
+		if ($receivedd_currency_id == $loan_cource_id) {
+		    $loan_pay_amount = $month_fee_trasaction;
+		}else{
+		    if ($receivedd_currency_id == 1 && $loan_cource_id == 2) {
+		        $loan_pay_amount = round($month_fee_trasaction/$course,2);
+		    }else{
+		        $loan_pay_amount = round($month_fee_trasaction*$course,2);
+		    }
+		}
 		$penalty = $res[penalty];
 
 		if ($type_id == 1 || $type_id == 0) {	
-    		$data = array('status' => 1, 'id' => $res[id],'pay_amount' => $res[pay_amount] + $penalty, 'root' => $res[root], 'percent' => $res[percent], 'penalty' => $penalty, 'client_data' => client($res[client_id]), 'agrement_data' => client_loan_number($res[agrement_id]), 'currenc' => currency($res[loan_currency_id]),'pay_amount1' => $res1[pay_amount], 'root1' => $res1[pay_root], 'percent1' => $res1[pay_percent], 'penalty1' => $res1[pay_penalty]);
+    		$data = array('status' => 1, 'id' => $res[id],'pay_amount' => $res[pay_amount] + $penalty, 'root' => $res[root], 'percent' => $res[percent], 'penalty' => $penalty, 'client_data' => client($res[client_id]), 'agrement_data' => client_loan_number($res[agrement_id]), 'currenc' => currency($res[loan_currency_id]),'pay_amount1' => $res1[pay_amount], 'root1' => $res1[pay_root], 'percent1' => $res1[pay_percent], 'penalty1' => $res1[pay_penalty], 'loan_pay_amount' => $loan_pay_amount);
 		}elseif ($type_id == 2){
-		    $data = array('status' => 2, 'id' => $res[id],'insurance_fee' => $res[insurance_fee], 'client_data' => client($res[client_id]), 'agrement_data' => client_loan_number($res[agrement_id]));
+		    $data = array('status' => 2, 'id' => $res[id],'insurance_fee' => $res[insurance_fee], 'client_data' => client($res[client_id]), 'agrement_data' => client_loan_number($res[agrement_id]), 'loan_pay_amount' => $loan_pay_amount,'pay_amount1' => $res1[pay_amount]);
 		}elseif ($type_id == 3){
-		    $data = array('status' => 3, 'id' => $res[id],'pledge_fee' => $res[pledge_fee]);
+		    $data = array('status' => 3, 'id' => $res[id],'pledge_fee' => $res[pledge_fee], 'loan_pay_amount' => $loan_pay_amount,'pay_amount1' => $res1[pay_amount]);
 		}
 		
 		break;
@@ -189,22 +211,23 @@ echo json_encode($data);
 * ******************************
 */
 
-function save($tr_id, $client_amount, $received_currency_id){
+function save($tr_id, $client_amount, $transaction_date, $received_currency_id){
     
 	$user_id	= $_SESSION['USERID'];
 	
 	mysql_query("UPDATE  `money_transactions`
                     SET  `datetime`             = NOW(),
             			 `user_id`              = '$user_id',
-            			 `pay_datetime`         = NOW(),
+            			 `pay_datetime`         = '$transaction_date',
             			 `pay_amount`           = '$client_amount',
             			 `received_currency_id` = '$received_currency_id',
             			 `status`               = '1'
                   WHERE  `id`                   = '$tr_id'");
 	
 	mysql_query("UPDATE `money_transactions_detail`
-                    SET `received_currency_id` = '$received_currency_id'
-                 WHERE  `transaction_id`       = '$tr_id'");
+                    SET `pay_datetime`         = '$transaction_date',
+	                    `received_currency_id` = '$received_currency_id'
+	             WHERE  `transaction_id`       = '$tr_id'");
 }
 
 function type($id){
@@ -267,10 +290,10 @@ function client($id){
 function client_loan_number($id){
     $req = mysql_query("SELECT  client_loan_agreement.id,
                                 CASE
-                        		   WHEN client.attachment_id = 0 AND client.id<286 THEN CONCAT('ს/ხ ',client.exel_agreement_id)
-                                   WHEN client.attachment_id = 0 AND client.id>=286 THEN CONCAT('ს/ხ ',client_loan_agreement.id)
-            					   WHEN client.attachment_id > 0 AND client.id<286 THEN concat('ს/ხ ',(SELECT cl.exel_agreement_id FROM client AS cl WHERE cl.id = client.attachment_id), '/დანართი N', client_loan_agreement.attachment_number)
-            					   WHEN client.attachment_id != 0 AND client.id>=286 THEN concat('ს/ხ ',(SELECT client_loan_agreement.id FROM client_loan_agreement WHERE client_loan_agreement.client_id = client.attachment_id), '/დანართი N', client_loan_agreement.attachment_number)
+                        		   WHEN client.attachment_id = 0 AND client.id<302 THEN CONCAT('ს/ხ ',client.exel_agreement_id)
+                                   WHEN client.attachment_id = 0 AND client.id>=302 THEN CONCAT('ს/ხ ',client_loan_agreement.id)
+            					   WHEN client.attachment_id > 0 AND client.id<302 THEN concat('ს/ხ ',(SELECT cl.exel_agreement_id FROM client AS cl WHERE cl.id = client.attachment_id), '/დანართი N', client_loan_agreement.attachment_number)
+            					   WHEN client.attachment_id != 0 AND client.id>=302 THEN concat('ს/ხ ',(SELECT client_loan_agreement.id FROM client_loan_agreement WHERE client_loan_agreement.client_id = client.attachment_id), '/დანართი N', client_loan_agreement.attachment_number)
                         	    END AS `name` 
                         			 
                          FROM   client_loan_agreement
@@ -304,6 +327,7 @@ function GetHolidays($id){
 	                                               money_transactions.datetime,
 	                                               money_transactions.pay_datetime,
 	                                               money_transactions.received_currency_id,
+	                                               money_transactions.month_fee_trasaction,
 	                                               money_transactions.status
                                             FROM  `money_transactions`
                                             JOIN   client_loan_schedule ON client_loan_schedule.id = money_transactions.client_loan_schedule_id
@@ -334,18 +358,9 @@ function GetPage($res = ''){
                                               FROM   money_transactions"));
         
         $hidde_id = $req[id];
-        
-        $req = mysql_fetch_assoc(mysql_query("SELECT MAX(id),
-                                                     cource 
-                                              FROM   cur_cource
-                                              WHERE  actived = 1 
-                                              AND    DATE(datetime) = CURDATE() 
-                                              LIMIT  1"));
-        $cource = $req[cource];
-        $date = $today;
+        $date     = $today;
     }else{
-        $cource = $res[course];
-        $date = $res[datetime];
+        $date     = $res[datetime];
         $hidde_id = $res[id];
     }
     
@@ -356,21 +371,21 @@ function GetPage($res = ''){
 	            <label>თარიღი: '.$date.'</label>
 	            <table>
 	                <tr>
-	                    <td style="width: 180px;"><label calss="label" style="padding-top: 5px;" for="name">სესხის ვალუტა</label></td>
-    					<td style="width: 180px;"><label calss="label" style="padding-top: 5px;" for="name">დღევანდელი კურსი</label></td>
+	                    <td style="width: 180px;"><label calss="label" style="padding-top: 5px;" for="name">დღევანდელი კურსი</label></td>
 	                    <td style="width: 180px;"><label calss="label" style="padding-top: 5px;" for="name">ჩარიცხული თანხა</label></td>
+	                    <td style="width: 180px;"><label calss="label" style="padding-top: 5px;" for="name">თანხა სესხის ვალუტაში</label></td>
     					<td style="width: 180px;"><label calss="label" style="padding-top: 5px;" for="name">ჩარიცხულის ვალუტა</label></td>
 	                    <td style="width: 180px;"><label calss="label" style="padding-top: 5px;" for="name">ჩარიცხვის თარიღი</label></td>
 	                </tr>
     				<tr>
 	                    <td style="width: 180px;">
-    						<select id="currency_id"  calss="label" style="width: 155px;">'.currency($res[currency_id]).'</select>
-    					</td>
-    					<td style="width: 180px;">
-    						<input style="width: 150px;" id="course" class="label" type="text" value="'.$cource.'" '.$disable.'>
+    						<input style="width: 150px;" id="course" class="label" type="text" value="'.$res[course].'" '.$disable.'>
     					</td>
     					<td style="width: 180px;">
     						<input style="width: 150px;" id="client_amount" class="label" type="text" value="'.$res[pay_amount].'" '.$disable.'>
+    					</td>
+    					<td style="width: 180px;">
+    						<input style="width: 150px;" id="client_amount1_1" class="label" type="text" value="'.$res[month_fee_trasaction].'" disabled="disabled">
     					</td>
     					<td style="width: 180px;">
     						<select id="received_currency_id" calss="label" style="width: 155px;">'.currency($res[received_currency_id]).'</select>

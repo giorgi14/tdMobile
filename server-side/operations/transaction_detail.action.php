@@ -65,6 +65,9 @@ switch ($action) {
 		$course               = $_REQUEST['course'];
 		$transaction_date     = $_REQUEST['transaction_date'];
 		
+		$month_fee_trasaction = $_REQUEST['month_fee_trasaction'];
+		$extra_fee            = $_REQUEST['extra_fee'];
+		
 		$hidde_id             = $_REQUEST['hidde_id'];
 		$hidde_transaction_id = $_REQUEST['hidde_transaction_id'];
 		$hidde_status         = $_REQUEST['hidde_status'];
@@ -73,9 +76,9 @@ switch ($action) {
 		if ($id == '') {
 	        if ($tr_id == '') {
 	            mysql_query("INSERT INTO `money_transactions` 
-                                        (`datetime`, `user_id`, `client_loan_schedule_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `type_id`, `status`, `actived`) 
+                                        (`datetime`, `user_id`, `client_loan_schedule_id`, `pay_datetime`, `pay_amount`, `extra_fee`, `course`, `currency_id`, `received_currency_id`, `month_fee_trasaction`, `type_id`, `status`, `actived`) 
                                   VALUES 
-                                        (NOW(), '$user_id', '$hidde_id', '$transaction_date', '$month_fee', '$course', '$currency_id', '$received_currency_id', '$type_id', '0', '1')");
+                                        (NOW(), '$user_id', '$hidde_id', '$transaction_date', '$month_fee', '$extra_fee', '$course', '$currency_id', '$received_currency_id', '$month_fee_trasaction', '$type_id', '0', '1')");
 	            
 	            $tr_id = mysql_insert_id();
 	        }else{
@@ -88,7 +91,7 @@ switch ($action) {
 	        }
 	        $data = array('tr_id' => $tr_id);
         }else{
-            update($hidde_status, $id, $transaction_date, $month_fee, $root,  $percent, $penalti_fee, $surplus);
+            update($hidde_status, $id, $transaction_date, $month_fee,  $root,  $percent, $penalti_fee, $surplus);
         }
 		
 		break;
@@ -387,10 +390,10 @@ function client($id){
 function client_loan_number($id){
     $req = mysql_query("SELECT  client_loan_agreement.id,
                                 CASE
-                        		   WHEN client.attachment_id = 0 AND client.id<286 THEN CONCAT('ს/ხ ',client.exel_agreement_id)
-                                   WHEN client.attachment_id = 0 AND client.id>=286 THEN CONCAT('ს/ხ ',client_loan_agreement.id)
-            					   WHEN client.attachment_id != 0 AND client.id<286 THEN concat('ს/ხ ',(SELECT client.exel_agreement_id FROM client WHERE client.id = client.attachment_id), '/დანართი N', client_loan_agreement.attachment_number)
-            					   WHEN client.attachment_id != 0 AND client.id>=286 THEN concat('ს/ხ ',(SELECT client_loan_agreement.id FROM client_loan_agreement WHERE client_loan_agreement.client_id = client.attachment_id), '/დანართი N', client_loan_agreement.attachment_number)
+                        		   WHEN client.attachment_id = 0 AND client.id<302 THEN CONCAT('ს/ხ ',client.exel_agreement_id)
+                                   WHEN client.attachment_id = 0 AND client.id>=302 THEN CONCAT('ს/ხ ',client_loan_agreement.id)
+            					   WHEN client.attachment_id != 0 AND client.id<302 THEN concat('ს/ხ ',(SELECT client.exel_agreement_id FROM client WHERE client.id = client.attachment_id), '/დანართი N', client_loan_agreement.attachment_number)
+            					   WHEN client.attachment_id != 0 AND client.id>=302 THEN concat('ს/ხ ',(SELECT client_loan_agreement.id FROM client_loan_agreement WHERE client_loan_agreement.client_id = client.attachment_id), '/დანართი N', client_loan_agreement.attachment_number)
                         	    END AS `name` 
                          FROM   client_loan_agreement
                          JOIN   client ON client.id = client_loan_agreement.client_id
@@ -423,6 +426,8 @@ function GetHolidays($id){
                                     				money_transactions.client_loan_schedule_id,
                                     				money_transactions_detail.datetime,
 	                                                money_transactions.id AS tr_id,
+	                                                money_transactions.extra_fee,
+	                                                money_transactions.month_fee_trasaction,
                                     				money_transactions_detail.`status`
                                             FROM   `money_transactions_detail`
                                             JOIN  	money_transactions ON money_transactions_detail.transaction_id = money_transactions.id
@@ -454,6 +459,12 @@ function GetPage($res = ''){
         $input_hidde = "display:none;";
     }else{
         $input_hidde = "";
+    }
+    
+    if ($res[status] == 1) {
+        $disable = 'disabled="disabled"';
+    }else{
+        $disable = "";
     }
     
     if ($res['id']=='') {
@@ -528,13 +539,40 @@ function GetPage($res = ''){
     						<select id="client_loan_number" calss="label" style="width: 175px;">'.client_loan_number($res[client_id]).'</select>
     					</td>
     				</tr>
+    				<tr>
+    	                <td style="width: 200px;"><label calss="label" style="padding-top: 5px;" for="name">სესხის ვალუტა</label></td>
+    					<td style="width: 280px;"><label calss="label" style="padding-top: 5px;" for="date"></label></td>
+    					<td style="width: 120px;"><label calss="label" style="padding-top: 5px;" for="date"></label></td>
+    				</tr>
+    				<tr>
+    	                <td style="width: 200px;">
+    						<select id="currency_id"  calss="label" style="width: 155px;">'.currency($res[currency_id]).'</select>
+    					</td>
+    					<td style="width: 280px;">
+    					</td>
+    					<td style="width: 120px;">
+    					</td>
+    				</tr>
     			</table>
     			<table>
     				<tr style="height:40px;"></tr>
     				<tr>
     					<td style="width: 105px;"><label style="padding-top: 5px;" class="label" for="date">ჩარიცხული თანხა:</label></td>
                 	    <td style="width: 100px;">
-    						<input style="width: 80px;" id="month_fee" class="label" type="text" value="'.$res['pay_amount'].'" disabled="disabled">
+    						<input style="width: 80px;" id="month_fee_trasaction" class="label" type="text" value="'.$res['month_fee_trasaction'].'" disabled="disabled">
+    					</td>
+    					<td style="width: 120px;"></td>
+    					<td style="width: 80px;">
+    					</td>
+    				    <td style="width: 135px;"></td>
+    					<td style="width: 100px;">
+    					</td>
+    				</tr>
+    				<tr style="height:10px;"></tr>
+    				<tr>
+    					<td style="width: 105px;"><label style="padding-top: 5px;" class="label" for="date">ჩარიცხული თანხა სესხის ვალუტაში:</label></td>
+                	    <td style="width: 100px;">
+    						<input style="width: 80px;" id="month_fee" class="label" type="text" value="'.$res['pay_amount'].'">
     					</td>
     					<td style="width: 120px;"><label style="padding-top: 5px;" class="label" for="name">სულ შესატანი თანხა:</label></td>
     					<td style="width: 80px;">
@@ -589,6 +627,15 @@ function GetPage($res = ''){
     						<input class="label_label" style="width: 80px; " id="surplus" type="text" value="'.$res['pay_amount'].'" '.$disable.'>
     					</td>
     					<td style="width: 120px;"></td>
+    					<td style="width: 100px;"></td>
+    					<td style="width: 120px;"></td>
+    					<td style="width: 80px;"></td>
+    				</tr>
+    				<tr style="height:10px;"></tr>
+    				<tr style="'.$input_hidde.'">
+    					<td style="width: 120px;"><label class="label_label" for="date">ზედმეტი თანხა</label></td>
+    					<td style="width: 100px;"><input class="label_label" style="width: 80px; " id="extra_fee" type="text" value="'.$res['extra_fee'].'" disabled="disabled"></td>
+    					<td style="width: 120px; color: #ff0000 "; id="error_mesage"></td>
     					<td style="width: 100px;"></td>
     					<td style="width: 120px;"></td>
     					<td style="width: 80px;"></td>
