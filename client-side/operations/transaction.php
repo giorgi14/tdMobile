@@ -25,7 +25,7 @@
         		LoadTable(tName,9,change_colum_main,aJaxURL);	
          	}else if(tab == 1){
          		GetButtons("add_button1", "");
-             	GetDataTable("example1", aJaxURL, 'get_list', 12, "tab=1", 0, "", 0, "desc", "", change_colum_main);
+             	GetDataTable("example1", aJaxURL, 'get_list', 13, "tab=1", 0, "", 0, "desc", "", change_colum_main);
              	SetEvents("", "", "", "example1", fName, aJaxURL,'',tName,10,change_colum_main,aJaxURL,'','','');
              	
              	setTimeout(function(){$('.ColVis, .dataTable_buttons').css('display','none');}, 90);
@@ -796,8 +796,8 @@
                         <th style="width: 8%;">ჩარიცხული თანხა</th>
                         <th style="width: 8%;">ვალუტა</th>
                         <th style="width: 8%;">კურსი</th>
-                        <th style="width: 10%;">სტატუსი</th>
-                        <th style="width: 10%;">user</th>
+                        <th style="width: 11%;">სტატუსი</th>
+                        <th style="width: 11%;">user</th>
                     </tr>
                 </thead>
                 <thead>
@@ -853,15 +853,16 @@
                         <th>ID</th>
                         <th style="width: 7%;">თარიღი</th>
                         <th style="width: 6%;">კოდი</th>
-                        <th style="width: 30%;">მსესხებელი</th>
+                        <th style="width: 28%;">მსესხებელი</th>
                         <th style="width: 6%;">ჩარიც.<br>თანხა</th>
-                        <th style="width: 7%;">ვალუტა</th>
+                        <th style="width: 6%;">ვალუტა</th>
                         <th style="width: 5%;">კურსი</th>
                         <th style="width: 6%;">დაფარ.<br>ძირი</th>
                         <th style="width: 6%;">დაფარ.<br>პროცენტი</th>
                         <th style="width: 6%;">მეტობა</th>
                         <th style="width: 8%;">სტატუსი</th>
                         <th style="width: 9%;">user</th>
+                        <th style="width: 7%;">შევსების<br>თარიღი</th>
                     </tr>
                 </thead>
                 <thead>
@@ -879,6 +880,9 @@
                             <input type="text" name="search_category" value="ფილტრი" class="search_init" />
                         </th>
                        	<th>
+                            <input type="text" name="search_category" value="ფილტრი" class="search_init" />
+                        </th>
+                        <th>
                             <input type="text" name="search_category" value="ფილტრი" class="search_init" />
                         </th>
                         <th>
@@ -924,13 +928,14 @@
                 <thead>
                     <tr id="datatable_header">
                         <th>ID</th>
-                        <th style="width: 10%;">თარიღი</th>
-                        <th style="width: 10%;">კოდი</th>
-                        <th style="width: 40%;">მსესხებელი</th>
-                        <th style="width: 10%;">ჩარიცხული<br>თანხა</th>
-                        <th style="width: 10%;">ვალუტა</th>
+                        <th style="width: 9%;">თარიღი</th>
+                        <th style="width: 9%;">კოდი</th>
+                        <th style="width: 35%;">მსესხებელი</th>
+                        <th style="width: 9%;">ჩარიცხული<br>თანხა</th>
+                        <th style="width: 9%;">ვალუტა</th>
                         <th style="width: 10%;">კურსი</th>
                         <th style="width: 10%;">user</th>
+                        <th style="width: 9%;">შევსების<br>თარიღი</th>
                     </tr>
                 </thead>
                 <thead>
@@ -948,6 +953,9 @@
                             <input type="text" name="search_category" value="ფილტრი" class="search_init" />
                         </th>
                        	<th>
+                            <input type="text" name="search_category" value="ფილტრი" class="search_init" />
+                        </th>
+                        <th>
                             <input type="text" name="search_category" value="ფილტრი" class="search_init" />
                         </th>
                         <th>
@@ -981,13 +989,14 @@
                 <thead>
                     <tr id="datatable_header">
                         <th>ID</th>
-                        <th style="width: 10%;">თარიღი</th>
-                        <th style="width: 10%;">კოდი</th>
-                        <th style="width: 40%;">მსესხებელი</th>
-                        <th style="width: 10%;">ჩარიცხული<br>თანხა</th>
-                        <th style="width: 10%;">ვალუტა</th>
+                        <th style="width: 9%;">თარიღი</th>
+                        <th style="width: 9%;">კოდი</th>
+                        <th style="width: 35%;">მსესხებელი</th>
+                        <th style="width: 7%;">ჩარიცხული<br>თანხა</th>
+                        <th style="width: 9%;">ვალუტა</th>
                         <th style="width: 10%;">კურსი</th>
                         <th style="width: 12%;">user</th>
+                        <th style="width: 9%;">შევსების<br>თარღი</th>
                     </tr>
                 </thead>
                 <thead>
@@ -1005,6 +1014,9 @@
                             <input type="text" name="search_category" value="ფილტრი" class="search_init" />
                         </th>
                        	<th>
+                            <input type="text" name="search_category" value="ფილტრი" class="search_init" />
+                        </th>
+                        <th>
                             <input type="text" name="search_category" value="ფილტრი" class="search_init" />
                         </th>
                         <th>

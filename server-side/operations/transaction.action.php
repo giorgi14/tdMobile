@@ -49,7 +49,8 @@ switch ($action) {
 		                                   money_transactions.course,
 		                                   $val
                                            IF(money_transactions.`status` = 0,'დაუდასტურებელი','დადასტურებული'),
-		                                   user_info.`name`
+		                                   user_info.`name`,
+		                                   DATE_FORMAT(money_transactions.datetime,'%d/%m/%Y')
                                  FROM     `money_transactions`
                                  JOIN      client_loan_schedule ON client_loan_schedule.id = money_transactions.client_loan_schedule_id
                                  JOIN      client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
