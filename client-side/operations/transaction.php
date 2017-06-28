@@ -175,10 +175,8 @@
     	        $("#month_fee_trasaction").val($('#client_amount').val());
     	        if($("#id").val()!=''){
 					$('#currency_id').prop('disabled', true).trigger("chosen:updated");
-        	        $('#client_id').prop('disabled', true).trigger("chosen:updated");
         	        $('#type_id').prop('disabled', true).trigger("chosen:updated");
-        	        //$('#client_loan_number').prop('disabled', true).trigger("chosen:updated");
-				}
+        	    }
 				
     	        $('#client_id').prop('disabled', true).trigger("chosen:updated");
     	        $('#client_loan_number').prop('disabled', true).trigger("chosen:updated");
@@ -249,25 +247,29 @@
 			}else if(param.month_fee == ''){
 		    	alert('შეავსე ჩარიცხული თანხა');
 			}else{
-    	    	$.ajax({
-    		        url: aJaxURL_det,
-    			    data: param,
-    		        success: function(data) {			        
-    					if(typeof(data.error) != 'undefined'){
-    						if(data.error != ''){
-    							alert(data.error);
-    						}else{
-    							$("#tr_id").val(data.tr_id);
-    							$("#hidde_cl_id").val($("#client_id").val());
-    							GetDataTable("table_transaction_detail", aJaxURL_det, 'get_list', 9, "&transaction_id="+$("#tr_id").val(), 0, "", 0, "desc", "", "<'F'Cpl>");
-    							setTimeout(function(){$('.ColVis, .dataTable_buttons').css('display','none');}, 50);
-    							$("#table_transaction_detail_length").css('top', '2px');
-    			        		CloseDialog('add-edit-form-det');
-    			        		
-    						}
-    					}
-    			    }
-    		    });
+				if($("#error_mesage").html() == ''){
+        	    	$.ajax({
+        		        url: aJaxURL_det,
+        			    data: param,
+        		        success: function(data) {			        
+        					if(typeof(data.error) != 'undefined'){
+        						if(data.error != ''){
+        							alert(data.error);
+        						}else{
+        							$("#tr_id").val(data.tr_id);
+        							$("#hidde_cl_id").val($("#client_id").val());
+        							GetDataTable("table_transaction_detail", aJaxURL_det, 'get_list', 9, "&transaction_id="+$("#tr_id").val(), 0, "", 0, "desc", "", "<'F'Cpl>");
+        							setTimeout(function(){$('.ColVis, .dataTable_buttons').css('display','none');}, 50);
+        							$("#table_transaction_detail_length").css('top', '2px');
+        			        		CloseDialog('add-edit-form-det');
+        			        		
+        						}
+        					}
+        			    }
+        		    });
+				}else{
+					alert('გადანაწილება არასწორია');
+				}
     	    }
 		});
 
