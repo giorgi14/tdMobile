@@ -380,7 +380,7 @@ function GetPage($res = ''){
 	                </tr>
     				<tr>
 	                    <td style="width: 180px;">
-    						<input style="width: 150px;" id="course" class="label" type="text" value="'.$res[course].'" '.$disable.'>
+    						<input style="width: 150px;" id="course" class="label" type="text" value="'.$res[course].'" disabled="disabled">
     					</td>
     					<td style="width: 180px;">
     						<input style="width: 150px;" id="client_amount" class="label" type="text" value="'.$res[pay_amount].'" '.$disable.'>
