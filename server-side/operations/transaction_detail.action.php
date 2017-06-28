@@ -25,7 +25,7 @@ switch ($action) {
 		$transaction_id	= $_REQUEST['transaction_id'];
 		
 		$rResult = mysql_query("SELECT      money_transactions_detail.id,
-                            				DATE_FORMAT(money_transactions_detail.datetime,'%d/%m/%Y'),
+                            				DATE_FORMAT(money_transactions_detail.pay_datetime,'%d/%m/%Y'),
                             				IF(money_transactions_detail.`status` = 1,money_transactions_detail.pay_root + money_transactions_detail.pay_percent,money_transactions_detail.pay_amount),
                             				loan_currency.`name`,
                             				money_transactions_detail.course,
