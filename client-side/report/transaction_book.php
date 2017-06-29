@@ -7,20 +7,25 @@
 		var change_colum_main = "<'dataTable_buttons'T><'F'Cfipl>";
 		    	
 		$(document).ready(function () {
-			$("#filt_day").chosen();        	
+			$("#filt_day").chosen(); 
+			$("#filt_month").chosen();       	
 			LoadTable(tName,10,change_colum_main,aJaxURL);
 		});
         
 		function LoadTable(tName,num,change_colum_main,aJaxURL){
 			var total =	[6,7,8];
-			GetDataTable(tName, aJaxURL, 'get_list', num, "&filt_day="+$("#filt_day").val(), 0, "", 1, "desc", total, change_colum_main);
+			GetDataTable(tName, aJaxURL, 'get_list', num, "&filt_day="+$("#filt_day").val()+"&filt_month="+$("#filt_month").val(), 0, "", 1, "desc", total, change_colum_main);
 			setTimeout(function(){$('.ColVis, .dataTable_buttons').css('display','none');}, 90);
 		}
 
 		$(document).on("change", "#filt_day", function () {
 			LoadTable(tName,10,change_colum_main,aJaxURL);	 
 	    });
-		
+
+		$(document).on("change", "#filt_month", function () {
+			LoadTable(tName,10,change_colum_main,aJaxURL);	 
+	    });
+	    
 	    $(document).on("click", "#show_copy_prit_exel", function () {
 	        if($(this).attr('myvar') == 0){
 	            $('.ColVis,.dataTable_buttons').css('display','block');
@@ -41,7 +46,7 @@
             position: relative;
             float: right;
             width: 70px;
-            top: 24px;
+            top: 37px;
         	z-index: 99;
         	border: 1px solid #E6E6E6;
         	padding: 4px;
@@ -74,6 +79,29 @@
 <div id="tabs" style="width: 95%;">
 <div class="callapp_head">დარიცხვების ჟურნალი<hr class="callapp_head_hr"></div>
     <div id="button_area">
+        <select id="filt_month" style="width:  130px;">
+    		<?php 
+    		
+        		mysql_connect('212.72.155.176','root','Gl-1114');
+        		mysql_select_db('tgmobile');
+        		mysql_set_charset ( 'utf8');
+    		
+    		    $c_date	= date('m');
+                $req = mysql_query("SELECT id,
+                                          `name`
+                                    FROM   month");
+    
+                while( $res = mysql_fetch_assoc($req)){
+                    if($res['id'] == $c_date){
+                        $data .= '<option value="' . $res['id'] . '" selected="selected">' . $res['name'] . '</option>';
+                    } else {
+                        $data .= '<option value="' . $res['id'] . '">' . $res['name'] . '</option>';
+                    }
+                }
+                
+                echo $data;
+    		 ?>
+    	</select>
     	<select id="filt_day" style="width:  100px;">
     	    <option value="0">ყველა</option>
     		<option value="1">01</option>
