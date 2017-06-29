@@ -648,71 +648,84 @@
 			if (event.keyCode == $.ui.keyCode.ENTER){
 				
 				if($(this).val()==''){this_value = 0;}else{this_value = $(this).val();}
-				
-				delta = (parseFloat($("#extra_fee").val())-parseFloat(this_value)).toFixed(2);
-				if(delta<0){
-					alert('მიუთითეთ კორექტული თანხა')
-					$("#root").css('background','#fb5959');
-					$("#error_mesage").html('არასწორი განაწილება!');
-				}else{
-					$("#hidde_root").val(1);
-    				$("#extra_fee").val(delta);
-    				$("#root").css('background','rgb(255, 255, 255)');
+				if($("#hidde_root").val()==0){
+    				delta = (parseFloat($("#extra_fee").val())-parseFloat(this_value)).toFixed(2);
+    				if(delta<0){
+    					alert('მიუთითეთ კორექტული თანხა')
+    					$("#root").css('background','#fb5959');
+    					$("#error_mesage").html('არასწორი განაწილება!');
+    				}else{
+    					$("#hidde_root").val(1);
+        				$("#extra_fee").val(delta);
+        				$("#root").css('background','rgb(255, 255, 255)');
+        				$("#percent").focus();
+        				$("#error_mesage").html('');
+    				}
+    			}else{
     				$("#percent").focus();
-    				$("#error_mesage").html('');
-				}
+        		}
             }
 		});
 		
 		$(document).on("keydown", "#percent", function (event) {
 			if (event.keyCode == $.ui.keyCode.ENTER){
 				if($(this).val()==''){this_value = 0;}else{this_value = $(this).val();}
-				delta = (parseFloat($("#extra_fee").val())-parseFloat(this_value)).toFixed(2);
-				if(delta<0){
-					alert('მიუთითეთ კორექტული თანხა');
-					$("#percent").css('background','#fb5959');
-					$("#error_mesage").html('არასწორი განაწილება!');
+				if($("#hidde_percent").val()==0){
+    				delta = (parseFloat($("#extra_fee").val())-parseFloat(this_value)).toFixed(2);
+    				if(delta<0){
+    					alert('მიუთითეთ კორექტული თანხა');
+    					$("#percent").css('background','#fb5959');
+    					$("#error_mesage").html('არასწორი განაწილება!');
+    				}else{
+    					$("#hidde_percent").val(1);
+        				$("#extra_fee").val(delta);
+        				$("#percent").css('background','rgb(255, 255, 255)');
+        				$("#penalti_fee").focus();
+        				$("#error_mesage").html('');
+    				}
 				}else{
-					$("#hidde_percent").val(1);
-    				$("#extra_fee").val(delta);
-    				$("#percent").css('background','rgb(255, 255, 255)');
     				$("#penalti_fee").focus();
-    				$("#error_mesage").html('');
-				}
+        		}
             }
 		});
 		
 		$(document).on("keydown", "#penalti_fee", function (event) {
 			if (event.keyCode == $.ui.keyCode.ENTER){
 				if($(this).val()==''){this_value = 0;}else{this_value = $(this).val();}
-				delta = (parseFloat($("#extra_fee").val())-parseFloat(this_value)).toFixed(2);
-				if(delta<0){
-					alert('მიუთითეთ კორექტული თანხა');
-					$("#penalti_fee").css('background','#fb5959');
-					$("#error_mesage").html('არასწორი განაწილება!');
+				if($("#hidde_penalty").val()==0){
+    				delta = (parseFloat($("#extra_fee").val())-parseFloat(this_value)).toFixed(2);
+    				if(delta<0){
+    					alert('მიუთითეთ კორექტული თანხა');
+    					$("#penalti_fee").css('background','#fb5959');
+    					$("#error_mesage").html('არასწორი განაწილება!');
+    				}else{
+    					$("#hidde_penalty").val(1);
+        				$("#extra_fee").val(delta);
+        				$("#penalti_fee").css('background','rgb(255, 255, 255)');
+        				$("#surplus").focus();
+        				$("#error_mesage").html('');
+    				}
 				}else{
-					$("#hidde_penalty").val(1);
-    				$("#extra_fee").val(delta);
-    				$("#penalti_fee").css('background','rgb(255, 255, 255)');
-    				$("#surplus").focus();
-    				$("#error_mesage").html('');
-				}
+					$("#surplus").focus();
+        		}
             }
 		});
 		
 		$(document).on("keydown", "#surplus", function (event) {
 			if (event.keyCode == $.ui.keyCode.ENTER){
 				if($(this).val()==''){this_value = 0;}else{this_value = $(this).val();}
-				delta = (parseFloat($("#extra_fee").val())-parseFloat(this_value)).toFixed(2);
-				if(delta<0){
-					alert('მიუთითეთ კორექტული თანხა');
-					$("#surplus").css('background','#fb5959');
-					$("#error_mesage").html('არასწორი განაწილება!');
-				}else{
-					$("#hidde_surplus").val(1);
-					$("#extra_fee").val(delta);
-					$("#surplus").css('background','rgb(255, 255, 255)');
-					$("#error_mesage").html('');
+				if($("#hidde_surplus").val()==0){
+    				delta = (parseFloat($("#extra_fee").val())-parseFloat(this_value)).toFixed(2);
+    				if(delta<0){
+    					alert('მიუთითეთ კორექტული თანხა');
+    					$("#surplus").css('background','#fb5959');
+    					$("#error_mesage").html('არასწორი განაწილება!');
+    				}else{
+    					$("#hidde_surplus").val(1);
+    					$("#extra_fee").val(delta);
+    					$("#surplus").css('background','rgb(255, 255, 255)');
+    					$("#error_mesage").html('');
+    				}
 				}
             }
 		});

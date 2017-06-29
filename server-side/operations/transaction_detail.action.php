@@ -573,7 +573,7 @@ function GetPage($res = ''){
     				<tr>
     					<td style="width: 105px;"><label style="" class="label" for="date">ჩარიცხული თანხა სესხის ვალუტაში:</label></td>
                 	    <td style="width: 100px;">
-    						<input style="width: 80px;" id="month_fee" class="label" type="text" value="'.$res['pay_amount'].'">
+    						<input style="width: 80px;" id="month_fee" class="label" type="text" value="'.$res['pay_amount'].'" disabled="disabled">
     					</td>
     					<td style="width: 100px;"><label style="padding-top: 5px; margin-left: 10px;" class="label" for="name">სულ შესატანი თანხა:</label></td>
     					<td style="width: 80px;">
