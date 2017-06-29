@@ -655,6 +655,7 @@
 					$("#root").css('background','#fb5959');
 					$("#error_mesage").html('არასწორი განაწილება!');
 				}else{
+					$("#hidde_root").val(1);
     				$("#extra_fee").val(delta);
     				$("#root").css('background','rgb(255, 255, 255)');
     				$("#percent").focus();
@@ -672,6 +673,7 @@
 					$("#percent").css('background','#fb5959');
 					$("#error_mesage").html('არასწორი განაწილება!');
 				}else{
+					$("#hidde_percent").val(1);
     				$("#extra_fee").val(delta);
     				$("#percent").css('background','rgb(255, 255, 255)');
     				$("#penalti_fee").focus();
@@ -689,6 +691,7 @@
 					$("#penalti_fee").css('background','#fb5959');
 					$("#error_mesage").html('არასწორი განაწილება!');
 				}else{
+					$("#hidde_penalty").val(1);
     				$("#extra_fee").val(delta);
     				$("#penalti_fee").css('background','rgb(255, 255, 255)');
     				$("#surplus").focus();
@@ -706,13 +709,78 @@
 					$("#surplus").css('background','#fb5959');
 					$("#error_mesage").html('არასწორი განაწილება!');
 				}else{
+					$("#hidde_surplus").val(1);
 					$("#extra_fee").val(delta);
 					$("#surplus").css('background','rgb(255, 255, 255)');
 					$("#error_mesage").html('');
 				}
             }
 		});
-		
+
+		$(document).on("click", "#delete_root", function () {
+	        root = $("#root").val();
+	        if(root == ''){root = 0;}
+
+	        if($("#hidde_root").val() == 1){
+	        	$("#extra_fee").val(parseFloat($("#extra_fee").val()) + parseFloat(root));
+	        	$("#root").val('');
+	        	$("#hidde_root").val(0);
+	        	$("#root").focus();
+	        }else{
+	        	$("#extra_fee").val(parseFloat($("#extra_fee").val()));
+	        	$("#root").val('');
+	        	$("#root").focus();
+		    }
+	    });
+
+		$(document).on("click", "#delete_percent", function () {
+			percent = $("#percent").val();
+	        if(percent == ''){percent = 0;}
+
+	        if($("#hidde_percent").val() == 1){
+	        	$("#extra_fee").val(parseFloat($("#extra_fee").val()) + parseFloat(percent));
+	        	$("#percent").val('');
+	        	$("#hidde_percent").val(0);
+	        	$("#percent").focus();
+	        }else{
+	        	$("#extra_fee").val(parseFloat($("#extra_fee").val()));
+	        	$("#percent").val('');
+	        	$("#percent").focus();
+		    }
+	    });
+
+		$(document).on("click", "#delete_penalty", function () {
+			penalti_fee = $("#penalti_fee").val();
+	        if(penalti_fee == ''){penalti_fee = 0;}
+
+	        if($("#hidde_penalty").val() == 1){
+	        	$("#extra_fee").val(parseFloat($("#extra_fee").val()) + parseFloat(penalti_fee));
+	        	$("#penalti_fee").val('');
+	        	$("#hidde_penalty").val(0);
+	        	$("#penalti_fee").focus();
+	        }else{
+	        	$("#extra_fee").val(parseFloat($("#extra_fee").val()));
+	        	$("#penalti_fee").val('');
+	        	$("#penalti_fee").focus();
+		    }
+	    });
+
+		$(document).on("click", "#delete_surplus", function () {
+			surplus = $("#surplus").val();
+	        if(surplus == ''){surplus = 0;}
+
+	        if($("#hidde_surplus").val() == 1){
+	        	$("#extra_fee").val(parseFloat($("#extra_fee").val()) + parseFloat(surplus));
+	        	$("#surplus").val('');
+	        	$("#hidde_surplus").val(0);
+	        	$("#surplus").focus();
+	        }else{
+	        	$("#extra_fee").val(parseFloat($("#extra_fee").val()));
+	        	$("#surplus").val('');
+	        	$("#surplus").focus();
+		    }
+	    });
+	    
 	    $(document).on("click", "#show_copy_prit_exel", function () {
 	        if($(this).attr('myvar') == 0){
 	            $('.ColVis,.dataTable_buttons').css('display','block');

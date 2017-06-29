@@ -562,7 +562,7 @@ function GetPage($res = ''){
                 	    <td style="width: 100px;">
     						<input style="width: 80px;" id="month_fee_trasaction" class="label" type="text" value="'.$res['month_fee_trasaction'].'" disabled="disabled">
     					</td>
-    					<td style="width: 120px;"></td>
+    					<td style="width: 100px;"></td>
     					<td style="width: 80px;">
     					</td>
     				    <td style="width: 135px;"></td>
@@ -571,11 +571,11 @@ function GetPage($res = ''){
     				</tr>
     				<tr style="height:10px;"></tr>
     				<tr>
-    					<td style="width: 105px;"><label style="padding-top: 5px;" class="label" for="date">ჩარიცხული თანხა სესხის ვალუტაში:</label></td>
+    					<td style="width: 105px;"><label style="" class="label" for="date">ჩარიცხული თანხა სესხის ვალუტაში:</label></td>
                 	    <td style="width: 100px;">
     						<input style="width: 80px;" id="month_fee" class="label" type="text" value="'.$res['pay_amount'].'">
     					</td>
-    					<td style="width: 120px;"><label style="padding-top: 5px;" class="label" for="name">სულ შესატანი თანხა:</label></td>
+    					<td style="width: 100px;"><label style="padding-top: 5px; margin-left: 10px;" class="label" for="name">სულ შესატანი თანხა:</label></td>
     					<td style="width: 80px;">
     						<input style="width: 80px;" id="month_fee1" class="label" type="text" value="'.$res1['pay_amount'].'" disabled="disabled">
     					</td>
@@ -586,11 +586,11 @@ function GetPage($res = ''){
     				</tr>
     				<tr style="height:10px;"></tr>
     				<tr style="'.$input_hidde.'">
-    					<td style="width: 105px; "><label style="'.$display_none.'" class="label_label" for="date">ძირი თანხა:</label></td>
+    					<td style="width: 105px; "><label style="padding-top: 5px; '.$display_none.'" class="label_label" for="date">ძირი თანხა:</label></td>
     					<td style="width: 100px; ">
-    						<input style="width: 80px; '.$display_none.'" id="root" class="label_label" type="text" value="'.$res['pay_root'].'" '.$disable.'>
+    						<input style="width: 70px; float:left; '.$display_none.'" id="root" onkeydown="if(event.which == 8 || event.keyCode == 46) return false;" class="label_label" type="text" value="'.$res['pay_root'].'" '.$disable.'><span style="float: right; display: inline; margin-top: 4px;"><button id="delete_root" class="label_label" style="width:20px; padding: 0 0 2px 0; color: #fb0000; '.$input_hidde.'">x</button></span>
     					</td>
-    					<td style="width: 120px;"><label style="padding-top: 5px;" class="label_label" for="date">ძირი თანხა:</label></td>
+    					<td style="width: 100px;"><label style="padding-top: 5px; margin-left: 10px;" class="label_label" for="date">ძირი თანხა:</label></td>
     					<td style="width: 80px;">
     						<input style="width: 80px;" id="root1" class="label_label" type="text" value="'.$res1['root'].'" disabled="disabled">
     					</td>
@@ -601,31 +601,31 @@ function GetPage($res = ''){
     				</tr>
     				<tr style="height:10px;"></tr>
     				<tr style="'.$input_hidde.'">
-    					<td style="width: 105px; "><label style="'.$display_none.'" class="label_label" for="date">პროცენტი:</label></td>
+    					<td style="width: 105px; "><label style="padding-top: 5px; '.$display_none.'" class="label_label" for="date">პროცენტი:</label></td>
     					<td style="width: 100px; ">
-    						<input style="width: 80px; '.$display_none.'" id="percent" class="label_label" type="text" value="'.$res['pay_percent'].'" '.$disable.'>
+    						<input style="width: 70px; float:left;'.$display_none.'" id="percent" class="label_label"  onkeydown="if(event.which == 8 || event.keyCode == 46) return false;" type="text" value="'.$res['pay_percent'].'" '.$disable.'><span style="float: right; display: inline; margin-top: 4px;"><button id="delete_percent" class="label_label" style="width:20px; padding: 0 0 2px 0; color: #fb0000; '.$input_hidde.'">x</button></span>
     					</td>
-    					<td style="width: 120px;"><label style="padding-top: 5px;" class="label_label" for="date">პროცენტი:</label></td>
+    					<td style="width: 100px;"><label style="padding-top: 5px; margin-left: 10px;" class="label_label" for="date">პროცენტი:</label></td>
     					<td style="width: 80px;">
     						<input style="width: 80px;"  class="label_label" id="percent1" type="text" value="'.$res1['percent'].'" disabled="disabled">
     					</td>
     				</tr>
     				<tr style="height:10px;"></tr>
     				<tr style="'.$input_hidde.'">
-    					<td style="width: 105px; "><label style="'.$display_none1.'" class="label_label" for="date">ჯარიმა:</label></td>
+    					<td style="width: 105px; "><label style="padding-top: 5px; '.$display_none1.'" class="label_label" for="date">ჯარიმა:</label></td>
     					<td style="width: 100px; ">
-    						<input class="label_label" style="width: 80px; '.$display_none1.'" id="penalti_fee" type="text" value="'.$res['pay_penalty'].'" '.$disable.'>
+    						<input class="label_label" style="width: 70px; float:left;'.$display_none1.'" id="penalti_fee"  onkeydown="if(event.which == 8 || event.keyCode == 46) return false;" type="text" value="'.$res['pay_penalty'].'" '.$disable.'><span style="float: right; display: inline; margin-top: 4px;"><button id="delete_penalty" class="label_label" style="width:20px; padding: 0 0 2px 0; color: #fb0000; '.$input_hidde.'">x</button></span>
     					</td>
-    					<td style="width: 120px;"><label style="padding-top: 5px;" class="label_label" for="date">ჯარიმა:</label></td>
+    					<td style="width: 100px;"><label style="padding-top: 5px; margin-left: 10px;" class="label_label" for="date">ჯარიმა:</label></td>
     					<td style="width: 80px;">
     						<input style="width: 80px;" id="penalti_fee1" class="label_label" type="text" value="'.$res1['penalty'].'" disabled="disabled">
     					</td>
     				</tr>
     				<tr style="height:10px;"></tr>
     				<tr style="'.$input_hidde.'">
-    					<td style="width: 105px; '.$display_none2.' "><label class="label_label" for="date">მეტობა</label></td>
+    					<td style="width: 105px; padding-top: 5px; '.$display_none2.' "><label class="label_label" for="date">მეტობა</label></td>
     					<td style="width: 100px; '.$display_none2.'">
-    						<input class="label_label" style="width: 80px; " id="surplus" type="text" value="'.$res['pay_amount'].'" '.$disable.'>
+    						<input class="label_label" style="width: 70px; float:left;" id="surplus" type="text"  onkeydown="if(event.which == 8 || event.keyCode == 46) return false;" value="'.$res['pay_amount'].'" '.$disable.'><span style="float: right; display: inline; margin-top: 4px; "><button id="delete_surplus" class="label_label" style="width:20px; padding: 0 0 2px 0; color: #fb0000; '.$input_hidde.'">x</button></span>
     					</td>
     					<td style="width: 120px;"></td>
     					<td style="width: 100px;"></td>
@@ -646,6 +646,12 @@ function GetPage($res = ''){
 			<!-- ID -->
 			<input type="hidden" id="id" value="' . $res['id'] . '" />
 			<input type="hidden" id="hidde_status" value="' . $res['status'] . '" />
+			    
+		    <input type="hidden" id="hidde_root" value="0" />
+	        <input type="hidden" id="hidde_percent" value="0" />
+            <input type="hidden" id="hidde_penalty" value="0" />
+            <input type="hidden" id="hidde_surplus" value="0" />
+                
 		</fieldset>
     </div>
     ';
