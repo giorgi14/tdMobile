@@ -24,23 +24,25 @@
         	if (tab == 0) {
         		LoadTable(tName,9,change_colum_main,aJaxURL);	
          	}else if(tab == 1){
-         		GetButtons("add_button1", "");
+             	GetButtons("add_button1", "");
              	GetDataTable("example1", aJaxURL, 'get_list', 13, "tab=1", 0, "", 0, "desc", "", change_colum_main);
              	SetEvents("", "", "", "example1", fName, aJaxURL,'',tName,10,change_colum_main,aJaxURL,'','','');
-             	
              	setTimeout(function(){$('.ColVis, .dataTable_buttons').css('display','none');}, 90);
+             	
 			}else if(tab == 2){
 				GetButtons("add_button2", "");
 				GetDataTable("example2", aJaxURL, 'get_list', 11, "tab=2", 0, "", 0, "desc", "", change_colum_main);
 				SetEvents("", "", "", "example2", fName, aJaxURL,'',tName,10,change_colum_main,aJaxURL,'','','');
 				
 				setTimeout(function(){$('.ColVis, .dataTable_buttons').css('display','none');}, 90);
+				
           	}else{
           		GetButtons("add_button3", "");
           		GetDataTable("example3", aJaxURL, 'get_list', 11, "tab=3", 0, "", 0, "desc", "", change_colum_main);
           		SetEvents("", "", "", "example3", fName, aJaxURL,'',tName,10,change_colum_main,aJaxURL,'','','');
           		
           		setTimeout(function(){$('.ColVis, .dataTable_buttons').css('display','none');}, 90);
+          		
             }
         });
         
@@ -48,6 +50,7 @@
 			
 			GetDataTable(tName, aJaxURL, 'get_list', num, "tab=0", 0, "", 0, "desc", "", change_colum_main);
 			setTimeout(function(){$('.ColVis, .dataTable_buttons').css('display','none');}, 90);
+			$("#table_right_menu").css('top','37px');
 		}
 		
 		function LoadDialog(fname){
@@ -259,6 +262,7 @@
         							$("#tr_id").val(data.tr_id);
         							$("#hidde_cl_id").val($("#client_id").val());
         							GetDataTable("table_transaction_detail", aJaxURL_det, 'get_list', 9, "&transaction_id="+$("#tr_id").val(), 0, "", 0, "desc", "", "<'F'Cpl>");
+        							LoadTable(tName,9,change_colum_main,aJaxURL);
         							setTimeout(function(){$('.ColVis, .dataTable_buttons').css('display','none');}, 50);
         							$("#table_transaction_detail_length").css('top', '2px');
         			        		CloseDialog('add-edit-form-det');
@@ -834,6 +838,8 @@
             </table>
        </div>
        <div id="tab-1">
+            <div id="button_area">
+            </div>
             <table id="table_right_menu">
                 <tr>
                     <td style="cursor: pointer;padding: 4px;border-right: 1px solid #E6E6E6;background:#2681DC;">
@@ -911,6 +917,8 @@
             </table>
        </div>
        <div id="tab-2">
+            <div id="button_area">
+            </div>
        		<table id="table_right_menu">
                 <tr>
                     <td style="cursor: pointer;padding: 4px;border-right: 1px solid #E6E6E6;background:#2681DC;">
@@ -972,6 +980,8 @@
             </table>
        </div>
        <div id="tab-3">
+            <div id="button_area">
+            </div>
        		<table id="table_right_menu">
                 <tr>
                     <td style="cursor: pointer;padding: 4px;border-right: 1px solid #E6E6E6;background:#2681DC;">
