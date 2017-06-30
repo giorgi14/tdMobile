@@ -162,15 +162,15 @@
         <thead>
             <tr id="datatable_header">
                 <th>ID</th>
-                <th style="width: 10%;">თარიღი</th>
-                <th style="width: 16%;">სახელი, გვარი</th>
-                <th style="width: 10%;">კოდი</th>
-                <th style="width: 10%;">ს/ხ</th>
-                <th style="width: 10%;">სესხი</th>
-                <th style="width: 12%;">დარიცხვის<br>თარიღი</th>
-                <th style="width: 10%;">გადახდის<br>თარიღი</th>
-                <th style="width: 12%;">გადახდილი<br>ძირი</th>
-                <th style="width: 10%;">დარჩენილი<br>ძირი</th>
+                <th style="width: 7%;">თარიღი</th>
+                <th style="width: 40%;">სახელი, გვარი</th>
+                <th style="width: 7%;">კოდი</th>
+                <th style="width: 7%;">ს/ხ</th>
+                <th style="width: 7%;">სესხი</th>
+                <th style="width: 9%;">დარიცხვის<br>თარიღი</th>
+                <th style="width: 7%;">გადახდის<br>თარიღი</th>
+                <th style="width: 9%;">გადახდილი<br>ძირი</th>
+                <th style="width: 7%;">დარჩენილი<br>ძირი</th>
             </tr>
         </thead>
         <thead>

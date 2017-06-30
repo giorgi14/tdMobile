@@ -32,7 +32,7 @@ switch ($action) {
         											  join   client AS cl ON cl.id = client_loan_agreement.client_id
         											  WHERE  client_loan_agreement.client_id = client.attachment_id),' დ.',client_loan_agreement.attachment_number
                         				 )) AS agreement_number,
-                                		 CONCAT(client_loan_agreement.loan_amount,IF(client_loan_agreement.loan_currency_id = 0,' GEL',' USD')) AS loan_amount,
+                                		 CONCAT(client_loan_agreement.loan_amount,IF(client_loan_agreement.loan_currency_id = 1,' GEL',' USD')) AS loan_amount,
                                          (SELECT DATE_FORMAT(sched.schedule_date,'%d/%m/%Y') FROM client_loan_schedule AS sched WHERE sched.actived = 1 AND sched.id = MAX(client_loan_schedule.id)) AS `schedule_date`,
                                 		 (SELECT DATE_FORMAT(money_transactions_detail.pay_datetime, '%d/%m/%Y')
                                           FROM   money_transactions
