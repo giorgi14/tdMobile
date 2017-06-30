@@ -48,6 +48,10 @@
 			LoadTable(tName,6,change_colum_main,aJaxURL);
 	    });
 
+		$(document).on("click", ".callapp_refresh", function () {
+			LoadTable(tName,6,change_colum_main,aJaxURL);	 
+	    });
+
 		$(document).on("click", ".copy_number", function () {
 	      	$('#sms_phone').val($(this).attr('phone'));
 	      	$("#add-edit-form-phone").dialog("close");
@@ -109,6 +113,15 @@
         	font-size: 20px;
         	color: #2681DC;
         }
+        .callapp_refresh{
+            padding: 5px;
+            border-radius:3px;
+            color:#FFF;
+            background: #9AAF24;
+            float: right;
+            font-size: 13px;
+            cursor: pointer;
+        }
         #example-cat_length{
         	position: inherit;
             width: 0px;
@@ -125,8 +138,8 @@
 
 <body>
 <div id="tabs">
-<div class="callapp_head">SMS<hr class="callapp_head_hr"></div>
-    <div id="button_area">
+<div class="callapp_head">SMS<span class="callapp_refresh"><img alt="refresh" src="media/images/icons/refresh.png" height="14" width="14">   განახლება</span><hr class="callapp_head_hr"></div>
+	<div id="button_area">
     	<table style="width: 100%">
         	<tr>
             	<td style="width: 150px;">
