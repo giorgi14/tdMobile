@@ -251,9 +251,9 @@ function Add1($tr_id, $hidde_id, $transaction_date, $month_fee, $course, $curren
                                 (NOW(), '$user_id', '$tr_id', '$transaction_date', '$res[ins_payy]', '$course', '$currency_id', '$received_currency_id', '', '', '2', '4', 1)");
         
         mysql_query("UPDATE `car_insurance_info`
-                        SET `status` = '1'
+                        SET  car_insurance_info.`status` = '1'
                      WHERE  `car_insurance_info.client_id` = '$client_id'
-                     AND     DATE(car_insurance_info.car_insurance_end) = CURDATE()");
+                     AND     DATE(car_insurance_info.car_insurance_end) <= CURDATE() AND car_insurance_info.status = 0 LIMIT 1");
         
         if ($sxvaoba1>1) {
             
