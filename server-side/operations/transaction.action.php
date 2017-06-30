@@ -445,7 +445,7 @@ function GetPage($res = ''){
 			<!-- ID -->
 			<input type="hidden" id="tr_id" value="' . $res['id'] . '" />
 			<input type="hidden" id="hidde_id" value="" />
-			<input type="hidden" id="hidde_cl_id" value="'.$res[client_id].'" />
+			<input type="hidden" id="hidde_cl_id1" value="'.$res[client_id].'" />
 			<input type="hidden" id="hidde_transaction_id" value="'.$hidde_id.'" />
         </fieldset>
     </div>

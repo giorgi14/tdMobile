@@ -63,7 +63,7 @@
     		            click: function () {
     		            	param 	  = new Object();
     		        		param.act = "get_edit_page";
-    		        		param.id  = $("#hidde_cl_id").val();
+    		        		param.id  = $("#hidde_cl_id1").val();
     		        		
     		        		$.ajax({
     		        	        url: aJaxURL_show_letter,
@@ -131,6 +131,7 @@
     		            id: "cancel-dialog",
     		            click: function () {
     		            	$(this).dialog("close");
+    		            	
     		            }
     		        }
     		    };
@@ -166,6 +167,7 @@
 				            id: "cancel-dialog",
 				            click: function () {
 				            	$(this).dialog("close");
+				            	GetDataTable("example1", aJaxURL, 'get_list', 13, "tab=1", 0, "", 0, "desc", "", change_colum_main);
 				            }
 				        }
 				    };
@@ -260,7 +262,7 @@
         							alert(data.error);
         						}else{
         							$("#tr_id").val(data.tr_id);
-        							$("#hidde_cl_id").val($("#client_id").val());
+        							$("#hidde_cl_id1").val($("#client_id").val());
         							GetDataTable("table_transaction_detail", aJaxURL_det, 'get_list', 9, "&transaction_id="+$("#tr_id").val(), 0, "", 0, "desc", "", "<'F'Cpl>");
         							LoadTable(tName,9,change_colum_main,aJaxURL);
         							setTimeout(function(){$('.ColVis, .dataTable_buttons').css('display','none');}, 50);
