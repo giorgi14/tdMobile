@@ -52,14 +52,14 @@ switch ($action) {
 		                                   user_info.`name`,
 		                                   DATE_FORMAT(money_transactions.datetime,'%d/%m/%Y')
                                  FROM     `money_transactions`
-                                 JOIN      client_loan_schedule ON client_loan_schedule.id = money_transactions.client_loan_schedule_id
-                                 JOIN      client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
+                                 LEFT JOIN client_loan_schedule ON client_loan_schedule.id = money_transactions.client_loan_schedule_id
+                                 LEFT JOIN client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
 		                         LEFT JOIN loan_currency ON loan_currency.id = money_transactions.currency_id
-		                         JOIN      transaction_type ON transaction_type.id = money_transactions.type_id
-                                 JOIN      client ON client.id = client_loan_agreement.client_id
-		                         JOIN      client_car ON client_car.client_id = client.id
-		                         JOIN      user_info ON user_info.user_id = money_transactions.user_id
-		                         WHERE     money_transactions.type_id != 4 $where_status $where AND money_transactions.id>67");
+		                         LEFT JOIN transaction_type ON transaction_type.id = money_transactions.type_id
+                                 LEFT JOIN client ON client.id = client_loan_agreement.client_id
+		                         LEFT JOIN client_car ON client_car.client_id = client.id
+		                         LEFT JOIN user_info ON user_info.user_id = money_transactions.user_id
+		                         WHERE     money_transactions.type_id != 4 $where_status $where ");
 
 		$data = array("aaData"	=> array());
 
@@ -329,10 +329,11 @@ function GetHolidays($id){
 	                                               money_transactions.pay_datetime,
 	                                               money_transactions.received_currency_id,
 	                                               money_transactions.month_fee_trasaction,
+	                                               money_transactions.comment,
 	                                               money_transactions.status
                                             FROM  `money_transactions`
-                                            JOIN   client_loan_schedule ON client_loan_schedule.id = money_transactions.client_loan_schedule_id
-                                            JOIN   client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
+                                            LEFT JOIN   client_loan_schedule ON client_loan_schedule.id = money_transactions.client_loan_schedule_id
+                                            LEFt JOIN   client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
                                             WHERE  money_transactions.id = $id" ));
     return $res;
 }
@@ -393,6 +394,15 @@ function GetPage($res = ''){
     					</td>
     				    <td style="width: 180px;">
     						<input style="width: 200px;" id="transaction_date" class="label" type="text" value="'.$res[pay_datetime].'">
+    					</td>
+    				</tr>
+    				<tr style="height:20px"></tr>
+    				<tr>
+	                    <td colspan="5" style="width: 180px;"><label calss="label" style="padding-top: 5px;" for="name">კომენტარი</label></td>
+	                </tr>
+    				<tr>
+	                    <td colspan="5" style="width: 180px;">
+    						<textarea class="idle" id="transaction_comment" style="resize: vertical;width: 100%; height: 40px;">'.$res['comment'].'</textarea>
     					</td>
     				</tr>
     				<tr style="height:20px"></tr>

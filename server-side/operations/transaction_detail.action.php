@@ -82,6 +82,17 @@ switch ($action) {
 	            
 	            $tr_id = mysql_insert_id();
 	        }else{
+	            mysqli_query("UPDATE `money_transactions`
+            	                 SET `datetime`                = NOW(),
+                	                 `user_id`                 = '$user_id',
+                	                 `client_loan_schedule_id` = '$hidde_id',
+                	                 `pay_datetime`            = '$transaction_date',
+                	                 `extra_fee`               = '$extra_fee',
+                	                 `course`                  = '$course',
+                	                 `currency_id`             = '$currency_id',
+                	                 `month_fee_trasaction`    = '$month_fee_trasaction',
+                	                 `type_id`                 = '$type_id'
+            	               WHERE `id`                      = '$hidde_transaction_id'");
 	            $tr_id = $hidde_transaction_id;
 	        }
 	        if ($type_id == 2) {
@@ -91,6 +102,7 @@ switch ($action) {
 	        }
 	        $data = array('tr_id' => $tr_id);
         }else{
+            
             update($hidde_status, $id, $transaction_date, $month_fee,  $root,  $percent, $penalti_fee, $surplus);
         }
 		
