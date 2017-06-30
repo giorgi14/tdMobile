@@ -27,6 +27,10 @@
         $(document).on("change", "#filt_year", function () {
         	LoadTable("example",colum_number,'get_list',change_colum_main,aJaxURL);	 
 	    });
+
+        $(document).on("click", ".callapp_refresh", function () {
+        	LoadTable("example",colum_number,'get_list',change_colum_main,aJaxURL);	 
+	    });
 	    
 	    $(document).on("click", "#show_copy_prit_exel", function () {
 	        if($(this).attr('myvar') == 0){
@@ -63,6 +67,15 @@
         	font-size: 20px;
         	color: #2681DC;
         }
+        .callapp_refresh{
+            padding: 5px;
+            border-radius:3px;
+            color:#FFF;
+            background: #9AAF24;
+            float: right;
+            font-size: 13px;
+            cursor: pointer;
+        }
         #example-cat_length{
         	position: inherit;
             width: 0px;
@@ -83,67 +96,67 @@
 
 <body>
 <div id="tabs" style="width: 95%">
-<div class="callapp_head">გადახდილი ძირი თანხა თვეების მიხედვით<hr class="callapp_head_hr"></div>
-<div id="button_area">
-	<select id="filt_month" style="width:  130px;">
-		<?php 
-		
-    		mysql_connect('212.72.155.176','root','Gl-1114');
-    		mysql_select_db('tgmobile');
-    		mysql_set_charset ( 'utf8');
-		
-		    $c_date	= date('m');
-            $req = mysql_query("SELECT id,
-                                      `name`
-                                FROM   month");
-
-            while( $res = mysql_fetch_assoc($req)){
-                if($res['id'] == $c_date){
-                    $data .= '<option value="' . $res['id'] . '" selected="selected">' . $res['name'] . '</option>';
-                } else {
-                    $data .= '<option value="' . $res['id'] . '">' . $res['name'] . '</option>';
-                }
-            }
-            
-            echo $data;
-		 ?>
-	</select>
-	<select id="filt_year" style="width:  100px;">
-		<?php 
-		
-    		mysql_connect('212.72.155.176','root','Gl-1114');
-    		mysql_select_db('tgmobile');
-    		mysql_set_charset ( 'utf8');
+    <div class="callapp_head">გადახდილი ძირი თანხა თვეების მიხედვით<span class="callapp_refresh"><img alt="refresh" src="media/images/icons/refresh.png" height="14" width="14">   განახლება</span><hr class="callapp_head_hr"></div>
+    <div id="button_area">
+    	<select id="filt_month" style="width:  130px;">
+    		<?php 
     		
-            $req = mysql_fetch_assoc(mysql_query("SELECT YEAR(CURDATE())+1 AS `year`,
-                                                         YEAR(CURDATE()) AS `cur_year`"));
-            $year = $req['year'];
-            for ($i=0; $i<=10; $i++){
-                $year --; 
-                if($req['cur_year'] == $year){
-                    $data1 .= '<option value="' . $year . '" selected="selected">' . $year . '</option>';
-                } else {
-                    $data1 .= '<option value="' . $year . '">' . $year . '</option>';
+        		mysql_connect('212.72.155.176','root','Gl-1114');
+        		mysql_select_db('tgmobile');
+        		mysql_set_charset ( 'utf8');
+    		
+    		    $c_date	= date('m');
+                $req = mysql_query("SELECT id,
+                                          `name`
+                                    FROM   month");
+    
+                while( $res = mysql_fetch_assoc($req)){
+                    if($res['id'] == $c_date){
+                        $data .= '<option value="' . $res['id'] . '" selected="selected">' . $res['name'] . '</option>';
+                    } else {
+                        $data .= '<option value="' . $res['id'] . '">' . $res['name'] . '</option>';
+                    }
                 }
-            }
-            
-            echo $data1;
-		 ?>
-	</select>
-</div>
-<table id="table_right_menu">
-    <tr>
-        <td style="cursor: pointer;padding: 4px;border-right: 1px solid #E6E6E6;background:#2681DC;">
-        	<img alt="table" src="media/images/icons/table_w.png" height="14" width="14">
-        </td>
-        <td style="cursor: pointer;padding: 4px;border-right: 1px solid #E6E6E6;">
-        	<img alt="log" src="media/images/icons/log.png" height="14" width="14">
-        </td>
-        <td style="cursor: pointer;padding: 4px;" id="show_copy_prit_exel" myvar="0">
-        	<img alt="link" src="media/images/icons/select.png" height="14" width="14">
-        </td>
-    </tr>
-</table>
+                
+                echo $data;
+    		 ?>
+    	</select>
+    	<select id="filt_year" style="width:  100px;">
+    		<?php 
+    		
+        		mysql_connect('212.72.155.176','root','Gl-1114');
+        		mysql_select_db('tgmobile');
+        		mysql_set_charset ( 'utf8');
+        		
+                $req = mysql_fetch_assoc(mysql_query("SELECT YEAR(CURDATE())+1 AS `year`,
+                                                             YEAR(CURDATE()) AS `cur_year`"));
+                $year = $req['year'];
+                for ($i=0; $i<=10; $i++){
+                    $year --; 
+                    if($req['cur_year'] == $year){
+                        $data1 .= '<option value="' . $year . '" selected="selected">' . $year . '</option>';
+                    } else {
+                        $data1 .= '<option value="' . $year . '">' . $year . '</option>';
+                    }
+                }
+                
+                echo $data1;
+    		 ?>
+    	</select>
+    </div>
+    <table id="table_right_menu">
+        <tr>
+            <td style="cursor: pointer;padding: 4px;border-right: 1px solid #E6E6E6;background:#2681DC;">
+            	<img alt="table" src="media/images/icons/table_w.png" height="14" width="14">
+            </td>
+            <td style="cursor: pointer;padding: 4px;border-right: 1px solid #E6E6E6;">
+            	<img alt="log" src="media/images/icons/log.png" height="14" width="14">
+            </td>
+            <td style="cursor: pointer;padding: 4px;" id="show_copy_prit_exel" myvar="0">
+            	<img alt="link" src="media/images/icons/select.png" height="14" width="14">
+            </td>
+        </tr>
+    </table>
 
     <table class="display" id="table_example" >
         <thead>
