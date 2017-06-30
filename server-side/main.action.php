@@ -327,7 +327,7 @@ switch ($action) {
                                     		SELECT  client_loan_agreement.client_id,
                                     				client_loan_schedule.id AS `id`,
                                     				client_loan_schedule.pay_date AS sort,
-                                    				'4' AS sort1,
+                                    				'2' AS sort1,
                                     				client_loan_schedule.number,
                                     				DATE_FORMAT(money_transactions_detail.pay_datetime, '%d/%m/%Y') AS `date`,
                                     				money_transactions_detail.course AS `exchange`,
@@ -507,7 +507,7 @@ switch ($action) {
                                 			SELECT  client_loan_agreement.client_id,
                                 					client_loan_schedule.id AS `id`,
                                 					client_loan_schedule.pay_date AS sort,
-                                					'4' AS sort1,
+                                					'2' AS sort1,
                                 					client_loan_schedule.number,
                                 					DATE_FORMAT(money_transactions_detail.pay_datetime, '%d/%m/%Y') AS `date`,
                                 					money_transactions_detail.course AS `exchange`,
@@ -623,7 +623,7 @@ switch ($action) {
                                 			JOIN    client_loan_schedule ON client_loan_schedule.id = money_transactions.client_loan_schedule_id
                                 			JOIN    client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
                                 			WHERE   client_loan_agreement.client_id = '$sub_client' AND client_loan_schedule.activ_status = 0 AND client_loan_schedule.actived=1 AND money_transactions_detail.`status` = 2)AS letter
-                                            ORDER BY letter.number, letter.sort,  letter.sort1 ASC ");
+                                            ORDER BY letter.number, letter.sort1,  letter.sort ASC ");
 	    }else{	
     	    $rResult = mysql_query("SELECT   letter.client_id,
                             				 letter.number,
@@ -710,7 +710,7 @@ switch ($action) {
                                     		SELECT  client_loan_agreement.client_id,
                             						client_loan_schedule.id AS `id`,
                             						client_loan_schedule.pay_date AS sort,
-                            						'4' AS sort1,
+                            						'2' AS sort1,
                             						client_loan_schedule.number,
                             						DATE_FORMAT(money_transactions_detail.pay_datetime, '%d/%m/%Y') AS `date`,
                             						money_transactions_detail.course AS `exchange`,
@@ -915,7 +915,7 @@ switch ($action) {
                                 			SELECT  client_loan_agreement.client_id,
                         							client_loan_schedule.id AS `id`,
                         							client_loan_schedule.pay_date AS sort,
-                        							'4' AS sort1,
+                        							'2' AS sort1,
                         							client_loan_schedule.number,
                         							DATE_FORMAT(money_transactions_detail.pay_datetime, '%d/%m/%Y') AS `date`,
                         							money_transactions_detail.course AS `exchange`,
@@ -1006,7 +1006,7 @@ switch ($action) {
                                 			JOIN   client_loan_schedule ON client_loan_schedule.id = money_transactions.client_loan_schedule_id
                                 			JOIN   client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
                                 			WHERE  client_loan_agreement.client_id = '0' AND client_loan_schedule.actived=1 AND money_transactions_detail.`status` = 2)AS letter
-                                            ORDER BY letter.number, letter.sort,  letter.sort1 ASC ");
+                                            ORDER BY letter.number, letter.sort1,  letter.sort ASC ");
 	    }
 	    
 	    $sumpercent  = 0;
