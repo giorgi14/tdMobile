@@ -33,19 +33,19 @@ switch ($action) {
 		$rResult = mysql_query("SELECT 	MAX(client_loan_schedule.id),
                         				DATE_FORMAT(MAX(client_loan_schedule.schedule_date),'%d/%m/%Y') AS daricxvis_tarigi,
                         				CASE
-                        					 WHEN client.id >= 302 THEN CONCAT(client.`name`, ' ', client.lastname, ' / ს/ხ', client_loan_agreement.id, ' / ', client_car.car_marc, ' / ', client_car.registration_number)
-                        					 WHEN client.id < 302 THEN CONCAT(client.`name`, ' ', client.lastname, ' / ს/ხ', client.exel_agreement_id, ' / ', client_car.car_marc, ' / ', client_car.registration_number)
+                        					 WHEN client.id >= (SELECT old_client_id.number FROM `old_client_id` LIMIT 1) THEN CONCAT(client.`name`, ' ', client.lastname, ' / ს/ხ', client_loan_agreement.id, ' / ', client_car.car_marc, ' / ', client_car.registration_number)
+                        					 WHEN client.id < (SELECT old_client_id.number FROM `old_client_id` LIMIT 1) THEN CONCAT(client.`name`, ' ', client.lastname, ' / ს/ხ', client.exel_agreement_id, ' / ', client_car.car_marc, ' / ', client_car.registration_number)
                         				END AS `name`,
                         				client_loan_agreement.oris_code,
                         				IF(client.attachment_id = 0, 
                         				IF(ISNULL(client.sub_client),
-                        				CONCAT('N',IF(client.id<302, client.exel_agreement_id, client_loan_agreement.id)),
-                        				CONCAT('N',IF(client.id<302, client.exel_agreement_id, client_loan_agreement.id),'/N',
-                        				(SELECT IF(clt.id<302, clt.exel_agreement_id, client_loan_agreement.id) 
+                        				CONCAT('N',IF(client.id<(SELECT old_client_id.number FROM `old_client_id` LIMIT 1), client.exel_agreement_id, client_loan_agreement.id)),
+                        				CONCAT('N',IF(client.id<(SELECT old_client_id.number FROM `old_client_id` LIMIT 1), client.exel_agreement_id, client_loan_agreement.id),'/N',
+                        				(SELECT IF(clt.id<(SELECT old_client_id.number FROM `old_client_id` LIMIT 1), clt.exel_agreement_id, client_loan_agreement.id) 
                         				FROM   client_loan_agreement 
                         				join   client AS clt ON clt.id = client_loan_agreement.client_id
                         				WHERE  client_loan_agreement.client_id = client.sub_client))),
-                        				CONCAT('N',(SELECT IF(cl.id<302, cl.exel_agreement_id, client_loan_agreement.id) 
+                        				CONCAT('N',(SELECT IF(cl.id<(SELECT old_client_id.number FROM `old_client_id` LIMIT 1), cl.exel_agreement_id, client_loan_agreement.id) 
                     						        FROM   client_loan_agreement 
                     						        join   client AS cl ON cl.id = client_loan_agreement.client_id
                     						        WHERE  client_loan_agreement.client_id = client.attachment_id),' დ.',client_loan_agreement.attachment_number
