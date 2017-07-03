@@ -50,13 +50,13 @@ switch ($action) {
                         					client_loan_agreement.oris_code,
 		                                    IF(client.attachment_id = 0, 
 	  	                                        IF(ISNULL(client.sub_client),
-	  	                                        CONCAT('N',IF(client.id<302, client.exel_agreement_id, client_loan_agreement.id)),
-	  	                                        CONCAT('N',IF(client.id<302, client.exel_agreement_id, client_loan_agreement.id),'/N',
-  	                                           (SELECT IF(clt.id<302, clt.exel_agreement_id, client_loan_agreement.id) 
+	  	                                        CONCAT('N',IF(client.id<(SELECT old_client_id.number FROM `old_client_id` LIMIT 1), client.exel_agreement_id, client_loan_agreement.id)),
+	  	                                        CONCAT('N',IF(client.id<(SELECT old_client_id.number FROM `old_client_id` LIMIT 1), client.exel_agreement_id, client_loan_agreement.id),'/N',
+  	                                           (SELECT IF(clt.id<(SELECT old_client_id.number FROM `old_client_id` LIMIT 1), clt.exel_agreement_id, client_loan_agreement.id) 
                                                 FROM   client_loan_agreement 
 		                                        join   client AS clt ON clt.id = client_loan_agreement.client_id
                                                 WHERE  client_loan_agreement.client_id = client.sub_client))),
-	  	                                        CONCAT('N',(SELECT IF(cl.id<302, cl.exel_agreement_id, client_loan_agreement.id) 
+	  	                                        CONCAT('N',(SELECT IF(cl.id<(SELECT old_client_id.number FROM `old_client_id` LIMIT 1), cl.exel_agreement_id, client_loan_agreement.id) 
                                                             FROM   client_loan_agreement 
                                                             join client AS cl ON cl.id = client_loan_agreement.client_id
     	                                                    WHERE  client_loan_agreement.client_id = client.attachment_id),
@@ -1951,7 +1951,7 @@ function GetPage($id){
                                                 client_loan_agreement.canceled_status,
                                                 client_loan_agreement.loan_currency_id,
                                                 loan_currency.name AS loan_name,
-                                                CONCAT(' / ',client_car.car_marc,' / ',client_car.registration_number, ' / ს/ხ', IF(client.id<302, client.exel_agreement_id, client_loan_agreement.id), ' / ორისის კოდი:', client_loan_agreement.oris_code) AS cl_car_info,
+                                                CONCAT(' / ',client_car.car_marc,' / ',client_car.registration_number, ' / ს/ხ', IF(client.id<(SELECT old_client_id.number FROM `old_client_id` LIMIT 1), client.exel_agreement_id, client_loan_agreement.id), ' / ორისის კოდი:', client_loan_agreement.oris_code) AS cl_car_info,
                                                 client.letter_comment,
                                                 client.id AS cl_hidde_id
                                         FROM `client_loan_agreement`
