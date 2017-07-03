@@ -213,6 +213,7 @@ switch ($action) {
 	    }else{
 	        $query = "SELECT    client_loan_agreement.client_id,
                     			client_loan_agreement.id AS `id`,
+                    			'' AS number1,
                     			client_loan_agreement.datetime AS sort,
                     			'0' AS sort1,
             				    '' AS number,
@@ -264,11 +265,13 @@ switch ($action) {
                             				 '' as `gdfgh`,
                             				 '' as `difference`,
                             				 letter.sort1,
-                            				 letter.loan_amount_gel
+                            				 letter.loan_amount_gel,
+	                                         letter.number1
                                     FROM(   $query
                                             SELECT  client_loan_agreement.client_id,
                                     			    client_loan_agreement.id AS `id`,
-                                    			    client_loan_agreement.datetime AS sort,
+	                                                '' AS number1,
+                                    			    DATE(client_loan_agreement.datetime) AS sort,
                                     			    '1' AS sort1,
                                     			    '' AS number,
                                     			    '01/06/2017' AS `date`,
@@ -296,6 +299,7 @@ switch ($action) {
                                     	    UNION ALL
                                     		SELECT   client_loan_agreement.client_id,
                             						 client_loan_schedule.id AS `id`,
+	                                                 '' AS number1,
                             						 client_loan_schedule.pay_date AS sort,
                             						 '2' AS sort1,
                             						 client_loan_schedule.number,
@@ -326,7 +330,8 @@ switch ($action) {
                                     		UNION ALL 
                                     		SELECT  client_loan_agreement.client_id,
                                     				client_loan_schedule.id AS `id`,
-                                    				client_loan_schedule.pay_date AS sort,
+	                                                '' AS number1,
+                                    				DATE(money_transactions_detail.pay_datetime) AS sort,
                                     				'2' AS sort1,
                                     				client_loan_schedule.number,
                                     				DATE_FORMAT(money_transactions_detail.pay_datetime, '%d/%m/%Y') AS `date`,
@@ -361,8 +366,9 @@ switch ($action) {
                                     		UNION ALL
                                     		SELECT  client_loan_agreement.client_id,
                                     				client_loan_schedule.id AS `id`,
-                                    				client_loan_schedule.pay_date AS sort,
-                                    				'5' AS sort1,
+	                                                '5' AS number1,
+                                    				DATE(money_transactions_detail.pay_datetime) AS sort,
+                                    				'2' AS sort1,
                                     				client_loan_schedule.number,
                                     				DATE_FORMAT(money_transactions_detail.pay_datetime, '%d/%m/%Y') AS `date`,
                                     				money_transactions_detail.course AS `exchange`,
@@ -391,8 +397,9 @@ switch ($action) {
                             				UNION ALL
                             				SELECT  client_loan_agreement.client_id,
                                     				client_loan_schedule.id AS `id`,
-                                    				client_loan_schedule.pay_date AS sort,
-                                    				'3' AS sort1,
+	                                                '7' AS number1,
+                                    				DATE(money_transactions_detail.pay_datetime) AS sort,
+                                    				'2' AS sort1,
                                     				client_loan_schedule.number,
                                     				DATE_FORMAT(money_transactions_detail.pay_datetime, '%d/%m/%Y') AS `date`,
                                     				money_transactions_detail.course AS `exchange`,
@@ -421,7 +428,8 @@ switch ($action) {
 	                                        UNION ALL
 	                                        SELECT  client_loan_agreement.client_id,
                                         			client_loan_agreement.id AS `id`,
-                                        			client_loan_agreement.datetime AS sort,
+	                                                '' AS number1,
+                                        			DATE(client_loan_agreement.datetime) AS sort,
                                         			'0' AS sort1,
                                 				    '' AS number,
                                 				    DATE_FORMAT(client_loan_agreement.datetime, '%d/%m/%Y') AS `date`,
@@ -448,7 +456,8 @@ switch ($action) {
 	                                        UNION ALL
 	                                        SELECT  client_loan_agreement.client_id,
                                     			    client_loan_agreement.id AS `id`,
-                                    			    client_loan_agreement.datetime AS sort,
+	                                                '' AS number1,
+                                    			    DATE(client_loan_agreement.datetime) AS sort,
                                     			    '1' AS sort1,
                                     			    '' AS number,
                                     			    '01/06/2017' AS `date`,
@@ -476,6 +485,7 @@ switch ($action) {
 	                                        UNION ALL
 	                                        SELECT client_loan_agreement.client_id,
                         							client_loan_schedule.id AS `id`,
+	                                                '' AS number1,
                         							client_loan_schedule.pay_date AS sort,
                         							'2' AS sort1,
                         							 client_loan_schedule.number,
@@ -506,7 +516,8 @@ switch ($action) {
                                 			UNION ALL 
                                 			SELECT  client_loan_agreement.client_id,
                                 					client_loan_schedule.id AS `id`,
-                                					client_loan_schedule.pay_date AS sort,
+	                                                '' AS number1,
+                                					DATE(money_transactions_detail.pay_datetime) AS sort,
                                 					'2' AS sort1,
                                 					client_loan_schedule.number,
                                 					DATE_FORMAT(money_transactions_detail.pay_datetime, '%d/%m/%Y') AS `date`,
@@ -541,8 +552,9 @@ switch ($action) {
                                 			UNION ALL
                                 			SELECT  client_loan_agreement.client_id,
                         							client_loan_schedule.id AS `id`,
-                        							client_loan_schedule.pay_date AS sort,
-                        							'5' AS sort1,
+	                                                '5' AS number1,
+                        							DATE(money_transactions_detail.pay_datetime) AS sort,
+                        							'2' AS sort1,
                         							client_loan_schedule.number,
                         							DATE_FORMAT(money_transactions_detail.pay_datetime, '%d/%m/%Y') AS `date`,
                         							money_transactions_detail.course AS `exchange`,
@@ -571,8 +583,9 @@ switch ($action) {
                                 			UNION ALL
     	                                    SELECT  difference_cource.client_id,
                                     				client_loan_schedule.id AS `id`,
-                                    				client_loan_schedule.pay_date AS sort,
-                                    				'6' AS sort1,
+	                                                '' AS number1,
+                                    				DATE(difference_cource.datetime) AS sort,
+                                    				'2' AS sort1,
                                     				client_loan_schedule.number,
                                     				DATE_FORMAT(difference_cource.datetime, '%d/%m/%Y') AS `date`,
                                     				difference_cource.end_cource AS `exchange`,
@@ -596,6 +609,7 @@ switch ($action) {
 	                                        UNION ALL
                                 			SELECT  client_loan_agreement.client_id,
                         							client_loan_schedule.id AS `id`,
+	                                                '7' AS number1,
                         							client_loan_schedule.pay_date AS sort,
                         							'3' AS sort1,
                         							client_loan_schedule.number,
@@ -623,7 +637,7 @@ switch ($action) {
                                 			JOIN    client_loan_schedule ON client_loan_schedule.id = money_transactions.client_loan_schedule_id
                                 			JOIN    client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
                                 			WHERE   client_loan_agreement.client_id = '$sub_client' AND client_loan_schedule.activ_status = 0 AND client_loan_schedule.actived=1 AND money_transactions_detail.`status` = 2)AS letter
-                                            ORDER BY letter.number, letter.sort1,  letter.sort ASC ");
+                                            ORDER BY letter.sort1,  letter.sort ASC ");
 	    }else{	
     	    $rResult = mysql_query("SELECT   letter.client_id,
                             				 letter.number,
@@ -647,10 +661,12 @@ switch ($action) {
                             				 '' as `gdfgh`,
                             				 '' as `gdasda`,
                             				 letter.sort1,
-                            				 letter.loan_amount_gel
+                            				 letter.loan_amount_gel,
+    	                                     letter.number1
                                     FROM(   $query
     	                                    SELECT  client_loan_agreement.client_id,
                                     			    client_loan_agreement.id AS `id`,
+    	                                            '' AS number1,
                                     			    client_loan_agreement.datetime AS sort,
                                     			    '1' AS sort1,
                                     			    '' AS number,
@@ -679,6 +695,7 @@ switch ($action) {
     	                                    UNION ALL
                                     		SELECT   client_loan_agreement.client_id,
                             						 client_loan_schedule.id AS `id`,
+    	                                             '' AS number1,
                             						 client_loan_schedule.pay_date AS sort,
                             						 '2' AS sort1,
                             						 client_loan_schedule.number,
@@ -709,7 +726,8 @@ switch ($action) {
                                     		UNION ALL 
                                     		SELECT  client_loan_agreement.client_id,
                             						client_loan_schedule.id AS `id`,
-                            						client_loan_schedule.pay_date AS sort,
+    	                                            '' AS number1,
+                            						DATE(money_transactions_detail.pay_datetime) AS sort,
                             						'2' AS sort1,
                             						client_loan_schedule.number,
                             						DATE_FORMAT(money_transactions_detail.pay_datetime, '%d/%m/%Y') AS `date`,
@@ -744,8 +762,9 @@ switch ($action) {
                                     		UNION ALL
                                     		SELECT  client_loan_agreement.client_id,
                             						client_loan_schedule.id AS `id`,
-                            						client_loan_schedule.pay_date AS sort,
-                            						'5' AS sort1,
+    	                                            '5' AS number1,
+                            						DATE(money_transactions_detail.pay_datetime) AS sort,
+    	                                            '2' AS sort1,
                             						client_loan_schedule.number,
                             						DATE_FORMAT(money_transactions_detail.pay_datetime, '%d/%m/%Y') AS `date`,
                             						money_transactions_detail.course AS `exchange`,
@@ -774,8 +793,9 @@ switch ($action) {
                             				UNION ALL
     	                                    SELECT  difference_cource.client_id,
                                     				client_loan_schedule.id AS `id`,
-                                    				client_loan_schedule.pay_date AS sort,
-                                    				'6' AS sort1,
+    	                                            '' AS number1,
+                                    				DATE(difference_cource.datetime) AS sort,
+                                    				'2' AS sort1,
                                     				client_loan_schedule.number,
                                     				DATE_FORMAT(difference_cource.datetime, '%d/%m/%Y') AS `date`,
                                     				difference_cource.end_cource AS `exchange`,
@@ -799,7 +819,8 @@ switch ($action) {
     	                                    UNION ALL
                             				SELECT  client_loan_agreement.client_id,
                     								client_loan_schedule.id AS `id`,
-                    								client_loan_schedule.pay_date AS sort,
+    	                                           '7' AS number1,
+                    								DATE(money_transactions_detail.pay_datetime) AS sort,
                     								'3' AS sort1,
                     								client_loan_schedule.number,
                     								DATE_FORMAT(money_transactions_detail.pay_datetime, '%d/%m/%Y') AS `date`,
@@ -829,7 +850,8 @@ switch ($action) {
                                             UNION ALL
 	                                        SELECT  client_loan_agreement.client_id,
                                         			client_loan_agreement.id AS `id`,
-                                        			client_loan_agreement.datetime AS sort,
+    	                                           '' AS number1,
+                                        			DATE(client_loan_agreement.datetime) AS sort,
                                         			'0' AS sort1,
                                 				    '' AS number,
                                 				    DATE_FORMAT(client_loan_agreement.datetime, '%d/%m/%Y') AS `date`,
@@ -856,7 +878,8 @@ switch ($action) {
     	                                    UNION ALL
 	                                        SELECT  client_loan_agreement.client_id,
                                     			    client_loan_agreement.id AS `id`,
-                                    			    client_loan_agreement.datetime AS sort,
+    	                                            '' AS number1,
+                                    			    DATE(client_loan_agreement.datetime) AS sort,
                                     			    '1' AS sort1,
                                     			    '' AS number,
                                     			    '01/06/2017' AS `date`,
@@ -884,7 +907,8 @@ switch ($action) {
 	                                        UNION ALL
                                             SELECT client_loan_agreement.client_id,
                         							client_loan_schedule.id AS `id`,
-                        							client_loan_schedule.pay_date AS sort,
+    	                                            '' AS number1,
+                        							DATE(client_loan_schedule.pay_date) AS sort,
                         							'2' AS sort1,
                         							 client_loan_schedule.number,
                         							 DATE_FORMAT(client_loan_schedule.pay_date, '%d/%m/%Y') AS `date`,
@@ -914,7 +938,8 @@ switch ($action) {
                                 			UNION ALL 
                                 			SELECT  client_loan_agreement.client_id,
                         							client_loan_schedule.id AS `id`,
-                        							client_loan_schedule.pay_date AS sort,
+    	                                            '' AS number1,
+                        							DATE(money_transactions_detail.pay_datetime) AS sort,
                         							'2' AS sort1,
                         							client_loan_schedule.number,
                         							DATE_FORMAT(money_transactions_detail.pay_datetime, '%d/%m/%Y') AS `date`,
@@ -949,8 +974,9 @@ switch ($action) {
                                 			UNION ALL
                                 			SELECT  client_loan_agreement.client_id,
                         							client_loan_schedule.id AS `id`,
-                        							client_loan_schedule.pay_date AS sort,
-                        							'5' AS sort1,
+    	                                            '5' AS number1,
+                        							DATE(money_transactions_detail.pay_datetime) AS sort,
+                        							'3' AS sort1,
                         							client_loan_schedule.number,
                         							DATE_FORMAT(money_transactions_detail.pay_datetime, '%d/%m/%Y') AS `date`,
                         							money_transactions_detail.course AS `exchange`,
@@ -979,8 +1005,9 @@ switch ($action) {
                                 			UNION ALL
                                 			SELECT  client_loan_agreement.client_id,
                         							client_loan_schedule.id AS `id`,
-                        							client_loan_schedule.pay_date AS sort,
-                        							'3' AS sort1,
+    	                                            '7' AS number1,
+                        							DATE(client_loan_schedule.pay_date) AS sort,
+    	                                            '2' AS sort1,
                         							client_loan_schedule.number,
                         							DATE_FORMAT(money_transactions_detail.pay_datetime, '%d/%m/%Y') AS `date`,
                         							money_transactions_detail.course AS `exchange`,
@@ -1006,7 +1033,7 @@ switch ($action) {
                                 			JOIN   client_loan_schedule ON client_loan_schedule.id = money_transactions.client_loan_schedule_id
                                 			JOIN   client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
                                 			WHERE  client_loan_agreement.client_id = '0' AND client_loan_schedule.actived=1 AND money_transactions_detail.`status` = 2)AS letter
-                                            ORDER BY letter.number, letter.sort1,  letter.sort ASC ");
+                                            ORDER BY letter.sort1,  letter.sort ASC ");
 	    }
 	    
 	    $sumpercent  = 0;
@@ -1028,42 +1055,42 @@ switch ($action) {
 	                   $row[] = $aRow[$i];
 	               }else if ($i == 8) {
 	                   $sumpercent+=$aRow[$i];
-	                   if($aRow[sort1]==3){
+	                   if($aRow[number1]==7){
 	                       $row[] = '<div title="'.$aRow[loan_amount_gel].' დღის ჯარიმა" style="background: #009688;  color: #fff;">'.$aRow[$i].'</div>';
 	                   }else{
     	                   $row[] = $aRow[$i];
     	               }
 	               }else if ($i == 9){
 	                   $sumpercent1+=$aRow[$i];
-	                   if($aRow[sort1]==3){
+	                   if($aRow[number1]==7){
 	                       $row[] = '<div title="'.$aRow[loan_amount_gel].' დღის ჯარიმა" style="background: #009688; color: #fff;">'.$aRow[$i].'</div>';
 	                   }else{
 	                       $row[] = $aRow[$i];
 	                   }
 	               }elseif ($i == 10){
 	                   $sumpercent2+=$aRow[$i];
-	                   if($aRow[sort1]==5){
+	                   if($aRow[number1]==5){
 	                       $row[] = '<div title="წინა თვის მეტობა" style="background: #F44336; color: #fff;">'.$aRow[$i].'</div>';
 	                   }else{
 	                       $row[] = $aRow[$i];
 	                   } 
 	               }elseif ($i == 11){
 	                   $sumpercent3+=$aRow[$i];
-	                   if($aRow[sort1]==5){
+	                   if($aRow[number1]==5){
 	                       $row[] = '<div title="წინა თვის მეტობა" style="background: #F44336; color: #fff;">'.$aRow[$i].'</div>';
 	                   }else{
 	                       $row[] = $aRow[$i];
 	                   }
 	               }elseif ($i == 12){
 	                   $sumpercent4+=$aRow[$i];
-	                   if($aRow[sort1]==5){
+	                   if($aRow[number1]==5){
 	                       $row[] = '<div title="წინა თვის მეტობა" style="background: #F44336; color: #fff;">'.$aRow[$i].'</div>';
 	                   }else{
 	                       $row[] = $aRow[$i];
 	                   }
 	               }elseif ($i == 13){
 	                   $sumpercent5+=$aRow[$i];
-	                   if($aRow[sort1]==5){
+	                   if($aRow[number1]==5){
 	                       $row[] = '<div title="წინა თვის მეტობა" style="background: #F44336; color: #fff;">'.$aRow[$i].'</div>';
 	                   }else{
 	                       $row[] = $aRow[$i];
