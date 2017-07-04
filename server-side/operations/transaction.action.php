@@ -22,8 +22,18 @@ switch ($action) {
 		$user_id = $_SESSION['USERID'];
 		
 	    mysql_query("UPDATE `money_transactions`
-	                        `user_id`                    = '$user_id',
-                        SET `money_transactions`.actived = '0'
+	                    SET `user_id`                    = '$user_id',
+                            `money_transactions`.actived = '0'
+                     WHERE   id                          = '$id'");
+
+		break;
+	case 'restore_transaction':
+		$id      = $_REQUEST['tr_id'];
+		$user_id = $_SESSION['USERID'];
+		
+	    mysql_query("UPDATE `money_transactions`
+	                    SET `user_id`                    = '$user_id',
+                            `money_transactions`.actived = '1'
                      WHERE   id                          = '$id'");
 
 		break;
@@ -352,7 +362,8 @@ function GetHolidays($id){
 	                                               money_transactions.received_currency_id,
 	                                               money_transactions.month_fee_trasaction,
 	                                               money_transactions.comment,
-	                                               money_transactions.status
+	                                               money_transactions.status,
+	                                               money_transactions.actived
                                             FROM  `money_transactions`
                                             LEFT JOIN   client_loan_schedule ON client_loan_schedule.id = money_transactions.client_loan_schedule_id
                                             LEFt JOIN   client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
@@ -479,6 +490,7 @@ function GetPage($res = ''){
 			<input type="hidden" id="hidde_id" value="" />
 			<input type="hidden" id="hidde_cl_id1" value="'.$res[client_id].'" />
 			<input type="hidden" id="hidde_transaction_id" value="'.$hidde_id.'" />
+			<input type="hidden" id="hidde_actived" value="'.$res[actived].'" />
         </fieldset>
     </div>
     ';

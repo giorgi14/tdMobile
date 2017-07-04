@@ -63,6 +63,10 @@
 			var id		= $("#id").val();
 			if(fname=='add-edit-form'){
     			var buttons = {
+					"restore-transaction": {
+    		            text: "აღდგენა",
+    		            id: "restore-transaction"
+    		        },
 					"move-transaction": {
     		            text: "გაუქმება",
     		            id: "move-transaction"
@@ -165,6 +169,14 @@
     		    }else{
     		    	$('#add_button_dettail').button("disable");
     			}
+
+    			if($("#hidde_actived").val() == 0){
+        			$("#restore-transaction").show();
+        			$("#move-transaction").hide();
+        		}else{
+        			$("#restore-transaction").hide();
+        			$("#move-transaction").show();
+            	}
     	        
 			}else if(fname=='add-edit-form-det'){
 				var buttons = {
@@ -293,6 +305,28 @@
 		    param = new Object();
 		    
 			param.act	= "delete_transaction";
+		    param.tr_id	= $("#tr_id").val();
+		    
+		    $.ajax({
+		        url: aJaxURL,
+			    data: param,
+		        success: function(data) {			        
+					if(typeof(data.error) != 'undefined'){
+						if(data.error != ''){
+							alert(data.error);
+						}else{
+							LoadTable(tName,9,change_colum_main,aJaxURL);
+							CloseDialog('add-edit-form');
+			        	}
+					}
+			    }
+		    });
+    	});
+
+		$(document).on("click", "#restore-transaction", function () {
+		    param = new Object();
+		    
+			param.act	= "restore_transaction";
 		    param.tr_id	= $("#tr_id").val();
 		    
 		    $.ajax({
