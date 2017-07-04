@@ -16,6 +16,15 @@ switch ($action) {
         $data	= array('page'	=> $page);
 
 		break;
+		
+	case 'delete_transaction':
+		$id = $_REQUEST['tr_id'];
+		
+	    mysql_query("UPDATE `money_transactions`
+                        SET `money_transactions`.actived = 0
+                     WHERE   id = '$id'");
+
+		break;
 	case 'get_list' :
 		$count	= $_REQUEST['count'];
 		$hidden	= $_REQUEST['hidden'];
@@ -59,7 +68,7 @@ switch ($action) {
                                  LEFT JOIN client ON client.id = client_loan_agreement.client_id
 		                         LEFT JOIN client_car ON client_car.client_id = client.id
 		                         LEFT JOIN user_info ON user_info.user_id = money_transactions.user_id
-		                         WHERE     money_transactions.type_id != 4 AND money_transactions.id > 59 $where_status $where ");
+		                         WHERE     money_transactions.actived = 1 AND money_transactions.type_id != 4 AND money_transactions.id > 59 $where_status $where ");
 
 		$data = array("aaData"	=> array());
 

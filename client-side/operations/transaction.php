@@ -57,6 +57,10 @@
 			var id		= $("#id").val();
 			if(fname=='add-edit-form'){
     			var buttons = {
+					"move-transaction": {
+    		            text: "გაუქმება",
+    		            id: "move-transaction"
+    		        },
     				"show_letter": {
     		            text: "ბარათის ნახვა",
     		            id: "show_letter",
@@ -278,7 +282,29 @@
 				}
     	    }
 		});
-
+	    
+		$(document).on("click", "#move-transaction", function () {
+		    param = new Object();
+		    
+			param.act	= "delete_transaction";
+		    param.tr_id	= $("#tr_id").val();
+		    
+		    $.ajax({
+		        url: aJaxURL,
+			    data: param,
+		        success: function(data) {			        
+					if(typeof(data.error) != 'undefined'){
+						if(data.error != ''){
+							alert(data.error);
+						}else{
+							LoadTable(tName,9,change_colum_main,aJaxURL);
+							CloseDialog('add-edit-form');
+			        	}
+					}
+			    }
+		    });
+    	});
+		
 	    $(document).on("click", "#save-dialog1", function () {
 		    param = new Object();
 		    
