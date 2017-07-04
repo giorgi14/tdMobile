@@ -36,10 +36,16 @@
 				
 				setTimeout(function(){$('.ColVis, .dataTable_buttons').css('display','none');}, 90);
 				
-          	}else{
+          	}else if(tab == 3){
           		GetButtons("add_button3", "");
           		GetDataTable("example3", aJaxURL, 'get_list', 11, "tab=3", 0, "", 0, "desc", "", change_colum_main);
           		SetEvents("", "", "", "example3", fName, aJaxURL,'',tName,10,change_colum_main,aJaxURL,'','','');
+          		
+          		setTimeout(function(){$('.ColVis, .dataTable_buttons').css('display','none');}, 90);
+          		
+            }else{
+          		GetDataTable("example4", aJaxURL, 'get_list', 11, "tab=4", 0, "", 0, "desc", "", change_colum_main);
+          		SetEvents("", "", "", "example4", fName, aJaxURL,'',tName,10,change_colum_main,aJaxURL,'','','');
           		
           		setTimeout(function(){$('.ColVis, .dataTable_buttons').css('display','none');}, 90);
           		
@@ -881,6 +887,7 @@
 		<li><a href="#tab-1">სესხი</a></li>
 		<li><a href="#tab-2">დაზღვევა</a></li>
 		<li><a href="#tab-3">გირავნობა</a></li>
+		<li><a href="#tab-4">გაუქმებული</a></li>
 	</ul>
 	<div id="tab-0">
         <div id="button_area">
@@ -1123,6 +1130,73 @@
                         <th class="colum_hidden">
                             <input type="text" name="search_category" value="ფილტრი" class="search_init" />
                         </th>                
+                        <th>
+                            <input type="text" name="search_category" value="ფილტრი" class="search_init" />
+                        </th>
+                        <th>
+                            <input type="text" name="search_category" value="ფილტრი" class="search_init" />
+                        </th>
+                        <th>
+                            <input type="text" name="search_category" value="ფილტრი" class="search_init" />
+                        </th>
+                       	<th>
+                            <input type="text" name="search_category" value="ფილტრი" class="search_init" />
+                        </th>
+                        <th>
+                            <input type="text" name="search_category" value="ფილტრი" class="search_init" />
+                        </th>
+                        <th>
+                            <input type="text" name="search_category" value="ფილტრი" class="search_init" />
+                        </th>
+                        <th>
+                            <input type="text" name="search_category" value="ფილტრი" class="search_init" />
+                        </th>
+                        <th>
+                            <input type="text" name="search_category" value="ფილტრი" class="search_init" />
+                        </th>
+                    </tr>
+                </thead>
+            </table>
+       </div>
+       <div id="tab-4">
+            <div id="button_area">
+            </div>
+       		<table id="table_right_menu">
+                <tr>
+                    <td style="cursor: pointer;padding: 4px;border-right: 1px solid #E6E6E6;background:#2681DC;">
+                    	<img alt="table" src="media/images/icons/table_w.png" height="14" width="14">
+                    </td>
+                    <td style="cursor: pointer;padding: 4px;border-right: 1px solid #E6E6E6;">
+                    	<img alt="log" src="media/images/icons/log.png" height="14" width="14">
+                    </td>
+                    <td style="cursor: pointer;padding: 4px;" id="show_copy_prit_exel" myvar="0">
+                    	<img alt="link" src="media/images/icons/select.png" height="14" width="14">
+                    </td>
+                </tr>
+            </table>
+            <table class="display" id="example4" style="width: 100%;">
+                <thead>
+                    <tr id="datatable_header">
+                        <th>ID</th>
+                        <th style="width: 9%;">თარიღი</th>
+                        <th style="width: 9%;">კოდი</th>
+                        <th style="width: 30%;">მსესხებელი</th>
+                        <th style="width: 7%;">ჩარიცხული<br>თანხა</th>
+                        <th style="width: 8%;">ვალუტა</th>
+                        <th style="width: 10%;">კურსი</th>
+                        <th style="width: 8%;">სტატუსი</th>
+                        <th style="width: 10%;">user</th>
+                        <th style="width: 9%;">შევსების<br>თარღი</th>
+                    </tr>
+                </thead>
+                <thead>
+                    <tr class="search_header">
+                        <th class="colum_hidden">
+                            <input type="text" name="search_category" value="ფილტრი" class="search_init" />
+                        </th>                
+                        <th>
+                            <input type="text" name="search_category" value="ფილტრი" class="search_init" />
+                        </th>
                         <th>
                             <input type="text" name="search_category" value="ფილტრი" class="search_init" />
                         </th>

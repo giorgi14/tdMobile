@@ -18,20 +18,30 @@ switch ($action) {
 		break;
 		
 	case 'delete_transaction':
-		$id = $_REQUEST['tr_id'];
+		$id      = $_REQUEST['tr_id'];
+		$user_id = $_SESSION['USERID'];
 		
 	    mysql_query("UPDATE `money_transactions`
-                        SET `money_transactions`.actived = 0
-                     WHERE   id = '$id'");
+	                        `user_id`                    = '$user_id',
+                        SET `money_transactions`.actived = '0'
+                     WHERE   id                          = '$id'");
 
 		break;
 	case 'get_list' :
-		$count	= $_REQUEST['count'];
-		$hidden	= $_REQUEST['hidden'];
-		$tab	= $_REQUEST['tab'];
-		$where = '';
+		$count	 = $_REQUEST['count'];
+		$hidden	 = $_REQUEST['hidden'];
+		$tab	 = $_REQUEST['tab'];
+		
+		$where   = '';
+		$actived = 1;
+		
 		if ($tab > 0) {
 		    $where="AND money_transactions.type_id=$tab";
+		    if ($tab == 4) {
+		        $actived = 0;
+		        $where="AND money_transactions.type_id=0";
+		    }
+		    
 		}
 		 
 		if ($tab == 1) {
@@ -46,6 +56,8 @@ switch ($action) {
 		    
 		}
 		
+		
+		
 		$rResult = mysql_query("SELECT     money_transactions.id,
                                     	   DATE_FORMAT(money_transactions.pay_datetime,'%d/%m/%Y'),
 		                                   client_loan_agreement.oris_code,
@@ -54,7 +66,7 @@ switch ($action) {
                                                WHEN client.id < (SELECT old_client_id.number FROM `old_client_id` LIMIT 1) THEN CONCAT(client.`name`, ' ', client.lastname, ' / ს/ხ', client.exel_agreement_id, ' / ', client_car.car_marc, ' / ', client_car.registration_number)
                                            END AS `name`,
                                     	   money_transactions.pay_amount,
-                                           loan_currency.name,
+                                           IFNULL(loan_currency.name,ln_currency.name),
 		                                   money_transactions.course,
 		                                   $val
                                            IF(money_transactions.`status` = 0,'დაუდასტურებელი','დადასტურებული'),
@@ -64,11 +76,12 @@ switch ($action) {
                                  LEFT JOIN client_loan_schedule ON client_loan_schedule.id = money_transactions.client_loan_schedule_id
                                  LEFT JOIN client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
 		                         LEFT JOIN loan_currency ON loan_currency.id = money_transactions.currency_id
+		                         LEFT JOIN loan_currency AS ln_currency ON ln_currency.id = money_transactions.received_currency_id
 		                         LEFT JOIN transaction_type ON transaction_type.id = money_transactions.type_id
                                  LEFT JOIN client ON client.id = client_loan_agreement.client_id
 		                         LEFT JOIN client_car ON client_car.client_id = client.id
 		                         LEFT JOIN user_info ON user_info.user_id = money_transactions.user_id
-		                         WHERE     money_transactions.actived = 1 AND money_transactions.type_id != 4 AND money_transactions.id > 59 $where_status $where ");
+		                         WHERE     money_transactions.actived = '$actived' AND money_transactions.type_id != 4 AND money_transactions.id > 59 $where_status $where ");
 
 		$data = array("aaData"	=> array());
 
