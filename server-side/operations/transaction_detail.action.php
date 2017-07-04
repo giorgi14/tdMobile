@@ -82,7 +82,7 @@ switch ($action) {
 	            
 	            $tr_id = mysql_insert_id();
 	        }else{
-	            mysqli_query("UPDATE `money_transactions`
+	            mysql_query("UPDATE `money_transactions`
             	                 SET `datetime`                = NOW(),
                 	                 `user_id`                 = '$user_id',
                 	                 `client_loan_schedule_id` = '$hidde_id',
@@ -94,11 +94,13 @@ switch ($action) {
                 	                 `type_id`                 = '$type_id'
             	               WHERE `id`                      = '$hidde_transaction_id'");
 	            $tr_id = $hidde_transaction_id;
+	            
 	        }
 	        if ($type_id == 2) {
 	            Add1($tr_id, $hidde_id, $transaction_date, $month_fee, $course, $currency_id, $received_currency_id, $type_id);
 	        }elseif ($type_id == 1){
 	           Add($tr_id, $hidde_id, $transaction_date, $month_fee, $course, $currency_id, $received_currency_id, $root,  $percent, $penalti_fee, $surplus, $diff, $type_id);
+	           
 	        }
 	        $data = array('tr_id' => $tr_id);
         }else{
@@ -180,9 +182,14 @@ function Add($hidde_transaction_id, $hidde_id, $transaction_date, $month_fee, $c
 	                      WHERE  `id`     = '$res1[id]'");
 	    }
 	    
-	}elseif ($all_fee < $all_pay){
-	    $delta = round($all_pay - $all_fee,2);
+	    if ($surplus>0) {
+	        mysql_query("INSERT INTO `money_transactions_detail`
+                    	            (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
+                    	      VALUES
+                    	            (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '$surplus', '$course', '$currency_id', '$received_currency_id', '', '', '$type_id', 3, 1)");
+	    }
 	    
+	}elseif ($all_fee < $all_pay){
 	    if ($penalti_fee>0){
 	        mysql_query("INSERT INTO `money_transactions_detail`
                     	            (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
@@ -211,7 +218,7 @@ function Add($hidde_transaction_id, $hidde_id, $transaction_date, $month_fee, $c
                      WHERE   client_loan_agreement.client_id = '$client_id' 
                      AND     money_transactions_detail.`status` = 3
                      AND     money_transactions_detail.actived = 1");
-	    if ($delta>1) {
+	    if ($surplus>0) {
 	       mysql_query("INSERT INTO `money_transactions_detail`
                         	       (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
                         	 VALUES
