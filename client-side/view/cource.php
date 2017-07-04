@@ -15,7 +15,7 @@
 		});
         
 		function LoadTable(tName,num,change_colum_main,aJaxURL){
-			GetDataTable(tName, aJaxURL, 'get_list', num, "", 0, "", 0, "desc", "", change_colum_main);
+			GetDataTable(tName, aJaxURL, 'get_list', num, "", 0, "", 1, "desc", "", change_colum_main);
 			setTimeout(function(){$('.ColVis, .dataTable_buttons').css('display','none');}, 90);
 		}
 		

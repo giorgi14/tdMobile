@@ -35,11 +35,11 @@ switch ($action) {
 		$count	= $_REQUEST['count'];
 		$hidden	= $_REQUEST['hidden'];
 		 
-		$rResult = mysql_query("SELECT cur_cource.id,
-		                               DATE_FORMAT(datetime,'%d/%m/%Y') AS `date`,
-                        			   cur_cource.`cource`
-                                FROM   cur_cource
-                                WHERE  cur_cource.actived = 1");
+		$rResult = mysql_query("SELECT   cur_cource.id,
+		                                 datetime AS `date`,
+                        			     cur_cource.`cource`
+                                FROM     cur_cource
+                                WHERE    cur_cource.actived = 1");
 
 		$data = array("aaData"	=> array());
 
