@@ -10,7 +10,7 @@ $result = mysql_query("SELECT  DATE_FORMAT(client_loan_schedule.pay_date, '%d.%m
                         	   client.`name` AS cl_name,
                     		   client.id AS cl_id,
                                client.phone,
-                    		   client_loan_agreement.id AS agr_id,
+                    		   IF(client.id>=(SELECT old_client_id.number FROM `old_client_id` LIMIT 1), client_loan_agreement.id, client.exel_agreement_id) AS agr_id,
                     		   CONCAT(client_car.car_marc,' ',client_car.registration_number) AS cl_car_info,
                                client.sms_sent,
                                client_loan_schedule.penalty AS penalty
