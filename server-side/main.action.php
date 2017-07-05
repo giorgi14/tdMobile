@@ -214,6 +214,7 @@ switch ($action) {
 	        $query = "SELECT    client_loan_agreement.client_id,
                     			client_loan_agreement.id AS `id`,
                     			'' AS number1,
+                    			'0' AS sort3,
                     			client_loan_agreement.datetime AS sort,
                     			'0' AS sort1,
             				    '' AS number,
@@ -271,10 +272,11 @@ switch ($action) {
                                             SELECT  client_loan_agreement.client_id,
                                     			    client_loan_agreement.id AS `id`,
 	                                                '' AS number1,
+	                                                '0' AS sort3,
                                     			    DATE(client_loan_agreement.datetime) AS sort,
                                     			    '1' AS sort1,
                                     			    '' AS number,
-                                    			    '01/07/2017' AS `date`,
+	                                                '01/07/2017' AS `date`,
                                     				client_loan_agreement.exchange_rate AS `exchange`,
                                     			    '' AS `loan_amount`,
                                     				''AS `loan_amount_gel`,
@@ -300,6 +302,7 @@ switch ($action) {
                                     		SELECT   client_loan_agreement.client_id,
                             						 client_loan_schedule.id AS `id`,
 	                                                 '' AS number1,
+	                                                 '1' AS sort3,
                             						 client_loan_schedule.pay_date AS sort,
                             						 '2' AS sort1,
                             						 client_loan_schedule.number,
@@ -331,6 +334,7 @@ switch ($action) {
                                     		SELECT  client_loan_agreement.client_id,
                                     				client_loan_schedule.id AS `id`,
 	                                                '' AS number1,
+	                                                '3' AS sort3,
                                     				DATE(money_transactions_detail.pay_datetime) AS sort,
                                     				'2' AS sort1,
                                     				client_loan_schedule.number,
@@ -342,10 +346,10 @@ switch ($action) {
 	                                                '' AS `delta1`,
                                     				'' AS percent,
                                     				'' AS percent_gel,
-                                    				CONCAT(ROUND(SUM(money_transactions_detail.pay_percent)+(SELECT SUM(money_transactions_detail.pay_amount) FROM money_transactions_detail WHERE money_transactions_detail.`status` = 2 AND money_transactions_detail.actived = 1 AND money_transactions_detail.transaction_id = money_transactions.id),2), if(client_loan_agreement.loan_currency_id = 1, ' GEL', ' USD')) AS percent1,
+                                    				CONCAT(ROUND(SUM(money_transactions_detail.pay_percent)+(SELECT IFNULL(SUM(money_transactions_detail.pay_amount),0) FROM money_transactions_detail WHERE money_transactions_detail.`status` = 2 AND money_transactions_detail.actived = 1 AND money_transactions_detail.transaction_id = money_transactions.id),2), if(client_loan_agreement.loan_currency_id = 1, ' GEL', ' USD')) AS percent1,
                                     				CASE 
-                                    					WHEN client_loan_agreement.loan_currency_id = 1 THEN CONCAT(ROUND((SUM(money_transactions_detail.pay_percent)+(SELECT SUM(money_transactions_detail.pay_amount) FROM money_transactions_detail WHERE money_transactions_detail.`status` = 2 AND money_transactions_detail.actived = 1 AND money_transactions_detail.transaction_id = money_transactions.id))/money_transactions_detail.course,2), ' USD')
-                                    					WHEN client_loan_agreement.loan_currency_id = 2 THEN CONCAT(ROUND((SUM(money_transactions_detail.pay_percent)+(SELECT SUM(money_transactions_detail.pay_amount) FROM money_transactions_detail WHERE money_transactions_detail.`status` = 2 AND money_transactions_detail.actived = 1 AND money_transactions_detail.transaction_id = money_transactions.id))*money_transactions_detail.course,2), ' GEL')
+                                    					WHEN client_loan_agreement.loan_currency_id = 1 THEN CONCAT(ROUND((SUM(money_transactions_detail.pay_percent)+(SELECT IFNULL(SUM(money_transactions_detail.pay_amount),0) FROM money_transactions_detail WHERE money_transactions_detail.`status` = 2 AND money_transactions_detail.actived = 1 AND money_transactions_detail.transaction_id = money_transactions.id))/money_transactions_detail.course,2), ' USD')
+                                    					WHEN client_loan_agreement.loan_currency_id = 2 THEN CONCAT(ROUND((SUM(money_transactions_detail.pay_percent)+(SELECT IFNULL(SUM(money_transactions_detail.pay_amount),0) FROM money_transactions_detail WHERE money_transactions_detail.`status` = 2 AND money_transactions_detail.actived = 1 AND money_transactions_detail.transaction_id = money_transactions.id))*money_transactions_detail.course,2), ' GEL')
                                     				END AS percent_gel1,
                                     				CONCAT(ROUND(SUM(money_transactions_detail.pay_root),2), if(client_loan_agreement.loan_currency_id = 1, ' GEL', ' USD')) AS pay_root,
                                     				CASE 
@@ -367,6 +371,7 @@ switch ($action) {
                                     		SELECT  client_loan_agreement.client_id,
                                     				client_loan_schedule.id AS `id`,
 	                                                '5' AS number1,
+	                                                '4' AS sort3,
                                     				DATE(money_transactions_detail.pay_datetime) AS sort,
                                     				'2' AS sort1,
                                     				client_loan_schedule.number,
@@ -393,11 +398,12 @@ switch ($action) {
                                             JOIN   money_transactions_detail ON money_transactions_detail.transaction_id = money_transactions.id
                                             JOIN   client_loan_schedule ON client_loan_schedule.id = money_transactions.client_loan_schedule_id
                                             JOIN   client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
-                                            WHERE  client_loan_agreement.client_id = '$id' AND client_loan_schedule.actived=1 AND money_transactions_detail.`status` = 3 AND money_transactions_detail.actived = 1 AND money_transactions_detail.pay_amount > 1
+                                            WHERE  client_loan_agreement.client_id = '$id' AND client_loan_schedule.actived=1 AND money_transactions_detail.`status` = 3 AND money_transactions_detail.actived = 1 AND money_transactions_detail.pay_amount > 0
                             				UNION ALL
                             				SELECT  client_loan_agreement.client_id,
                                     				client_loan_schedule.id AS `id`,
 	                                                '7' AS number1,
+	                                                '2' AS sort3,
                                     				DATE(money_transactions_detail.pay_datetime) AS sort,
                                     				'2' AS sort1,
                                     				client_loan_schedule.number,
@@ -429,6 +435,7 @@ switch ($action) {
 	                                        SELECT  client_loan_agreement.client_id,
                                         			client_loan_agreement.id AS `id`,
 	                                                '' AS number1,
+	                                                '0' AS sort3,
                                         			DATE(client_loan_agreement.datetime) AS sort,
                                         			'0' AS sort1,
                                 				    '' AS number,
@@ -457,6 +464,7 @@ switch ($action) {
 	                                        SELECT  client_loan_agreement.client_id,
                                     			    client_loan_agreement.id AS `id`,
 	                                                '' AS number1,
+	                                                '0' AS sort3,
                                     			    DATE(client_loan_agreement.datetime) AS sort,
                                     			    '1' AS sort1,
                                     			    '' AS number,
@@ -486,6 +494,7 @@ switch ($action) {
 	                                        SELECT client_loan_agreement.client_id,
                         							client_loan_schedule.id AS `id`,
 	                                                '' AS number1,
+	                                                '1' AS sort3,
                         							client_loan_schedule.pay_date AS sort,
                         							'2' AS sort1,
                         							 client_loan_schedule.number,
@@ -517,6 +526,7 @@ switch ($action) {
                                 			SELECT  client_loan_agreement.client_id,
                                 					client_loan_schedule.id AS `id`,
 	                                                '' AS number1,
+	                                                '3' AS sort3,
                                 					DATE(money_transactions_detail.pay_datetime) AS sort,
                                 					'2' AS sort1,
                                 					client_loan_schedule.number,
@@ -528,10 +538,10 @@ switch ($action) {
 	                                                '' AS `delta1`,
                                 					'' AS percent,
                                 					'' AS percent_gel,
-                                					CONCAT(ROUND(SUM(money_transactions_detail.pay_percent)+(SELECT SUM(money_transactions_detail.pay_amount) FROM money_transactions_detail WHERE money_transactions_detail.`status` = 2 AND money_transactions_detail.actived = 1 AND money_transactions_detail.transaction_id = money_transactions.id),2), if(client_loan_agreement.loan_currency_id = 1, ' GEL', ' USD')) AS percent1,
+                                					CONCAT(ROUND(SUM(money_transactions_detail.pay_percent)+(SELECT IFNULL(SUM(money_transactions_detail.pay_amount),0) FROM money_transactions_detail WHERE money_transactions_detail.`status` = 2 AND money_transactions_detail.actived = 1 AND money_transactions_detail.transaction_id = money_transactions.id),2), if(client_loan_agreement.loan_currency_id = 1, ' GEL', ' USD')) AS percent1,
                                 					CASE 
-                                    					WHEN client_loan_agreement.loan_currency_id = 1 THEN CONCAT(ROUND((SUM(money_transactions_detail.pay_percent)+(SELECT SUM(money_transactions_detail.pay_amount) FROM money_transactions_detail WHERE money_transactions_detail.`status` = 2 AND money_transactions_detail.actived = 1 AND money_transactions_detail.transaction_id = money_transactions.id))/money_transactions_detail.course,2), ' USD')
-                                    					WHEN client_loan_agreement.loan_currency_id = 2 THEN CONCAT(ROUND((SUM(money_transactions_detail.pay_percent)+(SELECT SUM(money_transactions_detail.pay_amount) FROM money_transactions_detail WHERE money_transactions_detail.`status` = 2 AND money_transactions_detail.actived = 1 AND money_transactions_detail.transaction_id = money_transactions.id))*money_transactions_detail.course,2), ' GEL')
+                                    					WHEN client_loan_agreement.loan_currency_id = 1 THEN CONCAT(ROUND((SUM(money_transactions_detail.pay_percent)+(SELECT IFNULL(SUM(money_transactions_detail.pay_amount),0) FROM money_transactions_detail WHERE money_transactions_detail.`status` = 2 AND money_transactions_detail.actived = 1 AND money_transactions_detail.transaction_id = money_transactions.id))/money_transactions_detail.course,2), ' USD')
+                                    					WHEN client_loan_agreement.loan_currency_id = 2 THEN CONCAT(ROUND((SUM(money_transactions_detail.pay_percent)+(SELECT IFNULL(SUM(money_transactions_detail.pay_amount),0) FROM money_transactions_detail WHERE money_transactions_detail.`status` = 2 AND money_transactions_detail.actived = 1 AND money_transactions_detail.transaction_id = money_transactions.id))*money_transactions_detail.course,2), ' GEL')
                                 					END AS percent_gel1,
                                 					CONCAT(ROUND(SUM(money_transactions_detail.pay_root),2), if(client_loan_agreement.loan_currency_id = 1, ' GEL', ' USD')) AS pay_root,
                                 					CASE 
@@ -553,6 +563,7 @@ switch ($action) {
                                 			SELECT  client_loan_agreement.client_id,
                         							client_loan_schedule.id AS `id`,
 	                                                '5' AS number1,
+	                                                '4' AS sort3,
                         							DATE(money_transactions_detail.pay_datetime) AS sort,
                         							'2' AS sort1,
                         							client_loan_schedule.number,
@@ -579,11 +590,12 @@ switch ($action) {
 											JOIN   money_transactions_detail ON money_transactions_detail.transaction_id = money_transactions.id
                                 			JOIN   client_loan_schedule ON client_loan_schedule.id = money_transactions.client_loan_schedule_id
                                 			JOIN   client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
-                                			WHERE  client_loan_agreement.client_id = '$sub_client' AND client_loan_schedule.actived=1 AND money_transactions_detail.actived=1 AND money_transactions_detail.`status` = 3 AND money_transactions_detail.pay_amount > 1
+                                			WHERE  client_loan_agreement.client_id = '$sub_client' AND client_loan_schedule.actived=1 AND money_transactions_detail.actived=1 AND money_transactions_detail.`status` = 3
                                 			UNION ALL
     	                                    SELECT  difference_cource.client_id,
                                     				client_loan_schedule.id AS `id`,
 	                                                '' AS number1,
+	                                               '5' AS sort3,
                                     				DATE(difference_cource.datetime) AS sort,
                                     				'2' AS sort1,
                                     				client_loan_schedule.number,
@@ -610,8 +622,9 @@ switch ($action) {
                                 			SELECT  client_loan_agreement.client_id,
                         							client_loan_schedule.id AS `id`,
 	                                                '7' AS number1,
+	                                                '2' AS sort3,
                         							client_loan_schedule.pay_date AS sort,
-                        							'3' AS sort1,
+                        							'2' AS sort1,
                         							client_loan_schedule.number,
                         							DATE_FORMAT(money_transactions_detail.pay_datetime, '%d/%m/%Y') AS `date`,
                         							money_transactions_detail.course AS `exchange`,
@@ -637,7 +650,7 @@ switch ($action) {
                                 			JOIN    client_loan_schedule ON client_loan_schedule.id = money_transactions.client_loan_schedule_id
                                 			JOIN    client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
                                 			WHERE   client_loan_agreement.client_id = '$sub_client' AND client_loan_schedule.activ_status = 0 AND client_loan_schedule.actived=1 AND money_transactions_detail.`status` = 2)AS letter
-                                            ORDER BY letter.sort1,  letter.sort ASC ");
+                                            ORDER BY letter.sort1,  letter.sort, letter.sort3 ASC ");
 	    }else{	
     	    $rResult = mysql_query("SELECT   letter.client_id,
                             				 letter.number,
@@ -667,6 +680,7 @@ switch ($action) {
     	                                    SELECT  client_loan_agreement.client_id,
                                     			    client_loan_agreement.id AS `id`,
     	                                            '' AS number1,
+    	                                            '0' AS sort3,
                                     			    client_loan_agreement.datetime AS sort,
                                     			    '1' AS sort1,
                                     			    '' AS number,
@@ -696,6 +710,7 @@ switch ($action) {
                                     		SELECT   client_loan_agreement.client_id,
                             						 client_loan_schedule.id AS `id`,
     	                                             '' AS number1,
+    	                                             '1' AS sort3,
                             						 client_loan_schedule.pay_date AS sort,
                             						 '2' AS sort1,
                             						 client_loan_schedule.number,
@@ -727,6 +742,7 @@ switch ($action) {
                                     		SELECT  client_loan_agreement.client_id,
                             						client_loan_schedule.id AS `id`,
     	                                            '' AS number1,
+    	                                            '3' AS sort3,
                             						DATE(money_transactions_detail.pay_datetime) AS sort,
                             						'2' AS sort1,
                             						client_loan_schedule.number,
@@ -738,10 +754,10 @@ switch ($action) {
 	                                                '' AS `delta1`,
                             						'' AS percent,
                             						'' AS percent_gel,
-                            						CONCAT(ROUND(SUM(money_transactions_detail.pay_percent)+(SELECT SUM(money_transactions_detail.pay_amount) FROM money_transactions_detail WHERE money_transactions_detail.`status` = 2 AND money_transactions_detail.actived = 1 AND money_transactions_detail.transaction_id = money_transactions.id),2), if(client_loan_agreement.loan_currency_id = 1, ' GEL', ' USD')) AS percent1,
+                            						CONCAT(ROUND(SUM(money_transactions_detail.pay_percent)+(SELECT IFNULL(SUM(money_transactions_detail.pay_amount),0) FROM money_transactions_detail WHERE money_transactions_detail.`status` = 2 AND money_transactions_detail.actived = 1 AND money_transactions_detail.transaction_id = money_transactions.id),2), if(client_loan_agreement.loan_currency_id = 1, ' GEL', ' USD')) AS percent1,
                             						CASE 
-                            							WHEN client_loan_agreement.loan_currency_id = 1 THEN CONCAT(ROUND((SUM(money_transactions_detail.pay_percent)+(SELECT SUM(money_transactions_detail.pay_amount) FROM money_transactions_detail WHERE money_transactions_detail.`status` = 2 AND money_transactions_detail.actived = 1 AND money_transactions_detail.transaction_id = money_transactions.id))/money_transactions_detail.course,2), ' USD')
-                            							WHEN client_loan_agreement.loan_currency_id = 2 THEN CONCAT(ROUND((SUM(money_transactions_detail.pay_percent)+(SELECT SUM(money_transactions_detail.pay_amount) FROM money_transactions_detail WHERE money_transactions_detail.`status` = 2 AND money_transactions_detail.actived = 1 AND money_transactions_detail.transaction_id = money_transactions.id))*money_transactions_detail.course,2), ' GEL')
+                            							WHEN client_loan_agreement.loan_currency_id = 1 THEN CONCAT(ROUND((SUM(money_transactions_detail.pay_percent)+(SELECT IFNULL(SUM(money_transactions_detail.pay_amount),0) FROM money_transactions_detail WHERE money_transactions_detail.`status` = 2 AND money_transactions_detail.actived = 1 AND money_transactions_detail.transaction_id = money_transactions.id))/money_transactions_detail.course,2), ' USD')
+                            							WHEN client_loan_agreement.loan_currency_id = 2 THEN CONCAT(ROUND((SUM(money_transactions_detail.pay_percent)+(SELECT IFNULL(SUM(money_transactions_detail.pay_amount),0) FROM money_transactions_detail WHERE money_transactions_detail.`status` = 2 AND money_transactions_detail.actived = 1 AND money_transactions_detail.transaction_id = money_transactions.id))*money_transactions_detail.course,2), ' GEL')
                             						END AS percent_gel1,
                             						CONCAT(ROUND(SUM(money_transactions_detail.pay_root),2), if(client_loan_agreement.loan_currency_id = 1, ' GEL', ' USD')) AS pay_root,
                             						CASE 
@@ -763,6 +779,7 @@ switch ($action) {
                                     		SELECT  client_loan_agreement.client_id,
                             						client_loan_schedule.id AS `id`,
     	                                            '5' AS number1,
+    	                                            '4' AS sort3,
                             						DATE(money_transactions_detail.pay_datetime) AS sort,
     	                                            '2' AS sort1,
                             						client_loan_schedule.number,
@@ -789,11 +806,12 @@ switch ($action) {
                                             JOIN money_transactions_detail ON money_transactions.id = money_transactions_detail.transaction_id
                             				JOIN   client_loan_schedule ON client_loan_schedule.id = money_transactions.client_loan_schedule_id
                             				JOIN   client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
-                            				WHERE  client_loan_agreement.client_id = '$id' AND client_loan_schedule.actived=1 AND money_transactions_detail.`status` = 3 AND money_transactions_detail.actived = 1 AND money_transactions_detail.pay_amount > 1
+                            				WHERE  client_loan_agreement.client_id = '$id' AND client_loan_schedule.actived=1 AND money_transactions_detail.`status` = 3 AND money_transactions_detail.actived = 1
                             				UNION ALL
     	                                    SELECT  difference_cource.client_id,
                                     				client_loan_schedule.id AS `id`,
     	                                            '' AS number1,
+    	                                            '5' AS sort3,
                                     				DATE(difference_cource.datetime) AS sort,
                                     				'2' AS sort1,
                                     				client_loan_schedule.number,
@@ -820,8 +838,9 @@ switch ($action) {
                             				SELECT  client_loan_agreement.client_id,
                     								client_loan_schedule.id AS `id`,
     	                                           '7' AS number1,
+    	                                            '2' AS sort3,
                     								DATE(money_transactions_detail.pay_datetime) AS sort,
-                    								'3' AS sort1,
+                    								'2' AS sort1,
                     								client_loan_schedule.number,
                     								DATE_FORMAT(money_transactions_detail.pay_datetime, '%d/%m/%Y') AS `date`,
                     								money_transactions_detail.course AS `exchange`,
@@ -850,7 +869,8 @@ switch ($action) {
                                             UNION ALL
 	                                        SELECT  client_loan_agreement.client_id,
                                         			client_loan_agreement.id AS `id`,
-    	                                           '' AS number1,
+    	                                           '' AS number1, 
+    	                                            '0' AS sort3,
                                         			DATE(client_loan_agreement.datetime) AS sort,
                                         			'0' AS sort1,
                                 				    '' AS number,
@@ -879,6 +899,7 @@ switch ($action) {
 	                                        SELECT  client_loan_agreement.client_id,
                                     			    client_loan_agreement.id AS `id`,
     	                                            '' AS number1,
+    	                                            '0' AS sort3,
                                     			    DATE(client_loan_agreement.datetime) AS sort,
                                     			    '1' AS sort1,
                                     			    '' AS number,
@@ -908,6 +929,7 @@ switch ($action) {
                                             SELECT client_loan_agreement.client_id,
                         							client_loan_schedule.id AS `id`,
     	                                            '' AS number1,
+    	                                            '1' AS sort3,
                         							DATE(client_loan_schedule.pay_date) AS sort,
                         							'2' AS sort1,
                         							 client_loan_schedule.number,
@@ -939,6 +961,7 @@ switch ($action) {
                                 			SELECT  client_loan_agreement.client_id,
                         							client_loan_schedule.id AS `id`,
     	                                            '' AS number1,
+    	                                            '3' AS sort3,
                         							DATE(money_transactions_detail.pay_datetime) AS sort,
                         							'2' AS sort1,
                         							client_loan_schedule.number,
@@ -950,10 +973,10 @@ switch ($action) {
 	                                                '' AS `delta1`,
                         							'' AS percent,
                         							'' AS percent_gel,
-                        							CONCAT(ROUND(SUM(money_transactions_detail.pay_percent)+(SELECT SUM(money_transactions_detail.pay_amount) FROM money_transactions_detail WHERE money_transactions_detail.`status` = 2 AND money_transactions_detail.actived = 1 AND money_transactions_detail.transaction_id = money_transactions.id),2), if(client_loan_agreement.loan_currency_id = 1, ' GEL', ' USD')) AS percent1,
+                        							CONCAT(ROUND(SUM(money_transactions_detail.pay_percent)+(SELECT IFNULL(SUM(money_transactions_detail.pay_amount),0) FROM money_transactions_detail WHERE money_transactions_detail.`status` = 2 AND money_transactions_detail.actived = 1 AND money_transactions_detail.transaction_id = money_transactions.id),2), if(client_loan_agreement.loan_currency_id = 1, ' GEL', ' USD')) AS percent1,
                         							CASE 
-                        								WHEN client_loan_agreement.loan_currency_id = 1 THEN CONCAT(ROUND((SUM(money_transactions_detail.pay_percent)+(SELECT SUM(money_transactions_detail.pay_amount) FROM money_transactions_detail WHERE money_transactions_detail.`status` = 2 AND money_transactions_detail.actived = 1 AND money_transactions_detail.transaction_id = money_transactions.id))/money_transactions_detail.course,2), ' USD')
-                        								WHEN client_loan_agreement.loan_currency_id = 2 THEN CONCAT(ROUND((SUM(money_transactions_detail.pay_percent)+(SELECT SUM(money_transactions_detail.pay_amount) FROM money_transactions_detail WHERE money_transactions_detail.`status` = 2 AND money_transactions_detail.actived = 1 AND money_transactions_detail.transaction_id = money_transactions.id))*money_transactions_detail.course,2), ' GEL')
+                        								WHEN client_loan_agreement.loan_currency_id = 1 THEN CONCAT(ROUND((SUM(money_transactions_detail.pay_percent)+(SELECT IFNULL(SUM(money_transactions_detail.pay_amount),0) FROM money_transactions_detail WHERE money_transactions_detail.`status` = 2 AND money_transactions_detail.actived = 1 AND money_transactions_detail.transaction_id = money_transactions.id))/money_transactions_detail.course,2), ' USD')
+                        								WHEN client_loan_agreement.loan_currency_id = 2 THEN CONCAT(ROUND((SUM(money_transactions_detail.pay_percent)+(SELECT IFNULL(SUM(money_transactions_detail.pay_amount),0) FROM money_transactions_detail WHERE money_transactions_detail.`status` = 2 AND money_transactions_detail.actived = 1 AND money_transactions_detail.transaction_id = money_transactions.id))*money_transactions_detail.course,2), ' GEL')
                         							END AS percent_gel1,
                         							CONCAT(ROUND(SUM(money_transactions_detail.pay_root),2), if(client_loan_agreement.loan_currency_id = 1, ' GEL', ' USD')) AS pay_root,
                         							CASE 
@@ -975,8 +998,9 @@ switch ($action) {
                                 			SELECT  client_loan_agreement.client_id,
                         							client_loan_schedule.id AS `id`,
     	                                            '5' AS number1,
+    	                                            '4' AS sort3,
                         							DATE(money_transactions_detail.pay_datetime) AS sort,
-                        							'3' AS sort1,
+                        							'2' AS sort1,
                         							client_loan_schedule.number,
                         							DATE_FORMAT(money_transactions_detail.pay_datetime, '%d/%m/%Y') AS `date`,
                         							money_transactions_detail.course AS `exchange`,
@@ -1001,11 +1025,12 @@ switch ($action) {
                                             JOIN money_transactions_detail on money_transactions_detail.transaction_id = money_transactions.id
                                 			JOIN   client_loan_schedule ON client_loan_schedule.id = money_transactions.client_loan_schedule_id
                                 			JOIN   client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
-                                			WHERE  client_loan_agreement.client_id = '$sub_client' AND client_loan_schedule.actived=1 AND money_transactions_detail.`status` = 3 AND money_transactions_detail.actived = 1 AND money_transactions_detail.pay_amount > 1
+                                			WHERE  client_loan_agreement.client_id = '$sub_client' AND client_loan_schedule.actived=1 AND money_transactions_detail.`status` = 3 AND money_transactions_detail.actived = 1
                                 			UNION ALL
                                 			SELECT  client_loan_agreement.client_id,
                         							client_loan_schedule.id AS `id`,
     	                                            '7' AS number1,
+    	                                            '2' AS sort3,
                         							DATE(client_loan_schedule.pay_date) AS sort,
     	                                            '2' AS sort1,
                         							client_loan_schedule.number,
@@ -1033,7 +1058,7 @@ switch ($action) {
                                 			JOIN   client_loan_schedule ON client_loan_schedule.id = money_transactions.client_loan_schedule_id
                                 			JOIN   client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
                                 			WHERE  client_loan_agreement.client_id = '0' AND client_loan_schedule.actived=1 AND money_transactions_detail.`status` = 2)AS letter
-                                            ORDER BY letter.sort1,  letter.sort ASC ");
+                                            ORDER BY letter.sort1,  letter.sort, letter.sort3 ASC ");
 	    }
 	    
 	    $sumpercent  = 0;
