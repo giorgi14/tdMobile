@@ -895,11 +895,11 @@
     					$("#hidde_penalty").val(1);
         				$("#extra_fee").val(delta);
         				$("#penalti_fee").css('background','rgb(255, 255, 255)');
-        				$("#surplus").focus();
+        				$("#payable_Fee").focus();
         				$("#error_mesage").html('');
     				}
 				}else{
-					$("#surplus").focus();
+					$("#payable_Fee").focus();
         		}
             }
 		});
