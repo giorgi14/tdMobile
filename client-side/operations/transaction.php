@@ -246,6 +246,11 @@
 		    param.tr_id	               = $("#tr_id").val();
 		    
 		    param.month_fee		       = $("#month_fee").val();
+		    param.month_fee1		   = $("#month_fee1").val();
+
+		    param.payable_Fee		   = $("#payable_Fee").val();
+		    param.yield		           = $("#yield").val();
+		    
 	    	param.root		           = $("#root").val();
 	    	param.percent		       = $("#percent").val();
 	    	param.penalti_fee	       = $("#penalti_fee").val();
@@ -274,31 +279,27 @@
 			}else if(param.month_fee == ''){
 		    	alert('შეავსე ჩარიცხული თანხა');
 			}else{
-				if($("#error_mesage").html() == ''){
-        	    	$.ajax({
-        		        url: aJaxURL_det,
-        			    data: param,
-        		        success: function(data) {			        
-        					if(typeof(data.error) != 'undefined'){
-        						if(data.error != ''){
-        							alert(data.error);
-        						}else{
-        							$("#tr_id").val(data.tr_id);
-        							$("#hidde_cl_id1").val($("#client_id").val());
-        							GetDataTable("table_transaction_detail", aJaxURL_det, 'get_list', 9, "&transaction_id="+$("#tr_id").val(), 0, "", 0, "desc", "", "<'F'Cpl>");
-        							LoadTable(tName,9,change_colum_main,aJaxURL);
-        							setTimeout(function(){$('.ColVis, .dataTable_buttons').css('display','none');}, 50);
-        							$("#table_transaction_detail_length").css('top', '2px');
-        			        		CloseDialog('add-edit-form-det');
-        			        		
-        						}
-        					}
-        			    }
-        		    });
-				}else{
-					alert('გადანაწილება არასწორია');
-				}
-    	    }
+				$.ajax({
+    		        url: aJaxURL_det,
+    			    data: param,
+    		        success: function(data) {			        
+    					if(typeof(data.error) != 'undefined'){
+    						if(data.error != ''){
+    							alert(data.error);
+    						}else{
+    							$("#tr_id").val(data.tr_id);
+    							$("#hidde_cl_id1").val($("#client_id").val());
+    							GetDataTable("table_transaction_detail", aJaxURL_det, 'get_list', 9, "&transaction_id="+$("#tr_id").val(), 0, "", 0, "desc", "", "<'F'Cpl>");
+    							LoadTable(tName,9,change_colum_main,aJaxURL);
+    							setTimeout(function(){$('.ColVis, .dataTable_buttons').css('display','none');}, 50);
+    							$("#table_transaction_detail_length").css('top', '2px');
+    			        		CloseDialog('add-edit-form-det');
+    			        		
+    						}
+    					}
+    			    }
+    		    });
+			}
 		});
 	    
 		$(document).on("click", "#move-transaction", function () {
@@ -373,6 +374,116 @@
     			    }
     		    });
     	    }
+		});
+
+	    $(document).on("change", "#car_out", function () {
+	    	car_out = $("input[id='car_out']:checked").val();
+	    	
+	    	if(car_out == 1){
+	    		$(".car_out_class").css('display', '');
+	    		param = new Object();
+		    	
+	    		param.act              = "get_canceled-loan";
+	    		param.client_id        = $("#client_id").val();
+	    		param.transaction_date = $("#transaction_date").val();
+	    		
+		    	$.ajax({
+	    	        url: aJaxURL,
+	    		    data: param,
+	    	        success: function(data) {       
+	    				if(typeof(data.error) != "undefined"){
+	    					if(data.error != ""){
+	    						alert(data.error);
+	    					}else{
+	        					$("#month_fee1").val(data.all_fee);
+	        					$("#root1").val(data.remaining_root);
+	        					$("#percent1").val(data.percent);
+	        					$("#penalti_fee1").val(data.penalty);
+	        					$("#payable_Fee1").val(data.sakomisio);
+	        					$("#yield1").val(data.nasargeblebebi);
+	    						//$("#add-edit-form-canceled").html(data.page);
+	    					}
+	    				}
+	    	    	}
+	    	    });
+		    }else{
+		    	$(".car_out_class").css('display', 'none');
+		    	param         =  new Object();
+			    param.act     = "get_shedule";
+			    param.status  = 1;
+			    param.id                   = $("#client_id").val();
+			    param.type_id              = $('#type_id').val();
+			    param.transaction_date     = $("#transaction_date").val();
+			    param.month_fee_trasaction = $("#month_fee_trasaction").val();
+			    param.received_currency_id = $("#received_currency_id").val();
+			    param.course               = $("#course").val();
+			    
+			    $.ajax({
+			        url: aJaxURL,
+				    data: param,
+			        success: function(data) {			        
+						if(typeof(data.error) != 'undefined'){
+							if(data.error != ''){
+								alert(data.error);
+							}else{
+								if(data.status==1){
+	    							$("#month_fee1").val(data.pay_amount);
+	    							$("#root1").val(data.root);
+	    							$("#percent1").val(data.percent);
+	    							$("#penalti_fee1").val(data.penalty);
+
+	    							$("#month_fee2").val(data.pay_amount1);
+	    							$("#root2").val(data.root1);
+	    							$("#percent2").val(data.percent1);
+	    							$("#penalti_fee2").val(data.penalty1);
+	    							$("#month_fee").val(data.loan_pay_amount);
+	    							$("#extra_fee").val(parseFloat(data.loan_pay_amount)+parseFloat(data.pay_amount1));
+	    							
+	    							$("#hidde_id").val(data.id);
+	    							$("#currency_id").html(data.currenc).trigger("chosen:updated");
+	    							$('#currency_id').prop('disabled', true).trigger("chosen:updated");
+	    							$('#client_loan_number').html(data.agrement_data).trigger("chosen:updated");
+		    					}else if(data.status==2){
+		    						$("#month_fee1").val(data.insurance_fee);
+		    						$("#month_fee").val(data.loan_pay_amount);
+		    						$("#extra_fee").val(parseFloat(data.loan_pay_amount)+parseFloat(data.pay_amount1));
+		    						
+		    						$("#root1").val('');
+	    							$("#percent1").val('');
+	    							$("#penalti_fee1").val('');
+
+	    							$("#month_fee2").val('');
+	    							$("#root2").val('');
+	    							$("#percent2").val('');
+	    							$("#penalti_fee2").val('');
+
+	    							$("#hidde_id").val(data.id);
+	    							$('#currency_id').prop('disabled', false).trigger("chosen:updated");
+	    							$('#client_loan_number').html(data.agrement_data).trigger("chosen:updated");
+	    						}else if(data.status==3){
+			    					$("#month_fee1").val(data.pledge_fee);
+			    					$("#month_fee").val(data.loan_pay_amount);
+			    					$("#extra_fee").val(parseFloat(data.loan_pay_amount)+parseFloat(data.pay_amount1));
+			    					
+			    					$("#root1").val('');
+	    							$("#percent1").val('');
+	    							$("#penalti_fee1").val('');
+
+	    							$("#month_fee2").val('');
+	    							$("#root2").val('');
+	    							$("#percent2").val('');
+	    							$("#penalti_fee2").val('');
+
+	    							$("#hidde_id").val(data.id);
+	    							$('#currency_id').prop('disabled', false).trigger("chosen:updated");
+	    						}
+							}
+						}
+				    }
+			    });
+		    }
+
+	    	
 		});
 		
 	    $(document).on("change", "#type_id", function () {
@@ -543,6 +654,13 @@
 	    });
 
 		$(document).on("change", "#client_id", function () {
+			
+			if($(this).val()>0){
+            	document.getElementById("car_out").disabled = false;
+            }else{
+            	document.getElementById("car_out").disabled = true;
+            }
+            
 			param         =  new Object();
 		    param.act     = "get_shedule";
 		    param.status  = 1;
@@ -619,6 +737,13 @@
     	});
 
 		$(document).on("change", "#client_loan_number", function () {
+			
+            if($(this).val()>0){
+            	document.getElementById("car_out").disabled = false;
+            }else{
+            	document.getElementById("car_out").disabled = true;
+            }
+			
 			param         =  new Object();
 		    param.act     = "get_shedule";
 		    param.agr_id  =  $(this).val();
@@ -778,6 +903,51 @@
         		}
             }
 		});
+
+		$(document).on("keydown", "#payable_Fee", function (event) {
+			if (event.keyCode == $.ui.keyCode.ENTER){
+				if($(this).val()==''){this_value = 0;}else{this_value = $(this).val();}
+				if($("#hidde_payable_Fee").val()==0){
+    				delta = (parseFloat($("#extra_fee").val())-parseFloat(this_value)).toFixed(2);
+    				if(delta<0){
+    					alert('მიუთითეთ კორექტული თანხა');
+    					$("#payable_Fee").css('background','#fb5959');
+    					$("#error_mesage").html('არასწორი განაწილება!');
+    				}else{
+    					$("#hidde_payable_Fee").val(1);
+        				$("#extra_fee").val(delta);
+        				$("#payable_Fee").css('background','rgb(255, 255, 255)');
+        				$("#yield").focus();
+        				$("#error_mesage").html('');
+    				}
+				}else{
+					$("#yield").focus();
+        		}
+            }
+		});
+
+		$(document).on("keydown", "#yield", function (event) {
+			if (event.keyCode == $.ui.keyCode.ENTER){
+				if($(this).val()==''){this_value = 0;}else{this_value = $(this).val();}
+				if($("#hidde_yield").val()==0){
+    				delta = (parseFloat($("#extra_fee").val())-parseFloat(this_value)).toFixed(2);
+    				if(delta<0){
+    					alert('მიუთითეთ კორექტული თანხა');
+    					$("#yield").css('background','#fb5959');
+    					$("#error_mesage").html('არასწორი განაწილება!');
+    				}else{
+    					$("#hidde_yield").val(1);
+        				$("#extra_fee").val(delta);
+        				$("#yield").css('background','rgb(255, 255, 255)');
+        				$("#surplus").focus();
+        				$("#error_mesage").html('');
+    				}
+				}else{
+					$("#surplus").focus();
+        		}
+            }
+		});
+
 		
 		$(document).on("keydown", "#surplus", function (event) {
 			if (event.keyCode == $.ui.keyCode.ENTER){
@@ -846,6 +1016,38 @@
 		    }
 	    });
 
+		$(document).on("click", "#delete_payable_Fee", function () {
+			payable_Fee = $("#payable_Fee").val();
+	        if(payable_Fee == ''){payable_Fee = 0;}
+
+	        if($("#hidde_payable_Fee").val() == 1){
+	        	$("#extra_fee").val(parseFloat($("#extra_fee").val()) + parseFloat(payable_Fee));
+	        	$("#payable_Fee").val('');
+	        	$("#hidde_payable_Fee").val(0);
+	        	$("#yield").focus();
+	        }else{
+	        	$("#extra_fee").val(parseFloat($("#extra_fee").val()));
+	        	$("#payable_Fee").val('');
+	        	$("#payable_Fee").focus();
+		    }
+	    });
+
+		$(document).on("click", "#delete_yield", function () {
+			yield = $("#yield").val();
+	        if(yield == ''){yield = 0;}
+
+	        if($("#hidde_yield").val() == 1){
+	        	$("#extra_fee").val(parseFloat($("#extra_fee").val()) + parseFloat(yield));
+	        	$("#yield").val('');
+	        	$("#hidde_yield").val(0);
+	        	$("#yield").focus();
+	        }else{
+	        	$("#extra_fee").val(parseFloat($("#extra_fee").val()));
+	        	$("#yield").val('');
+	        	$("#yield").focus();
+		    }
+	    });
+	    
 		$(document).on("click", "#delete_surplus", function () {
 			surplus = $("#surplus").val();
 	        if(surplus == ''){surplus = 0;}

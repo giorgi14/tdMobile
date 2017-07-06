@@ -54,6 +54,7 @@ switch ($action) {
 		$tr_id 		          = $_REQUEST['tr_id'];
 		
 		$month_fee            = $_REQUEST['month_fee'];
+		
 		$root                 = $_REQUEST['root'];
 		$percent              = $_REQUEST['percent'];
 		$penalti_fee          = $_REQUEST['penalti_fee'];
@@ -127,8 +128,13 @@ echo json_encode($data);
 
 function Add($hidde_transaction_id, $hidde_id, $transaction_date, $month_fee, $course, $currency_id, $received_currency_id, $root,  $percent, $penalti_fee, $surplus, $diff, $type_id){
     
-	$user_id	= $_SESSION['USERID'];
-	$client_id  = $_REQUEST['client_id'];
+	$user_id	 = $_SESSION['USERID'];
+	$client_id   = $_REQUEST['client_id'];
+	
+	$month_fee1  = $_REQUEST['month_fee1'];
+	$payable_Fee = $_REQUEST['payable_Fee'];
+	$yield       = $_REQUEST['yield'];
+	
 	$res = mysql_fetch_assoc(mysql_query("SELECT  SUM(money_transactions_detail.pay_amount) AS pay_amount
                                           FROM    money_transactions_detail
                                           JOIN    money_transactions ON money_transactions.id = money_transactions_detail.transaction_id
@@ -144,12 +150,15 @@ function Add($hidde_transaction_id, $hidde_id, $transaction_date, $month_fee, $c
                                     	   FROM   `client_loan_schedule`
 	                                       JOIN    client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
                                     	   WHERE   client_loan_schedule.id = $hidde_id AND client_loan_schedule.actived = 1"));
-	$sxvaoba = $month_fee - $res1[pay_amount]; 
-	if ($sxvaoba>0 && $sxvaoba<1) {
-	    $month_fee = $res1[pay_amount];
-	}
+	
+	//$sxvaoba = $month_fee - $res1[pay_amount]; 
+// 	if ($sxvaoba>0 && $sxvaoba<1) {
+// 	    $month_fee = $res1[pay_amount];
+// 	}
+//$all_fee = ROUND($res1[pay_amount] + $res1[penalty],2);
+
 	$all_pay = ROUND($month_fee + $res[pay_amount],2);
-	$all_fee = ROUND($res1[pay_amount] + $res1[penalty],2);
+	$all_fee = $month_fee1;
 	
 	if ($all_fee == $all_pay){
 	    
@@ -189,6 +198,20 @@ function Add($hidde_transaction_id, $hidde_id, $transaction_date, $month_fee, $c
                     	            (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '$surplus', '$course', '$currency_id', '$received_currency_id', '', '', '$type_id', 3, 1)");
 	    }
 	    
+	    if ($payable_Fee>0) {
+	        mysql_query("INSERT INTO `money_transactions_detail`
+	                                (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
+            	              VALUES
+            	                     (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '$payable_Fee', '$course', '$currency_id', '$received_currency_id', '', '', '$type_id', 5, 1)");
+	    }
+	    
+	    if ($yield>0) {
+	        mysql_query("INSERT INTO `money_transactions_detail`
+                    	            (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
+                    	      VALUES
+                    	            (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '$yield', '$course', '$currency_id', '$received_currency_id', '', '', '$type_id', 6, 1)");
+	    }
+	    
 	}elseif ($all_fee < $all_pay){
 	    if ($penalti_fee>0){
 	        mysql_query("INSERT INTO `money_transactions_detail`
@@ -225,6 +248,20 @@ function Add($hidde_transaction_id, $hidde_id, $transaction_date, $month_fee, $c
                         	       (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '$delta', '$course', '$currency_id', '$received_currency_id', '', '', '$type_id', 3, 1)");
 	    }
 	    
+	    if ($payable_Fee>0) {
+	        mysql_query("INSERT INTO `money_transactions_detail`
+                    	            (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
+                    	      VALUES
+                    	            (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '$payable_Fee', '$course', '$currency_id', '$received_currency_id', '', '', '$type_id', 5, 1)");
+	    }
+	     
+	    if ($yield>0) {
+	        mysql_query("INSERT INTO `money_transactions_detail`
+                    	            (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
+                    	      VALUES
+                    	            (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '$yield', '$course', '$currency_id', '$received_currency_id', '', '', '$type_id', 6, 1)");
+	    }
+	    
 	}else{
 	    mysql_query("INSERT INTO `money_transactions_detail`
                     	        (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
@@ -253,7 +290,7 @@ function Add1($tr_id, $hidde_id, $transaction_date, $month_fee, $course, $curren
                                           FROM   `car_insurance_info`
                                           WHERE   car_insurance_info.client_id = '$client_id'
                                           AND     car_insurance_info.actived = 1
-                                          AND     DATE(car_insurance_info.car_insurance_end) = CURDATE()"));
+                                          AND     DATE(car_insurance_info.car_insurance_end) = '$transaction_date'"));
     
     $sxvaoba = $month_fee - $res[ins_payy];
     if ($sxvaoba>0 && $sxvaoba<1) {
@@ -339,13 +376,6 @@ function update($hidde_status, $id, $transaction_date, $month_fee, $root,  $perc
                                    `pay_amount`   = '$surplus'
                             WHERE  `id`           = '$id'");
         
-    }elseif ($hidde_status == 3){
-        $req = mysql_query("UPDATE `money_transactions_detail`
-                               SET `datetime`     = NOW(),
-                                   `user_id`      = '$user_id',
-                                   `pay_datetime` = '$transaction_date',
-                                   `pay_amount`   = '$month_fee'
-                            WHERE  `id`           = '$id'");
     }
     
     
@@ -448,6 +478,7 @@ function GetHolidays($id){
 	                                                money_transactions.id AS tr_id,
 	                                                money_transactions.extra_fee,
 	                                                money_transactions.month_fee_trasaction,
+	                                                money_transactions.out_cal_status,
                                     				money_transactions_detail.`status`
                                             FROM   `money_transactions_detail`
                                             JOIN  	money_transactions ON money_transactions_detail.transaction_id = money_transactions.id
@@ -479,6 +510,12 @@ function GetPage($res = ''){
         $input_hidde = "display:none;";
     }else{
         $input_hidde = "";
+    }
+    
+    if ($res[out_cal_status] == 1) {
+        $hidde_out_car = '';
+    }else{
+        $hidde_out_car = 'display:none;';
     }
     
     if ($res[status] == 1) {
@@ -561,7 +598,7 @@ function GetPage($res = ''){
     				</tr>
     				<tr>
     	                <td style="width: 200px;"><label calss="label" style="padding-top: 5px;" for="name">სესხის ვალუტა</label></td>
-    					<td style="width: 280px;"><label calss="label" style="padding-top: 5px;" for="date"></label></td>
+    					<td style="width: 280px;"><label calss="label" style="padding-top: 5px;" for="date">მანქანის გაყვანა</label></td>
     					<td style="width: 120px;"><label calss="label" style="padding-top: 5px;" for="date"></label></td>
     				</tr>
     				<tr>
@@ -569,6 +606,7 @@ function GetPage($res = ''){
     						<select id="currency_id"  calss="label" style="width: 155px;">'.currency($res[currency_id]).'</select>
     					</td>
     					<td style="width: 280px;">
+    						<input class="idle" style="width: 15px;" id="car_out" value="1" disabled type="checkbox">
     					</td>
     					<td style="width: 120px;">
     					</td>
@@ -640,6 +678,26 @@ function GetPage($res = ''){
     						<input style="width: 80px;" id="penalti_fee1" class="label_label" type="text" value="'.$res1['penalty'].'" disabled="disabled">
     					</td>
     				</tr>
+    				<tr class="car_out_class" style="height:10px; '.$hidde_out_car.'"></tr>
+    				<tr class="car_out_class" style="'.$hidde_out_car.'">
+    					<td style="width: 105px; padding-top: 5px; '.$display_none2.' "><label class="label_label" for="date">საკომისიო:</label></td>
+    					<td style="width: 100px; '.$display_none2.'">
+    						<input class="label_label" style="width: 70px; float:left;" id="payable_Fee" type="text"  onkeydown="if(event.which == 8 || event.keyCode == 46) return false;" value="'.$res['pay_amount'].'" '.$disable.'><span style="float: right; display: inline; margin-top: 4px; "><button id="delete_payable_Fee" class="label_label" style="width:20px; padding: 0 0 2px 0; color: #fb0000; '.$display_none1.'">x</button></span>
+    					</td>
+    					<td style="width: 120px;"><label style="padding-top: 5px; margin-left: 10px;" class="label_label" for="date">საკომისიო:</label></td>
+    					<td style="width: 100px;"><input style="width: 80px;" id="payable_Fee1" class="label_label" type="text" value="'.$res1['penalty'].'" disabled="disabled"></td>
+    					<td style="width: 120px;"></td>
+    					<td style="width: 80px;"></td>
+    				</tr>
+    				<tr class="car_out_class" style="height:10px; '.$hidde_out_car.'"></tr>
+    				<tr class="car_out_class" style="'.$hidde_out_car.'">
+    					<td style="width: 120px;"><label class="label_label" for="date">დღიური სარგებელი:</label></td>
+    					<td style="width: 100px;"><input class="label_label" style="width: 70px; float:left;" id="yield" type="text"  onkeydown="if(event.which == 8 || event.keyCode == 46) return false;" value="'.$res['pay_amount'].'" '.$disable.'><span style="float: right; display: inline; margin-top: 4px; "><button id="delete_yield" class="label_label" style="width:20px; padding: 0 0 2px 0; color: #fb0000; '.$display_none1.'">x</button></span></td>
+    					<td style="width: 120px;"><label style="margin-left: 10px;" class="label_label" for="date">დღიური სარგებელი:</label></td>
+    					<td style="width: 100px;"><input style="width: 80px;" id="yield1" class="label_label" type="text" value="'.$res1['penalty'].'" disabled="disabled"></td>
+    					<td style="width: 120px;"></td>
+    					<td style="width: 80px;"></td>
+    				</tr>
     				<tr style="height:10px;"></tr>
     				<tr style="'.$input_hidde.'">
     					<td style="width: 105px; padding-top: 5px; '.$display_none2.' "><label class="label_label" for="date">მეტობა</label></td>
@@ -653,9 +711,9 @@ function GetPage($res = ''){
     				</tr>
     				<tr style="height:10px;"></tr>
     				<tr style="'.$input_hidde.'">
-    					<td style="width: 120px;"><label class="label_label" for="date">ზედმეტი თანხა</label></td>
+    					<td style="width: 120px;"><label class="label_label" for="date">ზედმეტი თანხა:</label></td>
     					<td style="width: 100px;"><input class="label_label" style="width: 80px; " id="extra_fee" type="text" value="'.$res['extra_fee'].'" disabled="disabled"></td>
-    					<td style="width: 120px; color: #ff0000 "; id="error_mesage"></td>
+    					<td style="width: 120px;"></td>
     					<td style="width: 100px;"></td>
     					<td style="width: 120px;"></td>
     					<td style="width: 80px;"></td>
@@ -669,7 +727,9 @@ function GetPage($res = ''){
 		    <input type="hidden" id="hidde_root" value="0" />
 	        <input type="hidden" id="hidde_percent" value="0" />
             <input type="hidden" id="hidde_penalty" value="0" />
-            <input type="hidden" id="hidde_surplus" value="0" />
+		    <input type="hidden" id="hidde_payable_Fee" value="0" />
+		    <input type="hidden" id="hidde_payable_Fee" value="0" />
+            <input type="hidden" id="hidde_yield" value="0" />
                 
 		</fieldset>
     </div>

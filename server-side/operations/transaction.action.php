@@ -124,6 +124,82 @@ switch ($action) {
 	    $data	= array('cource' => $cource[cource]);
 	    break;
 	    
+	case 'get_canceled-loan':
+	    $client_id        = $_REQUEST['client_id'];
+	    $transaction_date = $_REQUEST['transaction_date'];
+	    
+	    $res = mysql_query("SELECT   client_loan_schedule.id,
+                                     client_loan_agreement.status as st,
+                                     client_loan_schedule.pay_date,
+                    				 client_loan_schedule.`status`,
+                    				 ROUND(client_loan_schedule.percent,2) AS percent,
+                                     ROUND((client_loan_schedule.root + client_loan_schedule.remaining_root),2) AS remaining_root,
+                                     ROUND(((client_loan_schedule.root + client_loan_schedule.remaining_root)*client_loan_agreement.loan_beforehand_percent)/100, 2) AS sakomisio,
+                            		 client_loan_agreement.loan_amount,
+                                     DATEDIFF('$transaction_date', client_loan_schedule.pay_date) AS gadacilebuli,
+                                     client_loan_agreement.penalty_days,
+                					 client_loan_agreement.penalty_percent,
+                					 client_loan_agreement.penalty_additional_percent
+                            FROM     client_loan_schedule
+                            JOIN     client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
+                            WHERE    client_loan_agreement.client_id = '$client_id' AND client_loan_schedule.`status` = 0 
+                            ORDER BY client_loan_schedule.id ASC
+                            LIMIT 1");
+        
+        $check = mysql_num_rows($res);
+        
+        if ($check == 0) {
+            $res = mysql_query("SELECT   client_loan_schedule.id,
+                                         client_loan_agreement.status as st,
+                                         client_loan_schedule.pay_date,
+                        				 client_loan_schedule.`status`,
+                                         ROUND(((client_loan_schedule.root + client_loan_schedule.remaining_root)*client_loan_agreement.loan_beforehand_percent)/100,2) AS sakomisio,
+                        				 0 AS percent,
+                                         0 AS penalty,
+                                         ROUND(client_loan_schedule.remaining_root,2) AS remaining_root
+                                FROM     client_loan_schedule
+                                JOIN     client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
+                                WHERE    client_loan_agreement.client_id = '$client_id' AND client_loan_schedule.`status` = 1 AND client_loan_schedule.schedule_date <= '$transaction_date'
+                                ORDER BY client_loan_schedule.id DESC
+                                LIMIT 1");
+        }
+        
+        $result = mysql_fetch_assoc($res);
+        
+        if ($result[remaining_root]==0) {
+            $remainig_root = $result[loan_amount];
+        }else{
+            $remainig_root = $result[remaining_root];
+        }
+        
+        if ($result[gadacilebuli]>0 && $result[gadacilebuli]<=$result[penalty_days]) {
+            $penalty = round(($remainig_root * ($result[penalty_percent]/100))*$result[gadacilebuli],2);
+        }elseif ($result[gadacilebuli]>0 && $result[gadacilebuli]>$result[penalty_days] && $result[penalty_additional_percent] > 0){
+            $penalty = round((($remainig_root * ($result[gadacilebuli]/100))*$result[penalty_days])+($remainig_root * ($result[penalty_additional_percent]/100))*($result[gadacilebuli]-$result[penalty_days]),2);
+        }elseif($result[gadacilebuli]>0 && $result[penalty_additional_percent] <= 0){
+            $penalty = round(($remainig_root * ($result[gadacilebuli]/100))*$result[gadacilebuli],2);
+        }
+        
+        if($penalty==0){
+            $penalty = $result[penalty];
+        }
+        
+        $req = mysql_fetch_assoc(mysql_query("SELECT client_loan_schedule.id,
+                                                	 ROUND(DATEDIFF('$transaction_date', '$result[pay_date]')*(client_loan_schedule.percent/DAY(LAST_DAY(client_loan_schedule.pay_date))),2) AS nasargeblebebi
+                                              FROM   client_loan_schedule
+                                              JOIN   client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
+                                              WHERE  client_loan_agreement.client_id = $hidde_idd AND client_loan_schedule.`id` = '$result[id]+1'"));
+        
+        
+        $res1 = mysql_fetch_assoc(mysql_query("SELECT SUM(pay_amount) AS pay_amount
+                                               FROM   money_transactions
+                                               WHERE  money_transactions.client_loan_schedule_id = $res[id] AND money_transactions.status in(3) AND actived = 1"));
+    
+        $all_fee = $req[nasargeblebebi]+$result[sakomisio] + $result[percent] + $penalty + $result[remaining_root];
+	
+	    $data	= array('all_fee' => $all_fee, 'sakomisio' => $result[sakomisio], 'percent' => $result[percent], 'remaining_root' => $result[remaining_root], 'penalty' => $penalty, 'nasargeblebebi' => $req[nasargeblebebi]);
+	    break;
+	    
 	case 'get_shedule':
 		$id	               = $_REQUEST['id'];
 		$type_id           = $_REQUEST['type_id'];
@@ -153,8 +229,8 @@ switch ($action) {
                                                         JOIN     client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
                                                         JOIN     client ON client.id = client_loan_agreement.client_id
                                                         WHERE    client_loan_schedule.actived = 1 AND client_loan_schedule.`status` = 0
-                                                        AND      client_loan_schedule.schedule_date < CURDATE() AND DATEDIFF(CURDATE(),client_loan_schedule.pay_date)>=1
-                                                        AND      client_loan_agreement.`status` = 1 AND client_loan_agreement.canceled_status = 0
+                                                        AND      client_loan_schedule.schedule_date < '$transaction_date' AND DATEDIFF('$transaction_date',client_loan_schedule.pay_date)>=1
+                                                        AND      client_loan_agreement.`status` = 1 AND client_loan_agreement.canceled_status = 0 
                                                                  $filt
 		                                                LIMIT 1"));
 		
@@ -188,11 +264,11 @@ switch ($action) {
                                                          FROM   `car_insurance_info`
                                                          WHERE   car_insurance_info.client_id = client.id 
                                                          AND     car_insurance_info.actived = 1
-                                                         AND     DATE(car_insurance_info.car_insurance_end) = CURDATE()) AS insurance_fee
+                                                         AND     DATE(car_insurance_info.car_insurance_end) = '$transaction_date') AS insurance_fee
                                                FROM 	`client_loan_schedule`
                                                LEFT JOIN client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
                                                JOIN      client ON client.id = client_loan_agreement.client_id
-                                               WHERE     client_loan_schedule.actived = 1 $filt AND client_loan_schedule.`status` != 1
+                                               WHERE     client_loan_schedule.actived = 1 $filt AND client_loan_schedule.`status` != 1 
                                                ORDER BY  pay_date ASC
                                                LIMIT 1"));
 		
@@ -386,7 +462,6 @@ function GetPage($res = ''){
     }else{
         $disable = "";
     }
-    
     
     if ($res['id']=='') {
         $req = mysql_fetch_assoc(mysql_query("SELECT MAX(id)+1 AS `id` 
