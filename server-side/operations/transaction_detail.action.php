@@ -107,6 +107,7 @@ switch ($action) {
         }else{
             
             update($hidde_status, $id, $transaction_date, $month_fee,  $root,  $percent, $penalti_fee, $surplus);
+            $data = array('tr_id' => $tr_id);
         }
 		
 		break;
