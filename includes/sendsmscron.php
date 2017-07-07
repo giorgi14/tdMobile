@@ -1,11 +1,25 @@
 <?php
 require_once('classes/core.php');
 
+$ids   = json_decode($_REQUEST['id']);
+$check = $_REQUEST['check'];
+$idd ='';
+foreach($ids as $id) {
+    $idd .= $id.','; 
+}
+$idd .= '0';
+
+if ($check == 1) {
+   $filt = "AND id IN($idd)";
+}else{
+   $filt = '';
+}
+
 $result = mysql_query("SELECT id,
                               address,
                               content
                        FROM   sent_list
-                       WHERE  actived = 1 AND status = 0");
+                       WHERE  actived = 1 AND status = 0 $filt");
 
 while ($row = mysql_fetch_array($result)) {
     

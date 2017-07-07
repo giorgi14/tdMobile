@@ -2,7 +2,7 @@
 <head>
 	<script type="text/javascript">
 		var aJaxURL	          = "server-side/operations/sms_list.action.php";		//server side folder url
-		var aJaxURL_sms       = "includes/sendsms.php";
+		var aJaxURL_sms       = "includes/sendsmscron.php";
 		var tName	          = "example";	//table name
 		var fName	          = "add-edit-form"; //form name
 		var change_colum_main = "<'dataTable_buttons'T><'F'Cfipl>";
@@ -12,6 +12,7 @@
  						
 			/* Add Button ID, Delete Button ID */
 			GetButtons("add_button", "delete_button");
+			$("#sent_button").button();
 			SetEvents("add_button", "delete_button", "check-all", tName, fName, aJaxURL,'',tName,6,change_colum_main,aJaxURL,'','','');
 			$("#status").chosen();
 			$("#status_chosen").css('margin-top', '-7px'); 
@@ -92,6 +93,44 @@
 			}
 		});
 
+	    $(document).on("click", "#sent_button", function () {
+
+			var sms_id = new Array();
+			
+			$(".check:checked").each(function() {
+				sms_id.push(this.value); 
+			});
+			
+			var jsonString  = JSON.stringify(sms_id);
+			
+		    param 			= new Object();
+
+		    param.act		= "save_sms";
+
+		    param.id 	= jsonString;
+		    param.check = 1;
+	        param.hidde = $(".check:checked").val();
+	        
+	    	if(param.hidde == ""){
+				alert("არცერთი ვალი არაა მონიშნული");
+			}else {
+			    $.ajax({
+			        url: aJaxURL_sms,
+				    data: param,
+			        success: function(data) {			        
+						if(typeof(data.error) != 'undefined'){
+							if(data.error != ''){
+								alert(data.error);
+							}else{
+								LoadTable(tName,6,change_colum_main,aJaxURL);
+				        		CloseDialog(fName);
+							}
+						}
+				    }
+			    });
+			}
+		});
+		
 	    $(document).on("keyup  paste", "#sms_text", function () {
 	      	 var sms_text = $('#sms_text').val(); 
 	      	  isValid(sms_text);
@@ -168,6 +207,7 @@
     <div id="button_area">
     	<button id="add_button">დამატება</button>
     	<button id="delete_button">წაშლა</button>
+    	<button id="sent_button">გაგზავნა</button>
     	<select id="status" style="width: 200px;">
     		<option value="1">გასაგზავნი</option>
     		<option value="2">გაგზავნილი</option>
