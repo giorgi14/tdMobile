@@ -895,11 +895,19 @@
     					$("#hidde_penalty").val(1);
         				$("#extra_fee").val(delta);
         				$("#penalti_fee").css('background','rgb(255, 255, 255)');
-        				$("#payable_Fee").focus();
+        				if($("input[id='car_out']:checked").val()==1){
+        					$("#payable_Fee").focus();
+        				}else{
+        					$("#surplus").focus();
+            			}
         				$("#error_mesage").html('');
     				}
 				}else{
-					$("#payable_Fee").focus();
+					if($("input[id='car_out']:checked").val()==1){
+    					$("#payable_Fee").focus();
+    				}else{
+    					$("#surplus").focus();
+        			}
         		}
             }
 		});

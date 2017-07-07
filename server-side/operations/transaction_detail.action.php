@@ -731,6 +731,7 @@ function GetPage($res = ''){
 		    <input type="hidden" id="hidde_payable_Fee" value="0" />
 		    <input type="hidden" id="hidde_payable_Fee" value="0" />
             <input type="hidden" id="hidde_yield" value="0" />
+			<input type="hidden" id="hidde_surplus" value="0" />
                 
 		</fieldset>
     </div>
