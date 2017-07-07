@@ -1,6 +1,7 @@
 <?php
 require_once('classes/core.php');
 $data	= '';
+$error	= '';
 $status = 0;
 $ids    = json_decode($_REQUEST['id']);
 $check  = $_REQUEST['check'];
@@ -36,6 +37,8 @@ while ($row = mysql_fetch_array($result)) {
         $status = 1;
     }
 }
+$data['error'] = $error;
 $data = array("status" => $status);
+
 echo json_encode($data);
 ?>
