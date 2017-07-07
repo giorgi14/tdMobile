@@ -84,16 +84,16 @@ switch ($action) {
 	            $tr_id = mysql_insert_id();
 	        }else{
 	            mysql_query("UPDATE `money_transactions`
-            	                 SET `datetime`                = NOW(),
-                	                 `user_id`                 = '$user_id',
-                	                 `client_loan_schedule_id` = '$hidde_id',
-                	                 `pay_datetime`            = '$transaction_date',
-                	                 `extra_fee`               = '$extra_fee',
-                	                 `course`                  = '$course',
-                	                 `currency_id`             = '$currency_id',
-                	                 `month_fee_trasaction`    = '$month_fee_trasaction',
-                	                 `type_id`                 = '$type_id'
-            	               WHERE `id`                      = '$hidde_transaction_id'");
+            	                SET `datetime`                = NOW(),
+                	                `user_id`                 = '$user_id',
+                	                `client_loan_schedule_id` = '$hidde_id',
+                	                `pay_datetime`            = '$transaction_date',
+                	                `extra_fee`               = '$extra_fee',
+                	                `course`                  = '$course',
+                	                `currency_id`             = '$currency_id',
+                	                `month_fee_trasaction`    = '$month_fee_trasaction',
+                	                `type_id`                 = '$type_id'
+            	              WHERE `id`                      = '$hidde_transaction_id'");
 	            $tr_id = $hidde_transaction_id;
 	            
 	        }
