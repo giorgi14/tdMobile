@@ -98,12 +98,9 @@
         								var delta  = ((parseFloat(darchenili_vali) + parseFloat(daricxva_lari)) - (parseFloat(procenti_lari)+parseFloat(dziri_lari))).toFixed(2);
         								var delta1 = ((parseFloat(darchenili_vali1) + parseFloat(daricxva_lari1)) - (parseFloat(procenti_lari1)+parseFloat(dziri_lari1))).toFixed(2);	
         							}else{
-            							var delta  = (parseFloat(gacema_lari) + parseFloat(daricxva_lari) - parseFloat(procenti_lari)+parseFloat(dziri_lari)).toFixed(2);
-        								var delta1 = (parseFloat(gacema_lari1) + parseFloat(daricxva_lari1) - parseFloat(procenti_lari1)+parseFloat(dziri_lari1)).toFixed(2);	
+        								var delta  = ((parseFloat(gacema_lari) + parseFloat(daricxva_lari)) - (parseFloat(procenti_lari)+parseFloat(dziri_lari))).toFixed(2);
+        								var delta1 = ((parseFloat(gacema_lari1) + parseFloat(daricxva_lari1)) - (parseFloat(procenti_lari1)+parseFloat(dziri_lari1))).toFixed(2);	
                 					}
-        							
-        							
-
         							$("#remaining_root").html(delta);
         							$("#remaining_root_gel").html(delta1);
         						}
