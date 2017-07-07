@@ -76,14 +76,34 @@
         						if(data.error != ''){
         							alert(data.error);
         						}else{
-        							$("#remaining_root").html(data.remaining_root);
-        							$("#remaining_root_gel").html(data.remaining_root_gel);
-        							daricxva_lari = $("#daricxva_lari").html();
-        							procenti_lari = $("#procenti_lari").html();
-        							procenti_lari1 = $("#procenti_lari1").html();
-        							daricxva_lari1 = $("#daricxva_lari1").html();
-        							var delta  = (parseFloat(data.delta) + parseFloat(daricxva_lari) - parseFloat(procenti_lari)).toFixed(2);
-        							var delta1 = (parseFloat(data.remaining_root_gel) + parseFloat(daricxva_lari1) - parseFloat(procenti_lari1)).toFixed(2);
+//         							$("#remaining_root").html(data.remaining_root);
+//         							$("#remaining_root_gel").html(data.remaining_root_gel);
+
+        							gacema_lari      = $("#gacema_lari").html();
+        							gacema_lari1     = $("#gacema_lari1").html();
+
+        							darchenili_vali  = $("#darchenili_vali").html();
+        							darchenili_vali1 = $("#darchenili_vali1").html();
+
+        							daricxva_lari    = $("#daricxva_lari").html();
+        							daricxva_lari1   = $("#daricxva_lari1").html();
+        							
+        							procenti_lari    = $("#procenti_lari").html();
+        							procenti_lari1   = $("#procenti_lari1").html();
+        							
+        							dziri_lari       = $("#dziri_lari").html();
+        							dziri_lari1      = $("#dziri_lari1").html();
+
+        							if(darchenili_vali > 0){
+        								var delta  = ((parseFloat(darchenili_vali) + parseFloat(daricxva_lari)) - (parseFloat(procenti_lari)+parseFloat(dziri_lari))).toFixed(2);
+        								var delta1 = ((parseFloat(darchenili_vali1) + parseFloat(daricxva_lari1)) - (parseFloat(procenti_lari1)+parseFloat(dziri_lari1))).toFixed(2);	
+        							}else{
+            							var delta  = (parseFloat(gacema_lari) + parseFloat(daricxva_lari) - parseFloat(procenti_lari)+parseFloat(dziri_lari)).toFixed(2);
+        								var delta1 = (parseFloat(gacema_lari1) + parseFloat(daricxva_lari1) - parseFloat(procenti_lari1)+parseFloat(dziri_lari1)).toFixed(2);	
+                					}
+        							
+        							
+
         							$("#remaining_root").html(delta);
         							$("#remaining_root_gel").html(delta1);
         						}

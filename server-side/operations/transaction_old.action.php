@@ -234,13 +234,13 @@ function Add($hidde_id, $month_fee, $course, $currency_id, $received_currency_id
                     	  VALUES
                     	        (NOW(), '$user_id', '$hidde_id', curdate(), '$all_pay', '$course', '$currency_id', '$received_currency_id', '$root', '$percent', '', '$diff', '$type_id', '1','1');");
 	    
-	    mysql_query("UPDATE  `client_loan_schedule`
-        	            SET  `status` = '1'
-        	         WHERE   `id`     = '$hidde_id'");
+	    mysql_query("UPDATE `client_loan_schedule`
+        	            SET `status` = '1'
+        	         WHERE  `id`     = '$hidde_id'");
 	    
-	    mysql_query("UPDATE  `money_transactions`
-	                    SET  `actived` = '0'
-	                  WHERE  `client_loan_schedule_id`='$hidde_id' AND status = 3");
+	    mysql_query("UPDATE `money_transactions`
+	                    SET `actived` = '0'
+	                 WHERE  `client_loan_schedule_id`='$hidde_id' AND status = 3");
 	    $hidde_id = $hidde_id+1;
 	    mysql_query("INSERT INTO `money_transactions`
                 	            (`datetime`, `user_id`, `client_loan_schedule_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `pay_penalty`, `diff`, `type_id`, `status`, `actived`)
