@@ -122,6 +122,7 @@
 							if(data.error != ''){
 								alert(data.error);
 							}else{
+								if(data.status = 1;){alert('სმს-ები წარმატებით გაიგზავნა');}
 								LoadTable(tName,6,change_colum_main,aJaxURL);
 				        		CloseDialog(fName);
 							}

@@ -1,9 +1,10 @@
 <?php
 require_once('classes/core.php');
-
-$ids   = json_decode($_REQUEST['id']);
-$check = $_REQUEST['check'];
-$idd ='';
+$data	= '';
+$status = 0;
+$ids    = json_decode($_REQUEST['id']);
+$check  = $_REQUEST['check'];
+$idd    = '';
 foreach($ids as $id) {
     $idd .= $id.','; 
 }
@@ -32,7 +33,9 @@ while ($row = mysql_fetch_array($result)) {
         mysql_query("UPDATE  sent_list
                         SET `status` =  1
                      WHERE   id      = '$row[id]'");
+        $status = 1;
     }
 }
-
+$data = array("status" => $status);
+echo json_encode($data);
 ?>
