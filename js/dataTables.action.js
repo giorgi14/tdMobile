@@ -221,6 +221,11 @@ function GetDataTable1(tname, aJaxURL, action, count, data, hidden, length, sort
         "aLengthMenu": dLength,                                                                         //Custom Select Options
         "sAjaxSource": aJaxURL,
         "autoWidth": false,
+        "order": [],
+        "columnDefs": [{
+          "targets"  : 'no-sort',
+          "orderable": false,
+        }],
         "fnFooterCallback": function ( nRow, aaData, iStart, iEnd, aiDisplay ) {
         	if(!empty(total)){
 	        	var iTotal = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];

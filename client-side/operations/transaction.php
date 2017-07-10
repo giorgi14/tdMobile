@@ -25,7 +25,7 @@
         		LoadTable(tName,9,change_colum_main,aJaxURL);	
          	}else if(tab == 1){
              	GetButtons("add_button1", "");
-             	GetDataTable("example1", aJaxURL, 'get_list', 13, "tab=1", 0, "", 0, "desc", "", change_colum_main);
+             	GetDataTable1("example1", aJaxURL, 'get_list', 14, "tab=1", 0, "", "", "desc", "", change_colum_main);
              	SetEvents("", "", "", "example1", fName, aJaxURL,'',tName,10,change_colum_main,aJaxURL,'','','');
              	setTimeout(function(){$('.ColVis, .dataTable_buttons').css('display','none');}, 90);
              	

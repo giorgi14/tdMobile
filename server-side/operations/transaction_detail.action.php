@@ -31,7 +31,7 @@ switch ($action) {
                             				money_transactions_detail.course,
 		                                    fact_cource.`name`,
                             				money_transaction_status.`name`
-                                FROM       `money_transactions_detail`
+		                        FROM       `money_transactions_detail`
                                 LEFT JOIN   loan_currency ON loan_currency.id = money_transactions_detail.currency_id
 		                        LEFT JOIN   loan_currency AS fact_cource ON fact_cource.id = money_transactions_detail.received_currency_id
                                 JOIN        money_transaction_status ON money_transaction_status.id = money_transactions_detail.`status`
