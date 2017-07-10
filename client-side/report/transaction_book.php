@@ -219,7 +219,7 @@
                 <th>&nbsp;</th>
                 <th>&nbsp;</th>
                 <th>&nbsp;</th>
-                <th style="text-align: left; font-weight: bold;"><p align="right">სულ ჯამი</p></th>
+                <th style="text-align: left; font-weight: bold;"><p align="right">ჯამი<br>სულ ჯამი</p></th>
                 <th>&nbsp;</th>
                 <th>&nbsp;</th>
                 <th>&nbsp;</th>
