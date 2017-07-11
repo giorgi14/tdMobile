@@ -267,11 +267,12 @@
 		        			    		            }
 		        			    		        }
 		        			    		    };
-    		        			            GetDialog("add-edit-form-update_loan", 422, "auto", buttons, 'left+43 top');
+    		        			            GetDialog("add-edit-form-update_loan", 990, "auto", buttons, 'left+43 top');
     		        			            $("#sub_check_monthly_pay").button();
     		        			            $("#sub_loan_agreement_type").chosen();
     		        			            $("#sub_agreement_type_id").chosen();
     		        			            $("#sub_loan_currency").chosen();
+    		        			            $("#sub_responsible_user_id").chosen();
     		        			            get_local_id('client', '1');
     		        			            $('#add-edit-form-update_loan, .add-edit-form-update_loan-class').css('overflow','visible');
     		        					}
@@ -1019,6 +1020,7 @@
 		param.car_max_pledge          = $('#car_max_pledge').val();
 		param.shss_number             = $('#shss_number').val();
 		param.carsize                 = $("input[id='carsize']:checked").val();
+		param.tech_test_price         = $('#sub_tech_test_price').val();
 
 		//ხელშეკრულების მონაცემები//
 		param.agreement_type_id           = $('#sub_agreement_type_id').val();
@@ -1027,23 +1029,23 @@
 		param.agreement_date	          = $('#agreement_date').val();
 		param.loan_amount	              = $('#sub_loan_amount').val();
 		param.loan_months                 = $('#sub_loan_month').val();
-		param.insurance_fee               = $('#insurance_fee').val();
-		param.pledge_fee                  = $('#pledge_fee').val();
+		param.insurance_fee               = $('#sub_insurance_fee').val();
+		param.pledge_fee                  = $('#sub_pledge_fee').val();
 		param.month_percent               = $('#month_percent').val();
 		param.monthly_pay                 = $('#sub_monthly_pay').val();
 		param.rs_message_number           = $('#rs_message_number').val();
 		param.pay_day                     = $('#pay_day').val();
-		param.exchange_rate               = $('#exchange_rate').val();
-		param.penalty_days                = $('#penalty_days').val();
-		param.penalty_percent             = $('#penalty_percent').val();
-		param.penalty_additional_percent  = $('#penalty_additional_percent').val();
-		param.loan_fee                    = $('#loan_fee').val();
-		param.proceed_fee                 = $('#proceed_fee').val();
+		param.exchange_rate               = $('#sub_exchange_rate').val();
+		param.penalty_days                = $('#sub_penalty_days').val();
+		param.penalty_percent             = $('#sub_penalty_percent').val();
+		param.penalty_additional_percent  = $('#sub_penalty_additional_percent').val();
+		param.loan_fee                    = $('#sub_loan_fee').val();
+		param.proceed_fee                 = $('#sub_proceed_fee').val();
 		param.proceed_percent             = $('#proceed_percent').val();
 		param.loan_currency               = $('#sub_loan_currency').val();
 		param.oris_code                   = $('#oris_code').val();
-		param.loan_beforehand_percent     = $('#loan_beforehand_percent').val();
-		param.responsible_user_id         = $('#responsible_user_id').val();
+		param.loan_beforehand_percent     = $('#sub_loan_beforehand_percent').val();
+		param.responsible_user_id         = $('#sub_responsible_user_id').val();
 		param.agreement_no_standart       = $("input[id='agreement_no_standart']:checked").val();
 		
 		if(param.loan_amount == ''){
