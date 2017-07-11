@@ -1114,7 +1114,7 @@
 		param.agreement_type_id           = $('#new_agreement_type_id').val();
 		param.loan_agreement_type	      = $('#new_loan_agreement_type').val();
 		param.agreement_number	          = $('#agreement_number').val();
-		param.agreement_date	          = $('#agreement_date').val();
+		param.agreement_date	          = $('#new_loan_date').val();
 		param.loan_amount	              = $('#new_loan_amount').val();
 		param.loan_months                 = $('#new_loan_month').val();
 		param.insurance_fee               = $('#insurance_fee').val();
@@ -1139,6 +1139,8 @@
 		
 		if(param.loan_amount == ''){
 			alert('შეავსეთ "სესხის მოცულობა"');
+		}else if(param.agreement_date == ''){
+			alert('შეავსეთ "სესხის თარიღი"');
 		}else if(param.loan_months == ''){
 			alert('შეავსეთ "სესხის მოცულობა"');
 		}else if(param.monthly_pay == ''){
