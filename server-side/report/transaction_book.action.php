@@ -74,7 +74,8 @@ switch ($action) {
                                 WHERE  	 client_loan_schedule.actived = 1 AND client_loan_schedule.pay_date <= CURDATE() 
 		                        AND      MONTH(client_loan_schedule.schedule_date) = '$filt_month'
 		                        AND      YEAR(client_loan_schedule.schedule_date) = YEAR(CURDATE()) $AND
-                                GROUP BY client_loan_schedule.client_loan_agreement_id");
+                                GROUP BY client_loan_schedule.client_loan_agreement_id
+		                        ORDER BY client_loan_schedule.schedule_date DESC, client_loan_agreement.oris_code ASC");
 
 		$data = array("aaData" => array());
 

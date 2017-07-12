@@ -46,7 +46,7 @@ switch ($action) {
 		 
 		$rResult = mysql_query("  SELECT    client.id,
                         					DATE_FORMAT(client_loan_agreement.datetime,'%d/%m/%Y'),
-                        					concat(client_car.car_marc, ' / ', client_car.registration_number),
+                        					concat(client_car.car_marc, ' / ', client_car.registration_number, ' / ', client.name, ' / ', client.lastname),
                         					client_loan_agreement.oris_code,
 		                                    IF(client.attachment_id = 0, 
 	  	                                        IF(ISNULL(client.sub_client),
