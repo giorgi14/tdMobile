@@ -30,7 +30,9 @@
     						alert(data.error);
     					}else{
         					if(data.page != 1){
-        						$("#add-edit-form-cource").html(data.page);
+            					$("#add-edit-form-cource").html(data.page);
+            					
+        						
         						var buttons = {
     								"save": {
     			    		            text: "შენახვა",
@@ -47,6 +49,8 @@
     			    		        }
     			    		    };
         			            GetDialog("add-edit-form-cource", 270, "auto", buttons, 'center top');
+        			            GetDateTimes('cource_date');
+        						$("#cource_date").blur();
         					}
     			        }
     				}
@@ -413,6 +417,7 @@
 		    param.act	 = "save_cource";
 	    	param.id	 = $("#id").val();
 	    	param.cource = $("#cource").val();
+	    	param.cource_date = $("#cource_date").val();
 	    	
 			if(param.cource == ""){
 				alert("შეავსეთ კურსი!");
