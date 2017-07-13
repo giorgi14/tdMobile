@@ -5,17 +5,202 @@ $error	= '';
 $data	= '';
  
 switch ($action) {
-	case 'get_add_page':
-		$page		= GetPage();
-		$data		= array('page'	=> $page);
-
-		break;
 	case 'get_edit_page':
 		$id		= $_REQUEST['id'];
-	    $page		= GetPage(Get($id));
+	    $page		= GetPage($id);
         $data		= array('page'	=> $page);
 
 		break;
+		
+	case 'get_cource':
+	    $transaction_date = $_REQUEST['transaction_date'];
+	    $cource = mysql_fetch_array(mysql_query("SELECT cource FROM cur_cource WHERE DATE(datetime) = DATE('$transaction_date')"));
+	
+	    $data	= array('cource' => $cource[cource]);
+	    break;
+	    
+	case 'get_canceled-loan':
+	    $client_id        = $_REQUEST['client_id'];
+	    $transaction_date = $_REQUEST['transaction_date'];
+	     
+	    $res = mysql_query("SELECT   client_loan_schedule.id,
+                        	         client_loan_agreement.status as st,
+                        	         client_loan_schedule.pay_date,
+                        	         client_loan_schedule.`status`,
+                        	         ROUND(client_loan_schedule.percent,2) AS percent,
+                        	         ROUND((client_loan_schedule.root + client_loan_schedule.remaining_root),2) AS remaining_root,
+                        	         ROUND(((client_loan_schedule.root + client_loan_schedule.remaining_root)*client_loan_agreement.loan_beforehand_percent)/100, 2) AS sakomisio,
+                        	         client_loan_agreement.loan_amount,
+                        	         DATEDIFF('$transaction_date', client_loan_schedule.pay_date) AS gadacilebuli,
+                        	         client_loan_agreement.penalty_days,
+                        	         client_loan_agreement.penalty_percent,
+                        	         client_loan_agreement.penalty_additional_percent
+                	        FROM     client_loan_schedule
+                	        JOIN     client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
+                	        WHERE    client_loan_agreement.client_id = '$client_id' AND client_loan_schedule.`status` = 0
+                	        ORDER BY client_loan_schedule.id ASC
+                	        LIMIT 1");
+	
+	    $check = mysql_num_rows($res);
+	
+	    if ($check == 0) {
+	        $res = mysql_query("SELECT   client_loan_schedule.id,
+                        	            client_loan_agreement.status as st,
+                        	            client_loan_schedule.pay_date,
+                        	            client_loan_schedule.`status`,
+                        	            ROUND(((client_loan_schedule.root + client_loan_schedule.remaining_root)*client_loan_agreement.loan_beforehand_percent)/100,2) AS sakomisio,
+                        	            0 AS percent,
+                        	            0 AS penalty,
+                        	            ROUND(client_loan_schedule.remaining_root,2) AS remaining_root
+                    	            FROM     client_loan_schedule
+                    	            JOIN     client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
+                    	            WHERE    client_loan_agreement.client_id = '$client_id' AND client_loan_schedule.`status` = 1 AND client_loan_schedule.schedule_date <= '$transaction_date'
+                    	            ORDER BY client_loan_schedule.id DESC
+                    	            LIMIT 1");
+	    }
+	
+	    $result = mysql_fetch_assoc($res);
+	
+	    if ($result[remaining_root]==0) {
+	        $remainig_root = $result[loan_amount];
+	    }else{
+	        $remainig_root = $result[remaining_root];
+	    }
+	
+	    if ($result[gadacilebuli]>0 && $result[gadacilebuli]<=$result[penalty_days]) {
+	        $penalty = round(($remainig_root * ($result[penalty_percent]/100))*$result[gadacilebuli],2);
+	    }elseif ($result[gadacilebuli]>0 && $result[gadacilebuli]>$result[penalty_days] && $result[penalty_additional_percent] > 0){
+	        $penalty = round((($remainig_root * ($result[gadacilebuli]/100))*$result[penalty_days])+($remainig_root * ($result[penalty_additional_percent]/100))*($result[gadacilebuli]-$result[penalty_days]),2);
+	    }elseif($result[gadacilebuli]>0 && $result[penalty_additional_percent] <= 0){
+	        $penalty = round(($remainig_root * ($result[gadacilebuli]/100))*$result[gadacilebuli],2);
+	    }
+	
+	    if($penalty==0){
+	        $penalty = $result[penalty];
+	    }
+	
+	    $req = mysql_fetch_assoc(mysql_query("SELECT client_loan_schedule.id,
+	        ROUND(DATEDIFF('$transaction_date', '$result[pay_date]')*(client_loan_schedule.percent/DAY(LAST_DAY(client_loan_schedule.pay_date))),2) AS nasargeblebebi
+	        FROM   client_loan_schedule
+	        JOIN   client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
+	        WHERE  client_loan_agreement.client_id = $hidde_idd AND client_loan_schedule.`id` = '$result[id]+1'"));
+	
+	
+	    $res1 = mysql_fetch_assoc(mysql_query("SELECT SUM(pay_amount) AS pay_amount
+	        FROM   money_transactions
+	        WHERE  money_transactions.client_loan_schedule_id = $res[id] AND money_transactions.status in(3) AND actived = 1"));
+	
+	    $all_fee = $req[nasargeblebebi]+$result[sakomisio] + $result[percent] + $penalty + $result[remaining_root];
+	
+	    $data	= array('all_fee' => $all_fee, 'sakomisio' => $result[sakomisio], 'percent' => $result[percent], 'remaining_root' => $result[remaining_root], 'penalty' => $penalty, 'nasargeblebebi' => $req[nasargeblebebi]);
+	    break;
+	     
+	case 'get_shedule':
+	    $id	               = $_REQUEST['id'];
+	    $type_id           = $_REQUEST['type_id'];
+	    $agr_id            = $_REQUEST['agr_id'];
+	    $status            = $_REQUEST['status'];
+	    $transaction_date  = $_REQUEST['transaction_date'];
+	
+	    if ($status == 1) {
+	        $filt = "AND client_loan_agreement.client_id = $id";
+	    }elseif ($status == 2){
+	        $filt = "AND client_loan_agreement.id = $agr_id";
+	    }else{
+	        $filt = "AND client_loan_agreement.client_id = $id";
+	    }
+	
+	
+	    $check_penalty = mysql_fetch_array(mysql_query("SELECT   client_loan_schedule.id AS schedule_id,
+	        client_loan_schedule.schedule_date,
+	        client.id AS client_id,
+	        DATEDIFF('$transaction_date',client_loan_schedule.pay_date) AS datediff,
+	        client_loan_agreement.penalty_days,
+	        client_loan_agreement.penalty_percent,
+	        client_loan_agreement.penalty_additional_percent,
+	        client_loan_schedule.root + client_loan_schedule.remaining_root AS remaining_root
+	         
+	        FROM     client_loan_schedule
+	        JOIN     client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
+	        JOIN     client ON client.id = client_loan_agreement.client_id
+	        WHERE    client_loan_schedule.actived = 1 AND client_loan_schedule.`status` = 0
+	        AND      client_loan_schedule.schedule_date < '$transaction_date' AND DATEDIFF('$transaction_date',client_loan_schedule.pay_date)>=1
+	        AND      client_loan_agreement.`status` = 1 AND client_loan_agreement.canceled_status = 0
+	        $filt
+	        LIMIT 1"));
+	
+	        $remaining_root = $check_penalty[remaining_root];
+	
+	        if ($check_penalty[datediff]>0 && $check_penalty[datediff]<=$check_penalty[penalty_days]) {
+	            $penalty = round(($remaining_root * ($check_penalty[penalty_percent]/100))*$check_penalty[datediff],2);
+	        }elseif ($check_penalty[datediff]>0 && $check_penalty[datediff]>$check_penalty[penalty_days] && $check_penalty[penalty_additional_percent] > 0){
+	            $penalty = round((($remaining_root * ($check_penalty[penalty_percent]/100))*$check_penalty[penalty_days])+($remaining_root * ($check_penalty[penalty_additional_percent]/100))*($check_penalty[datediff]-$check_penalty[penalty_days]),2);
+	        }elseif($check_penalty[datediff]>0 && $check_penalty[penalty_additional_percent] <= 0){
+	            $penalty = round(($remaining_root * ($check_penalty[penalty_percent]/100))*$check_penalty[datediff],2);
+	        }
+	
+	        if ($penalty != ''){
+	            mysql_query("UPDATE `client_loan_schedule`
+	                SET `penalty` = '$penalty'
+	                WHERE  `id`      = '$check_penalty[schedule_id]'");
+	        }
+	
+	        $res = mysql_fetch_assoc(mysql_query("SELECT 	 client_loan_schedule.id,
+	            client_loan_schedule.pay_amount,
+	            client_loan_schedule.root,
+	            client_loan_schedule.percent,
+	            client_loan_schedule.penalty,
+	            client_loan_agreement.pledge_fee,
+	            client_loan_agreement.loan_currency_id,
+	            client_loan_agreement.id AS agrement_id,
+	            client_loan_agreement.loan_amount,
+	            client.id AS client_id,
+	            (SELECT  car_insurance_info.ins_payy
+	            FROM   `car_insurance_info`
+	            WHERE   car_insurance_info.client_id = client.id
+	            AND     car_insurance_info.actived = 1
+	            AND     DATE(car_insurance_info.car_insurance_end) = '$transaction_date') AS insurance_fee
+	            FROM 	`client_loan_schedule`
+	            LEFT JOIN client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
+	            JOIN      client ON client.id = client_loan_agreement.client_id
+	            WHERE     client_loan_schedule.actived = 1 $filt AND client_loan_schedule.`status` != 1
+	            ORDER BY  pay_date ASC
+	            LIMIT 1"));
+	
+	        $res1 = mysql_fetch_assoc(mysql_query("SELECT  IFNULL(SUM(money_transactions_detail.pay_amount),0) AS pay_amount
+	            FROM    money_transactions_detail
+	            JOIN    money_transactions ON money_transactions.id = money_transactions_detail.transaction_id
+	            JOIN    client_loan_schedule ON client_loan_schedule.id = money_transactions.client_loan_schedule_id
+	            JOIN    client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
+	            WHERE   client_loan_agreement.client_id = '$res[client_id]'
+	            AND     money_transactions_detail.`status` = 3
+	            AND     money_transactions_detail.actived = 1"));
+	
+	        $month_fee_trasaction = $_REQUEST['month_fee_trasaction'];
+	        $receivedd_currency_id = $_REQUEST['received_currency_id'];
+	        $loan_cource_id       = $res[loan_currency_id];
+	        $course               = $_REQUEST['course'];
+	
+	        if ($receivedd_currency_id == $loan_cource_id) {
+	            $loan_pay_amount = $month_fee_trasaction;
+	        }else{
+	            if ($receivedd_currency_id == 1 && $loan_cource_id == 2) {
+	                $loan_pay_amount = round($month_fee_trasaction/$course,2);
+	            }else{
+	                $loan_pay_amount = round($month_fee_trasaction*$course,2);
+	            }
+	        }
+	        $penalty = $res[penalty];
+	
+	        if ($type_id == 1 || $type_id == 0) {
+	            $data = array('status' => 1, 'id' => $res[id],'pay_amount' => $res[pay_amount] + $penalty, 'root' => $res[root], 'percent' => $res[percent], 'penalty' => $penalty, 'client_data' => client($res[client_id]), 'agrement_data' => client_loan_number($res[agrement_id]), 'currenc' => currency($res[loan_currency_id]),'pay_amount1' => $res1[pay_amount], 'root1' => $res1[pay_root], 'percent1' => $res1[pay_percent], 'penalty1' => $res1[pay_penalty], 'loan_pay_amount' => $loan_pay_amount);
+	        }elseif ($type_id == 2){
+	            $data = array('status' => 2, 'id' => $res[id],'insurance_fee' => $res[insurance_fee], 'client_data' => client($res[client_id]), 'agrement_data' => client_loan_number($res[agrement_id]), 'loan_pay_amount' => $loan_pay_amount,'pay_amount1' => $res1[pay_amount]);
+	        }elseif ($type_id == 3){
+	            $data = array('status' => 3, 'id' => $res[id],'pledge_fee' => $res[pledge_fee], 'loan_pay_amount' => $loan_pay_amount,'pay_amount1' => $res1[pay_amount]);
+	        }
+	
+	        break;
 	case 'get_list' :
         $count	    = $_REQUEST['count'];
 		$hidden	    = $_REQUEST['hidden'];
@@ -102,116 +287,308 @@ echo json_encode($data);
 * ******************************
 */
 
-function Get($id){
-	$res = mysql_fetch_assoc(mysql_query("SELECT  sent_sms.id,
-	                                              sent_sms.client_id,
-                                    			  sent_sms.`address`,
-	                                              sent_sms.`status`,
-	                                              sent_sms.`content`
-                                          FROM    sent_sms
-										  WHERE   sent_sms.`id` = '$id'" ));
+function type($id){
+    $req = mysql_query("SELECT id,
+                              `name`
+                        FROM   transaction_type");
 
-	return $res;
-}
-
-function get_client($id){
-    
-    $req = mysql_query("SELECT client.id,
-                               client.`name`
-                        FROM   client 
-                        JOIN   client_loan_agreement ON client.id = client_loan_agreement.client_id
-                        WHERE  client.actived = 1 AND client_loan_agreement.`status` = 1 AND client_loan_agreement.canceled_status = 1");
-    $data .= '<option value="0" selected="selected">აირჩიე კლიენტი</option>';
+    $data .= '<option value="0" selected="selected">----</option>';
     while( $res = mysql_fetch_assoc($req)){
         if($res['id'] == $id){
             $data .= '<option value="' . $res['id'] . '" selected="selected">' . $res['name'] . '</option>';
-        }else{
+        } else {
             $data .= '<option value="' . $res['id'] . '">' . $res['name'] . '</option>';
         }
     }
     return $data;
 }
 
-function get_phone($id, $phone){
-    $req = mysql_query("SELECT client.phone,
-                               CONCAT(client.`name`,'/',client.phone) AS name
-                        FROM   client 
-                        JOIN   client_loan_agreement ON client.id = client_loan_agreement.client_id
-                        WHERE  client.actived = 1 AND client_loan_agreement.`status` = 1 AND client_loan_agreement.canceled_status = 1 AND client.id = '$id'
-                        UNION ALL
-                        SELECT client_person.phone,
-                               CONCAT('საკონტ. პ./', client_person.person,'/', client_person.phone) AS name
-                        FROM   client_person
-                        JOIN   client ON client.id = client_person.client_id 
-                        JOIN   client_loan_agreement ON client.id = client_loan_agreement.client_id
-                        WHERE  client.actived = 1 AND client_person.actived = 1 AND client.id = '$id' AND client_loan_agreement.`status` = 1 AND client_loan_agreement.canceled_status = 1
-                        UNION ALL
-                        SELECT client_quarantors.phone,
-                               CONCAT('თავდ. პ./', client_quarantors.`name`,'/', client_quarantors.phone) AS name
-                        FROM   client_quarantors
-                        JOIN   client ON client.id = client_quarantors.client_id 
-                        JOIN   client_loan_agreement ON client.id = client_loan_agreement.client_id
-                        WHERE  client.actived = 1 AND client_quarantors.actived = 1 AND client.id = '$id' AND client_loan_agreement.`status` = 1 AND client_loan_agreement.canceled_status = 1
-                        UNION ALL
-                        SELECT client_trusted_person.phone,
-                               CONCAT('მინდობ. პ./', client_trusted_person.`name`,'/',client_trusted_person.phone) AS name
-                        FROM   client_trusted_person
-                        JOIN   client ON client.id = client_trusted_person.client_id 
-                        JOIN client_loan_agreement ON client.id = client_loan_agreement.client_id
-                        WHERE  client.actived = 1 AND client_trusted_person.actived = 1 AND client.id = '$id' AND client_loan_agreement.`status` = 1 AND client_loan_agreement.canceled_status = 1");
+function currency($id){
+    $req = mysql_query("SELECT id,
+                              `name`
+                        FROM   loan_currency");
 
-    $data .= '<option value="0" selected="selected">აირჩიე ნომერი</option>';
     while( $res = mysql_fetch_assoc($req)){
-        if($res['phone'] == $phone){
-            $data .= '<option value="' . $res['phone'] . '" selected="selected">' . $res['name'] . '</option>';
-        }else{
-            $data .= '<option value="' . $res['phone'] . '">' . $res['name'] . '</option>';
+        if($res['id'] == $id){
+            $data .= '<option value="' . $res['id'] . '" selected="selected">' . $res['name'] . '</option>';
+        } else {
+            $data .= '<option value="' . $res['id'] . '">' . $res['name'] . '</option>';
         }
     }
     return $data;
 }
 
-function GetPage($res = ''){
+function client($id){
+    $req = mysql_query("SELECT    cl.id,
+                                  CASE
+                        			  WHEN cl.attachment_id = 0 AND cl.`name` != '' THEN concat(cl.`name`, ' ', cl.lastname)
+                                      WHEN cl.attachment_id = 0 AND cl.`name` = '' THEN cl.ltd_name
+                                      WHEN cl.attachment_id != 0 AND cl.`name` = '' THEN cl.ltd_name
+                                      WHEN cl.attachment_id != 0 AND cl.`name` != '' THEN concat(cl.`name`, ' ', cl.lastname, '/დანართი N', client_loan_agreement.attachment_number)
+                                  END AS `name`
+                        FROM      client AS cl
+                        JOIN      client_loan_agreement ON cl.id = client_loan_agreement.client_id
+                        WHERE     cl.actived=1 AND client_loan_agreement.`status`=1 AND client_loan_agreement.canceled_status=0
+                        ORDER BY `name` ASC");
+
+    $data .= '<option value="0" selected="selected">----</option>';
+    while( $res = mysql_fetch_assoc($req)){
+        if($res['id'] == $id){
+            $data .= '<option value="' . $res['id'] . '" selected="selected">' . $res['name'] . '</option>';
+        } else {
+            $data .= '<option value="' . $res['id'] . '">' . $res['name'] . '</option>';
+        }
+    }
+    return $data;
+}
+
+function client_loan_number($id){
+    $req = mysql_query("SELECT  client_loan_agreement.id,
+                                CASE
+                        		   WHEN client.attachment_id = 0 AND client.id<(SELECT old_client_id.number FROM `old_client_id` LIMIT 1) THEN CONCAT('ს/ხ ',client.exel_agreement_id)
+                                   WHEN client.attachment_id = 0 AND client.id>=(SELECT old_client_id.number FROM `old_client_id` LIMIT 1) THEN CONCAT('ს/ხ ',client_loan_agreement.id)
+            					   WHEN client.attachment_id > 0 AND client.id<(SELECT old_client_id.number FROM `old_client_id` LIMIT 1) THEN concat('ს/ხ ',(SELECT cl.exel_agreement_id FROM client AS cl WHERE cl.id = client.attachment_id), '/დანართი N', client_loan_agreement.attachment_number)
+            					   WHEN client.attachment_id != 0 AND client.id>=(SELECT old_client_id.number FROM `old_client_id` LIMIT 1) THEN concat('ს/ხ ',(SELECT client_loan_agreement.id FROM client_loan_agreement WHERE client_loan_agreement.client_id = client.attachment_id), '/დანართი N', client_loan_agreement.attachment_number)
+                        	    END AS `name`
+
+                         FROM   client_loan_agreement
+                         JOIN   client ON client.id = client_loan_agreement.client_id
+                         WHERE  client_loan_agreement.actived = 1
+                         AND    client_loan_agreement.`status` = 1
+                         AND    client_loan_agreement.canceled_status = 0
+                         AND    client.actived = 1
+                         ORDER BY `name` ASC");
+
+    $data .= '<option value="0" selected="selected">----</option>';
+    while( $res = mysql_fetch_assoc($req)){
+        if($res['id'] == $id){
+            $data .= '<option value="' . $res['id'] . '" selected="selected">' . $res['name'] . '</option>';
+        } else {
+            $data .= '<option value="' . $res['id'] . '">' . $res['name'] . '</option>';
+        }
+    }
+    return $data;
+}
+
+function GetPage($id){
+    $today = date("Y-m-d H:i:s");
     
-    $data = '
+    $hidde_out_car = 'display:none;';
+    
+    
+    
+    
+    $res1= mysql_fetch_assoc(mysql_query("SELECT      client_loan_agreement.id,
+                                                      client_loan_agreement.client_id,
+                                                      client_loan_agreement.loan_currency_id,
+                                                      client_loan_schedule.id,
+                                					  client_loan_schedule.pay_amount,
+                                					  client_loan_schedule.root,
+                                					  client_loan_schedule.percent,
+                                					  client_loan_schedule.penalty AS penalty
+                                           FROM  	 `client_loan_schedule`
+                                           LEFT JOIN  money_transactions ON money_transactions.client_loan_schedule_id = client_loan_schedule.id
+                                           LEFT JOIN  client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
+                                           WHERE      client_loan_schedule.id = '$id'
+                                           LIMIT 1"));
+     
+    
+    
+    $res2 = mysql_fetch_assoc(mysql_query(" SELECT  SUM(money_transactions_detail.pay_amount) AS pay_amount
+                                            FROM    money_transactions_detail
+                                            JOIN    money_transactions ON money_transactions.id = money_transactions_detail.transaction_id
+                                            JOIN    client_loan_schedule ON client_loan_schedule.id = money_transactions.client_loan_schedule_id
+                                            JOIN    client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
+                                            WHERE   client_loan_agreement.client_id = '$res1[client_id]' 
+                                            AND     money_transactions_detail.`status` = 3
+                                            AND     money_transactions_detail.actived  = 1"));
+   
+    $res3 = mysql_fetch_assoc(mysql_query(" SELECT  money_transactions_detail.pay_amount AS pay_amount
+                                            FROM    money_transactions_detail
+                                            JOIN    money_transactions ON money_transactions.id = money_transactions_detail.transaction_id
+                                            JOIN    client_loan_schedule ON client_loan_schedule.id = money_transactions.client_loan_schedule_id
+                                            JOIN    client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
+                                            WHERE   client_loan_agreement.client_id = '$res[client_id]'
+                                            AND     money_transactions_detail.`status` = 3
+                                            AND     money_transactions_detail.balance_transaction_id = '$res[tr_id]'
+                                            AND     money_transactions_detail.actived = 0"));
+	$data = '
 	<div id="dialog-form">
 	    <fieldset>
-	    	<table class="dialog-form-table" style="width: 100%;">
-                <tr>
-                    <td>
-					</td>
-                    <td>
-					</td>
-                    <td>
-					   <label style="color:red;" id="errmsg"></label>
-					</td>
-                </tr>
-                <tr>
-                    <td style="width: 210px;"><select class="idle" id="client_id" style="width: 205px;" disabled="disabled">'.get_client($res[client_id]).'</select></td>
-                    <td style="width: 335px;"><select class="idle" id="client_phone" style="width: 335px;" disabled="disabled">'.get_phone($res[client_id], $res['address']).'</select></td>
-					<td style="width: 170px;">
-						<input placeholder="შეიყვანეთ ნომერი" onkeypress="{if (event.which != 8 &amp;&amp; event.which != 0 &amp;&amp; event.which!=46 &amp;&amp; (event.which < 48 || event.which > 57)) {$(\'#errmsg\').html(\'მხოლოდ ციფრი\').show().fadeOut(\'slow\'); return false;}}" type="text" id="sms_phone" class="idle" onblur="this.className=\'idle\'" onfocus="this.className=\'activeField\'" value="'.$res[address].'" disabled="disabled">
-					</td>
-				</tr>
-			    <tr style="height:5px"></tr>
-				<tr>
-                    <td colspan="3">
-					   <textarea maxlength="150" placeholder="შეიყვანეთ ტექსტი" class="idle" id="sms_text" style="resize: vertical;width: 99%;height: 85px;" disabled="disabled">'.$res['content'].'</textarea>
-					</td>
-                </tr>
-				<tr>
-                    <td colspan="3">
-					   <label id="simbol_caunt"></label>
-					</td>
-                </tr>
+	    	<table class="dialog-form-table">
+	            <table>
+	                <tr>
+	                    <td style="width: 180px;"><label calss="label" style="padding-top: 5px;" for="name">დღევანდელი კურსი</label></td>
+	                    <td style="width: 180px;"><label calss="label" style="padding-top: 5px;" for="name">ჩარიცხულის ვალუტა</label></td>
+	                    <td style="width: 180px;"><label calss="label" style="padding-top: 5px;" for="name">ჩარიცხვის თარიღი</label></td>
+	                </tr>
+    				<tr>
+	                    <td style="width: 180px;">
+    						<input style="width: 150px;" id="course" class="label" type="text" value="" disabled="disabled">
+    					</td>
+    					<td style="width: 180px;">
+    						<select id="received_currency_id" calss="label" style="width: 155px;">'.currency().'</select>
+    					</td>
+    				    <td style="width: 180px;">
+    						<input style="width: 200px;" id="transaction_date" class="label" type="text" value="'.$res[pay_datetime].'">
+    					</td>
+    				</tr>
+	                <tr>
+    	                <td style="width: 200px;"><label calss="label" style="padding-top: 5px;" for="name">ტიპი</label></td>
+    					<td style="width: 280px;"><label calss="label" style="padding-top: 5px;" for="date">მსესხებელი</label></td>
+    					<td style="width: 120px;"><label calss="label" style="padding-top: 5px;" for="date">სესხის ნომერი</label></td>
+    				</tr>
+    				<tr>
+    	                <td style="width: 200px;">
+    						<select id="type_id"  calss="label" style="width: 175px;">'.type(1).'</select>
+    					</td>
+    					<td style="width: 280px;">
+    						<select id="client_id" calss="label" style="width: 260px;">'.client($res1[client_id]).'</select>
+    					</td>
+    					<td style="width: 120px;">
+    						<select id="client_loan_number" calss="label" style="width: 175px;">'.client_loan_number($res1[client_id]).'</select>
+    					</td>
+    				</tr>
+    				<tr>
+    	                <td style="width: 200px;"><label calss="label" style="padding-top: 5px;" for="name">სესხის ვალუტა</label></td>
+    					<td style="width: 280px;"><label calss="label" style="padding-top: 5px;" for="date">მანქანის გაყვანა</label></td>
+    					<td style="width: 120px;"><label calss="label" style="padding-top: 5px;" for="date"></label></td>
+    				</tr>
+    				<tr>
+    	                <td style="width: 200px;">
+    						<select id="currency_id"  calss="label" style="width: 155px;">'.currency($res1[loan_currency_id]).'</select>
+    					</td>
+    					<td style="width: 280px;">
+    						<input class="idle" style="width: 15px;" id="car_out" value="1" type="checkbox">
+    					</td>
+    					<td style="width: 120px;">
+    					</td>
+    				</tr>
+    			</table>
+    			<table>
+    				<tr style="height:40px;"></tr>
+    				<tr>
+    					<td style="width: 105px;"><label style="padding-top: 5px;" class="label" for="date">ჩარიცხული თანხა:</label></td>
+                	    <td style="width: 100px;">
+    						<input style="width: 80px;" id="month_fee_trasaction" class="label" type="text" value="'.$res['month_fee_trasaction'].'" >
+    					</td>
+    					<td style="width: 100px;"></td>
+    					<td style="width: 80px;">
+    					</td>
+    				    <td style="width: 135px;"></td>
+    					<td style="width: 100px;">
+    					</td>
+    				</tr>
+    				<tr style="height:10px;"></tr>
+    				<tr>
+    					<td style="width: 105px;"><label style="" class="label" for="date">ჩარიცხული თანხა სესხის ვალუტაში:</label></td>
+                	    <td style="width: 100px;">
+    						<input style="width: 80px;" id="month_fee" class="label" type="text" value="'.$res['pay_amount'].'" disabled="disabled">
+    					</td>
+    					<td style="width: 100px;"><label style="padding-top: 5px; margin-left: 10px;" class="label" for="name">სულ შესატანი თანხა:</label></td>
+    					<td style="width: 80px;">
+    						<input style="width: 80px;" id="month_fee1" class="label" type="text" value="'.$res1['pay_amount'].'" disabled="disabled">
+    					</td>
+    				    <td style="width: 135px;"><label style="padding-top: 5px;" class="label" for="name">არსებული ბალანსი:</label></td>
+    					<td style="width: 100px;">
+    						<input style="width: 80px;" id="month_fee2" class="label" type="text" value="'.$res2['pay_amount'].'" disabled="disabled">
+    					</td>
+    				</tr>
+    				<tr style="height:10px;"></tr>
+    				<tr>
+    					<td style="width: 105px; "><label style="padding-top: 5px;" class="label_label" for="date">ძირი თანხა:</label></td>
+    					<td style="width: 100px; ">
+    						<input style="width: 70px; float:left;" id="root" onkeydown="if(event.which == 8 || event.keyCode == 46) return false;" class="label_label" type="text" value="'.$res['pay_root'].'"><span style="float: right; display: inline; margin-top: 4px;"><button id="delete_root" class="label_label" style="width:20px; padding: 0 0 2px 0; color: #fb0000; '.$display_none1.'">x</button></span>
+    					</td>
+    					<td style="width: 100px;"><label style="padding-top: 5px; margin-left: 10px;" class="label_label" for="date">ძირი თანხა:</label></td>
+    					<td style="width: 80px;">
+    						<input style="width: 80px;" id="root1" class="label_label" type="text" value="'.$res1['root'].'" disabled="disabled">
+    					</td>
+    				    <td style="width: 135px;"><label style="padding-top: 5px;" class="label" for="name">ჩარიცხვამდე ბალანსი:</label></td>
+    					<td style="width: 100px;">
+    						<input style="width: 80px;" id="post_balance" class="label" type="text" value="'.$res3['pay_amount'].'" disabled="disabled">
+    					</td>
+    				</tr>
+    				<tr style="height:10px;"></tr>
+    				<tr >
+    					<td style="width: 105px; "><label style="padding-top: 5px;" class="label_label" for="date">პროცენტი:</label></td>
+    					<td style="width: 100px; ">
+    						<input style="width: 70px; float:left;" id="percent" class="label_label"  onkeydown="if(event.which == 8 || event.keyCode == 46) return false;" type="text" value="'.$res['pay_percent'].'"><span style="float: right; display: inline; margin-top: 4px;"><button id="delete_percent" class="label_label" style="width:20px; padding: 0 0 2px 0; color: #fb0000; '.$display_none1.'">x</button></span>
+    					</td>
+    					<td style="width: 100px;"><label style="padding-top: 5px; margin-left: 10px;" class="label_label" for="date">პროცენტი:</label></td>
+    					<td style="width: 80px;">
+    						<input style="width: 80px;"  class="label_label" id="percent1" type="text" value="'.$res1['percent'].'" disabled="disabled">
+    					</td>
+    				</tr>
+    				<tr style="height:10px;"></tr>
+    				<tr >
+    					<td style="width: 105px; "><label style="padding-top: 5px;" class="label_label" for="date">ჯარიმა:</label></td>
+    					<td style="width: 100px; ">
+    						<input class="label_label" style="width: 70px; float:left;" id="penalti_fee"  onkeydown="if(event.which == 8 || event.keyCode == 46) return false;" type="text" value="'.$res['pay_penalty'].'"><span style="float: right; display: inline; margin-top: 4px;"><button id="delete_penalty" class="label_label" style="width:20px; padding: 0 0 2px 0; color: #fb0000; '.$display_none1.'">x</button></span>
+    					</td>
+    					<td style="width: 100px;"><label style="padding-top: 5px; margin-left: 10px;" class="label_label" for="date">ჯარიმა:</label></td>
+    					<td style="width: 80px;">
+    						<input style="width: 80px;" id="penalti_fee1" class="label_label" type="text" value="'.$res1['penalty'].'" disabled="disabled">
+    					</td>
+    				</tr>
+    				<tr class="car_out_class" style="height:10px; '.$hidde_out_car.'"></tr>
+    				<tr class="car_out_class" style="'.$hidde_out_car.'">
+    					<td style="width: 105px; padding-top: 5px;"><label class="label_label" for="date">საკომისიო:</label></td>
+    					<td style="width: 100px;">
+    						<input class="label_label" style="width: 70px; float:left;" id="payable_Fee" type="text"  onkeydown="if(event.which == 8 || event.keyCode == 46) return false;" value="'.$res['pay_amount'].'"><span style="float: right; display: inline; margin-top: 4px; "><button id="delete_payable_Fee" class="label_label" style="width:20px; padding: 0 0 2px 0; color: #fb0000; '.$display_none1.'">x</button></span>
+    					</td>
+    					<td style="width: 120px;"><label style="padding-top: 5px; margin-left: 10px;" class="label_label" for="date">საკომისიო:</label></td>
+    					<td style="width: 100px;"><input style="width: 80px;" id="payable_Fee1" class="label_label" type="text" value="'.$res1['penalty'].'" disabled="disabled"></td>
+    					<td style="width: 120px;"></td>
+    					<td style="width: 80px;"></td>
+    				</tr>
+    				<tr class="car_out_class" style="height:10px; '.$hidde_out_car.'"></tr>
+    				<tr class="car_out_class" style="'.$hidde_out_car.'">
+    					<td style="width: 120px;"><label class="label_label" for="date">დღიური სარგებელი:</label></td>
+    					<td style="width: 100px;"><input class="label_label" style="width: 70px; float:left;" id="yield" type="text"  onkeydown="if(event.which == 8 || event.keyCode == 46) return false;" value="'.$res['pay_amount'].'"><span style="float: right; display: inline; margin-top: 4px; "><button id="delete_yield" class="label_label" style="width:20px; padding: 0 0 2px 0; color: #fb0000; '.$display_none1.'">x</button></span></td>
+    					<td style="width: 120px;"><label style="margin-left: 10px;" class="label_label" for="date">დღიური სარგებელი:</label></td>
+    					<td style="width: 100px;"><input style="width: 80px;" id="yield1" class="label_label" type="text" value="'.$res1['penalty'].'" disabled="disabled"></td>
+    					<td style="width: 120px;"></td>
+    					<td style="width: 80px;"></td>
+    				</tr>
+    				<tr style="height:10px;"></tr>
+    				<tr>
+    					<td style="width: 105px; padding-top: 5px;"><label class="label_label" for="date">მეტობა</label></td>
+    					<td style="width: 100px;">
+    						<input class="label_label" style="width: 70px; float:left;" id="surplus" type="text"  onkeydown="if(event.which == 8 || event.keyCode == 46) return false;" value="'.$res['pay_amount'].'"><span style="float: right; display: inline; margin-top: 4px; "><button id="delete_surplus" class="label_label" style="width:20px; padding: 0 0 2px 0; color: #fb0000; '.$display_none1.'">x</button></span>
+    					</td>
+    					<td style="width: 120px;"></td>
+    					<td style="width: 100px;"></td>
+    					<td style="width: 120px;"></td>
+    					<td style="width: 80px;"></td>
+    				</tr>
+    				<tr style="height:10px;"></tr>
+    				<tr>
+    					<td style="width: 120px;"><label class="label_label" for="date">ზედმეტი თანხა:</label></td>
+    					<td style="width: 100px;"><input class="label_label" style="width: 80px; " id="extra_fee" type="text" value="'.$res['extra_fee'].'" disabled="disabled"></td>
+    					<td style="width: 120px;"></td>
+    					<td style="width: 100px;"></td>
+    					<td style="width: 120px;"></td>
+    					<td style="width: 80px;"></td>
+    				</tr>
+				</table>
 			</table>
 			<!-- ID -->
-			<input type="hidden" id="id" value="' . $res['id'] . '" />
-			<input type="hidden" id="h_status" value="' . $res['status'] . '" />
-        </fieldset>
+			<input type="hidden" id="id" value="' . $id . '" />
+			<input type="hidden" id="hidde_status" value="' . $res['status'] . '" />
+			    
+		    <input type="hidden" id="hidde_root" value="0" />
+	        <input type="hidden" id="hidde_percent" value="0" />
+            <input type="hidden" id="hidde_penalty" value="0" />
+		    <input type="hidden" id="hidde_payable_Fee" value="0" />
+		    <input type="hidden" id="hidde_payable_Fee" value="0" />
+            <input type="hidden" id="hidde_yield" value="0" />
+			<input type="hidden" id="hidde_surplus" value="0" />
+                
+		</fieldset>
     </div>
     ';
-    return $data;
+	return $data;
 }
 
 ?>
