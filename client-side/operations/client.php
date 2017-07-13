@@ -231,7 +231,8 @@
     		        			            $("#check_new_monthly_pay").button();
     		        			            get_local_id('client', '2');
     		        			            GetDateTimes('new_loan_date');
-    		        			            $("#new_loan_amount").blur();
+    		        			            $("#new_loan_date").blur();
+    		        			            
     		        					}
     		        				}
     		        	    	}
