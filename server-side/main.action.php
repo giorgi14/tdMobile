@@ -1313,7 +1313,7 @@ switch ($action) {
                                             JOIN money_transactions_detail ON money_transactions_detail.transaction_id = money_transactions.id
                                 			JOIN   client_loan_schedule ON client_loan_schedule.id = money_transactions.client_loan_schedule_id
                                 			JOIN   client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
-                                			WHERE  client_loan_agreement.client_id = '0' AND client_loan_schedule.actived=1 AND money_transactions_detail.`status` = 2)AS letter
+                                			WHERE  client_loan_agreement.client_id = '$sub_client' AND client_loan_schedule.actived=1 AND money_transactions_detail.`status` = 2)AS letter
                                             ORDER BY letter.sort1,  letter.sort, letter.sort3 ASC ");
 	    }
 	    
