@@ -222,6 +222,7 @@
 		        			    		            }
 		        			    		        }
 		        			    		    };
+		        			    		    
     		        			            GetDialog("add-edit-new_loan", 915, "auto", buttons, 'left+43 top');
     		        			            $("#new_loan_currency").chosen();
     		        			            $("#new_loan_agreement_type").chosen();
