@@ -1028,7 +1028,7 @@
 		param.agreement_type_id           = $('#sub_agreement_type_id').val();
 		param.loan_agreement_type	      = $('#sub_loan_agreement_type').val();
 		param.agreement_number	          = $('#agreement_number').val();
-		param.agreement_date	          = $('#agreement_date').val();
+		param.agreement_date	          = $('#sub_loan_date').val();
 		param.loan_amount	              = $('#sub_loan_amount').val();
 		param.loan_months                 = $('#sub_loan_month').val();
 		param.insurance_fee               = $('#sub_insurance_fee').val();
