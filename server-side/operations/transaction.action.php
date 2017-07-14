@@ -27,6 +27,18 @@ switch ($action) {
                      WHERE   id                          = '$id'");
 
 		break;
+		
+	case 'delete_transaction':
+	    $id      = $_REQUEST['tr_id'];
+	    $user_id = $_SESSION['USERID'];
+	
+	    mysql_query("UPDATE `money_transactions_detail`
+	                    SET `user_id` = '$user_id',
+	                         actived  = '0'
+	                  WHERE  transaction_id  = '$id'");
+	
+	    break;
+	    
 	case 'restore_transaction':
 		$id      = $_REQUEST['tr_id'];
 		$user_id = $_SESSION['USERID'];
@@ -520,6 +532,7 @@ function GetPage($res = ''){
                         <legend>ჩარიცხულის განაწილება</legend>
                         <div id="button_area">
                         	<button id="add_button_dettail">დამატება</button>
+    						<button id="delete_detail">განაწილების გაუქმება</button>
                         </div>
                         <table class="display" id="table_transaction_detail" style="width: 100%;">
                             <thead>
