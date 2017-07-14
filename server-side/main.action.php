@@ -48,21 +48,12 @@ switch ($action) {
                         					DATE_FORMAT(client_loan_agreement.datetime,'%d/%m/%Y'),
                         					concat(client_car.car_marc, ' / ', client_car.registration_number, ' / ', client.name, ' / ', client.lastname),
                         					client_loan_agreement.oris_code,
-		                                    IF(client.attachment_id = 0, 
-	  	                                        IF(ISNULL(client.sub_client),
-	  	                                        CONCAT('N',IF(client.id<(SELECT old_client_id.number FROM `old_client_id` LIMIT 1), client.exel_agreement_id, client_loan_agreement.id)),
-	  	                                        CONCAT('N',IF(client.id<(SELECT old_client_id.number FROM `old_client_id` LIMIT 1), client.exel_agreement_id, client_loan_agreement.id),'/N',
-  	                                           (SELECT IF(clt.id<(SELECT old_client_id.number FROM `old_client_id` LIMIT 1), clt.exel_agreement_id, client_loan_agreement.id) 
-                                                FROM   client_loan_agreement 
-		                                        join   client AS clt ON clt.id = client_loan_agreement.client_id
-                                                WHERE  client_loan_agreement.client_id = client.sub_client))),
-	  	                                        CONCAT('N',(SELECT IF(cl.id<(SELECT old_client_id.number FROM `old_client_id` LIMIT 1), cl.exel_agreement_id, client_loan_agreement.id) 
-                                                            FROM   client_loan_agreement 
-                                                            join client AS cl ON cl.id = client_loan_agreement.client_id
-    	                                                    WHERE  client_loan_agreement.client_id = client.attachment_id),
-	  	                                                    ' დანართი ',client_loan_agreement.attachment_number
-	  	                                    )),
-                        					
+		                                    CASE
+                        						 WHEN NOT ISNULL(client.sub_client) AND client_loan_agreement.agreement_id>0 THEN CONCAT('ს/ხ ', client_loan_agreement.agreement_id, ' 001')
+                        						 WHEN client.attachment_id > 0 AND client_loan_agreement.agreement_id>0 THEN CONCAT('ს/ხ ', client_loan_agreement.agreement_id, ' დ.', client_loan_agreement.attachment_number)
+                                                 WHEN ISNULL(client.sub_client) AND client.attachment_id = 0 AND client_loan_agreement.agreement_id > 0 THEN CONCAT('ს/ხ ', client_loan_agreement.agreement_id)
+                                                 WHEN ISNULL(client.sub_client) AND client.attachment_id = 0 AND client_loan_agreement.agreement_id = 0 THEN CONCAT('ს/ხ ', client_loan_agreement.oris_code)
+                            			    END AS agreement_id,
                         					IF(client_loan_agreement.loan_type_id =2,'გრაფიკი','ჩვეულებრივი'),
                         					ROUND(IF(client_loan_agreement.loan_currency_id = 1, client_loan_agreement.loan_amount/client_loan_agreement.exchange_rate, client_loan_agreement.loan_amount),2),
                         					client_loan_agreement.exchange_rate,
@@ -2267,7 +2258,14 @@ function GetPage($id){
                                                 client_loan_agreement.canceled_status,
                                                 client_loan_agreement.loan_currency_id,
                                                 loan_currency.name AS loan_name,
-                                                CONCAT(' / ',client_car.car_marc,' / ',client_car.registration_number, ' / ს/ხ', IF(client.id<(SELECT old_client_id.number FROM `old_client_id` LIMIT 1), client.exel_agreement_id, client_loan_agreement.id), ' / ორისის კოდი:', client_loan_agreement.oris_code) AS cl_car_info,
+                                                CONCAT(' / ',client_car.car_marc,' / ',client_car.registration_number, ' / ', 
+                                                CASE
+                            						 WHEN NOT ISNULL(client.sub_client) AND client_loan_agreement.agreement_id>0 THEN CONCAT('ს/ხ ', client_loan_agreement.agreement_id, ' 001')
+                            						 WHEN client.attachment_id > 0 AND client_loan_agreement.agreement_id>0 THEN CONCAT('ს/ხ ', client_loan_agreement.agreement_id, ' დ.', client_loan_agreement.attachment_number)
+                                                     WHEN ISNULL(client.sub_client) AND client.attachment_id = 0 AND client_loan_agreement.agreement_id > 0 THEN CONCAT('ს/ხ ', client_loan_agreement.agreement_id)
+                                                     WHEN ISNULL(client.sub_client) AND client.attachment_id = 0 AND client_loan_agreement.agreement_id = 0 THEN CONCAT('ს/ხ ', client_loan_agreement.oris_code)
+                                			    END,
+                                                ' / ორისის კოდი:', client_loan_agreement.oris_code) AS cl_car_info,
                                                 client.letter_comment,
                                                 client.id AS cl_hidde_id
                                         FROM `client_loan_agreement`

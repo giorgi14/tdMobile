@@ -1033,7 +1033,7 @@
 		param.loan_months                 = $('#sub_loan_month').val();
 		param.insurance_fee               = $('#sub_insurance_fee').val();
 		param.pledge_fee                  = $('#sub_pledge_fee').val();
-		param.month_percent               = $('#month_percent').val();
+		param.month_percent               = $('#sub_month_percent').val();
 		param.monthly_pay                 = $('#sub_monthly_pay').val();
 		param.rs_message_number           = $('#rs_message_number').val();
 		param.pay_day                     = $('#pay_day').val();
@@ -1393,7 +1393,7 @@
 		param.act = "check_monthly_pay";
 
 		param.loan_amount	      = $('#sub_loan_amount').val();
-		param.month_percent	      = $("#month_percent").val();
+		param.month_percent	      = $("#sub_month_percent").val();
 		param.loan_months	      = $('#sub_loan_month').val();
 		param.loan_agreement_type = $('#loan_agreement_type').val();
 		if(param.loan_amount == ''){
