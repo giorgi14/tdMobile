@@ -275,6 +275,8 @@
     		        			            $("#sub_agreement_type_id").chosen();
     		        			            $("#sub_loan_currency").chosen();
     		        			            $("#sub_responsible_user_id").chosen();
+    		        			            GetDateTimes('sub_loan_date');
+    		        			            $("#sub_loan_date").blur();
     		        			            get_local_id('client', '1');
     		        			            $('#add-edit-form-update_loan, .add-edit-form-update_loan-class').css('overflow','visible');
     		        					}

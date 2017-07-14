@@ -181,6 +181,7 @@
 				GetButtons("add_button_dettail","");
          		SetEvents("add_button_dettail", "", "", 'table_transaction_detail', 'add-edit-form-det', aJaxURL_det);
     	        GetDateTimes('transaction_date');
+    	        $("#delete_detail").button();
 
     	        if($('#transaction_date').val() != ''){
     		        $('#add_button_dettail').button("enable");
@@ -337,6 +338,27 @@
 							LoadTable(tName,9,change_colum_main,aJaxURL);
 							CloseDialog('add-edit-form');
 			        	}
+					}
+			    }
+		    });
+    	});
+
+		$(document).on("click", "#delete_detail", function () {
+		    param = new Object();
+		    
+			param.act	= "delete_detail";
+		    param.tr_id	= $("#tr_id").val();
+		    
+		    $.ajax({
+		        url: aJaxURL,
+			    data: param,
+		        success: function(data) {			        
+					if(typeof(data.error) != 'undefined'){
+						if(data.error != ''){
+							alert(data.error);
+						}else{
+							GetDataTable("table_transaction_detail", aJaxURL_det, 'get_list', 9, "&transaction_id="+$("#tr_id").val(), 0, "", 0, "desc", "", "<'F'Cpl>");
+						}
 					}
 			    }
 		    });
