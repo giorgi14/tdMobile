@@ -1,17 +1,18 @@
 <html>
 <head>
 	<script type="text/javascript">
-		var aJaxURL	          = "server-side/report/transaction_book.action.php";
+		var aJaxURL	            = "server-side/report/transaction_book.action.php";
+		var aJaxURL_det	        = "server-side/operatons/transaction_detail.action.php";
 		var aJaxURL_show_letter = "server-side/main.action.php";
-		var tName	          = "example";	//table name
-		var fName	          = "add-edit-form"; //form name
-		var change_colum_main = "<'dataTable_buttons'T><'F'Cfipl>";
+		var tName	            = "example";	//table name
+		var fName	            = "add-edit-form"; //form name
+		var change_colum_main   = "<'dataTable_buttons'T><'F'Cfipl>";
 		    	
 		$(document).ready(function () {
 			$("#filt_day").chosen(); 
 			$("#filt_month").chosen();       	
-			LoadTable(tName,10,change_colum_main,aJaxURL);
-			SetEvents("", "", "", tName, fName, aJaxURL,'',tName,10,change_colum_main,aJaxURL,'','','');
+			LoadTable(tName,11,change_colum_main,aJaxURL);
+			SetEvents("", "", "", tName, fName, aJaxURL,'',tName,11,change_colum_main,aJaxURL,'','','');
 		});
         
 		function LoadTable(tName,num,change_colum_main,aJaxURL){
@@ -24,90 +25,7 @@
 			var id		= $("#id").val();
 			if(fname=='add-edit-form'){
     			var buttons = {
-					"show_letter": {
-    		            text: "ბარათის ნახვა",
-    		            id: "show_letter",
-    		            click: function () {
-    		            	param 	  = new Object();
-    		        		param.act = "get_edit_page";
-    		        		param.id  = $("#hidde_cl_id1").val();
-    		        		
-    		        		$.ajax({
-    		        	        url: aJaxURL_show_letter,
-    		        		    data: param,
-    		        	        success: function(data) {       
-    		        				if(typeof(data.error) != "undefined"){
-    		        					if(data.error != ""){
-    		        						alert(data.error);
-    		        					}else{
-    		        						$("#add-edit-show_letter").html(data.page);
-    		        						var buttons = {
-		        			    				"cancel": {
-		        			    		            text: "დახურვა",
-		        			    		            id: "cancel-dialog",
-		        			    		            click: function () {
-		        			    		            	$(this).dialog("close");
-		        			    		            }
-		        			    		        }
-		        			    		    };
-    		        			            GetDialog("add-edit-show_letter", 1200, "auto", buttons, 'left+43 top');
-    		        			            $('#add-edit-show_letter, .add-edit-show_letter-class').css('overflow-y','scroll');
-    		        			            var dLength = [[10, 30, 50, -1], [10, 30, 50, "ყველა"]];
-    		        			            var total =	[4,5,6,7,14];
-    		        			            GetDataTable1("table_letter", aJaxURL_show_letter, "get_list1", 18, "&id="+param.id+"&loan_currency_id="+$("#loan_currency").val(), 0, dLength, 4, "desc", total, "<'F'Cpl>");
-											$("#table_letter_length").css('top','0px');
-    		        			            parame 		            = new Object();
-    		        					    parame.act	            = "gel_footer";
-    		        					    parame.id	            = $("#id").val();
-    		        					    parame.loan_currency_id	= $("#loan_currency_id").val();
-    		        					    
-    		        					    $.ajax({
-    		        		    		        url: aJaxURL_show_letter,
-    		        		    			    data: parame,
-    		        		    		        success: function(data) {			        
-    		        		    					if(typeof(data.error) != 'undefined'){
-    		        		    						if(data.error != ''){
-    		        		    							alert(data.error);
-    		        		    						}else{
-    		        		    							gacema_lari      = $("#gacema_lari").html();
-    		        	        							gacema_lari1     = $("#gacema_lari1").html();
-
-    		        	        							darchenili_vali  = $("#darchenili_vali").html();
-    		        	        							darchenili_vali1 = $("#darchenili_vali1").html();
-
-    		        	        							daricxva_lari    = $("#daricxva_lari").html();
-    		        	        							daricxva_lari1   = $("#daricxva_lari1").html();
-    		        	        							
-    		        	        							procenti_lari    = $("#procenti_lari").html();
-    		        	        							procenti_lari1   = $("#procenti_lari1").html();
-    		        	        							
-    		        	        							dziri_lari       = $("#dziri_lari").html();
-    		        	        							dziri_lari1      = $("#dziri_lari1").html();
-
-    		        	        							if(darchenili_vali > 0){
-    		        	        								
-    		        	        								var delta  = ((parseFloat(darchenili_vali) + parseFloat(daricxva_lari)) - (parseFloat(procenti_lari)+parseFloat(dziri_lari))).toFixed(2);
-    		        	        								var delta1 = ((parseFloat(darchenili_vali1) + parseFloat(daricxva_lari1)) - (parseFloat(procenti_lari1)+parseFloat(dziri_lari1))).toFixed(2);	
-    		        	        							}else{
-        		        	        							var delta  = ((parseFloat(gacema_lari) + parseFloat(daricxva_lari)) - (parseFloat(procenti_lari)+parseFloat(dziri_lari))).toFixed(2);
-    		        	        								var delta1 = ((parseFloat(gacema_lari1) + parseFloat(daricxva_lari1)) - (parseFloat(procenti_lari1)+parseFloat(dziri_lari1))).toFixed(2);	
-																
-        		        	                			    }
-
-    		        	        							$("#remaining_root").html(delta);
-    		        	        							$("#remaining_root_gel").html(delta1);
-    		        	        							
-    		        		    						}
-    		        		    					}
-    		        		    			    }
-    		        		    		    });
-    		        			        }
-    		        				}
-    		        	    	}
-    		        	    });
-    		            }
-    		        },
-    		        "save": {
+					"save": {
     		            text: "დადასტურება",
     		            id: "save-dialog1"
     		        },
@@ -151,6 +69,147 @@
 			LoadTable(tName,10,change_colum_main,aJaxURL);	 
 	    });
 
+		$(document).on("click", ".show_letter", function () {
+			param 	               = new Object();
+    		param.act              = "get_edit_page";
+    		param.id               = $(this).attr('client_id');
+    		param.loan_currency_id = $(this).attr('loan_currency_id');
+    		
+    		$.ajax({
+    	        url: aJaxURL_show_letter,
+    		    data: param,
+    	        success: function(data) {       
+    				if(typeof(data.error) != "undefined"){
+    					if(data.error != ""){
+    						alert(data.error);
+    					}else{
+    						$("#add-edit-show_letter").html(data.page);
+    						var buttons = {
+			    				"cancel": {
+			    		            text: "დახურვა",
+			    		            id: "cancel-dialog",
+			    		            click: function () {
+			    		            	$(this).dialog("close");
+			    		            }
+			    		        }
+			    		    };
+    			            GetDialog("add-edit-show_letter", 1200, "auto", buttons, 'left+43 top');
+    			            $('#add-edit-show_letter, .add-edit-show_letter-class').css('overflow-y','scroll');
+    			            var dLength = [[10, 30, 50, -1], [10, 30, 50, "ყველა"]];
+    			            var total =	[4,5,6,7,14];
+    			            GetDataTable1("table_letter", aJaxURL_show_letter, "get_list1", 18, "&id="+param.id+"&loan_currency_id="+$("#loan_currency_id").val(), 0, dLength, 4, "desc", total, "<'F'Cpl>");
+							$("#table_letter_length").css('top','0px');
+    			            parame 		            = new Object();
+    					    parame.act	            = "gel_footer";
+    					    parame.id	            = $("#id").val();
+    					    parame.loan_currency_id	= $("#loan_currency_id").val();
+    					    
+    					    $.ajax({
+    		    		        url: aJaxURL_show_letter,
+    		    			    data: parame,
+    		    		        success: function(data) {			        
+    		    					if(typeof(data.error) != 'undefined'){
+    		    						if(data.error != ''){
+    		    							alert(data.error);
+    		    						}else{
+    		    							gacema_lari      = $("#gacema_lari").html();
+    	        							gacema_lari1     = $("#gacema_lari1").html();
+
+    	        							darchenili_vali  = $("#darchenili_vali").html();
+    	        							darchenili_vali1 = $("#darchenili_vali1").html();
+
+    	        							daricxva_lari    = $("#daricxva_lari").html();
+    	        							daricxva_lari1   = $("#daricxva_lari1").html();
+    	        							
+    	        							procenti_lari    = $("#procenti_lari").html();
+    	        							procenti_lari1   = $("#procenti_lari1").html();
+    	        							
+    	        							dziri_lari       = $("#dziri_lari").html();
+    	        							dziri_lari1      = $("#dziri_lari1").html();
+
+    	        							if(darchenili_vali > 0){
+    	        								
+    	        								var delta  = ((parseFloat(darchenili_vali) + parseFloat(daricxva_lari)) - (parseFloat(procenti_lari)+parseFloat(dziri_lari))).toFixed(2);
+    	        								var delta1 = ((parseFloat(darchenili_vali1) + parseFloat(daricxva_lari1)) - (parseFloat(procenti_lari1)+parseFloat(dziri_lari1))).toFixed(2);	
+    	        							}else{
+        	        							var delta  = ((parseFloat(gacema_lari) + parseFloat(daricxva_lari)) - (parseFloat(procenti_lari)+parseFloat(dziri_lari))).toFixed(2);
+    	        								var delta1 = ((parseFloat(gacema_lari1) + parseFloat(daricxva_lari1)) - (parseFloat(procenti_lari1)+parseFloat(dziri_lari1))).toFixed(2);	
+												
+        	                			    }
+
+    	        							$("#remaining_root").html(delta);
+    	        							$("#remaining_root_gel").html(delta1);
+    	        							
+    		    						}
+    		    					}
+    		    			    }
+    		    		    });
+    			        }
+    				}
+    	    	}
+    	    });	 
+	    });
+
+		$(document).on("click", "#save-dialog1", function () {
+		    param 		= new Object();
+		    
+			param.act	               = "save_transaction";
+		    param.id	               = $("#id").val();
+		    param.tr_id	               = $("#tr_id").val();
+		    
+		    param.month_fee		       = $("#month_fee").val();
+		    param.month_fee1		   = $("#month_fee1").val();
+
+		    param.payable_Fee		   = $("#payable_Fee").val();
+		    param.yield		           = $("#yield").val();
+		    
+	    	param.root		           = $("#root").val();
+	    	param.percent		       = $("#percent").val();
+	    	param.penalti_fee	       = $("#penalti_fee").val();
+	    	param.surplus	           = $("#surplus").val();
+	    	param.type_id	           = $("#type_id").val();
+	    	param.client_id	           = $("#client_id").val();
+
+	    	param.month_fee_trasaction = $("#month_fee_trasaction").val();
+	    	param.extra_fee            = $("#extra_fee").val();
+	    	
+	    	param.currency_id	       = $("#currency_id").val();
+	    	param.received_currency_id = $('#received_currency_id').val();
+	    	param.course	           = $("#course").val();
+	    	param.transaction_date	   = $("#transaction_date").val();
+	    	
+	    	param.hidde_id		       = $("#hidde_id").val();
+	    	param.hidde_transaction_id = $("#hidde_transaction_id").val();
+	    	param.hidde_status         = $("#hidde_status").val();
+
+	    	param.client_id            = $("#client_id").val();
+
+	    	if(param.type_id == 0){
+		    	alert('შეავსე ტიპი');
+			}else if(param.client_id == 0){
+		    	alert('შეავსე კლიენტი');
+			}else if(param.month_fee == ''){
+		    	alert('შეავსე ჩარიცხული თანხა');
+			}else{
+				$.ajax({
+    		        url: aJaxURL_det,
+    			    data: param,
+    		        success: function(data) {			        
+    					if(typeof(data.error) != 'undefined'){
+    						if(data.error != ''){
+    							alert(data.error);
+    						}else{
+    							var total =	[6,7,8];
+    							GetDataTable1("example", aJaxURL, 'get_list', 11, "&filt_day="+$("#filt_day").val()+"&filt_month="+$("#filt_month").val(), 0, "", 1, "desc", total, change_colum_main);
+    							setTimeout(function(){$('.ColVis, .dataTable_buttons').css('display','none');}, 90);
+    			        		CloseDialog('add-edit-form');
+    			        	}
+    					}
+    			    }
+    		    });
+			}
+		});
+		
 		$(document).on("change", "#car_out", function () {
 	    	car_out = $("input[id='car_out']:checked").val();
 	    	
@@ -702,15 +761,16 @@
         <thead>
             <tr id="datatable_header">
                 <th>ID</th>
-                <th style="width: 9%;">თარიღი</th>
+                <th style="width: 8%;">თარიღი</th>
                 <th style="width: 28%;">კლიენტი</th>
-                <th style="width: 9%;">ორისის კოდი</th>
-                <th style="width: 9%;">ს/ხ</th>
-                <th style="width: 9%;">ვალუტა</th>
-                <th style="width: 9%;">დარიცხვა%<br>დოლარი</th>
-                <th style="width: 9%;">დარიცხვა%<br>ლარი</th>
-            	<th style="width: 9%;">ზედმეტობა</th>
-            	<th style="width: 9%;">სტატუსი</th>
+                <th style="width: 8%;">ორისის კოდი</th>
+                <th style="width: 8%;">ს/ხ</th>
+                <th style="width: 8%;">ვალუტა</th>
+                <th style="width: 8%;">დარიცხვა%<br>დოლარი</th>
+                <th style="width: 8%;">დარიცხვა%<br>ლარი</th>
+            	<th style="width: 8%;">ზედმეტობა</th>
+            	<th style="width: 8%;">სტატუსი</th>
+            	<th style="width: 8%;">ქმედება</th>
             </tr>
         </thead>
         <thead>
@@ -718,6 +778,9 @@
                 <th class="colum_hidden">
                     <input type="text" name="search_category" value="ფილტრი" class="search_init" />
                 </th>                
+                <th>
+                    <input type="text" name="search_category" value="ფილტრი" class="search_init" />
+                </th>
                 <th>
                     <input type="text" name="search_category" value="ფილტრი" class="search_init" />
                 </th>
@@ -755,6 +818,7 @@
                 <th>&nbsp;</th>
                 <th>&nbsp;</th>
                 <th style="text-align: left; font-weight: bold;"><p align="right">ჯამი<br>სულ ჯამი</p></th>
+                <th>&nbsp;</th>
                 <th>&nbsp;</th>
                 <th>&nbsp;</th>
                 <th>&nbsp;</th>

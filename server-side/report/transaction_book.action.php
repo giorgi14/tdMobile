@@ -250,7 +250,9 @@ switch ($action) {
                                          JOIN   client_loan_schedule ON money_transactions.client_loan_schedule_id = client_loan_schedule.id
                                          WHERE  money_transactions_detail.actived = 1 AND money_transactions_detail.`status` = 3
                                          AND    client_loan_schedule.client_loan_agreement_id = client_loan_agreement.id) AS extra_fee,
-                                        (SELECT IF(shd.`status` = 0,'გადაუხდელი','გადახდილი') FROM client_loan_schedule AS shd WHERE shd.actived = 1 AND shd.id = MAX(client_loan_schedule.id)) AS `status`
+                                        (SELECT IF(shd.`status` = 0,'გადაუხდელი','გადახდილი') FROM client_loan_schedule AS shd WHERE shd.actived = 1 AND shd.id = MAX(client_loan_schedule.id)) AS `status`,
+		                                 client.id AS client_id,
+		                                 client_loan_agreement.loan_currency_id
                                 FROM   	 client_loan_schedule
                                 JOIN   	 client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
                                 JOIN   	 client ON client.id = client_loan_agreement.client_id
@@ -267,7 +269,11 @@ switch ($action) {
 		while ( $aRow = mysql_fetch_array( $rResult ) ){
 			$row = array();
 			for ( $i = 0 ; $i < $count ; $i++ ){
-				$row[] = $aRow[$i];
+			    if ($i == 10) {
+			        $row[] = '<button style="width: 100px;" class="show_letter" loan_currency_id="'.$aRow['loan_currency_id'].'" client_id="'.$aRow['client_id'].'">ბარათი</button>';
+			    }else{
+				    $row[] = $aRow[$i];
+			    }
 			}
 			$data['aaData'][] = $row;
 		}
@@ -470,7 +476,7 @@ function GetPage($id){
     				<tr>
     					<td style="width: 105px;"><label style="padding-top: 5px;" class="label" for="date">ჩარიცხული თანხა:</label></td>
                 	    <td style="width: 100px;">
-    						<input style="width: 80px;" id="month_fee_trasaction" class="label" type="text" value="'.$res['month_fee_trasaction'].'" >
+    						<input style="width: 80px;" id="month_fee_trasaction" class="label" type="text" value="0" disabled="disabled">
     					</td>
     					<td style="width: 100px;"></td>
     					<td style="width: 80px;">
@@ -483,7 +489,7 @@ function GetPage($id){
     				<tr>
     					<td style="width: 105px;"><label style="" class="label" for="date">ჩარიცხული თანხა სესხის ვალუტაში:</label></td>
                 	    <td style="width: 100px;">
-    						<input style="width: 80px;" id="month_fee" class="label" type="text" value="'.$res['pay_amount'].'" disabled="disabled">
+    						<input style="width: 80px;" id="month_fee" class="label" type="text" value="0" disabled="disabled">
     					</td>
     					<td style="width: 100px;"><label style="padding-top: 5px; margin-left: 10px;" class="label" for="name">სულ შესატანი თანხა:</label></td>
     					<td style="width: 80px;">
@@ -565,7 +571,7 @@ function GetPage($id){
     				<tr style="height:10px;"></tr>
     				<tr>
     					<td style="width: 120px;"><label class="label_label" for="date">ზედმეტი თანხა:</label></td>
-    					<td style="width: 100px;"><input class="label_label" style="width: 80px; " id="extra_fee" type="text" value="'.$res['extra_fee'].'" disabled="disabled"></td>
+    					<td style="width: 100px;"><input class="label_label" style="width: 80px; " id="extra_fee" type="text" value="'.$res2['pay_amount'].'" disabled="disabled"></td>
     					<td style="width: 120px;"></td>
     					<td style="width: 100px;"></td>
     					<td style="width: 120px;"></td>
@@ -575,6 +581,8 @@ function GetPage($id){
 			</table>
 			<!-- ID -->
 			<input type="hidden" id="id" value="' . $id . '" />
+			<input type="hidden" id="tr_id" value="" />
+			    
 			<input type="hidden" id="hidde_status" value="' . $res['status'] . '" />
 			    
 		    <input type="hidden" id="hidde_root" value="0" />
