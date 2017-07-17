@@ -142,11 +142,8 @@ switch ($action) {
     					
     					if ($data->val($i,'AJ') != '' && $data->val($i,'AK') != '' && $data->val($i,'AN') && $data->val($i,'AO')) {
     					    
-    					    $start = strtotime($data->val($i,'AN'));
-    					    $start = date('Y-m-d',$start);
-    					    
-    					    $end = strtotime($data->val($i,'AO'));
-    					    $end = date('Y-m-d',$end);
+    					    $start = $data->val($i,'AN');
+    					    $end = $data->val($i,'AO');
     					    
         					$car_insurance = mysql_query("INSERT INTO `car_insurance_info` 
                                                                      (`user_id`, `datetime`, `client_id`, `car_loan_amount`, `car_real_price`, `car_insurance_amount`, `ins_payy`, `car_insurance_start`, `car_insurance_end`, `status`, `actived`) 
@@ -155,8 +152,7 @@ switch ($action) {
     					}
     					
     					// ხელშეკრულება
-    					$time = strtotime($data->val($i,'H'));
-    					$loan_date = date('Y-m-d',$time);
+    					$loan_date = $data->val($i,'H');
     					
     					$client_agreement = mysql_query("INSERT INTO `client_loan_agreement` 
                                                                     (`user_id`, `datetime`, `attachment_number`, `client_id`, `loan_type_id`, `loan_currency_id`, `oris_code`, `loan_amount`, `loan_months`, `percent`, `penalty_days`, `penalty_percent`, `loan_beforehand_percent`, `penalty_additional_percent`,  `proceed_fee`, `exchange_rate`, `status`, `canceled_status`, `actived`) 
@@ -173,14 +169,15 @@ switch ($action) {
     					$month_percent       = $data->val($i,'N');
     					$loan_months         = $data->val($i,'O');
     					
-    					$metoba_date   = strtotime($data->val($i,'S'));
-    					$metoba_date   = date('Y-m-d',$metoba_date);
+    					$metoba_date   = $data->val($i,'W');
     					
     					$metoba_tanxa  = $data->val($i,'U')+$data->val($i,'V');
     					$metoba_cource = $data->val($i,'X');
     					$cource_id     = $data->val($i,'I');
     					
-    					$mont_pay = insert_shedule($client_loan_agreement_id, $loan_date, $loan_agreement_type, $loan_amount, $month_percent, $loan_months, $metoba_tanxa, $metoba_date, $metoba_cource, $cource_id);
+    					$darcheni_vali_date = $data->val($i,'S');
+    					
+    					$mont_pay = insert_shedule($client_loan_agreement_id, $loan_date, $loan_agreement_type, $loan_amount, $month_percent, $loan_months, $darcheni_vali_date, $metoba_tanxa, $metoba_date, $metoba_cource, $cource_id);
     					
     					mysqli_query("UPDATE `client_loan_agreement`
                                          SET `monthly_pay` = '$mont_pay'
@@ -198,7 +195,7 @@ switch ($action) {
 
 }
 
-function insert_shedule($client_loan_agreement_id, $agreement_date, $loan_agreement_type, $loan_amount, $month_percent, $loan_months, $metoba_tanxa, $metoba_date, $metoba_cource, $cource_id){
+function insert_shedule($client_loan_agreement_id, $agreement_date, $loan_agreement_type, $loan_amount, $month_percent, $loan_months, $darcheni_vali_date, $metoba_tanxa, $metoba_date, $metoba_cource, $cource_id){
         
         $date       = date_create($agreement_date);
         $month_id   = date_format($date, 'm');
@@ -275,15 +272,23 @@ function insert_shedule($client_loan_agreement_id, $agreement_date, $loan_agreem
             }
             
             $shedule_status = 0;
-            $cur_date = date('Y-m-d');
+            $activ_status   = 0;
+            $cur_date       = date('Y-m-d');
             
-            if ($date<$cur_date) {
+            if ($darcheni_vali_date == '') {
+                $filt_date = '2017-07-01';
+            }else{
+                $filt_date = $darcheni_vali_date;
+            }
+            
+            if ($date < $filt_date) {
                 $shedule_status = 1;
+                $activ_status   = 1;
             }
             mysql_query("INSERT INTO `client_loan_schedule`
-                                    (`user_id`, `datetime`, `client_loan_agreement_id`, `number`, `pay_date`, `schedule_date`, `root`, `percent`, `pay_amount`, `remaining_root`, `actived`, `status`)
+                                    (`user_id`, `datetime`, `client_loan_agreement_id`, `number`, `pay_date`, `schedule_date`, `root`, `percent`, `pay_amount`, `remaining_root`, `actived`, `status`, activ_status)
                               VALUES
-                                    ('$user_id', NOW(), '$client_loan_agreement_id', '$i', '$pay_date', '$date', '$ziri', '$percent', '$P', '$PV', 1, '$shedule_status');");
+                                    ('$user_id', NOW(), '$client_loan_agreement_id', '$i', '$pay_date', '$date', '$ziri', '$percent', '$P', '$PV', 1, '$shedule_status', '$activ_status');");
         }
         
         if($metoba_tanxa != 0){
@@ -304,14 +309,14 @@ function insert_shedule($client_loan_agreement_id, $agreement_date, $loan_agreem
             mysql_query("INSERT INTO `money_transactions`
                                     (`datetime`, `user_id`, `client_loan_schedule_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `type_id`, `status`, `actived`)
                               VALUES
-                                    ('$metoba_date', '1', '$res_check_metoba[shedule_id]', '$metoba_date', '$metoba_tanxa', '$metoba_cource', '$cource_id', '$cource_id', '1', '1', '1')");
+                                    (NOW(), '1', '$res_check_metoba[shedule_id]', '$metoba_date', '$metoba_tanxa', '$metoba_cource', '$cource_id', '$cource_id', '1', '1', '1')");
             
             $transaction_id = mysql_insert_id();
             
             mysql_query("INSERT INTO `money_transactions_detail`
                                     (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `type_id`, `status`, `actived`)
                               VALUES
-                                    ('$metoba_date', '1', '$transaction_id', '$metoba_date', '$metoba_tanxa', '$metoba_cource', '$cource_id', '$cource_id', '1', '3', '1')");
+                                    (NOW(), '1', '$transaction_id', '$metoba_date', '$metoba_tanxa', '$metoba_cource', '$cource_id', '$cource_id', '1', '3', '1')");
         }
         return $P;
 }
