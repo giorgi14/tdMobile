@@ -2,7 +2,7 @@
 <head>
 	<script type="text/javascript">
 		var aJaxURL	            = "server-side/report/transaction_book.action.php";
-		var aJaxURL_det	        = "server-side/operatons/transaction_detail.action.php";
+		var aJaxURL_det	        = "server-side/operations/transaction_detail.action.php";
 		var aJaxURL_show_letter = "server-side/main.action.php";
 		var tName	            = "example";	//table name
 		var fName	            = "add-edit-form"; //form name
@@ -58,15 +58,15 @@
 		}
 		
 		$(document).on("change", "#filt_day", function () {
-			LoadTable(tName,10,change_colum_main,aJaxURL);	 
+			LoadTable(tName,11,change_colum_main,aJaxURL);	 
 	    });
 
 		$(document).on("change", "#filt_month", function () {
-			LoadTable(tName,10,change_colum_main,aJaxURL);	 
+			LoadTable(tName,11,change_colum_main,aJaxURL);	 
 	    });
 
 		$(document).on("click", ".callapp_refresh", function () {
-			LoadTable(tName,10,change_colum_main,aJaxURL);	 
+			LoadTable(tName,11,change_colum_main,aJaxURL);	 
 	    });
 
 		$(document).on("click", ".show_letter", function () {
@@ -159,6 +159,7 @@
 		    
 		    param.month_fee		       = $("#month_fee").val();
 		    param.month_fee1		   = $("#month_fee1").val();
+		    param.month_fee2		   = $("#month_fee2").val();
 
 		    param.payable_Fee		   = $("#payable_Fee").val();
 		    param.yield		           = $("#yield").val();
@@ -178,21 +179,13 @@
 	    	param.course	           = $("#course").val();
 	    	param.transaction_date	   = $("#transaction_date").val();
 	    	
-	    	param.hidde_id		       = $("#hidde_id").val();
-	    	param.hidde_transaction_id = $("#hidde_transaction_id").val();
-	    	param.hidde_status         = $("#hidde_status").val();
+			param.client_id            = $("#client_id").val();
 
-	    	param.client_id            = $("#client_id").val();
-
-	    	if(param.type_id == 0){
-		    	alert('შეავსე ტიპი');
-			}else if(param.client_id == 0){
-		    	alert('შეავსე კლიენტი');
-			}else if(param.month_fee == ''){
-		    	alert('შეავსე ჩარიცხული თანხა');
+	    	if(param.course == '' || param.course == '0.0000'){
+		    	alert('შეავსე დარიცხვის კურსი');
 			}else{
 				$.ajax({
-    		        url: aJaxURL_det,
+    		        url: aJaxURL,
     			    data: param,
     		        success: function(data) {			        
     					if(typeof(data.error) != 'undefined'){

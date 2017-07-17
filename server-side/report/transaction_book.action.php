@@ -45,18 +45,18 @@ switch ($action) {
 	
 	    if ($check == 0) {
 	        $res = mysql_query("SELECT   client_loan_schedule.id,
-                        	            client_loan_agreement.status as st,
-                        	            client_loan_schedule.pay_date,
-                        	            client_loan_schedule.`status`,
-                        	            ROUND(((client_loan_schedule.root + client_loan_schedule.remaining_root)*client_loan_agreement.loan_beforehand_percent)/100,2) AS sakomisio,
-                        	            0 AS percent,
-                        	            0 AS penalty,
-                        	            ROUND(client_loan_schedule.remaining_root,2) AS remaining_root
-                    	            FROM     client_loan_schedule
-                    	            JOIN     client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
-                    	            WHERE    client_loan_agreement.client_id = '$client_id' AND client_loan_schedule.`status` = 1 AND client_loan_schedule.schedule_date <= '$transaction_date'
-                    	            ORDER BY client_loan_schedule.id DESC
-                    	            LIMIT 1");
+                        	             client_loan_agreement.status as st,
+                        	             client_loan_schedule.pay_date,
+                        	             client_loan_schedule.`status`,
+                        	             ROUND(((client_loan_schedule.root + client_loan_schedule.remaining_root)*client_loan_agreement.loan_beforehand_percent)/100,2) AS sakomisio,
+                        	             0 AS percent,
+                        	             0 AS penalty,
+                        	             ROUND(client_loan_schedule.remaining_root,2) AS remaining_root
+                	            FROM     client_loan_schedule
+                	            JOIN     client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
+                	            WHERE    client_loan_agreement.client_id = '$client_id' AND client_loan_schedule.`status` = 1 AND client_loan_schedule.schedule_date <= '$transaction_date'
+                	            ORDER BY client_loan_schedule.id DESC
+                	            LIMIT 1");
 	    }
 	
 	    $result = mysql_fetch_assoc($res);
@@ -80,15 +80,15 @@ switch ($action) {
 	    }
 	
 	    $req = mysql_fetch_assoc(mysql_query("SELECT client_loan_schedule.id,
-	        ROUND(DATEDIFF('$transaction_date', '$result[pay_date]')*(client_loan_schedule.percent/DAY(LAST_DAY(client_loan_schedule.pay_date))),2) AS nasargeblebebi
-	        FROM   client_loan_schedule
-	        JOIN   client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
-	        WHERE  client_loan_agreement.client_id = $hidde_idd AND client_loan_schedule.`id` = '$result[id]+1'"));
+                                	                 ROUND(DATEDIFF('$transaction_date', '$result[pay_date]')*(client_loan_schedule.percent/DAY(LAST_DAY(client_loan_schedule.pay_date))),2) AS nasargeblebebi
+                                	          FROM   client_loan_schedule
+                                	          JOIN   client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
+                                	          WHERE  client_loan_agreement.client_id = $hidde_idd AND client_loan_schedule.`id` = '$result[id]+1'"));
 	
 	
-	    $res1 = mysql_fetch_assoc(mysql_query("SELECT SUM(pay_amount) AS pay_amount
-	        FROM   money_transactions
-	        WHERE  money_transactions.client_loan_schedule_id = $res[id] AND money_transactions.status in(3) AND actived = 1"));
+	    $res1 = mysql_fetch_assoc(mysql_query(" SELECT SUM(pay_amount) AS pay_amount
+                                    	        FROM   money_transactions
+                                    	        WHERE  money_transactions.client_loan_schedule_id = $res[id] AND money_transactions.status in(3) AND actived = 1"));
 	
 	    $all_fee = $req[nasargeblebebi]+$result[sakomisio] + $result[percent] + $penalty + $result[remaining_root];
 	
@@ -112,22 +112,22 @@ switch ($action) {
 	
 	
 	    $check_penalty = mysql_fetch_array(mysql_query("SELECT   client_loan_schedule.id AS schedule_id,
-	        client_loan_schedule.schedule_date,
-	        client.id AS client_id,
-	        DATEDIFF('$transaction_date',client_loan_schedule.pay_date) AS datediff,
-	        client_loan_agreement.penalty_days,
-	        client_loan_agreement.penalty_percent,
-	        client_loan_agreement.penalty_additional_percent,
-	        client_loan_schedule.root + client_loan_schedule.remaining_root AS remaining_root
-	         
-	        FROM     client_loan_schedule
-	        JOIN     client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
-	        JOIN     client ON client.id = client_loan_agreement.client_id
-	        WHERE    client_loan_schedule.actived = 1 AND client_loan_schedule.`status` = 0
-	        AND      client_loan_schedule.schedule_date < '$transaction_date' AND DATEDIFF('$transaction_date',client_loan_schedule.pay_date)>=1
-	        AND      client_loan_agreement.`status` = 1 AND client_loan_agreement.canceled_status = 0
-	        $filt
-	        LIMIT 1"));
+                                                    	         client_loan_schedule.schedule_date,
+                                                    	         client.id AS client_id,
+                                                    	         DATEDIFF('$transaction_date',client_loan_schedule.pay_date) AS datediff,
+                                                    	         client_loan_agreement.penalty_days,
+                                                    	         client_loan_agreement.penalty_percent,
+                                                    	         client_loan_agreement.penalty_additional_percent,
+                                                    	         client_loan_schedule.root + client_loan_schedule.remaining_root AS remaining_root
+                                            	         
+                                            	        FROM     client_loan_schedule
+                                            	        JOIN     client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
+                                            	        JOIN     client ON client.id = client_loan_agreement.client_id
+                                            	        WHERE    client_loan_schedule.actived = 1 AND client_loan_schedule.`status` = 0
+                                            	        AND      client_loan_schedule.schedule_date < '$transaction_date' AND DATEDIFF('$transaction_date',client_loan_schedule.pay_date)>=1
+                                            	        AND      client_loan_agreement.`status` = 1 AND client_loan_agreement.canceled_status = 0
+                                            	        $filt
+                                            	        LIMIT 1"));
 	
 	        $remaining_root = $check_penalty[remaining_root];
 	
@@ -145,41 +145,41 @@ switch ($action) {
 	                WHERE  `id`      = '$check_penalty[schedule_id]'");
 	        }
 	
-	        $res = mysql_fetch_assoc(mysql_query("SELECT 	 client_loan_schedule.id,
-	            client_loan_schedule.pay_amount,
-	            client_loan_schedule.root,
-	            client_loan_schedule.percent,
-	            client_loan_schedule.penalty,
-	            client_loan_agreement.pledge_fee,
-	            client_loan_agreement.loan_currency_id,
-	            client_loan_agreement.id AS agrement_id,
-	            client_loan_agreement.loan_amount,
-	            client.id AS client_id,
-	            (SELECT  car_insurance_info.ins_payy
-	            FROM   `car_insurance_info`
-	            WHERE   car_insurance_info.client_id = client.id
-	            AND     car_insurance_info.actived = 1
-	            AND     DATE(car_insurance_info.car_insurance_end) = '$transaction_date') AS insurance_fee
-	            FROM 	`client_loan_schedule`
-	            LEFT JOIN client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
-	            JOIN      client ON client.id = client_loan_agreement.client_id
-	            WHERE     client_loan_schedule.actived = 1 $filt AND client_loan_schedule.`status` != 1
-	            ORDER BY  pay_date ASC
-	            LIMIT 1"));
+	        $res = mysql_fetch_assoc(mysql_query(" SELECT 	  client_loan_schedule.id,
+                                            	              client_loan_schedule.pay_amount,
+                                            	              client_loan_schedule.root,
+                                            	              client_loan_schedule.percent,
+                                            	              client_loan_schedule.penalty,
+                                            	              client_loan_agreement.pledge_fee,
+                                            	              client_loan_agreement.loan_currency_id,
+                                            	              client_loan_agreement.id AS agrement_id,
+                                            	              client_loan_agreement.loan_amount,
+                                            	              client.id AS client_id,
+                                            	             (SELECT  car_insurance_info.ins_payy
+                                            	              FROM   `car_insurance_info`
+                                            	              WHERE   car_insurance_info.client_id = client.id
+                                            	              AND     car_insurance_info.actived = 1
+                                            	              AND     DATE(car_insurance_info.car_insurance_end) = '$transaction_date') AS insurance_fee
+                                    	            FROM 	 `client_loan_schedule`
+                                    	            LEFT JOIN client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
+                                    	            JOIN      client ON client.id = client_loan_agreement.client_id
+                                    	            WHERE     client_loan_schedule.actived = 1 $filt AND client_loan_schedule.`status` != 1
+                                    	            ORDER BY  pay_date ASC
+                                    	            LIMIT 1"));
 	
-	        $res1 = mysql_fetch_assoc(mysql_query("SELECT  IFNULL(SUM(money_transactions_detail.pay_amount),0) AS pay_amount
-	            FROM    money_transactions_detail
-	            JOIN    money_transactions ON money_transactions.id = money_transactions_detail.transaction_id
-	            JOIN    client_loan_schedule ON client_loan_schedule.id = money_transactions.client_loan_schedule_id
-	            JOIN    client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
-	            WHERE   client_loan_agreement.client_id = '$res[client_id]'
-	            AND     money_transactions_detail.`status` = 3
-	            AND     money_transactions_detail.actived = 1"));
+	        $res1 = mysql_fetch_assoc(mysql_query(" SELECT  IFNULL(SUM(money_transactions_detail.pay_amount),0) AS pay_amount
+                                    	            FROM    money_transactions_detail
+                                    	            JOIN    money_transactions ON money_transactions.id = money_transactions_detail.transaction_id
+                                    	            JOIN    client_loan_schedule ON client_loan_schedule.id = money_transactions.client_loan_schedule_id
+                                    	            JOIN    client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
+                                    	            WHERE   client_loan_agreement.client_id = '$res[client_id]'
+                                    	            AND     money_transactions_detail.`status` = 3
+                                    	            AND     money_transactions_detail.actived = 1"));
 	
-	        $month_fee_trasaction = $_REQUEST['month_fee_trasaction'];
+	        $month_fee_trasaction  = $_REQUEST['month_fee_trasaction'];
 	        $receivedd_currency_id = $_REQUEST['received_currency_id'];
-	        $loan_cource_id       = $res[loan_currency_id];
-	        $course               = $_REQUEST['course'];
+	        $loan_cource_id        = $res[loan_currency_id];
+	        $course                = $_REQUEST['course'];
 	
 	        if ($receivedd_currency_id == $loan_cource_id) {
 	            $loan_pay_amount = $month_fee_trasaction;
@@ -278,7 +278,41 @@ switch ($action) {
 			$data['aaData'][] = $row;
 		}
         break;
+    case 'save_transaction':
+        $id 		          = $_REQUEST['id'];
+        $tr_id 		          = $_REQUEST['tr_id'];
+        $type_id              = $_REQUEST['type_id'];
+        $currency_id          = $_REQUEST['currency_id'];
+        $received_currency_id = $_REQUEST['received_currency_id'];
+        $course               = $_REQUEST['course'];
+        $transaction_date     = $_REQUEST['transaction_date'];
+    
+        $month_fee            = $_REQUEST['month_fee'];
+        $month_fee2           = $_REQUEST['month_fee2'];
+        $root                 = $_REQUEST['root'];
+        $percent              = $_REQUEST['percent'];
+        $penalti_fee          = $_REQUEST['penalti_fee'];
+        $surplus              = $_REQUEST['surplus'];
         
+        
+        
+    
+        $month_fee_trasaction = $_REQUEST['month_fee_trasaction'];
+        $extra_fee            = $_REQUEST['extra_fee'];
+    
+        $user_id	          = $_SESSION['USERID'];
+    
+        $pay_amount = $month_fee + $month_fee2;
+        mysql_query("INSERT INTO `money_transactions`
+                                (`datetime`, `user_id`, `client_loan_schedule_id`, `pay_datetime`, `pay_amount`, `extra_fee`, `course`, `currency_id`, `received_currency_id`, `month_fee_trasaction`, `type_id`, `status`, `actived`)
+                          VALUES
+                                (NOW(), '$user_id', '$id', '$transaction_date', '$pay_amount', '$extra_fee', '$course', '$currency_id', '$received_currency_id', '$month_fee_trasaction', '$type_id', '1', '1')");
+         
+        $tr_id = mysql_insert_id();
+    
+        Add($tr_id, $transaction_date, $pay_amount, $course, $currency_id, $currency_id, $root,  $percent, $penalti_fee, $surplus, $type_id);
+    
+        break;
 	default:
 		$error = 'Action is Null';
 }
@@ -292,6 +326,131 @@ echo json_encode($data);
  *	Category Functions
 * ******************************
 */
+function Add($hidde_transaction_id, $transaction_date, $month_fee, $course, $currency_id, $received_currency_id, $root,  $percent, $penalti_fee, $surplus, $type_id){
+
+    $user_id	 = $_SESSION['USERID'];
+    $client_id   = $_REQUEST['client_id'];
+
+    $month_fee1  = $_REQUEST['month_fee1'];
+    $payable_Fee = $_REQUEST['payable_Fee'];
+    $yield       = $_REQUEST['yield'];
+
+   
+
+    
+    $all_pay = $month_fee;
+    $all_fee = $month_fee1;
+
+    if ($all_fee == $all_pay){
+         
+        if ($penalti_fee>0){
+            mysql_query("INSERT INTO `money_transactions_detail`
+                                    (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
+                              VALUES
+                                    (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '$penalti_fee', '$course', '$currency_id', '$received_currency_id', '', '', '$type_id', '2', 1)");
+        }
+         
+        mysql_query(" UPDATE  money_transactions_detail
+                      JOIN    money_transactions ON money_transactions.id = money_transactions_detail.transaction_id
+                      JOIN    client_loan_schedule ON client_loan_schedule.id = money_transactions.client_loan_schedule_id
+                      JOIN    client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
+                      SET     money_transactions_detail.actived = 0,
+                              money_transactions_detail.balance_transaction_id = '$hidde_transaction_id'
+                      WHERE   client_loan_agreement.client_id = '$client_id'
+                      AND     money_transactions_detail.`status` = 3
+                      AND     money_transactions_detail.actived = 1");
+         
+        if ($root>0 && $percent>0) {
+             
+            mysql_query("INSERT INTO `money_transactions_detail`
+                                    (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
+                              VALUES
+                                    (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '', '$course', '$currency_id', '$received_currency_id', '$root', '$percent', '$type_id', 1, 1)");
+             
+            mysql_query("UPDATE  `client_loan_schedule`
+                            SET  `status` = '1'
+                          WHERE  `id`     = '$res1[id]'");
+        }
+         
+        if ($surplus>0) {
+            mysql_query("INSERT INTO `money_transactions_detail`
+                                    (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
+                              VALUES
+                                    (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '$surplus', '$course', '$currency_id', '$received_currency_id', '', '', '$type_id', 3, 1)");
+        }
+         
+        if ($payable_Fee>0) {
+            mysql_query("INSERT INTO `money_transactions_detail`
+                                    (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
+                              VALUES
+                                    (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '$payable_Fee', '$course', '$currency_id', '$received_currency_id', '', '', '$type_id', 5, 1)");
+        }
+         
+        if ($yield>0) {
+            mysql_query("INSERT INTO `money_transactions_detail`
+                                    (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
+                              VALUES
+                                    (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '$yield', '$course', '$currency_id', '$received_currency_id', '', '', '$type_id', 6, 1)");
+        }
+         
+    }elseif ($all_fee < $all_pay){
+        if ($penalti_fee>0){
+            mysql_query("INSERT INTO `money_transactions_detail`
+                                    (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
+                              VALUES
+                                    (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '$penalti_fee', '$course', '$currency_id', '$received_currency_id', '', '', '$type_id', 2, 1)");
+        }
+         
+        if($root>0 && $percent>0){
+            mysql_query("INSERT INTO `money_transactions_detail`
+                                    (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
+                              VALUES
+                                    (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '', '$course', '$currency_id', '$received_currency_id', '$root', '$percent', '$type_id', 1, 1)");
+            	
+            mysql_query("UPDATE  `client_loan_schedule`
+                            SET  `status` = '1'
+                         WHERE   `id`     = '$res1[id]'");
+             
+        }
+         
+        mysql_query("UPDATE  money_transactions_detail
+                     JOIN    money_transactions ON money_transactions.id = money_transactions_detail.transaction_id
+                     JOIN    client_loan_schedule ON client_loan_schedule.id = money_transactions.client_loan_schedule_id
+                     JOIN    client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
+                     SET     money_transactions_detail.actived = 0,
+                     money_transactions_detail.balance_transaction_id = '$hidde_transaction_id'
+                     WHERE   client_loan_agreement.client_id = '$client_id'
+                     AND     money_transactions_detail.`status` = 3
+                     AND     money_transactions_detail.actived = 1");
+        
+        if ($surplus>0) {
+            mysql_query("INSERT INTO `money_transactions_detail`
+                                    (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
+                              VALUES
+                                    (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '$surplus', '$course', '$currency_id', '$received_currency_id', '', '', '$type_id', 3, 1)");
+        }
+         
+        if ($payable_Fee>0) {
+            mysql_query("INSERT INTO `money_transactions_detail`
+                                    (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
+                              VALUES
+                                    (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '$payable_Fee', '$course', '$currency_id', '$received_currency_id', '', '', '$type_id', 5, 1)");
+        }
+
+        if ($yield>0) {
+            mysql_query("INSERT INTO `money_transactions_detail`
+                                    (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
+                              VALUES
+                                    (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '$yield', '$course', '$currency_id', '$received_currency_id', '', '', '$type_id', 6, 1)");
+        }
+         
+    }else{
+        mysql_query("INSERT INTO `money_transactions_detail`
+                                (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
+                          VALUES
+                                (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '$month_fee', '$course', '$currency_id', '$received_currency_id', '', '', '$type_id', 3, 1)");
+    }
+}
 
 function type($id){
     $req = mysql_query("SELECT id,
@@ -391,6 +550,7 @@ function GetPage($id){
                                 					  client_loan_schedule.pay_amount,
                                 					  client_loan_schedule.root,
                                 					  client_loan_schedule.percent,
+                                                      client_loan_schedule.schedule_date,
                                 					  client_loan_schedule.penalty AS penalty
                                            FROM  	 `client_loan_schedule`
                                            LEFT JOIN  money_transactions ON money_transactions.client_loan_schedule_id = client_loan_schedule.id
@@ -418,6 +578,9 @@ function GetPage($id){
                                             AND     money_transactions_detail.`status` = 3
                                             AND     money_transactions_detail.balance_transaction_id = '$res[tr_id]'
                                             AND     money_transactions_detail.actived = 0"));
+                                            
+    $res4 = mysql_fetch_assoc(mysql_query("SELECT cource FROM cur_cource WHERE DATE(datetime) = '$res1[schedule_date]' AND actived = 1"));
+    
 	$data = '
 	<div id="dialog-form">
 	    <fieldset>
@@ -425,18 +588,18 @@ function GetPage($id){
 	            <table>
 	                <tr>
 	                    <td style="width: 180px;"><label calss="label" style="padding-top: 5px;" for="name">დღევანდელი კურსი</label></td>
-	                    <td style="width: 180px;"><label calss="label" style="padding-top: 5px;" for="name">ჩარიცხულის ვალუტა</label></td>
-	                    <td style="width: 180px;"><label calss="label" style="padding-top: 5px;" for="name">ჩარიცხვის თარიღი</label></td>
+	                    <td style="width: 180px;"><label calss="label" style="padding-top: 5px;" for="name">სესხის ვალუტა</label></td>
+	                    <td style="width: 180px;"><label calss="label" style="padding-top: 5px;" for="name">დარიცხვის თარიღი</label></td>
 	                </tr>
     				<tr>
 	                    <td style="width: 180px;">
-    						<input style="width: 150px;" id="course" class="label" type="text" value="" disabled="disabled">
+    						<input style="width: 150px;" id="course" class="label" type="text" value="'.$res4[cource].'" disabled="disabled">
     					</td>
     					<td style="width: 180px;">
-    						<select id="received_currency_id" calss="label" style="width: 155px;">'.currency().'</select>
+    						<select id="currency_id"  calss="label" style="width: 155px;" disabled="disabled">'.currency($res1[loan_currency_id]).'</select>
     					</td>
     				    <td style="width: 180px;">
-    						<input style="width: 200px;" id="transaction_date" class="label" type="text" value="'.$res[pay_datetime].'">
+    						<input style="width: 200px;" id="transaction_date" class="label" type="text" value="'.$res1[schedule_date].'" disabled="disabled">
     					</td>
     				</tr>
 	                <tr>
@@ -446,23 +609,23 @@ function GetPage($id){
     				</tr>
     				<tr>
     	                <td style="width: 200px;">
-    						<select id="type_id"  calss="label" style="width: 175px;">'.type(1).'</select>
+    						<select id="type_id"  calss="label" style="width: 175px;" disabled="disabled">'.type(1).'</select>
     					</td>
     					<td style="width: 280px;">
-    						<select id="client_id" calss="label" style="width: 260px;">'.client($res1[client_id]).'</select>
+    						<select id="client_id" calss="label" style="width: 260px;" disabled="disabled">'.client($res1[client_id]).'</select>
     					</td>
     					<td style="width: 120px;">
-    						<select id="client_loan_number" calss="label" style="width: 175px;">'.client_loan_number($res1[client_id]).'</select>
+    						<select id="client_loan_number" calss="label" style="width: 175px;" disabled="disabled">'.client_loan_number($res1[client_id]).'</select>
     					</td>
     				</tr>
-    				<tr>
+    				<tr style="display:none">
     	                <td style="width: 200px;"><label calss="label" style="padding-top: 5px;" for="name">სესხის ვალუტა</label></td>
     					<td style="width: 280px;"><label calss="label" style="padding-top: 5px;" for="date">მანქანის გაყვანა</label></td>
     					<td style="width: 120px;"><label calss="label" style="padding-top: 5px;" for="date"></label></td>
     				</tr>
-    				<tr>
+    				<tr style="display:none">
     	                <td style="width: 200px;">
-    						<select id="currency_id"  calss="label" style="width: 155px;">'.currency($res1[loan_currency_id]).'</select>
+    						<select id="currency_id"  calss="label" style="width: 155px;" disabled="disabled">'.currency($res1[loan_currency_id]).'</select>
     					</td>
     					<td style="width: 280px;">
     						<input class="idle" style="width: 15px;" id="car_out" value="1" type="checkbox">
