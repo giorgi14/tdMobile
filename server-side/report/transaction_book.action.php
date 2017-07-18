@@ -418,7 +418,7 @@ function Add($id, $hidde_transaction_id, $transaction_date, $month_fee, $course,
                      JOIN    client_loan_schedule ON client_loan_schedule.id = money_transactions.client_loan_schedule_id
                      JOIN    client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
                      SET     money_transactions_detail.actived = 0,
-                     money_transactions_detail.balance_transaction_id = '$hidde_transaction_id'
+                             money_transactions_detail.balance_transaction_id = '$hidde_transaction_id'
                      WHERE   client_loan_agreement.client_id = '$client_id'
                      AND     money_transactions_detail.`status` = 3
                      AND     money_transactions_detail.actived = 1");
