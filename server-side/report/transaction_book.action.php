@@ -310,7 +310,7 @@ switch ($action) {
          
         $tr_id = mysql_insert_id();
     
-        Add($tr_id, $transaction_date, $pay_amount, $course, $currency_id, $currency_id, $root,  $percent, $penalti_fee, $surplus, $type_id);
+        Add($id, $tr_id, $transaction_date, $pay_amount, $course, $currency_id, $currency_id, $root,  $percent, $penalti_fee, $surplus, $type_id);
     
         break;
 	default:
@@ -326,7 +326,7 @@ echo json_encode($data);
  *	Category Functions
 * ******************************
 */
-function Add($hidde_transaction_id, $transaction_date, $month_fee, $course, $currency_id, $received_currency_id, $root,  $percent, $penalti_fee, $surplus, $type_id){
+function Add($id, $hidde_transaction_id, $transaction_date, $month_fee, $course, $currency_id, $received_currency_id, $root,  $percent, $penalti_fee, $surplus, $type_id){
 
     $user_id	 = $_SESSION['USERID'];
     $client_id   = $_REQUEST['client_id'];
@@ -369,7 +369,7 @@ function Add($hidde_transaction_id, $transaction_date, $month_fee, $course, $cur
              
             mysql_query("UPDATE  `client_loan_schedule`
                             SET  `status` = '1'
-                          WHERE  `id`     = '$res1[id]'");
+                          WHERE  `id`     = '$id'");
         }
          
         if ($surplus>0) {
@@ -409,7 +409,7 @@ function Add($hidde_transaction_id, $transaction_date, $month_fee, $course, $cur
             	
             mysql_query("UPDATE  `client_loan_schedule`
                             SET  `status` = '1'
-                         WHERE   `id`     = '$res1[id]'");
+                         WHERE   `id`     = '$id'");
              
         }
          
