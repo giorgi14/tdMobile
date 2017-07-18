@@ -37,19 +37,12 @@ switch ($action) {
                         					 WHEN client.id < (SELECT old_client_id.number FROM `old_client_id` LIMIT 1) THEN CONCAT(client.`name`, ' ', client.lastname, ' / ს/ხ', client.exel_agreement_id, ' / ', client_car.car_marc, ' / ', client_car.registration_number)
                         				END AS `name`,
                         				client_loan_agreement.oris_code,
-                        				IF(client.attachment_id = 0, 
-                        				IF(ISNULL(client.sub_client),
-                        				CONCAT('N',IF(client.id<(SELECT old_client_id.number FROM `old_client_id` LIMIT 1), client.exel_agreement_id, client_loan_agreement.id)),
-                        				CONCAT('N',IF(client.id<(SELECT old_client_id.number FROM `old_client_id` LIMIT 1), client.exel_agreement_id, client_loan_agreement.id),'/N',
-                        			   (SELECT IF(clt.id<(SELECT old_client_id.number FROM `old_client_id` LIMIT 1), clt.exel_agreement_id, client_loan_agreement.id) 
-                        				FROM   client_loan_agreement 
-                        				join   client AS clt ON clt.id = client_loan_agreement.client_id
-                        				WHERE  client_loan_agreement.client_id = client.sub_client))),
-                        				CONCAT('N',(SELECT IF(cl.id<(SELECT old_client_id.number FROM `old_client_id` LIMIT 1), cl.exel_agreement_id, client_loan_agreement.id) 
-                        								    FROM   client_loan_agreement 
-                        								    join   client AS cl ON cl.id = client_loan_agreement.client_id
-                        								    WHERE  client_loan_agreement.client_id = client.attachment_id),' დ.',client_loan_agreement.attachment_number
-                        				)) AS agreement_number,
+                        				CASE
+											 WHEN NOT ISNULL(client.sub_client) AND client_loan_agreement.agreement_id>0 THEN CONCAT('ს/ხ ', client_loan_agreement.agreement_id)
+											 WHEN client.attachment_id > 0 AND client_loan_agreement.agreement_id>0 THEN CONCAT('ს/ხ ', client_loan_agreement.agreement_id, ' დ.', client_loan_agreement.attachment_number)
+											 WHEN ISNULL(client.sub_client) AND client.attachment_id = 0 AND client_loan_agreement.agreement_id > 0 THEN CONCAT('ს/ხ ', client_loan_agreement.agreement_id)
+											 WHEN ISNULL(client.sub_client) AND client.attachment_id = 0 AND client_loan_agreement.agreement_id = 0 THEN CONCAT('ს/ხ ', client_loan_agreement.oris_code)
+                        			    END AS agreement_number,
                         				(SELECT car_insurance_info.ins_payy 
                         				 FROM   car_insurance_info AS ins_info
                         				 WHERE  ins_info.id = MAX(car_insurance_info.id)) AS percent_usd

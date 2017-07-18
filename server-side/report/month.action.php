@@ -32,19 +32,12 @@ switch ($action) {
                             		   DATE_FORMAT(client_loan_agreement.datetime,'%d/%m/%Y') AS loan_date,
                                        IF(client_loan_agreement.no_standart = 1,CONCAT('<div title=\"არასტანდარტული ხელშეკრულება\" style=\"background: #009688;\">',IF(client.`name` = '',client.ltd_name,CONCAT(client.`name`,' ',client.lastname)), '</div>'),CONCAT(IF(client.`name` = '',client.ltd_name,CONCAT(client.`name`,' ',client.lastname)))) AS cl_name,
                             		   client_loan_agreement.oris_code,
-                                       IF(client.attachment_id = 0, 
-                            				IF(ISNULL(client.sub_client),
-                            					CONCAT('N',IF(client.id<(SELECT old_client_id.number FROM `old_client_id` LIMIT 1), client.exel_agreement_id, client_loan_agreement.id)),
-                            					CONCAT('N',IF(client.id<(SELECT old_client_id.number FROM `old_client_id` LIMIT 1), client.exel_agreement_id, client_loan_agreement.id),'/N',
-                            				   (SELECT IF(clt.id<(SELECT old_client_id.number FROM `old_client_id` LIMIT 1), clt.exel_agreement_id, client_loan_agreement.id) 
-                            					FROM   client_loan_agreement 
-                            					join   client AS clt ON clt.id = client_loan_agreement.client_id
-                            					WHERE  client_loan_agreement.client_id = client.sub_client))),
-                            					CONCAT('N',(SELECT IF(cl.id<(SELECT old_client_id.number FROM `old_client_id` LIMIT 1), cl.exel_agreement_id, client_loan_agreement.id) 
-                            								FROM   client_loan_agreement 
-                            								join client AS cl ON cl.id = client_loan_agreement.client_id
-                            								WHERE  client_loan_agreement.client_id = client.attachment_id),' დ.',client_loan_agreement.attachment_number
-                            		   )) AS agreement_number,
+                                       CASE
+    										 WHEN NOT ISNULL(client.sub_client) AND client_loan_agreement.agreement_id>0 THEN CONCAT('ს/ხ ', client_loan_agreement.agreement_id)
+    										 WHEN client.attachment_id > 0 AND client_loan_agreement.agreement_id>0 THEN CONCAT('ს/ხ ', client_loan_agreement.agreement_id, ' დ.', client_loan_agreement.attachment_number)
+    										 WHEN ISNULL(client.sub_client) AND client.attachment_id = 0 AND client_loan_agreement.agreement_id > 0 THEN CONCAT('ს/ხ ', client_loan_agreement.agreement_id)
+    										 WHEN ISNULL(client.sub_client) AND client.attachment_id = 0 AND client_loan_agreement.agreement_id = 0 THEN CONCAT('ს/ხ ', client_loan_agreement.oris_code)
+                        			   END AS agreement_number,
                                 	   CASE
                                 		   WHEN client_loan_schedule.`status` = 1 AND client_loan_agreement.loan_currency_id = 1 THEN client_loan_schedule.remaining_root
                                            WHEN client_loan_schedule.`status` = 1 AND client_loan_agreement.loan_currency_id = 2 THEN ROUND(client_loan_schedule.remaining_root*client_loan_agreement.exchange_rate,2)
