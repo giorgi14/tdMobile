@@ -98,7 +98,7 @@
 
     	if(dataparam == undefined){dataparam = leng;}
     	if(tbl == 'person' || tbl == 'cardrivers' || tbl == 'guarantors' || tbl == 'sms_histori'){dataparam = 'local_id='+$("#local_id").val();}
-    	GetDataTable(tName+tbl,URL,act,col_num,dataparam,0,"",0,"desc",total,change_colum);
+    	GetDataTable(tName+tbl,URL,act,col_num,dataparam,0,"",2,"desc",total,change_colum);
     	$("#table_person_length").css('top', '2px');
     	$("#table_cardrivers_length").css('top', '2px');
     	$("#table_guarantors_length").css('top', '2px');
