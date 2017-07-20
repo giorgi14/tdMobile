@@ -64,8 +64,10 @@
 			var dLength = [[-1], ["ყველა"]];
 			
 			if(tbl == 'letter'){
-				var total =	[4,5,6,7];
+				var total =	[4,5,6,7,17,18,19,20,23,24];
 				GetDataTable1(tName+tbl, aJaxURL, act, num, "&id="+$("#id").val()+"&loan_currency_id="+$("#loan_currency_id").val()+"&loan_currency_id="+$("#loan_currency_id").val(), 0, dLength, 4, "desc", total, change_colum_main);
+				$("#table_letter_length").css('top', '2px');
+				setTimeout(function(){$('.ColVis, .dataTable_buttons').css('display','none');}, 90);
 				setTimeout(function(){
     				param 		            = new Object();
     			    param.act	            = "gel_footer";
@@ -105,6 +107,25 @@
         								var delta  = ((parseFloat(gacema_lari) + parseFloat(daricxva_lari)) - (parseFloat(procenti_lari)+parseFloat(dziri_lari))).toFixed(2);
         								var delta1 = ((parseFloat(gacema_lari1) + parseFloat(daricxva_lari1)) - (parseFloat(procenti_lari1)+parseFloat(dziri_lari1))).toFixed(2);	
                 					}
+
+        							insurance_fee  = $("#insurance_fee").html();
+        							insurance_fee1 = $("#insurance_fee1").html();
+        							
+        							insurance_payed  = $("#insurance_payed").html();
+        							insurance_payed1 = $("#insurance_payed1").html();
+
+        						    ins_delta = (parseFloat(insurance_fee) - parseFloat(insurance_payed)).toFixed(2);
+        						    ins_delta1 = (parseFloat(insurance_fee1) - parseFloat(insurance_payed1)).toFixed(2);
+
+        						    other  = $("#other").html();
+        						    other1 = $("#other1").html();
+        							
+        						    other_delta = (parseFloat(other) - parseFloat(other1)).toFixed(2);
+
+        						    $("#insurance_delta").html(ins_delta);
+        						    $("#insurance_delta1").html(ins_delta1);
+        						    $("#other_delta").html(other_delta);
+        						    
         							$("#remaining_root").html(delta);
         							$("#remaining_root_gel").html(delta1);
         						}
@@ -116,8 +137,7 @@
 				var total =	[6,8,9,10,11,12,13,14,16];
 				GetDataTable(tName+tbl, aJaxURL, act, num, "&id="+$("#id").val()+"&filt_year="+$("#filt_year").val(), 0, dLength, 3, "asc", total, change_colum_main);
 			}
-			$("#table_letter_length").css('top', '2px');
-			setTimeout(function(){$('.ColVis, .dataTable_buttons').css('display','none');}, 90);
+			
 		}
 
 		$(document).on("tabsactivate", "#tabs1", function() {
@@ -321,7 +341,7 @@
 	            	$("#cancel-loan").button("enable");
 			    }
 	            $(".add-edit-form-class").css('position','fixed');
-	            LoadTable('letter', 18, 'get_list1', "<'F'Cpl>", aJaxURL, '');
+	            LoadTable('letter', 26, 'get_list1', "<'F'Cpl>", aJaxURL, '');
 	            
 	        }
 	    }

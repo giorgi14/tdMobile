@@ -137,9 +137,11 @@
 		        			    		    };
     		        						GetDialog("add-edit-show_letter", 1200, "auto", buttons, 'left+43 top');
     		        			            $('#add-edit-show_letter, .add-edit-show_letter-class').css('overflow-y','scroll');
+    		        			            $('#add-edit-show_letter, .add-edit-show_letter-class').css('overflow-x','scroll');
     		        			            var dLength = [[10, 30, 50, -1], [10, 30, 50, "ყველა"]];
-    		        			            var total =	[4,5,6,7,14];
-    		        			            GetDataTable1("table_letter", aJaxURL_show_letter, "get_list1", 18, "&id="+param.id+"&loan_currency_id="+$("#loan_currency").val(), 0, dLength, 4, "desc", total, "<'F'Cpl>");
+    		        			            var total =	[4,5,6,7,17,18,19,20,23,24];
+    		        			            GetDataTable1("table_letter", aJaxURL_show_letter, "get_list1", 26, "&id="+param.id+"&loan_currency_id="+$("#loan_currency").val(), 0, dLength, 4, "desc", total, "<'F'Cpl>");
+    		        			            setTimeout(function(){$('.ColVis, .dataTable_buttons').css('display','none');}, 90);
 											$("#table_letter_length").css('top','0px');
     		        			            parame 		            = new Object();
     		        					    parame.act	            = "gel_footer";
@@ -179,6 +181,24 @@
 																
         		        	                			    }
 
+    		        	        							insurance_fee  = $("#insurance_fee").html();
+    		        	        							insurance_fee1 = $("#insurance_fee1").html();
+    		        	        							
+    		        	        							insurance_payed  = $("#insurance_payed").html();
+    		        	        							insurance_payed1 = $("#insurance_payed1").html();
+
+    		        	        						    ins_delta = (parseFloat(insurance_fee) - parseFloat(insurance_payed)).toFixed(2);
+    		        	        						    ins_delta1 = (parseFloat(insurance_fee1) - parseFloat(insurance_payed1)).toFixed(2);
+
+    		        	        						    other  = $("#other").html();
+    		        	        						    other1 = $("#other1").html();
+    		        	        							
+    		        	        						    other_delta = (parseFloat(other) - parseFloat(other1)).toFixed(2);
+
+    		        	        						    $("#insurance_delta").html(ins_delta);
+    		        	        						    $("#insurance_delta1").html(ins_delta1);
+    		        	        						    $("#other_delta").html(other_delta);
+    		        	        						    
     		        	        							$("#remaining_root").html(delta);
     		        	        							$("#remaining_root_gel").html(delta1);
     		        	        							
