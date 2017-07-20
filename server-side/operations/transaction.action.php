@@ -120,6 +120,100 @@ switch ($action) {
 		}
 
 		break;
+	case 'get_list_pledge' :
+	    $count	 = $_REQUEST['count'];
+	    $hidden	 = $_REQUEST['hidden'];
+	    
+	    $rResult = mysql_query("SELECT    money_transactions.id,
+                        				  DATE_FORMAT(money_transactions.pay_datetime,'%d/%m/%Y'),
+                        				  client_loan_agreement.oris_code,
+                                          CASE
+                    						 WHEN NOT ISNULL(client.sub_client) AND client_loan_agreement.agreement_id>0 THEN CONCAT(client.`name`, ' ', client.lastname, ' / ს/ხ', client_loan_agreement.agreement_id, ' / ', client_car.car_marc, ' / ', client_car.registration_number)
+                    						 WHEN client.attachment_id > 0 AND client_loan_agreement.agreement_id>0 THEN CONCAT(client.`name`, ' ', client.lastname, ' / ს/ხ', client_loan_agreement.agreement_id, ' დანართი ', client_loan_agreement.attachment_number, ' / ', client_car.car_marc, ' / ', client_car.registration_number)
+                    						 WHEN ISNULL(client.sub_client) AND client.attachment_id = 0 AND client_loan_agreement.agreement_id > 0 THEN CONCAT(client.`name`, ' ', client.lastname, ' / ს/ხ', client_loan_agreement.agreement_id, ' / ', client_car.car_marc, ' / ', client_car.registration_number)
+                    						 WHEN ISNULL(client.sub_client) AND client.attachment_id = 0 AND client_loan_agreement.agreement_id = 0 THEN CONCAT(client.ltd_name, 'ს/ხ', client_loan_agreement.oris_code, ' / ', client_car.car_marc, ' / ', client_car.registration_number)
+                    					  END AS new_name,
+                        			      money_transactions.pay_amount,
+                        				  IFNULL(loan_currency.name,ln_currency.name),
+                            		      money_transactions.course,
+                            		      IF(money_transactions.`status` = 0,'დაუდასტურებელი','დადასტურებული'),
+                            		      user_info.`name`,
+                                          DATE_FORMAT(money_transactions.datetime,'%d/%m/%Y'),
+	                                      money_transaction_status.`name`
+                                FROM     `money_transactions`
+	                            JOIN      money_transactions_detail ON money_transactions_detail.transaction_id = money_transactions.id
+                                JOIN      money_transaction_status ON money_transactions_detail.`status` = money_transaction_status.id
+                                LEFT JOIN client_loan_agreement ON client_loan_agreement.id = money_transactions.agreement_id
+                                LEFT JOIN loan_currency ON loan_currency.id = money_transactions.currency_id
+                                LEFT JOIN loan_currency AS ln_currency ON ln_currency.id = money_transactions.received_currency_id
+                                LEFT JOIN transaction_type ON transaction_type.id = money_transactions.type_id
+                                LEFT JOIN client ON client.id = client_loan_agreement.client_id
+                                LEFT JOIN client_car ON client_car.client_id = client.id
+                                LEFT JOIN user_info ON user_info.user_id = money_transactions.user_id
+                                WHERE     money_transactions.actived = '1' AND money_transactions.id > 59  AND money_transactions.type_id=2
+                                ORDER BY  money_transactions.pay_datetime DESC");
+	
+	        $data = array("aaData"	=> array());
+	
+	        while ($aRow = mysql_fetch_array($rResult)){
+	            $row = array();
+	            for ( $i = 0 ; $i < $count ; $i++ )
+	            {
+	                /* General output */
+	                $row[] = $aRow[$i];
+	
+	            }
+	            $data['aaData'][] = $row;
+	        }
+	
+	        break;
+	    case 'get_list_other' :
+    	    $count	 = $_REQUEST['count'];
+    	    $hidden	 = $_REQUEST['hidden'];
+    	    
+    	    $rResult = mysql_query("SELECT    money_transactions.id,
+                            				  DATE_FORMAT(money_transactions.pay_datetime,'%d/%m/%Y'),
+                            				  client_loan_agreement.oris_code,
+                                              CASE
+                        						 WHEN NOT ISNULL(client.sub_client) AND client_loan_agreement.agreement_id>0 THEN CONCAT(client.`name`, ' ', client.lastname, ' / ს/ხ', client_loan_agreement.agreement_id, ' / ', client_car.car_marc, ' / ', client_car.registration_number)
+                        						 WHEN client.attachment_id > 0 AND client_loan_agreement.agreement_id>0 THEN CONCAT(client.`name`, ' ', client.lastname, ' / ს/ხ', client_loan_agreement.agreement_id, ' დანართი ', client_loan_agreement.attachment_number, ' / ', client_car.car_marc, ' / ', client_car.registration_number)
+                        						 WHEN ISNULL(client.sub_client) AND client.attachment_id = 0 AND client_loan_agreement.agreement_id > 0 THEN CONCAT(client.`name`, ' ', client.lastname, ' / ს/ხ', client_loan_agreement.agreement_id, ' / ', client_car.car_marc, ' / ', client_car.registration_number)
+                        						 WHEN ISNULL(client.sub_client) AND client.attachment_id = 0 AND client_loan_agreement.agreement_id = 0 THEN CONCAT(client.ltd_name, 'ს/ხ', client_loan_agreement.oris_code, ' / ', client_car.car_marc, ' / ', client_car.registration_number)
+                        					  END AS new_name,
+                            			      money_transactions.pay_amount,
+                            				  IFNULL(loan_currency.name,ln_currency.name),
+                                		      money_transactions.course,
+                                		      IF(money_transactions.`status` = 0,'დაუდასტურებელი','დადასტურებული'),
+                                		      user_info.`name`,
+                                              DATE_FORMAT(money_transactions.datetime,'%d/%m/%Y'),
+    	                                      money_transaction_status.`name`
+                                    FROM     `money_transactions`
+    	                            JOIN      money_transactions_detail ON money_transactions_detail.transaction_id = money_transactions.id
+                                    JOIN      money_transaction_status ON money_transactions_detail.`status` = money_transaction_status.id
+                                    LEFT JOIN client_loan_agreement ON client_loan_agreement.id = money_transactions.agreement_id
+                                    LEFT JOIN loan_currency ON loan_currency.id = money_transactions.currency_id
+                                    LEFT JOIN loan_currency AS ln_currency ON ln_currency.id = money_transactions.received_currency_id
+                                    LEFT JOIN transaction_type ON transaction_type.id = money_transactions.type_id
+                                    LEFT JOIN client ON client.id = client_loan_agreement.client_id
+                                    LEFT JOIN client_car ON client_car.client_id = client.id
+                                    LEFT JOIN user_info ON user_info.user_id = money_transactions.user_id
+                                    WHERE     money_transactions.actived = '1' AND money_transactions.id > 59  AND money_transactions.type_id=3
+                                    ORDER BY  money_transactions.pay_datetime DESC");
+	
+	        $data = array("aaData"	=> array());
+	
+	        while ($aRow = mysql_fetch_array($rResult)){
+	            $row = array();
+	            for ( $i = 0 ; $i < $count ; $i++ )
+	            {
+	                /* General output */
+	                $row[] = $aRow[$i];
+	
+	            }
+	            $data['aaData'][] = $row;
+	        }
+	
+	        break;
 	case 'save_transaction':
 		$tr_id 		          = $_REQUEST['tr_id'];
 		$client_amount        = $_REQUEST['client_amount'];
@@ -212,7 +306,6 @@ switch ($action) {
 	
 	    $data	= array('all_fee' => $all_fee, 'sakomisio' => $result[sakomisio], 'percent' => $result[percent], 'remaining_root' => $result[remaining_root], 'penalty' => $penalty, 'nasargeblebebi' => $req[nasargeblebebi]);
 	    break;
-	    
 	case 'get_shedule':
 		$id	               = $_REQUEST['id'];
 		$type_id           = $_REQUEST['type_id'];
@@ -440,7 +533,7 @@ function client_loan_number($id){
 function GetHolidays($id){
     
 	$res = mysql_fetch_assoc(mysql_query("	SELECT money_transactions.id,
-                                    			   client_loan_agreement.`client_id`,
+                                    			   IFNULL(client_loan_agreement.`client_id`,money_transactions.client_id) AS client_id,
                                     			   money_transactions.pay_amount,
 	                                               money_transactions.type_id,
 	                                               money_transactions.course,
@@ -532,6 +625,7 @@ function GetPage($res = ''){
                         <legend>ჩარიცხულის განაწილება</legend>
                         <div id="button_area">
                         	<button id="add_button_dettail">დამატება</button>
+    						<button id="pledge_distribution">დაზღვევის დარიცხვა</button>
     						<button id="delete_detail">განაწილების გაუქმება</button>
                         </div>
                         <table class="display" id="table_transaction_detail" style="width: 100%;">

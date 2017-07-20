@@ -28,28 +28,24 @@
              	GetDataTable1("example1", aJaxURL, 'get_list', 14, "tab=1", 0, "", "", "desc", "", change_colum_main);
              	SetEvents("", "", "", "example1", fName, aJaxURL,'',tName,10,change_colum_main,aJaxURL,'','','');
              	setTimeout(function(){$('.ColVis, .dataTable_buttons').css('display','none');}, 90);
-             	
-			}else if(tab == 2){
+            }else if(tab == 2){
 				GetButtons("add_button2", "");
-				GetDataTable("example2", aJaxURL, 'get_list', 11, "tab=2", 0, "", 0, "desc", "", change_colum_main);
+				GetDataTable1("example2", aJaxURL, 'get_list_pledge', 11, "tab=2", 0, "", "", "desc", "", change_colum_main);
 				SetEvents("", "", "", "example2", fName, aJaxURL,'',tName,10,change_colum_main,aJaxURL,'','','');
 				
 				setTimeout(function(){$('.ColVis, .dataTable_buttons').css('display','none');}, 90);
-				
-          	}else if(tab == 3){
+			}else if(tab == 3){
           		GetButtons("add_button3", "");
-          		GetDataTable("example3", aJaxURL, 'get_list', 11, "tab=3", 0, "", 0, "desc", "", change_colum_main);
+          		GetDataTable1("example3", aJaxURL, 'get_list_other', 11, "tab=3", 0, "", "", "desc", "", change_colum_main);
           		SetEvents("", "", "", "example3", fName, aJaxURL,'',tName,10,change_colum_main,aJaxURL,'','','');
-          		
+          		$("#add_other").button();
           		setTimeout(function(){$('.ColVis, .dataTable_buttons').css('display','none');}, 90);
-          		
-            }else{
-          		GetDataTable("example4", aJaxURL, 'get_list', 11, "tab=4", 0, "", 0, "desc", "", change_colum_main);
+          	}else{
+          		GetDataTable1("example4", aJaxURL, 'get_list', 11, "tab=4", 0, "", "", "desc", "", change_colum_main);
           		SetEvents("", "", "", "example4", fName, aJaxURL,'',tName,10,change_colum_main,aJaxURL,'','','');
-          		
+
           		setTimeout(function(){$('.ColVis, .dataTable_buttons').css('display','none');}, 90);
-          		
-            }
+          	}
         });
         
 		function LoadTable(tName,num,change_colum_main,aJaxURL){
@@ -182,11 +178,16 @@
          		SetEvents("add_button_dettail", "", "", 'table_transaction_detail', 'add-edit-form-det', aJaxURL_det);
     	        GetDateTimes('transaction_date');
     	        $("#delete_detail").button();
+    	        $("#pledge_distribution").button();
 
     	        if($('#transaction_date').val() != ''){
     		        $('#add_button_dettail').button("enable");
+    		        $('#delete_detail').button("enable");
+    		        $('#pledge_distribution').button("enable");
     		    }else{
     		    	$('#add_button_dettail').button("disable");
+    		    	$('#delete_detail').button("disable");
+    		        $('#pledge_distribution').button("disable");
     			}
 
     			if($("#hidde_actived").val() == 0){
@@ -229,6 +230,105 @@
 			}
 		}
 
+		$(document).on("click", "#pledge_distribution",  function (event) {
+			param 	  = new Object();
+		    param.act = "get_pledge_dialog";
+		    $.ajax({
+		        url: aJaxURL_det,
+			    data: param,
+		        success: function(data) {			        
+					if(typeof(data.error) != 'undefined'){
+						if(data.error != ''){
+							alert(data.error);
+						}else{
+							$("#pledge_dialog").html(data.page);
+
+							var buttons = {
+								"save_pledge_distribution": {
+						            text: "შენახვა",
+						            id: "save_pledge_distribution"
+						        },
+					        	"cancel": {
+						            text: "დახურვა",
+						            id: "cancel-dialog",
+						            click: function () {
+						            	$(this).dialog("close");
+						            }
+						        }
+						    };
+							GetDialog("pledge_dialog", 700, "auto", buttons,"top");
+
+							$("#pledge_client_id").chosen();
+							$("#pledge_client_loan_number").chosen();
+							$("#client_pledge_amount").val($("#client_amount").val());
+							$('#pledge_dialog, .pledge_dialog-class').css('overflow','visible');
+						}
+					}
+			    }
+		    });
+	    });
+
+		$(document).on("click", "#add_other",  function (event) {
+			param 	  = new Object();
+		    param.act = "get_other_dialog";
+		    $.ajax({
+		        url: aJaxURL_det,
+			    data: param,
+		        success: function(data) {			        
+					if(typeof(data.error) != 'undefined'){
+						if(data.error != ''){
+							alert(data.error);
+						}else{
+							$("#other_dialog").html(data.page);
+
+							var buttons = {
+								"save_other_dialog": {
+						            text: "შენახვა",
+						            id: "save_other_dialog"
+						        },
+					        	"cancel": {
+						            text: "დახურვა",
+						            id: "cancel-dialog",
+						            click: function () {
+						            	$(this).dialog("close");
+						            }
+						        }
+						    };
+							GetDialog("other_dialog", 700, "auto", buttons,"top");
+
+							$("#other_client_id").chosen();
+							$("#other_client_loan_number").chosen();
+							$("#other_curense_id").chosen();
+							GetDateTimes('other_date');
+							$("#other_date").blur();
+							$('#other_dialog, .other_dialog-class').css('overflow','visible');
+						}
+					}
+			    }
+		    });
+	    });
+
+		$(document).on("change", "#other_date",  function (event) {
+			param 	                = new Object();
+		    
+			param.act               = "get_cource";
+		    param.transaction_date  = $(this).val();
+		    
+			$.ajax({
+		        url: aJaxURL,
+			    data: param,
+		        success: function(data) {			        
+					if(typeof(data.error) != 'undefined'){
+						if(data.error != ''){
+							alert(data.error);
+						}else{
+							$("#other_cource").val(data.cource);
+						}
+					}
+			    }
+			});
+		});   
+		 
 		$(document).on("change", "#transaction_date",  function (event) {
 			param 	                = new Object();
 		    
@@ -251,8 +351,12 @@
 		    
 			if($('#transaction_date').val() != ''){
 		        $('#add_button_dettail').button("enable");
+		        $('#delete_detail').button("enable");
+		        $('#pledge_distribution').button("enable");
 		    }else{
 		    	$('#add_button_dettail').button("disable");
+		    	$('#delete_detail').button("disable");
+		        $('#pledge_distribution').button("disable");
 			}
 	    });
 	    
@@ -858,6 +962,153 @@
 		    });
     	});
 
+
+		$(document).on("change", "#pledge_client_loan_number", function () {
+			
+            param         =  new Object();
+		    param.act     = "get_client_chosen";
+		    param.id  =  $(this).val();
+		    
+		    $.ajax({
+		        url: aJaxURL_det,
+			    data: param,
+		        success: function(data) {			        
+					if(typeof(data.error) != 'undefined'){
+						if(data.error != ''){
+							alert(data.error);
+						}else{
+							$('#pledge_client_id').html(data.client_data).trigger("chosen:updated");
+	    				}
+					}
+			    }
+		    });
+    	});
+
+		$(document).on("change", "#other_client_loan_number", function () {
+			
+            param         =  new Object();
+		    param.act     = "get_client_chosen";
+		    param.id  =  $(this).val();
+		    
+		    $.ajax({
+		        url: aJaxURL_det,
+			    data: param,
+		        success: function(data) {			        
+					if(typeof(data.error) != 'undefined'){
+						if(data.error != ''){
+							alert(data.error);
+						}else{
+							$('#other_client_id').html(data.client_data).trigger("chosen:updated");
+	    				}
+					}
+			    }
+		    });
+    	});
+
+		$(document).on("change", "#pledge_client_id", function () {
+			
+            param         =  new Object();
+		    param.act     = "get_loan_number_chosen";
+		    param.id  =  $(this).val();
+		    
+		    $.ajax({
+		        url: aJaxURL_det,
+			    data: param,
+		        success: function(data) {			        
+					if(typeof(data.error) != 'undefined'){
+						if(data.error != ''){
+							alert(data.error);
+						}else{
+							$('#pledge_client_loan_number').html(data.loan_number_data).trigger("chosen:updated");
+	    				}
+					}
+			    }
+		    });
+    	});
+
+		$(document).on("change", "#other_client_id", function () {
+			
+            param         =  new Object();
+		    param.act     = "get_loan_number_chosen";
+		    param.id  =  $(this).val();
+		    
+		    $.ajax({
+		        url: aJaxURL_det,
+			    data: param,
+		        success: function(data) {			        
+					if(typeof(data.error) != 'undefined'){
+						if(data.error != ''){
+							alert(data.error);
+						}else{
+							$('#other_client_loan_number').html(data.loan_number_data).trigger("chosen:updated");
+	    				}
+					}
+			    }
+		    });
+    	});
+
+		$(document).on("click", "#save_pledge_distribution", function () {
+			
+            param                           =  new Object();
+		    param.act                       = "save_pledge_distribution";
+		    
+		    param.tr_id	                    =  $("#tr_id").val();
+		    param.course                    =  $("#course").val();
+		    param.received_currency_id      =  $("#received_currency_id").val();
+		    param.transaction_date          =  $("#transaction_date").val();
+		    param.pledge_client_id          =  $("#pledge_client_id").val();
+		    param.pledge_client_loan_number =  $("#pledge_client_loan_number").val();
+		    param.client_pledge_amount      =  $("#client_pledge_amount").val();
+		    
+		    $.ajax({
+		        url: aJaxURL_det,
+			    data: param,
+		        success: function(data) {			        
+					if(typeof(data.error) != 'undefined'){
+						if(data.error != ''){
+							alert(data.error);
+						}else{
+							CloseDialog('pledge_dialog');
+							GetDataTable("table_transaction_detail", aJaxURL_det, 'get_list', 9, "&transaction_id="+$("#tr_id").val(), 0, "", 0, "desc", "", "<'F'Cpl>");
+							$("#hidde_cl_id1").val(data.pledge_client_id);
+		    			}
+					}
+			    }
+		    });
+    	});
+
+		$(document).on("click", "#save_other_dialog", function () {
+			
+            param                         =  new Object();
+		    param.act                     = "save_other_distribution";
+		    
+		    param.tr_id	                  =  $("#tr_id").val();
+		    param.other_cource            =  $("#other_cource").val();
+		    param.other_currency_id       =  $("#other_curense_id").val();
+		    param.other_date              =  $("#other_date").val();
+		    param.other_client_id         =  $("#other_client_id").val();
+		    param.ther_client_loan_number =  $("#other_client_loan_number").val();
+		    param.client_other_amount     =  $("#other_pledge_amount").val();
+		    param.other_comment           =  $("#other_comment").val();
+		    
+		    $.ajax({
+		        url: aJaxURL_det,
+			    data: param,
+		        success: function(data) {			        
+					if(typeof(data.error) != 'undefined'){
+						if(data.error != ''){
+							alert(data.error);
+						}else{
+							CloseDialog('other_dialog');
+							GetDataTable1("example3", aJaxURL, 'get_list_other', 11, "tab=3", 0, "", "", "desc", "", change_colum_main);
+			          		setTimeout(function(){$('.ColVis, .dataTable_buttons').css('display','none');}, 90);
+							$("#hidde_cl_id1").val(data.pledge_client_id);
+		    			}
+					}
+			    }
+		    });
+    	});
+    	
 		$(document).on("keypress", "#client_amount, #course",  function (event) {
 	        var ew = event.which;
 	        if((48 <= ew && ew <= 57) || ew==46){
@@ -1169,8 +1420,8 @@
 	<ul>
 		<li><a href="#tab-0">დასადასტურებელი</a></li>
 		<li><a href="#tab-1">სესხი</a></li>
-		<li><a href="#tab-2">დაზღვევა</a></li>
-		<li><a href="#tab-3">გირავნობა</a></li>
+		<li><a href="#tab-2">ალდაგი</a></li>
+		<li><a href="#tab-3">სხვა ხარჯი</a></li>
 		<li><a href="#tab-4">გაუქმებული</a></li>
 	</ul>
 	<div id="tab-0">
@@ -1336,14 +1587,16 @@
                 <thead>
                     <tr id="datatable_header">
                         <th>ID</th>
-                        <th style="width: 9%;">თარიღი</th>
-                        <th style="width: 9%;">კოდი</th>
-                        <th style="width: 35%;">მსესხებელი</th>
-                        <th style="width: 9%;">ჩარიცხული<br>თანხა</th>
-                        <th style="width: 9%;">ვალუტა</th>
-                        <th style="width: 10%;">კურსი</th>
-                        <th style="width: 10%;">user</th>
-                        <th style="width: 9%;">შევსების<br>თარიღი</th>
+                        <th style="width: 7%;">თარიღი</th>
+                        <th style="width: 7%;">კოდი</th>
+                        <th style="width: 25%;">მსესხებელი</th>
+                        <th style="width: 6%;">ჩარიცხ.<br>თანხა</th>
+                        <th style="width: 6%;">ვალუტა</th>
+                        <th style="width: 6%;">კურსი</th>
+                        <th style="width: 10%;">სტატუსი</th>
+                        <th style="width: 11%;">user</th>
+                        <th style="width: 7%;">შევსების<br>თარიღი</th>
+                        <th style="width: 13%;">დანიშნულება</th>
                     </tr>
                 </thead>
                 <thead>
@@ -1360,7 +1613,13 @@
                         <th>
                             <input type="text" name="search_category" value="ფილტრი" class="search_init" />
                         </th>
+                        <th>
+                            <input type="text" name="search_category" value="ფილტრი" class="search_init" />
+                        </th>
                        	<th>
+                            <input type="text" name="search_category" value="ფილტრი" class="search_init" />
+                        </th>
+                        <th>
                             <input type="text" name="search_category" value="ფილტრი" class="search_init" />
                         </th>
                         <th>
@@ -1381,6 +1640,7 @@
        </div>
        <div id="tab-3">
             <div id="button_area">
+            	<button id="add_other">დამატება</button>
             </div>
        		<table id="table_right_menu">
                 <tr>
@@ -1399,14 +1659,16 @@
                 <thead>
                     <tr id="datatable_header">
                         <th>ID</th>
-                        <th style="width: 9%;">თარიღი</th>
-                        <th style="width: 9%;">კოდი</th>
-                        <th style="width: 35%;">მსესხებელი</th>
-                        <th style="width: 7%;">ჩარიცხული<br>თანხა</th>
-                        <th style="width: 9%;">ვალუტა</th>
-                        <th style="width: 10%;">კურსი</th>
-                        <th style="width: 12%;">user</th>
-                        <th style="width: 9%;">შევსების<br>თარღი</th>
+                        <th style="width: 7%;">თარიღი</th>
+                        <th style="width: 7%;">კოდი</th>
+                        <th style="width: 25%;">მსესხებელი</th>
+                        <th style="width: 6%;">ჩარიცხ.<br>თანხა</th>
+                        <th style="width: 6%;">ვალუტა</th>
+                        <th style="width: 6%;">კურსი</th>
+                        <th style="width: 10%;">სტატუსი</th>
+                        <th style="width: 11%;">user</th>
+                        <th style="width: 7%;">შევსების<br>თარიღი</th>
+                        <th style="width: 13%;">დანიშნულება</th>
                     </tr>
                 </thead>
                 <thead>
@@ -1423,7 +1685,13 @@
                         <th>
                             <input type="text" name="search_category" value="ფილტრი" class="search_init" />
                         </th>
+                        <th>
+                            <input type="text" name="search_category" value="ფილტრი" class="search_init" />
+                        </th>
                        	<th>
+                            <input type="text" name="search_category" value="ფილტრი" class="search_init" />
+                        </th>
+                        <th>
                             <input type="text" name="search_category" value="ფილტრი" class="search_init" />
                         </th>
                         <th>
@@ -1511,13 +1779,11 @@
        </div>
     </div>
     <!-- jQuery Dialog -->
-    <div id="add-edit-form" class="form-dialog" title="ძირითადი ველები">
-    	<!-- aJax -->
-	</div>
-	<div id="add-edit-form-det" class="form-dialog" title="განაწილება">
-    	<!-- aJax -->
-	</div>
+    <div id="add-edit-form" class="form-dialog" title="ძირითადი ველები"></div>
+	<div id="add-edit-form-det" class="form-dialog" title="განაწილება"></div>
 	<div id="add-edit-show_letter" class="form-dialog" title="ბარათი"></div>
+	<div id="pledge_dialog" class="form-dialog" title="დაზღვევის დარიცხვა"></div>
+	<div id="other_dialog" class="form-dialog" title="სხვა ხარჯი"></div>
 </body>
 </html>
 

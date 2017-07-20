@@ -18,6 +18,99 @@ switch ($action) {
         $data = array('page'	=> $page);
 		
 		break;
+	case 'get_client_chosen':
+	
+	    $id	= $_REQUEST['id'];
+	
+	    $data = array('client_data' => client_car($id));
+	    break;
+	case 'get_loan_number_chosen':
+    
+        $id	= $_REQUEST['id'];
+    
+        $data = array('loan_number_data' => pledge_client_loan_number($id));
+        break;
+    case 'get_pledge_dialog':
+        
+		$page = '<div id="dialog-form">
+                     <fieldset>
+                     <legend>ძირითადი ინფორმაცია</legend>
+                        <table class="dialog-form-table" style="width: 100%;">
+                           <tr>
+            	                <td style="width: 330px;"><label calss="label" style="padding-top: 5px;" for="date">მსესხებელი</label></td>
+            					<td style="width: 200px;"><label calss="label" style="padding-top: 5px;" for="date">სესხის ნომერი</label></td>
+                                <td style="width: 135px;"><label>თანხა</label></td>
+            				</tr>
+            				<tr>
+            	                <td style="width: 330px;">
+            						<select id="pledge_client_id" calss="label" style="width: 310px;">'.client_car().'</select>
+            					</td>
+            					<td style="width: 200px;">
+            						<select id="pledge_client_loan_number" calss="label" style="width: 175px;">'.pledge_client_loan_number().'</select>
+            					</td>
+            					<td style="width: 135px;">
+            						<input class="idle" style="width: 135px;" id="client_pledge_amount" type="text" value="">
+            				    </td>
+            				</tr>
+                        </table>
+                        <input id="local_sub_id" type="hidden" value="">
+                     </fieldset>
+                 </div>';
+        $data = array('page' => $page);
+		
+		break;
+	case 'get_other_dialog':
+        
+		$page = '<div id="dialog-form">
+                     <fieldset>
+                     <legend>ძირითადი ინფორმაცია</legend>
+                        <table class="dialog-form-table" style="width: 100%;">
+		                    <tr>
+            	                <td style="width: 250px;"><label calss="label" style="padding-top: 5px;" for="date">დარიცხვის თარიღი</label></td>
+            					<td style="width: 200px;"><label calss="label" style="padding-top: 5px;" for="date">მიმდინარე კურსი</label></td>
+                                <td style="width: 135px;"><label>ვალუტა</label></td>
+            				</tr>
+            				<tr>
+            	                <td style="width: 250px;">
+            						<input class="idle" style="width: 245px;" id="other_date" type="text" value="">
+            					</td>
+            					<td style="width: 200px;">
+            						<input class="idle" style="width: 195px;" id="other_cource" type="text" value="" disabled="disabled">
+            					</td>
+            					<td style="width: 141px;">
+            						<select id="other_curense_id" calss="label" style="width: 141px;">'.currency().'</select>
+            				    </td>
+            				</tr>
+                            <tr>
+            	                <td style="width: 250px;"><label calss="label" style="padding-top: 5px;" for="date">მსესხებელი</label></td>
+            					<td style="width: 200px;"><label calss="label" style="padding-top: 5px;" for="date">სესხის ნომერი</label></td>
+                                <td style="width: 135px;"><label>თანხა</label></td>
+            				</tr>
+            				<tr>
+            	                <td style="width:250px;">
+            						<select id="other_client_id" calss="label" style="width: 250px;">'.client_car().'</select>
+            					</td>
+            					<td style="width: 200px;">
+            						<select id="other_client_loan_number" calss="label" style="width: 200px;">'.pledge_client_loan_number().'</select>
+            					</td>
+            					<td style="width: 135px;">
+            						<input class="idle" style="width: 135px;" id="other_pledge_amount" type="text" value="">
+            				    </td>
+            				</tr>
+            				<tr>
+            	                <td colspan="3" style="width: 330px;"><label calss="label" style="padding-top: 5px;" for="date">მსესხებელი</label></td>
+            				</tr>
+            				<tr>
+            	                <td colspan="3">
+                                   <textarea class="idle" id="other_comment" style="resize: vertical;width: 100%;height: 40px;"></textarea>
+                               </td>
+            				</tr>
+                        </table>
+                     </fieldset>
+                 </div>';
+        $data = array('page' => $page);
+		
+		break;
 	case 'get_list' :
 		$count	= $_REQUEST['count'];
 		$hidden	= $_REQUEST['hidden'];
@@ -111,6 +204,65 @@ switch ($action) {
         }
 		
 		break;
+		
+	case 'save_pledge_distribution':
+	    
+	    $tr_id                     = $_REQUEST['tr_id'];
+		$client_pledge_amount      = $_REQUEST['client_pledge_amount'];
+		$received_currency_id      = $_REQUEST['received_currency_id'];
+		$course                    = $_REQUEST['course'];
+		$transaction_date          = $_REQUEST['transaction_date'];
+		$pledge_client_id          = $_REQUEST['pledge_client_id'];
+		$pledge_client_loan_number = $_REQUEST['pledge_client_loan_number'];
+		
+		$user_id	               = $_SESSION['USERID'];
+		
+		
+        mysql_query("UPDATE `money_transactions`
+                    	SET `agreement_id` = '$pledge_client_id',
+                    		`client_id`    = '$pledge_client_loan_number',
+                    		`pay_datetime` = '$transaction_date',
+                    		`course`       = '$course',
+                    		`currency_id`  = '$received_currency_id',
+                    		`type_id`      = '2',
+                            `status`       = '1',
+                    		`actived`      = '1'
+                      WHERE `id`           = '$tr_id'");
+                            
+        mysql_query("INSERT INTO `money_transactions_detail` 
+                                (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `payed_status`,  `actived`) 
+                          VALUES 
+                                (NOW(), '$user_id', '$tr_id', '$transaction_date', '$client_pledge_amount', '$course', '$received_currency_id', '$received_currency_id', '', '', '2', '7', '1', '1')");
+        
+        $data = array('pledge_client_id' => $pledge_client_id);
+        break;
+    case 'save_other_distribution':
+	    
+	    $tr_id                     = $_REQUEST['tr_id'];
+		$client_pledge_amount      = $_REQUEST['client_other_amount'];
+		$received_currency_id      = $_REQUEST['other_cource'];
+		$course                    = $_REQUEST['other_cource'];
+		$transaction_date          = $_REQUEST['other_date'];
+		$pledge_client_id          = $_REQUEST['other_client_id'];
+		$pledge_client_loan_number = $_REQUEST['ther_client_loan_number'];
+		$other_comment             = $_REQUEST['other_comment'];
+		
+		$user_id	               = $_SESSION['USERID'];
+		
+		
+        mysql_query("INSERT INTO `money_transactions` 
+                                (`datetime`, `user_id`, `agreement_id`, `client_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `type_id`, `comment`, `status`, `actived`) 
+                          VALUES 
+                                (NOW(), '$user_id', '$pledge_client_loan_number', '$pledge_client_id', '$transaction_date', '$client_pledge_amount', '$course', '$received_currency_id', '$received_currency_id', '3', '$other_comment', '1', '1')");
+        
+        $tr_id = mysql_insert_id();
+        mysql_query("INSERT INTO `money_transactions_detail` 
+                                (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `payed_status`,  `actived`) 
+                          VALUES 
+                                (NOW(), '$user_id', '$tr_id', '$transaction_date', '$client_pledge_amount', '$course', '$received_currency_id', '$received_currency_id', '$course', '$received_currency_id', '3', '10', '1', '1')");
+        
+        $data = array('pledge_client_id' => $pledge_client_id);
+        break;
 		
 	
 	default:
@@ -413,6 +565,30 @@ function currency($id){
     return $data;
 }
 
+function client_car($id){
+    $req = mysql_query("SELECT    cl.id,
+            					  CASE
+            						  WHEN cl.attachment_id = 0 AND cl.`name` != '' THEN concat(client_car.registration_number, '/', client_loan_agreement.oris_code)
+            						  WHEN cl.attachment_id = 0 AND cl.`name` = '' THEN CONCAT(client_car.registration_number, '/', client_loan_agreement.oris_code)
+            						  WHEN cl.attachment_id != 0 AND cl.`name` = '' THEN CONCAT(client_car.registration_number, '/', client_loan_agreement.oris_code)
+            						  WHEN cl.attachment_id != 0 AND cl.`name` != '' THEN concat(client_car.registration_number, '/', client_loan_agreement.oris_code, '/დანართი N', client_loan_agreement.attachment_number)
+            					  END AS `name`
+                        FROM      client AS cl
+                        JOIN      client_loan_agreement ON cl.id = client_loan_agreement.client_id
+                        JOIN      client_car ON client_car.client_id = cl.id
+                        WHERE     cl.actived=1 AND client_loan_agreement.`status`=1 AND client_loan_agreement.canceled_status=0");
+
+    $data .= '<option value="0" selected="selected">----</option>';
+    while( $res = mysql_fetch_assoc($req)){
+        if($res['id'] == $id){
+            $data .= '<option value="' . $res['id'] . '" selected="selected">' . $res['name'] . '</option>';
+        } else {
+            $data .= '<option value="' . $res['id'] . '">' . $res['name'] . '</option>';
+        }
+    }
+    return $data;
+}
+
 function client($id){
     $req = mysql_query("SELECT    cl.id,
                                   CASE
@@ -437,14 +613,42 @@ function client($id){
     return $data;
 }
 
+function pledge_client_loan_number($id){
+    $req = mysql_query("SELECT  client.id,
+                                CASE
+            						 WHEN NOT ISNULL(client.sub_client) AND client_loan_agreement.agreement_id>0 THEN CONCAT('სხ ',client_loan_agreement.agreement_id)
+            						 WHEN client.attachment_id > 0 AND client_loan_agreement.agreement_id>0 THEN CONCAT('სხ ',client_loan_agreement.agreement_id, ' დანართი ', client_loan_agreement.attachment_number)
+                                     WHEN ISNULL(client.sub_client) AND client.attachment_id = 0 AND client_loan_agreement.agreement_id > 0 THEN CONCAT('სხ ',client_loan_agreement.agreement_id)
+                                     WHEN ISNULL(client.sub_client) AND client.attachment_id = 0 AND client_loan_agreement.agreement_id = 0 THEN CONCAT('სხ ',client_loan_agreement.oris_code)
+                			    END AS `name`
+
+                         FROM   client_loan_agreement
+                         JOIN   client ON client.id = client_loan_agreement.client_id
+                         WHERE  client_loan_agreement.actived = 1
+                         AND    client_loan_agreement.`status` = 1
+                         AND    client_loan_agreement.canceled_status = 0
+                         AND    client.actived = 1
+                         ORDER BY `name` ASC");
+
+    $data .= '<option value="0" selected="selected">----</option>';
+    while( $res = mysql_fetch_assoc($req)){
+        if($res['id'] == $id){
+            $data .= '<option value="' . $res['id'] . '" selected="selected">' . $res['name'] . '</option>';
+        } else {
+            $data .= '<option value="' . $res['id'] . '">' . $res['name'] . '</option>';
+        }
+    }
+    return $data;
+}
+
 function client_loan_number($id){
     $req = mysql_query("SELECT  client_loan_agreement.id,
                                 CASE
-                        		   WHEN client.attachment_id = 0 AND client.id<(SELECT old_client_id.number FROM `old_client_id` LIMIT 1) THEN CONCAT('ს/ხ ',client.exel_agreement_id)
-                                   WHEN client.attachment_id = 0 AND client.id>=(SELECT old_client_id.number FROM `old_client_id` LIMIT 1) THEN CONCAT('ს/ხ ',client_loan_agreement.id)
-            					   WHEN client.attachment_id > 0 AND client.id<(SELECT old_client_id.number FROM `old_client_id` LIMIT 1) THEN concat('ს/ხ ',(SELECT cl.exel_agreement_id FROM client AS cl WHERE cl.id = client.attachment_id), '/დანართი N', client_loan_agreement.attachment_number)
-            					   WHEN client.attachment_id != 0 AND client.id>=(SELECT old_client_id.number FROM `old_client_id` LIMIT 1) THEN concat('ს/ხ ',(SELECT client_loan_agreement.id FROM client_loan_agreement WHERE client_loan_agreement.client_id = client.attachment_id), '/დანართი N', client_loan_agreement.attachment_number)
-                        	    END AS `name` 
+            						 WHEN NOT ISNULL(client.sub_client) AND client_loan_agreement.agreement_id>0 THEN CONCAT('სხ ',client_loan_agreement.agreement_id)
+            						 WHEN client.attachment_id > 0 AND client_loan_agreement.agreement_id>0 THEN CONCAT('სხ ',client_loan_agreement.agreement_id, ' დანართი ', client_loan_agreement.attachment_number)
+                                     WHEN ISNULL(client.sub_client) AND client.attachment_id = 0 AND client_loan_agreement.agreement_id > 0 THEN CONCAT('სხ ',client_loan_agreement.agreement_id)
+                                     WHEN ISNULL(client.sub_client) AND client.attachment_id = 0 AND client_loan_agreement.agreement_id = 0 THEN CONCAT('სხ ',client_loan_agreement.oris_code)
+                			    END AS `name` 
                         			 
                          FROM   client_loan_agreement
                          JOIN   client ON client.id = client_loan_agreement.client_id
