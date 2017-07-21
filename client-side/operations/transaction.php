@@ -239,7 +239,22 @@
     	        $('#currency_id').chosen();
 
     	        $("#month_fee_trasaction").val($('#client_amount').val());
-    	        if($("#id").val()!=''){
+    	        $("#pledge_or_other_mont_fee").val($('#client_amount').val());
+    	        $("#pledge_or_other_extra_fee").val($('#client_amount').val());
+    	        
+    	        if($("#received_currency_id").val()==1){
+        	        lari   = $("#client_amount").val();
+        	        dolari = (parseFloat($("#client_amount").val())/parseFloat($("#course").val())).toFixed(2);
+        	        $("#month_payed_gel").val(lari);
+                    $("#month_payed_usd").val(dolari);
+    	        }else{
+        	        lari   = (parseFloat($("#client_amount").val())*parseFloat($("#course").val())).toFixed(2);
+        	        dolari = parseFloat($("#client_amount").val());
+        	        $("#month_payed_gel").val(lari);
+                    $("#month_payed_usd").val(dolari);
+        	    }
+				
+        	    if($("#id").val()!=''){
 					$('#currency_id').prop('disabled', true).trigger("chosen:updated");
         	        $('#type_id').prop('disabled', true).trigger("chosen:updated");
         	    }
@@ -384,8 +399,11 @@
 		    param 		= new Object();
 		    
 			param.act	               = "save_transaction";
+			
 		    param.id	               = $("#id").val();
 		    param.tr_id	               = $("#tr_id").val();
+		    param.client_id            = $("#client_id").val();
+		    param.type_id	           = $("#type_id").val();
 		    
 		    param.month_fee		       = $("#month_fee").val();
 		    param.month_fee1		   = $("#month_fee1").val();
@@ -397,7 +415,6 @@
 	    	param.percent		       = $("#percent").val();
 	    	param.penalti_fee	       = $("#penalti_fee").val();
 	    	param.surplus	           = $("#surplus").val();
-	    	param.type_id	           = $("#type_id").val();
 	    	param.client_id	           = $("#client_id").val();
 
 	    	param.month_fee_trasaction = $("#month_fee_trasaction").val();
@@ -407,12 +424,22 @@
 	    	param.received_currency_id = $('#received_currency_id').val();
 	    	param.course	           = $("#course").val();
 	    	param.transaction_date	   = $("#transaction_date").val();
+
+
+	    	param.pledge_or_other_payed	    = $("#pledge_or_other_payed").val();
+	    	param.pledge_or_other_surplus   = $('#pledge_or_other_surplus').val();
+	    	param.pledge_or_other_extra_fee	= $("#pledge_or_other_extra_fee").val();
+	    	
+	    	param.month_fee_gel         	= $("#month_fee_gel").val();
+	    	param.month_fee_usd         	= $("#month_fee_usd").val();
+	    	param.month_payed_gel         	= $("#month_payed_gel").val();
+	    	param.month_payed_usd         	= $("#month_payed_usd").val();
 	    	
 	    	param.hidde_id		       = $("#hidde_id").val();
 	    	param.hidde_transaction_id = $("#hidde_transaction_id").val();
 	    	param.hidde_status         = $("#hidde_status").val();
 
-	    	param.client_id            = $("#client_id").val();
+	    	
 
 	    	if(param.type_id == 0){
 		    	alert('შეავსე ტიპი');
@@ -652,13 +679,15 @@
 	    $(document).on("change", "#type_id", function () {
 	    	
 	        if($(this).val() > 1 ){
-	            $(".label_label").css('display','none');
+	            $("#loan_table").css('display','none');
+	            $("#pledge_table").css('display','');
 	            $("#month_fee1").val('');
 				$("#root1").val('');
 				$("#percent1").val('');
 				$("#penalti_fee1").val('');
-
-				param         =  new Object();
+				document.getElementById("car_out").disabled = true;
+				
+	            param         =  new Object();
     		    param.act     = "get_shedule";
     		    
     		    param.id                   = $("#client_id").val();
@@ -676,71 +705,38 @@
     						if(data.error != ''){
     							alert(data.error);
     						}else{
-	    						if(data.status==1){
-	    							$("#month_fee1").val(data.pay_amount);
-	    							$("#root1").val(data.root);
-	    							$("#percent1").val(data.percent);
-	    							$("#penalti_fee1").val(data.penalty);
-	    							$("#month_fee").val(data.loan_pay_amount);
-	    							
-	    							$("#month_fee2").val(data.pay_amount1);
-	    							$("#root2").val(data.root1);
-	    							$("#percent2").val(data.percent1);
-	    							$("#penalti_fee2").val(data.penalty1);
-	    							$("#extra_fee").val(parseFloat(data.loan_pay_amount)+parseFloat(data.pay_amount1));
-	    							
-	    							$("#hidde_id").val(data.id);
-	    							$('#currency_id').prop('disabled', true).trigger("chosen:updated");
-		    					}else if(data.status==2){
-		    						$("#month_fee1").val(data.insurance_fee);
-		    						$("#month_fee").val(data.loan_pay_amount);
-		    						$("#extra_fee").val(parseFloat(data.loan_pay_amount)+parseFloat(data.pay_amount1));
-		    						
-		    						$("#root1").val('');
-	    							$("#percent1").val('');
-	    							$("#penalti_fee1").val('');
+	    						$("#month_fee1").val(data.insurance_fee);
+	    						$("#month_fee").val(data.loan_pay_amount);
+	    						$("#extra_fee").val(parseFloat(data.loan_pay_amount)+parseFloat(data.pay_amount1));
+	    						
+	    						$("#root1").val('');
+    							$("#percent1").val('');
+    							$("#penalti_fee1").val('');
 
-	    							$("#month_fee2").val('');
-	    							$("#root2").val('');
-	    							$("#percent2").val('');
-	    							$("#penalti_fee2").val('');
+    							$("#month_fee2").val('');
+    							$("#root2").val('');
+    							$("#percent2").val('');
+    							$("#penalti_fee2").val('');
 
-	    							$("#hidde_id").val(data.id);
-	    							$('#currency_id').prop('disabled', false).trigger("chosen:updated");
-	    						}else if(data.status==3){
-			    					$("#month_fee1").val(data.pledge_fee);
-			    					$("#month_fee").val(data.loan_pay_amount);
-			    					$("#extra_fee").val(parseFloat(data.loan_pay_amount)+parseFloat(data.pay_amount1));
-			    					
-			    					$("#root1").val('');
-	    							$("#percent1").val('');
-	    							$("#penalti_fee1").val('');
-
-	    							$("#month_fee2").val('');
-	    							$("#root2").val('');
-	    							$("#percent2").val('');
-	    							$("#penalti_fee2").val('');
-
-	    							$("#hidde_id").val(data.id);
-	    							$('#currency_id').prop('disabled', false).trigger("chosen:updated");
-	    						}
+    							$("#hidde_id").val(data.id);
+    							$('#currency_id').prop('disabled', false).trigger("chosen:updated");
 	    					}
     					}
     			    }
     		    });
 	        }else{
 	        	if($(this).val() == 1 && $("#client_id").val()>0){
-		        	
+	        		document.getElementById("car_out").disabled = false;
 	        		param         =  new Object();
 	    		    param.act     = "get_shedule";
 	    		    
-	    		    param.id                   =  $("#client_id").val();
-	    		    param.agr_id               =  $("#client_loan_number").val();
-	    		    param.transaction_date     =  $("#transaction_date").val();
+	    		    param.id                   = $("#client_id").val();
+	    		    param.agr_id               = $("#client_loan_number").val();
+	    		    param.transaction_date     = $("#transaction_date").val();
 	    		    param.month_fee_trasaction = $("#month_fee_trasaction").val();
 	    		    param.received_currency_id = $("#received_currency_id").val();
 	    		    param.course               = $("#course").val();
-	    		    param.type_id              =  $(this).val();
+	    		    param.type_id              = $(this).val();
 	    			$.ajax({
 	    		        url: aJaxURL,
 	    			    data: param,
@@ -749,61 +745,26 @@
 	    						if(data.error != ''){
 	    							alert(data.error);
 	    						}else{
-		    						if(data.status==1){
-		    							$("#month_fee1").val(data.pay_amount);
-		    							$("#root1").val(data.root);
-		    							$("#percent1").val(data.percent);
-		    							$("#penalti_fee1").val(data.penalty);
-		    							$("#month_fee").val(data.loan_pay_amount);
-		    							
-		    							$("#month_fee2").val(data.pay_amount1);
-		    							$("#root2").val(data.root1);
-		    							$("#percent2").val(data.percent1);
-		    							$("#penalti_fee2").val(data.penalty1);
-		    							$("#extra_fee").val(parseFloat(data.loan_pay_amount)+parseFloat(data.pay_amount1));
-		    							
-		    							$("#hidde_id").val(data.id);
-		    							$('#currency_id').prop('disabled', true).trigger("chosen:updated");
-			    					}else if(data.status==2){
-			    						$("#month_fee1").val(data.insurance_fee);
-			    						$("#month_fee").val(data.loan_pay_amount);
-			    						$("#extra_fee").val(parseFloat(data.loan_pay_amount)+parseFloat(data.pay_amount1));
-			    						
-			    						$("#root1").val('');
-		    							$("#percent1").val('');
-		    							$("#penalti_fee1").val('');
-
-		    							$("#month_fee2").val('');
-		    							$("#root2").val('');
-		    							$("#percent2").val('');
-		    							$("#penalti_fee2").val('');
-
-		    							$("#hidde_id").val(data.id);
-		    							$('#currency_id').prop('disabled', false).trigger("chosen:updated");
-		    						}else if(data.status==3){
-				    					$("#month_fee1").val(data.pledge_fee);
-				    					$("#month_fee").val(data.loan_pay_amount);
-				    					$("#extra_fee").val(parseFloat(data.loan_pay_amount)+parseFloat(data.pay_amount1));
-				    					
-				    					$("#root1").val('');
-		    							$("#percent1").val('');
-		    							$("#penalti_fee1").val('');
-
-		    							$("#month_fee2").val('');
-		    							$("#root2").val('');
-		    							$("#percent2").val('');
-		    							$("#penalti_fee2").val('');
-
-		    							$("#hidde_id").val(data.id);
-		    							$('#currency_id').prop('disabled', false).trigger("chosen:updated");
-		    						}
-		    					}
+	    							$("#month_fee1").val(data.pay_amount);
+	    							$("#root1").val(data.root);
+	    							$("#percent1").val(data.percent);
+	    							$("#penalti_fee1").val(data.penalty);
+	    							$("#month_fee").val(data.loan_pay_amount);
+	    							$("#month_fee2").val(data.pay_amount1);
+	    							$("#root2").val(data.root1);
+	    							$("#percent2").val(data.percent1);
+	    							$("#penalti_fee2").val(data.penalty1);
+	    							$("#extra_fee").val(parseFloat(data.loan_pay_amount)+parseFloat(data.pay_amount1));
+	    							$("#hidde_id").val(data.id);
+	    							$('#currency_id').prop('disabled', true).trigger("chosen:updated");
+			    				}
 	    					}
 	    			    }
 	    		    });
 	        	}
 	        	
-	       		$(".label_label").css('display','block');
+	       		$("#loan_table").css('display','block');
+	       		$("#pledge_table").css('display','none');
 	       		
 	        }
 
@@ -818,7 +779,7 @@
 
 		$(document).on("change", "#client_id", function () {
 			
-			if($(this).val()>0){
+			if($(this).val()>0 && $('#type_id').val() == 1){
             	document.getElementById("car_out").disabled = false;
             }else{
             	document.getElementById("car_out").disabled = true;
@@ -827,9 +788,9 @@
 			param         =  new Object();
 		    param.act     = "get_shedule";
 		    param.status  = 1;
-		    param.id                   =  $(this).val();
-		    param.type_id              =  $('#type_id').val();
-		    param.transaction_date     =  $("#transaction_date").val();
+		    param.id                   = $(this).val();
+		    param.type_id              = $('#type_id').val();
+		    param.transaction_date     = $("#transaction_date").val();
 		    param.month_fee_trasaction = $("#month_fee_trasaction").val();
 		    param.received_currency_id = $("#received_currency_id").val();
 		    param.course               = $("#course").val();
@@ -860,38 +821,12 @@
     							$('#currency_id').prop('disabled', true).trigger("chosen:updated");
     							$('#client_loan_number').html(data.agrement_data).trigger("chosen:updated");
 	    					}else if(data.status==2){
-	    						$("#month_fee1").val(data.insurance_fee);
-	    						$("#month_fee").val(data.loan_pay_amount);
-	    						$("#extra_fee").val(parseFloat(data.loan_pay_amount)+parseFloat(data.pay_amount1));
-	    						
-	    						$("#root1").val('');
-    							$("#percent1").val('');
-    							$("#penalti_fee1").val('');
-
-    							$("#month_fee2").val('');
-    							$("#root2").val('');
-    							$("#percent2").val('');
-    							$("#penalti_fee2").val('');
-
-    							$("#hidde_id").val(data.id);
-    							$('#currency_id').prop('disabled', false).trigger("chosen:updated");
+	    						$("#month_fee_gel").val(data.fee_lari);
+    							$("#month_fee_usd").val(data.fee_dolari);
+    							
     							$('#client_loan_number').html(data.agrement_data).trigger("chosen:updated");
     						}else if(data.status==3){
-		    					$("#month_fee1").val(data.pledge_fee);
-		    					$("#month_fee").val(data.loan_pay_amount);
-		    					$("#extra_fee").val(parseFloat(data.loan_pay_amount)+parseFloat(data.pay_amount1));
-		    					
-		    					$("#root1").val('');
-    							$("#percent1").val('');
-    							$("#penalti_fee1").val('');
-
-    							$("#month_fee2").val('');
-    							$("#root2").val('');
-    							$("#percent2").val('');
-    							$("#penalti_fee2").val('');
-
-    							$("#hidde_id").val(data.id);
-    							$('#currency_id').prop('disabled', false).trigger("chosen:updated");
+    							$('#client_id').html(data.client_data).trigger("chosen:updated");
     						}
 						}
 					}
@@ -901,7 +836,7 @@
 
 		$(document).on("change", "#client_loan_number", function () {
 			
-            if($(this).val()>0){
+            if($(this).val()>0 && $('#type_id').val() == 1){
             	document.getElementById("car_out").disabled = false;
             }else{
             	document.getElementById("car_out").disabled = true;
@@ -944,36 +879,11 @@
     							$('#currency_id').prop('disabled', true).trigger("chosen:updated");
     							$('#client_id').html(data.client_data).trigger("chosen:updated");
 	    					}else if(data.status==2){
-	    						$("#month_fee1").val(data.insurance_fee);
-	    						$("#month_fee").val(data.loan_pay_amount);
-	    						$("#extra_fee").val(parseFloat(data.loan_pay_amount)+parseFloat(data.pay_amount1));
-	    						$("#root1").val('');
-    							$("#percent1").val('');
-    							$("#penalti_fee1").val('');
-
-    							$("#month_fee2").val('');
-    							$("#root2").val('');
-    							$("#percent2").val('');
-    							$("#penalti_fee2").val('');
-
-    							$("#hidde_id").val(data.id);
-    							$('#currency_id').prop('disabled', false).trigger("chosen:updated");
+	    						$("#month_fee_gel").val(data.fee_lari);
+    							$("#month_fee_usd").val(data.fee_dolari);
     							$('#client_id').html(data.client_data).trigger("chosen:updated");
     						}else if(data.status==3){
-		    					$("#month_fee1").val(data.pledge_fee);
-		    					$("#month_fee").val(data.loan_pay_amount);
-		    					$("#extra_fee").val(parseFloat(data.loan_pay_amount)+parseFloat(data.pay_amount1));
-		    					$("#root1").val('');
-    							$("#percent1").val('');
-    							$("#penalti_fee1").val('');
-
-    							$("#month_fee2").val('');
-    							$("#root2").val('');
-    							$("#percent2").val('');
-    							$("#penalti_fee2").val('');
-
-    							$("#hidde_id").val(data.id);
-    							$('#currency_id').prop('disabled', false).trigger("chosen:updated");
+    							$('#client_id').html(data.client_data).trigger("chosen:updated");
     						}
 						}
 					}
@@ -1286,6 +1196,46 @@
             }
 		});
 
+		$(document).on("keydown", "#pledge_or_other_payed", function (event) {
+			if (event.keyCode == $.ui.keyCode.ENTER){
+				if($(this).val()==''){this_value = 0;}else{this_value = $(this).val();}
+				if($("#hidde_pledge_amount").val()==0){
+    				delta = (parseFloat($("#pledge_or_other_extra_fee").val())-parseFloat(this_value)).toFixed(2);
+    				if(delta<0){
+    					alert('მიუთითეთ კორექტული თანხა');
+    					$("#pledge_or_other_payed").css('background','#fb5959');
+    				}else{
+    					$("#hidde_pledge_amount").val(1);
+        				$("#pledge_or_other_extra_fee").val(delta);
+        				$("#pledge_or_other_payed").css('background','rgb(255, 255, 255)');
+        				$("#pledge_or_other_surplus").focus();
+        			}
+				}else{
+    				$("#pledge_or_other_surplus").focus();
+        		}
+            }
+		});
+
+		$(document).on("keydown", "#pledge_or_other_surplus", function (event) {
+			if (event.keyCode == $.ui.keyCode.ENTER){
+				if($(this).val()==''){this_value = 0;}else{this_value = $(this).val();}
+				if($("#hidde_pledge_surplus").val()==0){
+    				delta = (parseFloat($("#pledge_or_other_extra_fee").val())-parseFloat(this_value)).toFixed(2);
+    				if(delta<0){
+    					alert('მიუთითეთ კორექტული თანხა');
+    					$("#pledge_or_other_surplus").css('background','#fb5959');
+    				}else{
+    					$("#hidde_pledge_surplus").val(1);
+        				$("#pledge_or_other_extra_fee").val(delta);
+        				$("#pledge_or_other_surplus").css('background','rgb(255, 255, 255)');
+        				$("#pledge_or_other_surplus").focus();
+        			}
+				}else{
+    				$("#pledge_or_other_surplus").focus();
+        		}
+            }
+		});
+		
 		$(document).on("click", "#delete_root", function () {
 	        root = $("#root").val();
 	        if(root == ''){root = 0;}
@@ -1381,6 +1331,38 @@
 	        	$("#surplus").focus();
 		    }
 	    });
+
+		$(document).on("click", "#delete_pledge_surplus", function () {
+			pledge_or_other_surplus = $("#pledge_or_other_surplus").val();
+	        if(pledge_or_other_surplus == ''){pledge_or_other_surplus = 0;}
+
+	        if($("#hidde_pledge_surplus").val() == 1){
+	        	$("#pledge_or_other_extra_fee").val(parseFloat($("#pledge_or_other_extra_fee").val()) + parseFloat(pledge_or_other_surplus));
+	        	$("#pledge_or_other_surplus").val('');
+	        	$("#hidde_pledge_surplus").val(0);
+	        	$("#pledge_or_other_surplus").focus();
+	        }else{
+	        	$("#pledge_or_other_extra_fee").val(parseFloat($("#pledge_or_other_extra_fee").val()));
+	        	$("#pledge_or_other_surplus").val('');
+	        	$("#pledge_or_other_surplus").focus();
+		    }
+	    });
+
+		$(document).on("click", "#delete_amount", function () {
+			pledge_or_other_payed = $("#pledge_or_other_payed").val();
+	        if(pledge_or_other_payed == ''){pledge_or_other_payed = 0;}
+
+	        if($("#hidde_pledge_amount").val() == 1){
+	        	$("#pledge_or_other_extra_fee").val(parseFloat($("#pledge_or_other_extra_fee").val()) + parseFloat(pledge_or_other_payed));
+	        	$("#pledge_or_other_payed").val('');
+	        	$("#hidde_pledge_amount").val(0);
+	        	$("#pledge_or_other_payed").focus();
+	        }else{
+	        	$("#pledge_or_other_extra_fee").val(parseFloat($("#pledge_or_other_extra_fee").val()));
+	        	$("#pledge_or_other_payed").val('');
+	        	$("#pledge_or_other_payed").focus();
+		    }
+	    });
 	    
 	    $(document).on("click", "#show_copy_prit_exel", function () {
 	        if($(this).attr('myvar') == 0){
@@ -1395,8 +1377,7 @@
 	            $(this).attr('myvar','0');
 	        }
 	    });
-	   
-    </script>
+	</script>
     <style type="text/css">
         #table_right_menu{
             position: relative;

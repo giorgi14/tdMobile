@@ -162,6 +162,11 @@ switch ($action) {
 		$month_fee_trasaction = $_REQUEST['month_fee_trasaction'];
 		$extra_fee            = $_REQUEST['extra_fee'];
 		
+		$pledge_or_other_payed     = $_REQUEST['pledge_or_other_payed'];
+		$pledge_or_other_surplus   = $_REQUEST['pledge_or_other_surplus'];
+		$pledge_or_other_extra_fee = $_REQUEST['pledge_or_other_extra_fee'];
+		
+		
 		$hidde_id             = $_REQUEST['hidde_id'];
 		$hidde_transaction_id = $_REQUEST['hidde_transaction_id'];
 		$hidde_status         = $_REQUEST['hidde_status'];
@@ -190,8 +195,8 @@ switch ($action) {
 	            $tr_id = $hidde_transaction_id;
 	            
 	        }
-	        if ($type_id == 2) {
-	            Add1($tr_id, $hidde_id, $transaction_date, $month_fee, $course, $currency_id, $received_currency_id, $type_id);
+	        if ($type_id == 2 || $type_id == 3) {
+	            Add1($tr_id, $hidde_id, $transaction_date, $pledge_or_other_payed, $pledge_or_other_surplus, $course, $currency_id, $received_currency_id, $type_id);
 	        }elseif ($type_id == 1){
 	           Add($tr_id, $hidde_id, $transaction_date, $month_fee, $course, $currency_id, $received_currency_id, $root,  $percent, $penalti_fee, $surplus, $diff, $type_id);
 	           
@@ -423,81 +428,60 @@ function Add($hidde_transaction_id, $hidde_id, $transaction_date, $month_fee, $c
 	}
 }
 
-function Add1($tr_id, $hidde_id, $transaction_date, $month_fee, $course, $currency_id, $received_currency_id, $type_id){
+function Add1($tr_id, $hidde_id, $transaction_date, $pledge_or_other_payed, $pledge_or_other_surplus, $course, $currency_id, $received_currency_id, $type_id){
 
     $user_id	= $_SESSION['USERID'];
     $client_id  = $_REQUEST['client_id'];
     
+    $month_fee_gel   = $_REQUEST['month_fee_gel'];
+    $month_fee_usd   = $_REQUEST['month_fee_usd'];
+    $month_payed_gel = $_REQUEST['month_payed_gel'];
+    $month_payed_usd = $_REQUEST['month_payed_usd'];
     
-    
-    $res1 = mysql_fetch_assoc(mysql_query(" SELECT  SUM(money_transactions_detail.pay_amount) AS pay_amount
-                                            FROM    money_transactions_detail
-                                            JOIN    money_transactions ON money_transactions.id = money_transactions_detail.transaction_id
-                                            JOIN    client_loan_schedule ON client_loan_schedule.id = money_transactions.client_loan_schedule_id
-                                            JOIN    client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
-                                            WHERE   client_loan_agreement.client_id = '$client_id'
-                                            AND     money_transactions_detail.`status` = 3
-                                            AND     money_transactions_detail.actived = 1"));
-    
-    $res = mysql_fetch_array(mysql_query("SELECT  car_insurance_info.ins_payy
-                                          FROM   `car_insurance_info`
-                                          WHERE   car_insurance_info.client_id = '$client_id'
-                                          AND     car_insurance_info.actived = 1
-                                          AND     DATE(car_insurance_info.car_insurance_end) = '$transaction_date'"));
-    
-    $sxvaoba = $month_fee - $res[ins_payy];
-    if ($sxvaoba>0 && $sxvaoba<1) {
-        $month_fee = $res1[pay_amount];
-    }
-    
-    $month_fee = $month_fee + $res1[pay_amount];
-    $sxvaoba1 = $month_fee - $res[ins_payy];
-    
-    if ($month_fee >= $res[ins_payy]) {
+    if(($month_fee_gel<=$month_payed_gel || $month_fee_usd<= $month_payed_usd) && $type_id == 2){
+        
         mysql_query("INSERT INTO `money_transactions_detail`
                                 (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
                           VALUES
-                                (NOW(), '$user_id', '$tr_id', '$transaction_date', '$res[ins_payy]', '$course', '$currency_id', '$received_currency_id', '', '', '2', '4', 1)");
+                                (NOW(), '$user_id', '$tr_id', '$transaction_date', '$pledge_or_other_payed', '$course', '$currency_id', '$received_currency_id', '', '', '2', '8', 1)");
+    
+        $tr_id = mysql_fetch_array(mysql_query("SELECT MAX(money_transactions_detail.id) AS tr_id 
+                                                FROM   money_transactions
+                                                JOIN   money_transactions_detail ON money_transactions_detail.transaction_id = money_transactions.id
+                                                WHERE  money_transactions_detail.actived = 1 AND money_transactions.actived = 1
+                                                AND    money_transactions_detail.`status` = 7 AND money_transactions_detail.payed_status = 1
+                                                AND    money_transactions.type_id = 2 AND money_transactions.client_id = '$client_id'"));
         
-        mysql_query("UPDATE `car_insurance_info`
-                        SET  car_insurance_info.`status` = '1'
-                     WHERE  `car_insurance_info.client_id` = '$client_id'
-                     AND     DATE(car_insurance_info.car_insurance_end) <= CURDATE() AND car_insurance_info.status = 0 LIMIT 1");
+        mysql_query("UPDATE money_transactions_detail
+                     SET    payed_status = 2
+                     WHERE  id           = $tr_id[tr_id]");
         
-        if ($sxvaoba1>1) {
-            
-            mysql_query("UPDATE  money_transactions_detail
-                         JOIN    money_transactions ON money_transactions.id = money_transactions_detail.transaction_id
-                         JOIN    client_loan_schedule ON client_loan_schedule.id = money_transactions.client_loan_schedule_id
-                         JOIN    client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
-                            SET  money_transactions_detail.actived = 0
-                         WHERE   client_loan_agreement.client_id = '$client_id'
-                         AND     money_transactions_detail.`status` = 3
-                         AND     money_transactions_detail.actived = 1");
-            
+        if ($pledge_or_other_surplus>0) {
             mysql_query("INSERT INTO `money_transactions_detail`
                                     (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
                               VALUES
-                                    (NOW(), '$user_id', '$tr_id', '$transaction_date', '$sxvaoba1', '$course', '$currency_id', '$received_currency_id', '', '', '2', 3, 1)");
+                                    (NOW(), '$user_id', '$tr_id', '$transaction_date', '$pledge_or_other_surplus', '$course', '$currency_id', '$received_currency_id', '', '', '2', '9', 1)");
         }
-    }else{
-        
-        mysql_query("UPDATE  money_transactions_detail
-                     JOIN    money_transactions ON money_transactions.id = money_transactions_detail.transaction_id
-                     JOIN    client_loan_schedule ON client_loan_schedule.id = money_transactions.client_loan_schedule_id
-                     JOIN    client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
-                        SET  money_transactions_detail.actived = 0
-                     WHERE   client_loan_agreement.client_id = '$client_id'
-                     AND     money_transactions_detail.`status` = 3
-                     AND     money_transactions_detail.actived = 1");
-        
+    }else if($type_id == 3){
         mysql_query("INSERT INTO `money_transactions_detail`
                                 (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
                           VALUES
-                                (NOW(), '$user_id', '$tr_id', '$transaction_date', '$month_fee', '$course', '$currency_id', '$received_currency_id', '', '', '2', 3, 1)");
-    }
-    
-    
+                                (NOW(), '$user_id', '$tr_id', '$transaction_date', '$pledge_or_other_surplus', '$course', '$currency_id', '$received_currency_id', '', '', '3', '11', 1)");
+        
+        if ($pledge_or_other_surplus>0) {
+            mysql_query("INSERT INTO `money_transactions_detail`
+                                    (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
+                              VALUES
+                                    (NOW(), '$user_id', '$tr_id', '$transaction_date', '$pledge_or_other_surplus', '$course', '$currency_id', '$received_currency_id', '', '', '2', '9', 1)");
+        }
+    }else{
+        if ($pledge_or_other_surplus>0) {
+            mysql_query("INSERT INTO `money_transactions_detail`
+                                    (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
+                              VALUES
+                                    (NOW(), '$user_id', '$tr_id', '$transaction_date', '$pledge_or_other_surplus', '$course', '$currency_id', '$received_currency_id', '', '', '2', '9', 1)");
+        }
+    }  
 }
 
 function update($hidde_status, $id, $transaction_date, $month_fee, $root,  $percent, $penalti_fee, $surplus){
@@ -697,24 +681,12 @@ function GetHolidays($id){
 function GetPage($res = ''){
     $today = date("Y-m-d H:i:s");
     
-    $display_none  = '';
-    $display_none1 = '';
-    $display_none2 = '';
-    
-    if ($res['status']==1) {
-       $display_none1 = 'display:none';
-       $display_none2= 'display:none';
-    }elseif ($res['status']==2){
-        $display_none = 'display:none';
-        $display_none2= 'display:none';
-    }elseif ($res['status']==3){
-        $display_none = 'display:none';
-        $display_none1= 'display:none';
-    }
-    if ($res[type_id] > 1) {
-        $input_hidde = "display:none;";
+    if ($res[type_id] == 1 || $res[type_id] == '') {
+        $loan_table_hidde = "";
+        $pledge_table_hidde = "display:none;";
     }else{
-        $input_hidde = "";
+        $loan_table_hidde = "display:none;";
+        $pledge_table_hidde = "";
     }
     
     if ($res[out_cal_status] == 1) {
@@ -723,15 +695,8 @@ function GetPage($res = ''){
         $hidde_out_car = 'display:none;';
     }
     
-    if ($res[status] == 1) {
-        $disable = 'disabled="disabled"';
-    }else{
-        $disable = "";
-    }
-    
     if ($res['id']=='') {
-        $req = mysql_fetch_assoc(mysql_query("SELECT MAX(id),
-                                                     cource 
+        $req = mysql_fetch_assoc(mysql_query("SELECT cource 
                                               FROM   cur_cource
                                               WHERE  actived = 1 
                                               AND    DATE(datetime) = CURDATE() 
@@ -742,7 +707,8 @@ function GetPage($res = ''){
         $cource = $res[course];
         $date = $res[datetime];
     }
-     if ($res['type_id'] == 1) {
+     
+    if ($res['type_id'] == 1) {
          $res1= mysql_fetch_assoc(mysql_query("SELECT  client_loan_schedule.id,
                                         			   client_loan_schedule.pay_amount,
                                         			   client_loan_schedule.root,
@@ -753,13 +719,7 @@ function GetPage($res = ''){
                                                 JOIN   client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
                                                 WHERE  client_loan_schedule.id = $res[client_loan_schedule_id]
                                                 LIMIT  1"));
-     }elseif ($res['type_id'] == 2){
-         $res1= mysql_fetch_assoc(mysql_query("SELECT  car_insurance_info.ins_payy AS pay_amount
-                                               FROM   `car_insurance_info`
-                                               WHERE   car_insurance_info.client_id = '$res[client_id]'
-                                               AND     car_insurance_info.actived = 1
-                                               AND     DATE(car_insurance_info.car_insurance_end) = CURDATE()"));
-     }
+    }
     
     
     $res2 = mysql_fetch_assoc(mysql_query(" SELECT  SUM(money_transactions_detail.pay_amount) AS pay_amount
@@ -813,11 +773,10 @@ function GetPage($res = ''){
     					<td style="width: 280px;">
     						<input class="idle" style="width: 15px;" id="car_out" value="1" disabled type="checkbox">
     					</td>
-    					<td style="width: 120px;">
-    					</td>
+    					<td style="width: 120px;"></td>
     				</tr>
     			</table>
-    			<table>
+    			<table id="loan_table" style="'.$loan_table_hidde.'">
     				<tr style="height:40px;"></tr>
     				<tr>
     					<td style="width: 105px;"><label style="padding-top: 5px;" class="label" for="date">ჩარიცხული თანხა:</label></td>
@@ -847,10 +806,10 @@ function GetPage($res = ''){
     					</td>
     				</tr>
     				<tr style="height:10px;"></tr>
-    				<tr style="'.$input_hidde.'">
-    					<td style="width: 105px; "><label style="padding-top: 5px; '.$display_none.'" class="label_label" for="date">ძირი თანხა:</label></td>
-    					<td style="width: 100px; ">
-    						<input style="width: 70px; float:left; '.$display_none.'" id="root" onkeydown="if(event.which == 8 || event.keyCode == 46) return false;" class="label_label" type="text" value="'.$res['pay_root'].'" '.$disable.'><span style="float: right; display: inline; margin-top: 4px;"><button id="delete_root" class="label_label" style="width:20px; padding: 0 0 2px 0; color: #fb0000; '.$display_none1.'">x</button></span>
+    				<tr>
+    					<td style="width: 105px;"><label id="" style="padding-top: 5px;" class="label_label" for="date">ძირი თანხა:</label></td>
+    					<td style="width: 100px;">
+    						<input style="width: 70px; float:left;" id="root" onkeydown="if(event.which == 8 || event.keyCode == 46) return false;" class="label_label" type="text" value="'.$res['pay_root'].'" '.$disable.'><span style="float: right; display: inline; margin-top: 4px;"><button id="delete_root" class="label_label" style="width:20px; padding: 0 0 2px 0; color: #fb0000; '.$display_none1.'">x</button></span>
     					</td>
     					<td style="width: 100px;"><label style="padding-top: 5px; margin-left: 10px;" class="label_label" for="date">ძირი თანხა:</label></td>
     					<td style="width: 80px;">
@@ -862,10 +821,10 @@ function GetPage($res = ''){
     					</td>
     				</tr>
     				<tr style="height:10px;"></tr>
-    				<tr style="'.$input_hidde.'">
-    					<td style="width: 105px; "><label style="padding-top: 5px; '.$display_none.'" class="label_label" for="date">პროცენტი:</label></td>
+    				<tr>
+    					<td style="width: 105px; "><label style="padding-top: 5px;" class="label_label" for="date">პროცენტი:</label></td>
     					<td style="width: 100px; ">
-    						<input style="width: 70px; float:left;'.$display_none.'" id="percent" class="label_label"  onkeydown="if(event.which == 8 || event.keyCode == 46) return false;" type="text" value="'.$res['pay_percent'].'" '.$disable.'><span style="float: right; display: inline; margin-top: 4px;"><button id="delete_percent" class="label_label" style="width:20px; padding: 0 0 2px 0; color: #fb0000; '.$display_none1.'">x</button></span>
+    						<input style="width: 70px; float:left;" id="percent" class="label_label"  onkeydown="if(event.which == 8 || event.keyCode == 46) return false;" type="text" value="'.$res['pay_percent'].'" '.$disable.'><span style="float: right; display: inline; margin-top: 4px;"><button id="delete_percent" class="label_label" style="width:20px; padding: 0 0 2px 0; color: #fb0000; '.$display_none1.'">x</button></span>
     					</td>
     					<td style="width: 100px;"><label style="padding-top: 5px; margin-left: 10px;" class="label_label" for="date">პროცენტი:</label></td>
     					<td style="width: 80px;">
@@ -873,10 +832,10 @@ function GetPage($res = ''){
     					</td>
     				</tr>
     				<tr style="height:10px;"></tr>
-    				<tr style="'.$input_hidde.'">
-    					<td style="width: 105px; "><label style="padding-top: 5px; '.$display_none1.'" class="label_label" for="date">ჯარიმა:</label></td>
+    				<tr>
+    					<td style="width: 105px; "><label style="padding-top: 5px;" class="label_label" for="date">ჯარიმა:</label></td>
     					<td style="width: 100px; ">
-    						<input class="label_label" style="width: 70px; float:left;'.$display_none1.'" id="penalti_fee"  onkeydown="if(event.which == 8 || event.keyCode == 46) return false;" type="text" value="'.$res['pay_penalty'].'" '.$disable.'><span style="float: right; display: inline; margin-top: 4px;"><button id="delete_penalty" class="label_label" style="width:20px; padding: 0 0 2px 0; color: #fb0000; '.$display_none1.'">x</button></span>
+    						<input class="label_label" style="width: 70px; float:left;" id="penalti_fee"  onkeydown="if(event.which == 8 || event.keyCode == 46) return false;" type="text" value="'.$res['pay_penalty'].'" '.$disable.'><span style="float: right; display: inline; margin-top: 4px;"><button id="delete_penalty" class="label_label" style="width:20px; padding: 0 0 2px 0; color: #fb0000; '.$display_none1.'">x</button></span>
     					</td>
     					<td style="width: 100px;"><label style="padding-top: 5px; margin-left: 10px;" class="label_label" for="date">ჯარიმა:</label></td>
     					<td style="width: 80px;">
@@ -885,8 +844,8 @@ function GetPage($res = ''){
     				</tr>
     				<tr class="car_out_class" style="height:10px; '.$hidde_out_car.'"></tr>
     				<tr class="car_out_class" style="'.$hidde_out_car.'">
-    					<td style="width: 105px; padding-top: 5px; '.$display_none2.' "><label class="label_label" for="date">საკომისიო:</label></td>
-    					<td style="width: 100px; '.$display_none2.'">
+    					<td style="width: 105px; padding-top: 5px;"><label class="label_label" for="date">საკომისიო:</label></td>
+    					<td style="width: 100px;">
     						<input class="label_label" style="width: 70px; float:left;" id="payable_Fee" type="text"  onkeydown="if(event.which == 8 || event.keyCode == 46) return false;" value="'.$res['pay_amount'].'" '.$disable.'><span style="float: right; display: inline; margin-top: 4px; "><button id="delete_payable_Fee" class="label_label" style="width:20px; padding: 0 0 2px 0; color: #fb0000; '.$display_none1.'">x</button></span>
     					</td>
     					<td style="width: 120px;"><label style="padding-top: 5px; margin-left: 10px;" class="label_label" for="date">საკომისიო:</label></td>
@@ -904,10 +863,10 @@ function GetPage($res = ''){
     					<td style="width: 80px;"></td>
     				</tr>
     				<tr style="height:10px;"></tr>
-    				<tr style="'.$input_hidde.'">
-    					<td style="width: 105px; padding-top: 5px; '.$display_none2.' "><label class="label_label" for="date">მეტობა</label></td>
-    					<td style="width: 100px; '.$display_none2.'">
-    						<input class="label_label" style="width: 70px; float:left;" id="surplus" type="text"  onkeydown="if(event.which == 8 || event.keyCode == 46) return false;" value="'.$res['pay_amount'].'" '.$disable.'><span style="float: right; display: inline; margin-top: 4px; "><button id="delete_surplus" class="label_label" style="width:20px; padding: 0 0 2px 0; color: #fb0000; '.$display_none1.'">x</button></span>
+    				<tr>
+    					<td style="width: 105px; padding-top: 5px;"><label for="date">მეტობა</label></td>
+    					<td style="width: 100px;">
+    						<input style="width: 70px; float:left;" id="surplus" type="text"  onkeydown="if(event.which == 8 || event.keyCode == 46) return false;" value="'.$res['pay_amount'].'" '.$disable.'><span style="float: right; display: inline; margin-top: 4px; "><button id="delete_surplus" class="label_label" style="width:20px; padding: 0 0 2px 0; color: #fb0000; '.$display_none1.'">x</button></span>
     					</td>
     					<td style="width: 120px;"></td>
     					<td style="width: 100px;"></td>
@@ -915,9 +874,85 @@ function GetPage($res = ''){
     					<td style="width: 80px;"></td>
     				</tr>
     				<tr style="height:10px;"></tr>
-    				<tr style="'.$input_hidde.'">
-    					<td style="width: 120px;"><label class="label_label" for="date">ზედმეტი თანხა:</label></td>
-    					<td style="width: 100px;"><input class="label_label" style="width: 80px; " id="extra_fee" type="text" value="'.$res['extra_fee'].'" disabled="disabled"></td>
+    				<tr>
+    					<td style="width: 120px;"><label for="date">ზედმეტი თანხა:</label></td>
+    					<td style="width: 100px;"><input style="width: 80px; " id="extra_fee" type="text" value="'.$res['extra_fee'].'" disabled="disabled"></td>
+    					<td style="width: 120px;"></td>
+    					<td style="width: 100px;"></td>
+    					<td style="width: 120px;"></td>
+    					<td style="width: 80px;"></td>
+    				</tr>
+				</table>
+    			<table id="pledge_table" style="'.$pledge_table_hidde.'">
+    			    <tr style="height:40px;"></tr>
+    				<tr>
+    					<td style="width: 105px;"><label style="padding-top: 5px;" for="date">ჩარიცხული თანხა</label></td>
+                	    <td style="width: 100px;">
+    						<input style="width: 80px;" id="pledge_or_other_mont_fee" type="text" value="'.$res['month_fee_trasaction'].'" disabled="disabled">
+    					</td>
+    					<td style="width: 100px;"></td>
+    					<td style="width: 80px;"></td>
+    				    <td style="width: 135px;"></td>
+    					<td style="width: 100px;"></td>
+    				</tr>
+    				<tr style="height:10px;"></tr>
+    				<tr>
+    					<td style="width: 105px;"><label style="padding-top: 5px;" for="date">ჩარიცხული თანხა (GEL):</label></td>
+                	    <td style="width: 100px;">
+    						<input style="width: 80px;" id="month_payed_gel" type="text" value="'.$res['month_fee_trasaction'].'" disabled="disabled">
+    					</td>
+    					<td style="width: 100px;">დარიცხული თანხა (GEL)</td>
+    					<td style="width: 80px;">
+    						<input style="width: 80px;" id="month_fee_gel" class="label" type="text" value="'.$res['pay_amount'].'" disabled="disabled">
+    					</td>
+    				    <td style="width: 135px;">
+    						<label style="padding-top: 5px;" for="name">არსებული ბალანსი (GEL):</label> 
+    				    </td>
+    					<td style="width: 100px;">
+    						<input style="width: 80px;" id="pledge_or_other_balance_usd" class="label" type="text" value="'.$res2['pay_amount'].'" disabled="disabled">
+    					</td>
+    				</tr>
+    				<tr style="height:10px;"></tr>
+    				<tr>
+    					<td style="width: 105px;"><label style="" class="label" for="date">ჩარიცხული თანხა (USD):</label></td>
+                	    <td style="width: 100px;">
+    						<input style="width: 80px;" id="month_payed_usd" class="label" type="text" value="'.$res['pay_amount'].'" disabled="disabled">
+    					</td>
+    					<td style="width: 100px;"><label style="padding-top: 5px;" class="label" for="name">დარიცხული თანხა (USD)</label></td>
+    					<td style="width: 80px;">
+    						<input style="width: 80px;" id="month_fee_usd" class="label" type="text" value="'.$res1['pay_amount'].'" disabled="disabled">
+    					</td>
+    				    <td style="width: 135px;"><label style="padding-top: 5px;" class="label" for="name">არსებული ბალანსი (USD):</label></td>
+    					<td style="width: 100px;">
+    						<input style="width: 80px;" id="pledge_or_other_balance_usd" type="text" value="'.$res2['pay_amount'].'" disabled="disabled">
+    					</td>
+    				</tr>
+    				<tr style="height:10px;"></tr>
+    				<tr>
+    					<td style="width: 105px;"><label id="" style="padding-top: 5px;" for="date">თანხა:</label></td>
+    					<td style="width: 100px;">
+    						<input style="width: 70px; float:left;" id="pledge_or_other_payed" onkeydown="if(event.which == 8 || event.keyCode == 46) return false;" type="text" value="'.$res['pay_root'].'"><span style="float: right; display: inline; margin-top: 4px;"><button id="delete_amount" style="width:20px; padding: 0 0 2px 0; color: #fb0000;">x</button></span>
+    					</td>
+    					<td style="width: 100px;"></td>
+    					<td style="width: 80px;"></td>
+    				    <td style="width: 135px;"></td>
+    					<td style="width: 100px;"></td>
+    				</tr>
+    				<tr style="height:10px;"></tr>
+    				<tr>
+    					<td style="width: 105px; padding-top: 5px;"><label for="date">მეტობა</label></td>
+    					<td style="width: 100px;">
+    						<input style="width: 70px; float:left;" id="pledge_or_other_surplus" type="text"  onkeydown="if(event.which == 8 || event.keyCode == 46) return false;" value="'.$res['pay_amount'].'"><span style="float: right; display: inline; margin-top: 4px; "><button id="delete_pledge_surplus" style="width:20px; padding: 0 0 2px 0; color: #fb0000;">x</button></span>
+    					</td>
+    					<td style="width: 120px;"></td>
+    					<td style="width: 100px;"></td>
+    					<td style="width: 120px;"></td>
+    					<td style="width: 80px;"></td>
+    				</tr>
+    				<tr style="height:10px;"></tr>
+    				<tr>
+    					<td style="width: 120px;"><label for="date">ზედმეტი თანხა:</label></td>
+    					<td style="width: 100px;"><input style="width: 80px; " id="pledge_or_other_extra_fee" type="text" value="'.$res['extra_fee'].'" disabled="disabled"></td>
     					<td style="width: 120px;"></td>
     					<td style="width: 100px;"></td>
     					<td style="width: 120px;"></td>
@@ -928,7 +963,7 @@ function GetPage($res = ''){
 			<!-- ID -->
 			<input type="hidden" id="id" value="' . $res['id'] . '" />
 			<input type="hidden" id="hidde_status" value="' . $res['status'] . '" />
-			    
+			   
 		    <input type="hidden" id="hidde_root" value="0" />
 	        <input type="hidden" id="hidde_percent" value="0" />
             <input type="hidden" id="hidde_penalty" value="0" />
@@ -936,6 +971,9 @@ function GetPage($res = ''){
 		    <input type="hidden" id="hidde_payable_Fee" value="0" />
             <input type="hidden" id="hidde_yield" value="0" />
 			<input type="hidden" id="hidde_surplus" value="0" />
+			    
+			<input type="hidden" id="hidde_pledge_amount" value="0" />
+			<input type="hidden" id="hidde_pledge_surplus" value="0" />
                 
 		</fieldset>
     </div>
