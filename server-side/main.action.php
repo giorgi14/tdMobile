@@ -2705,7 +2705,7 @@ switch ($action) {
                             ORDER BY client_loan_schedule.id DESC
                             LIMIT 1");
         
-        $res1 = mysql_query("SELECT   ROUND(client_loan_schedule.percent/30,2) AS `percent`
+        $res1 = mysql_query("SELECT   client_loan_schedule.percent/30 AS `percent`
                              FROM     client_loan_schedule
                              JOIN     client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
                              WHERE    client_loan_agreement.client_id = '$local_id' AND client_loan_schedule.schedule_date >= '$pay_datee'
@@ -2721,17 +2721,17 @@ switch ($action) {
         if ($result[gadacilebuli]>0 && $result[gadacilebuli]<=$result[penalty_days] && $result[status] == 0) {
             $penalty = round(($remainig_root * ($result[penalty_percent]/100))*$result[gadacilebuli],2);
         }elseif ($result[gadacilebuli]>0 && $result[gadacilebuli]>$result[penalty_days] && $result[status] == 0){
-            $penalty = round((($remainig_root * ($result[penalty_percent]/100))*$result[penalty_days])+($remainig_root * ($result[penalty_additional_percent]/100))*($result[gadacilebuli]-$result[penalty_days]),2);
+            $penalty = round(round(($remainig_root * ($result[penalty_percent]/100))*$result[penalty_days],2)+round(($remainig_root * ($result[penalty_additional_percent]/100))*($result[gadacilebuli]-$result[penalty_days]),2),2);
         }
         
         $nasargeblebi = round($result1[percent]*$result[gadacilebuli],2);
         
-        if ($result[st] == 1) {
+        if ($result[st] == 1){
             $res1 = mysql_fetch_assoc(mysql_query("SELECT SUM(pay_amount) AS pay_amount
                                                    FROM   money_transactions
-                                                   WHERE  money_transactions.client_loan_schedule_id = $result[id] AND money_transactions.status in(3) AND actived = 1"));
+                                                   WHERE  money_transactions.client_loan_schedule_id = '$result[id]' AND money_transactions.status in(3) AND actived = 1"));
         
-            $pay_amount = round($remainig_root + $result['percent'] + $penalty + $result[sakomisio] + $nasargeblebi, 2);
+            $pay_amount = round($remainig_root + $result['percent'] + $penalty + $result['sakomisio'] + $nasargeblebi, 2);
         
             $data = array('pay_amount' => $pay_amount, 'root' => $remainig_root, 'percent' => $result[percent], 'penalty' => $penalty, 'pay_amount1' => $res1[pay_amount], 'nasargeblebebi' => $nasargeblebi, 'sakomisio' => $result[sakomisio]);
         }else{
