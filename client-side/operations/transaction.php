@@ -398,12 +398,13 @@
 	    $(document).on("click", "#save-dialog", function () {
 		    param 		= new Object();
 		    
-			param.act	               = "save_transaction";
+			param.act	                    = "save_transaction";
 			
-		    param.id	               = $("#id").val();
-		    param.tr_id	               = $("#tr_id").val();
-		    param.client_id            = $("#client_id").val();
-		    param.type_id	           = $("#type_id").val();
+		    param.id	                    = $("#id").val();
+		    param.tr_id	                    = $("#tr_id").val();
+		    param.client_id                 = $("#client_id").val();
+		    param.client_loan_number        = $("#client_loan_number").val();
+		    param.type_id	                = $("#type_id").val();
 		    
 		    param.month_fee		       = $("#month_fee").val();
 		    param.month_fee1		   = $("#month_fee1").val();
@@ -445,7 +446,7 @@
 		    	alert('შეავსე ტიპი');
 			}else if(param.client_id == 0){
 		    	alert('შეავსე კლიენტი');
-			}else if(param.month_fee == ''){
+			}else if(param.month_fee == '' && param.type_id != 2){
 		    	alert('შეავსე ჩარიცხული თანხა');
 			}else{
 				$.ajax({
