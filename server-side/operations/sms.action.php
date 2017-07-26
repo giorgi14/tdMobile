@@ -227,7 +227,7 @@ function GetPage($res = ''){
         			    <tr style="height:5px"></tr>
         				<tr>
                             <td colspan="3">
-        					   <textarea maxlength="150" placeholder="შეიყვანეთ ტექსტი" class="idle" id="sms_text" style="resize: vertical;width: 99%;height: 85px;" '.$diss.'>'.$res['content'].'</textarea>
+        					   <textarea maxlength="300" placeholder="შეიყვანეთ ტექსტი" class="idle" id="sms_text" style="resize: vertical;width: 99%;height: 85px;" '.$diss.'>'.$res['content'].'</textarea>
         					</td>
                         </tr>
         				<tr>
