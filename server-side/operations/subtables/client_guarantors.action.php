@@ -133,7 +133,7 @@ function GetPage($res){
                        <tr style="height:15px;"></tr>
                        <tr>
                            <td style="width: 132px;"><label for="pet_num">პირადი ნომერი</label></td>
-                           <td style="width: 275px;"><input style="width: 275px;" id="guarantor_pid" onKeyDown="if(this.value.length==11) return false;" type="text" value="'.$res[pid].'"></td>
+                           <td style="width: 275px;"><input style="width: 275px;" id="guarantor_pid" type="text" value="'.$res[pid].'"></td>
             	       </tr>
                        <tr style="height:15px;"></tr>
                        <tr>
