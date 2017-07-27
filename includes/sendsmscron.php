@@ -32,8 +32,9 @@ while ($row = mysql_fetch_array($result)) {
     
     if ($check) {
         mysql_query("UPDATE  sent_list
-                        SET `status` =  1
-                     WHERE   id      = '$row[id]'");
+                        SET  datetime = NOW(),
+                            `status`  =  1
+                    WHERE    id       = '$row[id]'");
         $status = 1;
     }
 }
