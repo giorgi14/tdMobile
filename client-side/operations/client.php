@@ -2007,6 +2007,7 @@
 		
 		param.receipt_check                 = $("input[id='receipt_check']:checked").val();
 		param.acceptance_act_check          = $("input[id='acceptance_act_check']:checked").val();
+		param.acceptance_act_1check         = $("input[id='acceptance_act_1check']:checked").val();
 		param.Client_car_confiscation_check = $("input[id='Client_car_confiscation_check']:checked").val();
 		param.approval1_check               = $("input[id='approval1_check']:checked").val();
 		param.execution_pickup_check        = $("input[id='execution_pickup_check']:checked").val();
@@ -2095,8 +2096,10 @@
     		            	var attachment_responsible = $("#attachment_responsible").val();
     		            	
     		            	var acceptance_act_sakomisio = $("#acceptance_act_sakomisio").val();
+    		            	var acceptance_act_sakomisio1 = $("#acceptance_act_sakomisio1").val();
     		            	var acceptance_act_xelze     = $("#acceptance_act_xelze").val();
     		            	var acceptance_act_responses = $("#acceptance_act_responses").val();
+    		            	var acceptance_act_responses1 = $("#acceptance_act_responses1").val();
     		            	
     		            	var client_debt_amount         = $("#client_debt_amount").val();
     		            	var client_debt_respons        = $("#client_debt_respons").val();
@@ -2108,7 +2111,7 @@
     		            	var pledge_removal_responsible = $("#pledge_removal_responsible").val();
     		            	var pledge_removal_date        = $("#pledge_removal_date").val();
     		            	
-    		                local_id  = "&local_id="+local_id+"&file_type="+file_type+"&id_hidden="+$("#id_hidden").val()+"&execution_pickup_datee="+$("#execution_pickup_datee").val()+"&execution_pickup_datee1="+$("#execution_pickup_datee1").val()+"&client_car_driver_name="+$("#client_car_driver_name").val()+"&client_car_driver_datetime="+$("#client_car_driver_datetime").val()+'&registering_a_car_mogo_date='+$("#registering_a_car_mogo_date").val()+ '&registering_car_mogo_respons='+$("#registering_car_mogo_respons").val()+"&guarante_id="+guarante_id+"&message_type="+message_type+"&rename_payment_system_date="+rename_payment_system_date+"&added_respons="+added_respons+"&pledge_removal_responsible="+pledge_removal_responsible+"&pledge_removal_date="+pledge_removal_date+"&Client_car_confiscation_date="+$("#Client_car_confiscation_date").val()+"&client_debt_amount="+client_debt_amount+"&client_debt_respons="+client_debt_respons+"&client_debt_date="+client_debt_date+"&acceptance_act_sakomisio="+acceptance_act_sakomisio+"&acceptance_act_xelze="+acceptance_act_xelze+"&acceptance_act_responses="+acceptance_act_responses+"&attachment_datee="+attachment_datee+"&attachment_datee1="+attachment_datee1+"&attachment_responsible="+attachment_responsible;
+    		                local_id  = "&local_id="+local_id+"&file_type="+file_type+"&id_hidden="+$("#id_hidden").val()+"&acceptance_act_responses1="+$("#acceptance_act_responses1").val()+"&acceptance_act_sakomisio1="+$("#acceptance_act_sakomisio1").val()+"&execution_pickup_datee="+$("#execution_pickup_datee").val()+"&execution_pickup_datee1="+$("#execution_pickup_datee1").val()+"&client_car_driver_name="+$("#client_car_driver_name").val()+"&client_car_driver_datetime="+$("#client_car_driver_datetime").val()+'&registering_a_car_mogo_date='+$("#registering_a_car_mogo_date").val()+ '&registering_car_mogo_respons='+$("#registering_car_mogo_respons").val()+"&guarante_id="+guarante_id+"&message_type="+message_type+"&rename_payment_system_date="+rename_payment_system_date+"&added_respons="+added_respons+"&pledge_removal_responsible="+pledge_removal_responsible+"&pledge_removal_date="+pledge_removal_date+"&Client_car_confiscation_date="+$("#Client_car_confiscation_date").val()+"&client_debt_amount="+client_debt_amount+"&client_debt_respons="+client_debt_respons+"&client_debt_date="+client_debt_date+"&acceptance_act_sakomisio="+acceptance_act_sakomisio+"&acceptance_act_xelze="+acceptance_act_xelze+"&acceptance_act_responses="+acceptance_act_responses+"&attachment_datee="+attachment_datee+"&attachment_datee1="+attachment_datee1+"&attachment_responsible="+attachment_responsible;
     		        		win=window.open("server-side/operations/subtables/print_documents.action.php?"+local_id, "" , "scrollbars=no,toolbar=no,screenx=0,screeny=0,location=no,titlebar=no,directories=no,status=no,menubar=no");
     		            }
     		        },
@@ -2122,8 +2125,10 @@
         		            	var attachment_responsible = $("#attachment_responsible").val();
         		            	
         		            	var acceptance_act_sakomisio = $("#acceptance_act_sakomisio").val();
+        		            	var acceptance_act_sakomisio1 = $("#acceptance_act_sakomisio1").val();
         		            	var acceptance_act_xelze     = $("#acceptance_act_xelze").val();
         		            	var acceptance_act_responses = $("#acceptance_act_responses").val();
+        		            	var acceptance_act_responses1 = $("#acceptance_act_responses1").val();
         		            	
         		            	var client_debt_amount         = $("#client_debt_amount").val();
         		            	var client_debt_respons        = $("#client_debt_respons").val();
@@ -2135,7 +2140,7 @@
         		            	var pledge_removal_responsible = $("#pledge_removal_responsible").val();
         		            	var pledge_removal_date        = $("#pledge_removal_date").val();
         		            	
-        		            	URL="server-side/operations/subtables/download_doc.php?file_type="+file_type+"&local_id="+$("#local_id").val()+"&file_name="+file_name+"&execution_pickup_datee="+$("#execution_pickup_datee").val()+"&execution_pickup_datee1="+$("#execution_pickup_datee1").val()+"&client_car_driver_name="+$("#client_car_driver_name").val()+"&client_car_driver_datetime="+$("#client_car_driver_datetime").val()+'&registering_a_car_mogo_date='+$("#registering_a_car_mogo_date").val()+'&registering_car_mogo_respons='+$("#registering_car_mogo_respons").val()+"&guarante_id="+guarante_id+"&message_type="+message_type+"&rename_payment_system_date="+rename_payment_system_date+"&added_respons="+added_respons+"&pledge_removal_responsible="+pledge_removal_responsible+"&pledge_removal_date="+pledge_removal_date+"&Client_car_confiscation_date="+$("#Client_car_confiscation_date").val()+"&client_debt_amount="+client_debt_amount+"&client_debt_respons="+client_debt_respons+"&client_debt_date="+client_debt_date+"&acceptance_act_sakomisio="+acceptance_act_sakomisio+"&acceptance_act_xelze="+acceptance_act_xelze+"&acceptance_act_responses="+acceptance_act_responses+"&attachment_datee="+attachment_datee+"&attachment_datee1="+attachment_datee1+"&attachment_responsible="+attachment_responsible;
+        		            	URL="server-side/operations/subtables/download_doc.php?file_type="+file_type+"&local_id="+$("#local_id").val()+"&file_name="+file_name+"&acceptance_act_responses1="+$("#acceptance_act_responses1").val()+"&file_name="+file_name+"&acceptance_act_sakomisio1="+$("#acceptance_act_sakomisio1").val()+"&execution_pickup_datee="+$("#execution_pickup_datee").val()+"&execution_pickup_datee1="+$("#execution_pickup_datee1").val()+"&client_car_driver_name="+$("#client_car_driver_name").val()+"&client_car_driver_datetime="+$("#client_car_driver_datetime").val()+'&registering_a_car_mogo_date='+$("#registering_a_car_mogo_date").val()+'&registering_car_mogo_respons='+$("#registering_car_mogo_respons").val()+"&guarante_id="+guarante_id+"&message_type="+message_type+"&rename_payment_system_date="+rename_payment_system_date+"&added_respons="+added_respons+"&pledge_removal_responsible="+pledge_removal_responsible+"&pledge_removal_date="+pledge_removal_date+"&Client_car_confiscation_date="+$("#Client_car_confiscation_date").val()+"&client_debt_amount="+client_debt_amount+"&client_debt_respons="+client_debt_respons+"&client_debt_date="+client_debt_date+"&acceptance_act_sakomisio="+acceptance_act_sakomisio+"&acceptance_act_xelze="+acceptance_act_xelze+"&acceptance_act_responses="+acceptance_act_responses+"&attachment_datee="+attachment_datee+"&attachment_datee1="+attachment_datee1+"&attachment_responsible="+attachment_responsible;
         		            	open(URL);
         		            }else{
             		            
@@ -2566,3 +2571,4 @@
     <div id="add-edit-form_sms_histori" class="form-dialog" title="SMS"></div>
     <div id="add-edit-form_car_insurance" class="form-dialog" title="დაზღვევა"></div>
 </body>
+        
