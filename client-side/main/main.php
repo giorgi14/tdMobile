@@ -65,13 +65,13 @@
 			
 			if(tbl == 'letter'){
 				var total =	[4,5,6,7,17,18,19,20,23,24];
-				GetDataTable1(tName+tbl, aJaxURL, act, num, "&id="+$("#id").val()+"&loan_currency_id="+$("#loan_currency_id").val()+"&loan_currency_id="+$("#loan_currency_id").val(), 0, dLength, 4, "desc", total, change_colum_main);
+				GetDataTable1(tName+tbl, aJaxURL, act, num, "&id="+$("#hidde_cl_id").val()+"&loan_currency_id="+$("#loan_currency_id").val()+"&loan_currency_id="+$("#loan_currency_id").val(), 0, dLength, 4, "desc", total, change_colum_main);
 				$("#table_letter_length").css('top', '2px');
 				setTimeout(function(){$('.ColVis, .dataTable_buttons').css('display','none');}, 90);
 				setTimeout(function(){
     				param 		            = new Object();
     			    param.act	            = "gel_footer";
-    			    param.id	            = $("#id").val();
+    			    param.id	            = $("#hidde_cl_id").val();
     			    param.loan_currency_id	= $("#loan_currency_id").val();
     			    
     			    $.ajax({
