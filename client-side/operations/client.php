@@ -830,6 +830,7 @@
 		param.hidde_agreement_percent     = $('#hidde_agreement_percent').val();
 		param.hidde_loan_type_id          = $('#hidde_loan_type_id').val();
 		param.agreement_no_standart       = $("input[id='agreement_no_standart']:checked").val();
+		param.fact_address_check          = $("input[id='fact_address_check']:checked").val();
 		
 		if(param.name == ''){
 			alert('შეავსეთ "სახელი"');
@@ -1004,6 +1005,7 @@
 		param.tld_responsible     = $("#tld_responsible").val();
 		param.client_type         = $("input[class=client_type]:checked").val();
 		param.trust_pers_checkbox = $("input[id='trust_pers_checkbox']:checked").val();
+		param.fact_address_check  = $("input[id='fact_address_check']:checked").val();
 		
 		//მინდობილი პირის მონაცემები//
 		param.client_trust_name	        = $('#client_trust_name').val();
@@ -1163,6 +1165,7 @@
 		param.car_max_pledge          = $('#car_max_pledge').val();
 		param.shss_number             = $('#shss_number').val();
 		param.carsize                 = $("input[id='carsize']:checked").val();
+		param.fact_address_check      = $("input[id='fact_address_check']:checked").val();
 		
 		//ხელშეკრულების მონაცემები//
 		param.agreement_type_id           = $('#new_agreement_type_id').val();
