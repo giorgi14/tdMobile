@@ -2271,7 +2271,7 @@
         		        $("#img_colum").html(data.str_file_picture);
         		    }
         	    });
-        	}, 500);
+        	}, 2000);
         }
     });
     function view_image(id){
