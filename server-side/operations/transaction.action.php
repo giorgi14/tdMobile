@@ -404,6 +404,7 @@ switch ($action) {
     		}
     		
 		}elseif ($type_id == 2){
+		    $receivedd_currency_id = $_REQUEST['received_currency_id'];
 		    $res_pledge = mysql_fetch_array(mysql_query("SELECT CASE
                                                                    WHEN money_transactions.received_currency_id = 2 THEN ROUND(money_transactions_detail.pay_amount*money_transactions.course,2)
                                                                    WHEN money_transactions.received_currency_id = 1 THEN money_transactions_detail.pay_amount
@@ -428,7 +429,7 @@ switch ($action) {
                                                              FROM   client_loan_agreement 
                                                              WHERE  client_id = '$id' OR id = '$agr_id'"));
 		    
-		    $data = array('status' => 2, 'fee_lari' => $res_pledge[fee_lari], 'fee_dolari' => $res_pledge[fee_dolari], 'trasnsaction_detail_id' => $res_pledge[id], 'client_data' => client($check_client[client_id]), 'agrement_data' => client_loan_number($check_client[id]));
+		    $data = array('status' => 2, 'fee_lari' => $res_pledge[fee_lari], 'fee_dolari' => $res_pledge[fee_dolari], 'trasnsaction_detail_id' => $res_pledge[id], 'client_data' => client($check_client[client_id]), 'agrement_data' => client_loan_number($check_client[id]), 'currency_data' => currency($receivedd_currency_id));
 		}elseif ($type_id == 3){
 		    $check_client = mysql_fetch_array(mysql_query("SELECT id,
                                             		              client_id
