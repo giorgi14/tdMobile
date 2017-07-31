@@ -240,32 +240,21 @@ function GetDataTable1(tname, aJaxURL, action, count, data, hidden, length, sort
 	            {
 	            	for ( var j = 0 ; j < total.length ; j++ )
 	                {
-	            		if(aaData[i][total[j]] == ''){
-	            			
-	            		}else{
-		                iTotal[j] += parseFloat(aaData[i][total[j]])*1;
-	            		}
-		                
+		                iTotal[j] += aaData[i][total[j]]*1;
 	                }
 	            }
-
 	            var iPage = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 				for ( var i = iStart ; i < iEnd ; i++ )
 				{
 					for ( var j = 0 ; j < total.length ; j++ )
 	                {
-						if(aaData[ aiDisplay[i] ][total[j]] == ''){
-	            			
-	            		}else{
-						iPage[j] += parseFloat(aaData[ aiDisplay[i] ][total[j]])*1;
-	            		}
+						iPage[j] += aaData[ aiDisplay[i] ][total[j]]*1;
 	                }
 				}
-
 	            var nCells = nRow.getElementsByTagName('th');
 	            for ( var k = 0 ; k < total.length ; k++ )
 	            {
-	            	nCells[total[k]].innerHTML = (parseFloat(iTotal[k] * 100) / 100).toFixed(2) + ' ';
+	            	nCells[total[k]].innerHTML = (parseInt(iPage[k] * 100) / 100).toFixed(2) + '<br />' + (parseInt(iTotal[k] * 100) / 100).toFixed(2) + ' ';
 	            }
         	}
         	
