@@ -261,7 +261,9 @@
 				
     	        $('#client_id').prop('disabled', true).trigger("chosen:updated");
     	        $('#client_loan_number').prop('disabled', true).trigger("chosen:updated");
-			}
+    	        $('#surplus_type').chosen();
+    	        $('#surplus_type_chosen').css('width','175px');
+    	    }
 		}
 
 		$(document).on("click", "#pledge_distribution",  function (event) {
@@ -435,6 +437,8 @@
 	    	param.month_fee_usd         	= $("#month_fee_usd").val();
 	    	param.month_payed_gel         	= $("#month_payed_gel").val();
 	    	param.month_payed_usd         	= $("#month_payed_usd").val();
+
+	    	param.surplus_type          	= $("#surplus_type").val();
 	    	
 	    	param.hidde_id		       = $("#hidde_id").val();
 	    	param.hidde_transaction_id = $("#hidde_transaction_id").val();
@@ -448,6 +452,8 @@
 		    	alert('შეავსე კლიენტი');
 			}else if(param.month_fee == '' && param.type_id != 2){
 		    	alert('შეავსე ჩარიცხული თანხა');
+			}else if(param.surplus_type == 0 && (param.pledge_or_other_surplus != '' || param.surplus != '')){
+		    	alert('შეავსე მეტობის ტიპი');
 			}else{
 				$.ajax({
     		        url: aJaxURL_det,
@@ -720,7 +726,9 @@
     							$("#penalti_fee2").val('');
 
     							$("#hidde_id").val(data.id);
-    							$('#currency_id').prop('disabled', false).trigger("chosen:updated");
+    							
+    							$('#currency_id').html(data.currency_data).trigger("chosen:updated");
+    							$('#currency_id').prop('disabled', true).trigger("chosen:updated");
 	    					}
     					}
     			    }
