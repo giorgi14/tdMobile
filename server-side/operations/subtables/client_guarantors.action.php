@@ -8,17 +8,18 @@ $data    = '';
 $user_id = $_SESSION['USERID'];
 
 
-$id		            = $_REQUEST['id'];
-$guarantor_hidde    = $_REQUEST['guarantor_hidde'];
+$id		                      = $_REQUEST['id'];
+$guarantor_hidde              = $_REQUEST['guarantor_hidde'];
 
-$local_id               = $_REQUEST['local_id'];
-$guarantor_name	        = $_REQUEST['guarantor_name'];
-$guarantor_pid          = $_REQUEST['guarantor_pid'];
-$guarantor_address      = $_REQUEST['guarantor_address'];
-$guarantor_fact_address = $_REQUEST['guarantor_fact_address'];
-$guarantor_mail         = $_REQUEST['guarantor_mail'];
-$guarantor_phone        = $_REQUEST['guarantor_phone'];
-$sms_sent_checkbox      = $_REQUEST['sms_sent_checkbox'];
+$local_id                     = $_REQUEST['local_id'];
+$guarantor_name	              = $_REQUEST['guarantor_name'];
+$guarantor_pid                = $_REQUEST['guarantor_pid'];
+$guarantor_address            = $_REQUEST['guarantor_address'];
+$guarantor_fact_address       = $_REQUEST['guarantor_fact_address'];
+$guarantor_fact_address_check = $_REQUEST['guarantor_fact_address_check'];
+$guarantor_mail               = $_REQUEST['guarantor_mail'];
+$guarantor_phone              = $_REQUEST['guarantor_phone'];
+$sms_sent_checkbox            = $_REQUEST['sms_sent_checkbox'];
 
 switch ($action) {
     case 'get_add_page':
@@ -68,9 +69,9 @@ switch ($action) {
         break;
     case 'save_guarantor':
         if($guarantor_hidde == ''){
-            insert($user_id, $local_id, $guarantor_name, $guarantor_pid, $guarantor_address, $guarantor_fact_address, $guarantor_mail,$guarantor_phone, $sms_sent_checkbox);
+            insert($user_id, $local_id, $guarantor_name, $guarantor_pid, $guarantor_address, $guarantor_fact_address, $guarantor_fact_address_check, $guarantor_mail,$guarantor_phone, $sms_sent_checkbox);
         }else{
-            update($guarantor_hidde, $user_id, $guarantor_name, $guarantor_pid, $guarantor_address, $guarantor_fact_address, $guarantor_mail,$guarantor_phone, $sms_sent_checkbox);
+            update($guarantor_hidde, $user_id, $guarantor_name, $guarantor_pid, $guarantor_address, $guarantor_fact_address, $guarantor_fact_address_check, $guarantor_mail,$guarantor_phone, $sms_sent_checkbox);
         }
         
         break;
@@ -82,25 +83,26 @@ $data['error'] = $error;
 
 echo json_encode($data);
 
-function insert($user_id, $local_id, $guarantor_name, $guarantor_pid, $guarantor_address, $guarantor_fact_address, $guarantor_mail,$guarantor_phone, $sms_sent_checkbox){
+function insert($user_id, $local_id, $guarantor_name, $guarantor_pid, $guarantor_address, $guarantor_fact_address, $guarantor_fact_address_check, $guarantor_mail,$guarantor_phone, $sms_sent_checkbox){
     mysql_query("INSERT INTO `client_quarantors` 
-                            (`user_id`, `datetime`, `client_id`, `name`, `pid`, `address`, `fact_address`, `email`, `phone`, `sms_sent`, `actived`) 
+                            (`user_id`, `datetime`, `client_id`, `name`, `pid`, `address`, `fact_address`, `fact_address_check`, `email`, `phone`, `sms_sent`, `actived`) 
                       VALUES 
-                            ('$user_id', NOW(), '$local_id', '$guarantor_name', '$guarantor_pid', '$guarantor_address', '$guarantor_fact_address', '$guarantor_mail', '$guarantor_phone', '$sms_sent_checkbox', 1)");
+                            ('$user_id', NOW(), '$local_id', '$guarantor_name', '$guarantor_pid', '$guarantor_address', '$guarantor_fact_address', '$guarantor_fact_address_check', '$guarantor_mail', '$guarantor_phone', '$sms_sent_checkbox', 1)");
 }
 
-function update($car_driver_hidde, $user_id, $guarantor_name, $guarantor_pid, $guarantor_address, $guarantor_fact_address, $guarantor_mail,$guarantor_phone, $sms_sent_checkbox){
+function update($car_driver_hidde, $user_id, $guarantor_name, $guarantor_pid, $guarantor_address, $guarantor_fact_address, $guarantor_fact_address_check, $guarantor_mail,$guarantor_phone, $sms_sent_checkbox){
    mysql_query("UPDATE `client_quarantors`
-            	   SET `user_id`      = '$user_id',
-            		   `datetime`     =  NOW(),
-            		   `name`         = '$guarantor_name',
-            		   `pid`          = '$guarantor_pid',
-            		   `address`      = '$guarantor_address',
-                       `fact_address` = '$guarantor_fact_address',
-            		   `email`        = '$guarantor_mail',
-            		   `phone`        = '$guarantor_phone',
-                       `sms_sent`     = '$sms_sent_checkbox'
-                WHERE  `id`           = '$car_driver_hidde'");
+            	   SET `user_id`            = '$user_id',
+            		   `datetime`           =  NOW(),
+            		   `name`               = '$guarantor_name',
+            		   `pid`                = '$guarantor_pid',
+            		   `address`            = '$guarantor_address',
+                       `fact_address`       = '$guarantor_fact_address',
+                       `fact_address_check` = '$guarantor_fact_address_check',
+            		   `email`              = '$guarantor_mail',
+            		   `phone`              = '$guarantor_phone',
+                       `sms_sent`           = '$sms_sent_checkbox'
+                WHERE  `id`                 = '$car_driver_hidde'");
 }
 
 function GetClient($id){
@@ -109,6 +111,7 @@ function GetClient($id){
                                                  pid,
                                         		 address,
                                                  fact_address,
+                                                 fact_address_check,
                                                  email,
                                                  phone,
                                                  sms_sent
@@ -121,6 +124,8 @@ function GetClient($id){
 function GetPage($res){
     if($res[sms_sent] == 1){$checked = "checked";}else{$checked = "";}
     if ($res[id] == ''){$index = '995';}else{$index = '';}
+    $check = '';
+    if ($res[fact_address_check] == 1) {$check="checked";}
     $data  .= '
     	   <div id="dialog-form">
                 <fieldset style="float: left;">
@@ -143,8 +148,19 @@ function GetPage($res){
                        <tr style="height:15px;"></tr>
                        <tr>
                            <td style="width: 132px;"><label for="pet_num">ფაქტიური მისამართი</label></td>
-                           <td style="width: 275px;"><input style="width: 275px;" id="guarantor_fact_address" type="text" value="'.$res[fact_address].'"></td>
-            	       </tr>
+                           <td style="width: 215px;">
+                               <table style="width: 100%;">
+                                   <tr>
+                                       <td style="width: 245px;">
+                                            <input style="width: 245px;" id="guarantor_fact_address" type="text" value="'.$res[fact_address].'">
+                                       </td>
+                                       <td style="width: 50px;">
+                                            <input style="width: 20px;" id="guarantor_fact_address_check" type="checkbox" value="1" '.$check.'>
+                                       </td>
+                                   </tr>
+                               </table>
+                           </td>
+                       </tr>
                        <tr style="height:15px;"></tr>
                        <tr>
                            <td style="width: 132px;"><label for="pet_num">ელ-ფოსტა</label></td>

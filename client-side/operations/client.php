@@ -1565,13 +1565,14 @@
 		param.guarantor_hidde	     = $('#guarantor_hidde').val();
 		param.local_id	             = $("#local_id").val();
 		
-		param.guarantor_name	     = $('#guarantor_name').val();
-		param.guarantor_pid	         = $('#guarantor_pid').val();
-		param.guarantor_address	     = $('#guarantor_address').val();
-		param.guarantor_fact_address = $('#guarantor_fact_address').val();
-		param.guarantor_mail	     = $('#guarantor_mail').val();
-		param.guarantor_phone        = $('#guarantor_phone').val();
-		param.sms_sent_checkbox      = $("input[id='sms_sent_checkbox']:checked").val();
+		param.guarantor_name	           = $('#guarantor_name').val();
+		param.guarantor_pid	               = $('#guarantor_pid').val();
+		param.guarantor_address	           = $('#guarantor_address').val();
+		param.guarantor_fact_address       = $('#guarantor_fact_address').val();
+		param.guarantor_fact_address_check = $("input[id='guarantor_fact_address_check']:checked").val();
+		param.guarantor_mail	           = $('#guarantor_mail').val();
+		param.guarantor_phone              = $('#guarantor_phone').val();
+		param.sms_sent_checkbox            = $("input[id='sms_sent_checkbox']:checked").val();
 		
 		if(param.guarantor_phone.length!=12){
 			alert('ნომერი არასწორი ფორმატითაა შეყვანილი');
