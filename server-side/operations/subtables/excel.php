@@ -741,7 +741,7 @@ $data .='</ss:Table>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		        <ss:Cell ss:StyleID="headercell">
-					<ss:Data ss:Type="String">'.$row1['car_price'].' დოლარი</ss:Data>
+					<ss:Data ss:Type="String">'.$row1['car_price'].' აშშ დოლარი</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		        <ss:Cell ss:MergeAcross="1" ss:StyleID="headercell">
