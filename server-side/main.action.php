@@ -2746,8 +2746,9 @@ switch ($action) {
                         					 WHEN client_loan_schedule.`status` = 0 THEN ROUND(client_loan_schedule.root + client_loan_schedule.remaining_root,2)
                                          END AS remaining_root,
                                          CASE
-                                             WHEN client_loan_schedule.`status` = 1 THEN ROUND((client_loan_schedule.remaining_root*client_loan_agreement.loan_beforehand_percent/100),2)
-                        					 WHEN client_loan_schedule.`status` = 0 THEN ROUND((client_loan_schedule.root + client_loan_schedule.remaining_root)*client_loan_agreement.loan_beforehand_percent/100,2)
+                                             WHEN client_loan_schedule.`status` = 1 AND client_loan_schedule.remaining_root>0 THEN ROUND((client_loan_schedule.remaining_root*client_loan_agreement.loan_beforehand_percent/100),2)
+                        					 WHEN client_loan_schedule.`status` = 0 AND client_loan_schedule.remaining_root>0 THEN ROUND((client_loan_schedule.root + client_loan_schedule.remaining_root)*client_loan_agreement.loan_beforehand_percent/100,2)
+                                             WHEN client_loan_schedule.remaining_root=0 THEN 0.00
                                          END AS sakomisio,
                         				 DATEDIFF('$pay_datee', client_loan_schedule.pay_date) AS gadacilebuli,
                         				 client_loan_agreement.penalty_days,
