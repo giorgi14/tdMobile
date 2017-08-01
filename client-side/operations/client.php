@@ -510,6 +510,9 @@
              		$("#car_driver_born").val('');
              		
                 }
+                
+				$(".add-edit-form-guarantors-class").css('z-index','999');
+				
         }else if(fName == 'add-edit-b_letter1'){
         	var buttons = {
         			"show-b_letter": {
@@ -598,6 +601,7 @@
 		        }
 		    };
             GetDialog("add-edit-form-pers", 450, "auto", buttons, 'left+43 top');
+            $(".add-edit-form-pers-class").css('z-index','999');
         }
     }
 
