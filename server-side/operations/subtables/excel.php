@@ -438,7 +438,7 @@ $data .='</ss:Table>
                         FROM   `client_car_drivers`
                         WHERE   actived = 1 AND client_id = '$local_id'");
     
-    $curense = 'დოლარი';
+    $curense = 'აშშ დოლარი';
     if($row1[loan_currency_id] == 1){
         $curense = 'ლარი';
     }
