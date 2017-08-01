@@ -6,18 +6,18 @@ $file_type	= $_REQUEST['file_type'];
 
 if ($file_type == 'payment_schedule') {
     $res =mysql_query("SELECT    client.id,
-            			     CONCAT(client.`name`, ' ', client.lastname) AS `name`,
-                             DATE_FORMAT(client_loan_agreement.datetime,'%m') AS `month_id`,
-                    		 DATE_FORMAT(client_loan_agreement.datetime,'%Y') AS `year`,
-                             DATE_FORMAT(client_loan_agreement.datetime,'%d') AS `day`,
-                             client_loan_agreement.loan_amount,
-                             client_loan_agreement.loan_months,
-                             client_loan_agreement.percent,
-                             client_loan_agreement.loan_type_id
-                   FROM     `client`
-                   LEFT JOIN client_loan_agreement ON client_loan_agreement.client_id = client.id
-                   LEFT JOIN `month` ON `month`.id = DATE_FORMAT(client_loan_agreement.datetime,'%m')
-                   WHERE     client.id = '$local_id' AND client.actived=1 LIMIT 1");
+                			     CONCAT(client.`name`, ' ', client.lastname) AS `name`,
+                                 DATE_FORMAT(client_loan_agreement.datetime,'%m') AS `month_id`,
+                        		 DATE_FORMAT(client_loan_agreement.datetime,'%Y') AS `year`,
+                                 DATE_FORMAT(client_loan_agreement.datetime,'%d') AS `day`,
+                                 client_loan_agreement.loan_amount,
+                                 client_loan_agreement.loan_months,
+                                 client_loan_agreement.percent,
+                                 client_loan_agreement.loan_type_id
+                       FROM     `client`
+                       LEFT JOIN client_loan_agreement ON client_loan_agreement.client_id = client.id
+                       LEFT JOIN `month` ON `month`.id = DATE_FORMAT(client_loan_agreement.datetime,'%m')
+                       WHERE     client.id = '$local_id' AND client.actived=1 LIMIT 1");
  	
 
     $row1    = mysql_fetch_assoc($res);
@@ -412,15 +412,16 @@ $data .='</ss:Table>
                                     			 car_type.`name` AS car_type_name,
                                                  client_car.car_seats,
                                     			 client_car.engine_size,
-                                    			 client_car.manufacturing_date,
+                                    			 DATE_FORMAT(client_car.manufacturing_date, '%d.%m.%Y') AS manufacturing_date,
                                     			 client_car.registration_number,
-                                    			 client_car.car_sale_date,
+                                    			 DATE_FORMAT(client_car.car_sale_date, '%d.%m.%Y') AS car_sale_date,
                                     			 car_insurance_info.car_real_price AS car_price,
                                     			 car_insurance_info.car_loan_amount AS loan_amount,
                                     			 car_insurance_info.car_insurance_amount AS insurance_price_usd,
-                                                 car_insurance_info.car_insurance_start AS insurance_start_date,
-                                    			 car_insurance_info.car_insurance_end AS insurance_end_date,
-                                    			 car_insurance_info.datetime AS car_insurance_info_datetime
+                                                 DATE_FORMAT(car_insurance_info.car_insurance_start, '%d.%m.%Y') AS insurance_start_date,
+                                    			 DATE_FORMAT(car_insurance_info.car_insurance_end, '%d.%m.%Y') AS insurance_end_date,
+                                    			 DATE_FORMAT(car_insurance_info.datetime, '%d.%m.%Y') AS car_insurance_info_datetime,
+                                                 client_loan_agreement.loan_currency_id
                                             FROM car_insurance_info
                                             JOIN client ON client.id = car_insurance_info.client_id
                                             JOIN client_loan_agreement ON client.id = client_loan_agreement.client_id
@@ -429,14 +430,18 @@ $data .='</ss:Table>
                                             WHERE car_insurance_info.id = '$insurance_hidde' AND car_insurance_info.actived = 1"));
     
     $req = mysql_query("SELECT `name`,
-                				born_date,
+                				DATE_FORMAT(born_date, '%d.%m.%Y') AS `born_date`,
                                 position,
                                 TIMESTAMPDIFF(YEAR, born_date, CURDATE()) AS age,
                 				driving_license_type,
-                				driving_license_date
+                				DATE_FORMAT(driving_license_date, '%d.%m.%Y') AS `driving_license_date`
                         FROM   `client_car_drivers`
                         WHERE   actived = 1 AND client_id = '$local_id'");
     
+    $curense = 'დოლარი';
+    if($row1[loan_currency_id] == 1){
+        $curense = 'ლარი';
+    }
     $number = 100;
     $i = 1;
     while ($row = mysql_fetch_assoc($req)){
@@ -736,7 +741,7 @@ $data .='</ss:Table>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		        <ss:Cell ss:StyleID="headercell">
-					<ss:Data ss:Type="String">'.$row1['car_price'].'</ss:Data>
+					<ss:Data ss:Type="String">'.$row1['car_price'].' დოლარი</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		        <ss:Cell ss:MergeAcross="1" ss:StyleID="headercell">
@@ -748,7 +753,7 @@ $data .='</ss:Table>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		        <ss:Cell ss:MergeAcross="1" ss:StyleID="headercell">
-					<ss:Data ss:Type="String">'.$row1['loan_amount'].'</ss:Data>
+					<ss:Data ss:Type="String">'.$row1['loan_amount'].' '.$curense.'</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		    </ss:Row>
