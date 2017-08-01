@@ -577,7 +577,7 @@
                 GetDate('car_insurance_end');
                 $('#add-edit-b_letter1, .add-edit-b_letter1-class').css('overflow','visible');
                 $('#add-edit-b_letter1, .add-edit-b_letter1-class').css('min-height','275px');
-
+                $("#old_insurance_info").button();
                 if($("#b_letter_hidde").val()!=''){
                     $("#show-b_letter").css('display', '');
                 }else{
@@ -1446,6 +1446,33 @@
 		}
 	});
 
+    $(document).on("click", "#old_insurance_info", function () {
+		param 	  = new Object();
+		param.act = "old_insurance_info";
+
+		param.local_id = $('#local_id').val();
+		
+		$.ajax({
+	        url: aJaxURL,
+		    data: param,
+	        success: function(data) {       
+				if(typeof(data.error) != "undefined"){
+					if(data.error != ""){
+						alert(data.error);
+					}else{
+						$("#car_loan_amount").val(data.car_loan_amount);
+						$("#car_real_price").val(data.car_real_price);
+						$("#car_ins_registration_number").val(data.car_ins_registration_number);
+						$("#car_insurance_amount").val(data.car_insurance_amount);
+						$("#ins_payy").val(data.ins_payy);
+						$("#car_insurance_start").val(data.car_insurance_start);
+						$("#car_insurance_end").val(data.car_insurance_end);
+					}
+				}
+	    	}
+	   });
+	});
+    
     $(document).on("click", "#check_new_monthly_pay", function () {
 		param 	  = new Object();
 		param.act = "check_monthly_pay";

@@ -122,6 +122,10 @@ function GetClient($id){
 
 
 function GetPage($res){
+    $dis = '';
+    if ($res[id] != '') {
+        $dis = 'disabled="disabled"';
+    }
     $data  .= '
     	   <div id="dialog-form">
                 <fieldset style="width: 440px;  float: left;">
@@ -160,6 +164,11 @@ function GetPage($res){
                        <tr>
                            <td style="width: 150px;"><label for="pet_num">დასასრული</label></td>
                            <td style="width: 275px;"><input style="width: 275px;" id="car_insurance_end" type="text" value="'.$res[car_insurance_end].'"></td>
+            	       </tr>
+                       <tr style="height:15px;"></tr>
+                       <tr>
+                           <td style="width: 150px;"><label for="pet_num">ძველი მონაცემები</label></td>
+                           <td style="width: 275px;"><button style="width: 140px;" id="old_insurance_info" '.$dis.'>ძველი მონაცემები</button></td>
             	       </tr>
                    </table>
             </fieldset>
