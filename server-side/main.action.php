@@ -2679,66 +2679,120 @@ switch ($action) {
         $local_id  = $_REQUEST['local_id'];
         $pay_datee = $_REQUEST['pay_datee1'];
 
-        $res = mysql_query("SELECT   client_loan_schedule.id,
-                    				 client_loan_agreement.status AS st,
-                    				 client_loan_schedule.pay_date,
-                    				 client_loan_schedule.`status`,
-                                     CASE
-                                         WHEN client_loan_schedule.`status` = 1 THEN 0
-                    					 WHEN client_loan_schedule.`status` = 0 THEN ROUND(client_loan_schedule.percent,2)
-                                     END AS percent,
-                                     CASE
-                                         WHEN client_loan_schedule.`status` = 1 THEN client_loan_schedule.remaining_root
-                    					 WHEN client_loan_schedule.`status` = 0 THEN ROUND(client_loan_schedule.root + client_loan_schedule.remaining_root,2)
-                                     END AS remaining_root,
-                                     CASE
-                                         WHEN client_loan_schedule.`status` = 1 THEN ROUND((client_loan_schedule.remaining_root*client_loan_agreement.loan_beforehand_percent/100),2)
-                    					 WHEN client_loan_schedule.`status` = 0 THEN ROUND((client_loan_schedule.root + client_loan_schedule.remaining_root)*client_loan_agreement.loan_beforehand_percent/100,2)
-                                     END AS sakomisio,
-                    				 DATEDIFF('$pay_datee', client_loan_schedule.pay_date) AS gadacilebuli,
-                    				 client_loan_agreement.penalty_days,
-                    				 client_loan_agreement.penalty_percent,
-                    				 client_loan_agreement.penalty_additional_percent
-                            FROM     client_loan_schedule
-                            JOIN     client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
-                            WHERE    client_loan_agreement.client_id = '$local_id' AND client_loan_schedule.schedule_date <= '$pay_datee'
-                            ORDER BY client_loan_schedule.id DESC
-                            LIMIT 1");
         
-        $res1 = mysql_query("SELECT   client_loan_schedule.percent/30 AS `percent`
-                             FROM     client_loan_schedule
-                             JOIN     client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
-                             WHERE    client_loan_agreement.client_id = '$local_id' AND client_loan_schedule.schedule_date >= '$pay_datee'
-                             ORDER BY client_loan_schedule.id ASC
-                             LIMIT 1");
-        
-        $result  = mysql_fetch_assoc($res);
-        $result1 = mysql_fetch_assoc($res1);
-        
-        $remainig_root = $result[remaining_root];
-        
+        $check_count = mysql_query("SELECT client_loan_schedule.id,
+                                           DATEDIFF('$pay_datee', client_loan_schedule.pay_date) AS gadacilebuli,
+                                           client_loan_agreement.penalty_days,
+                            			   client_loan_agreement.penalty_percent,
+                            			   client_loan_agreement.penalty_additional_percent,
+                                           ROUND(client_loan_schedule.root + client_loan_schedule.remaining_root,2) AS remaining_root
+                                    FROM   client_loan_schedule 
+                                    JOIN   client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
+                                    WHERE  client_loan_agreement_id = '$local_id'
+                                    AND    DATE(client_loan_schedule.schedule_date)<='$pay_datee'
+                                    AND    client_loan_schedule.`status` = 0
+                                    AND    client_loan_schedule.actived = 1");
         $penalty = 0;
-        if ($result[gadacilebuli]>0 && $result[gadacilebuli]<=$result[penalty_days] && $result[status] == 0) {
-            $penalty = round(($remainig_root * ($result[penalty_percent]/100))*$result[gadacilebuli],2);
-        }elseif ($result[gadacilebuli]>0 && $result[gadacilebuli]>$result[penalty_days] && $result[status] == 0){
-            $penalty = round(round(($remainig_root * ($result[penalty_percent]/100))*$result[penalty_days],2)+round(($remainig_root * ($result[penalty_additional_percent]/100))*($result[gadacilebuli]-$result[penalty_days]),2),2);
+        while ($row_all = mysql_fetch_array($check_count)) {
+            $remainig_root = $row_all[remaining_root];
+            if ($row_all[gadacilebuli]>0 && $row_all[gadacilebuli]<=$row_all[penalty_days]) {
+                $penalty1 = round(($remainig_root * ($row_all[penalty_percent]/100))*$row_all[gadacilebuli],2);
+            }elseif ($row_all[gadacilebuli]>0 && $row_all[gadacilebuli]>$row_all[penalty_days]){
+                $penalty1 = round(round(($remainig_root * ($row_all[penalty_percent]/100))*$row_all[penalty_days],2)+round(($remainig_root * ($row_all[penalty_additional_percent]/100))*($row_all[gadacilebuli]-$row_all[penalty_days]),2),2);
+            }
+            $penalty = $penalty+$penalty1;
         }
         
-        $nasargeblebi = round($result1[percent]*$result[gadacilebuli],2);
+        $resultt = mysql_fetch_array(mysql_query("SELECT MAX(client_loan_schedule.id) AS max_sch_id,
+                                                        (SELECT ROUND(clsh.remaining_root+clsh.root,2) FROM client_loan_schedule AS clsh WHERE clsh.id = MIN(client_loan_schedule.id)) AS `remaining_root`,
+                                                        (SELECT DATEDIFF('$pay_datee', clsh.pay_date) FROM client_loan_schedule AS clsh WHERE clsh.id = MAX(client_loan_schedule.id)) AS `gadacilebuli`,
+                                                        (SELECT ROUND(clsh.percent/30,2) FROM client_loan_schedule AS clsh WHERE clsh.id = MAX(client_loan_schedule.id)) AS `erti_dgis_procenti`,
+                                                         SUM(client_loan_schedule.percent) AS percent,
+                                                         client_loan_agreement.loan_beforehand_percent,
+                                                        (SELECT clsh.remaining_root FROM client_loan_schedule AS clsh WHERE clsh.id = MAX(client_loan_schedule.id)) AS `check_remaining_root`,
+                                                         MIN(client_loan_schedule.id) AS min_sch_id
+                                                  FROM   client_loan_schedule 
+                                                  JOIN   client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
+                                                  WHERE  client_loan_agreement_id = $local_id
+                                                  AND    DATE(client_loan_schedule.schedule_date)<='$pay_datee'
+                                                  AND    client_loan_schedule.`status` = 0
+                                                  AND    client_loan_schedule.actived = 1"));
         
-        if ($result[st] == 1){
-            $res1 = mysql_fetch_assoc(mysql_query("SELECT SUM(pay_amount) AS pay_amount
-                                                   FROM   money_transactions
-                                                   WHERE  money_transactions.client_loan_schedule_id = '$result[id]' AND money_transactions.status in(3) AND actived = 1"));
+        $rercent        = $resultt[percent];
+        $remaining_root = $resultt[remaining_root];
+        $nasargeblebi   = round($resultt[erti_dgis_procenti]*$resultt[gadacilebuli],2);
         
-            $pay_amount = round($remainig_root + $result['percent'] + $penalty + $result['sakomisio'] + $nasargeblebi, 2);
+        if ($resultt[check_remaining_root] > 0){
+            $sakomisio = round($remaining_root * ($resultt[loan_beforehand_percent]/100),2);
+        }
         
-            $data = array('pay_amount' => $pay_amount, 'root' => $remainig_root, 'percent' => $result[percent], 'penalty' => $penalty, 'pay_amount1' => $res1[pay_amount], 'nasargeblebebi' => $nasargeblebi, 'sakomisio' => $result[sakomisio]);
+        if (mysql_num_rows($check_count)>1) {
+           
+        $pay_amount = round($remaining_root + $rercent + $penalty + $result['sakomisio'] + $nasargeblebi, 2);
+       
+        $data = array('pay_amount' => $pay_amount, 'root' => $remaining_root, 'percent' => $rercent, 'penalty' => $penalty, 'pay_amount1' => $res1[pay_amount], 'nasargeblebebi' => $nasargeblebi, 'sakomisio' => $sakomisio);
         }else{
-            global  $error;
-            $error = 'ხელშეკრულება არ არის გააქტიურებული';
+        
+            $res = mysql_query("SELECT   client_loan_schedule.id,
+                        				 client_loan_agreement.status AS st,
+                        				 client_loan_schedule.pay_date,
+                        				 client_loan_schedule.`status`,
+                                         CASE
+                                             WHEN client_loan_schedule.`status` = 1 THEN 0
+                        					 WHEN client_loan_schedule.`status` = 0 THEN ROUND(client_loan_schedule.percent,2)
+                                         END AS percent,
+                                         CASE
+                                             WHEN client_loan_schedule.`status` = 1 THEN client_loan_schedule.remaining_root
+                        					 WHEN client_loan_schedule.`status` = 0 THEN ROUND(client_loan_schedule.root + client_loan_schedule.remaining_root,2)
+                                         END AS remaining_root,
+                                         CASE
+                                             WHEN client_loan_schedule.`status` = 1 THEN ROUND((client_loan_schedule.remaining_root*client_loan_agreement.loan_beforehand_percent/100),2)
+                        					 WHEN client_loan_schedule.`status` = 0 THEN ROUND((client_loan_schedule.root + client_loan_schedule.remaining_root)*client_loan_agreement.loan_beforehand_percent/100,2)
+                                         END AS sakomisio,
+                        				 DATEDIFF('$pay_datee', client_loan_schedule.pay_date) AS gadacilebuli,
+                        				 client_loan_agreement.penalty_days,
+                        				 client_loan_agreement.penalty_percent,
+                        				 client_loan_agreement.penalty_additional_percent
+                                FROM     client_loan_schedule
+                                JOIN     client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
+                                WHERE    client_loan_agreement.client_id = '$local_id' AND client_loan_schedule.schedule_date <= '$pay_datee'
+                                ORDER BY client_loan_schedule.id DESC
+                                LIMIT 1");
+            
+            $res1 = mysql_query("SELECT   client_loan_schedule.percent/30 AS `percent`
+                                 FROM     client_loan_schedule
+                                 JOIN     client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
+                                 WHERE    client_loan_agreement.client_id = '$local_id' AND client_loan_schedule.schedule_date >= '$pay_datee'
+                                 ORDER BY client_loan_schedule.id ASC
+                                 LIMIT 1");
+            
+            $result  = mysql_fetch_assoc($res);
+            $result1 = mysql_fetch_assoc($res1);
+            
+            $remainig_root = $result[remaining_root];
+            
+            $penalty = 0;
+            if ($result[gadacilebuli]>0 && $result[gadacilebuli]<=$result[penalty_days] && $result[status] == 0) {
+                $penalty = round(($remainig_root * ($result[penalty_percent]/100))*$result[gadacilebuli],2);
+            }elseif ($result[gadacilebuli]>0 && $result[gadacilebuli]>$result[penalty_days] && $result[status] == 0){
+                $penalty = round(round(($remainig_root * ($result[penalty_percent]/100))*$result[penalty_days],2)+round(($remainig_root * ($result[penalty_additional_percent]/100))*($result[gadacilebuli]-$result[penalty_days]),2),2);
+            }
+            
+            $nasargeblebi = round($result1[percent]*$result[gadacilebuli],2);
+        
+            if ($result[st] == 1){
+                $res1 = mysql_fetch_assoc(mysql_query("SELECT SUM(pay_amount) AS pay_amount
+                                                       FROM   money_transactions
+                                                       WHERE  money_transactions.client_loan_schedule_id = '$result[id]' AND money_transactions.status in(3) AND actived = 1"));
+            
+                $pay_amount = round($remainig_root + $result['percent'] + $penalty + $result['sakomisio'] + $nasargeblebi, 2);
+            
+                $data = array('pay_amount' => $pay_amount, 'root' => $remainig_root, 'percent' => $result[percent], 'penalty' => $penalty, 'pay_amount1' => $res1[pay_amount], 'nasargeblebebi' => $nasargeblebi, 'sakomisio' => $result[sakomisio]);
+            }else{
+                global  $error;
+                $error = 'ხელშეკრულება არ არის გააქტიურებული';
+            }
         }
-    
     
         break;
         
