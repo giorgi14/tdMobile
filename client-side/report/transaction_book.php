@@ -17,7 +17,7 @@
         
 		function LoadTable(tName,num,change_colum_main,aJaxURL){
 			var total =	[6,7,8];
-			GetDataTable1(tName, aJaxURL, 'get_list', num, "&filt_day="+$("#filt_day").val()+"&filt_month="+$("#filt_month").val(), 0, "", 1, "desc", total, change_colum_main);
+			GetDataTable(tName, aJaxURL, 'get_list', num, "&filt_day="+$("#filt_day").val()+"&filt_month="+$("#filt_month").val(), 0, "", 1, "desc", total, change_colum_main);
 			setTimeout(function(){$('.ColVis, .dataTable_buttons').css('display','none');}, 90);
 		}
 
