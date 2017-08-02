@@ -2661,14 +2661,25 @@ switch ($action) {
         
         $remainig_root = $res[remaining_root];
         
-        if ($res[gadacilebuli]>0 && $res[gadacilebuli]<=$res[penalty_days]) {
-            $penalty = round(($remainig_root * ($res[penalty_percent]/100))*$res[gadacilebuli],2);
-        }elseif ($res[gadacilebuli]>0 && $res[gadacilebuli]>$res[penalty_days] && $res[penalty_additional_percent]>0){
-            $penalty = round((($remainig_root * ($res[penalty_percent]/100))*$res[penalty_days])+($remainig_root * ($res[penalty_additional_percent]/100))*($res[gadacilebuli]-$res[penalty_days]),2);
-        }elseif($res[gadacilebuli]>0 && $res[penalty_additional_percent] <= 0){
-            $penalty = round(($remainig_root * ($res[penalty_percent]/100))*$res[gadacilebuli],2);
+        $check_count_schedule = mysql_num_rows(mysql_query("SELECT 	    client_loan_schedule.id
+                                                            FROM 	   `client_loan_schedule`
+                                                            LEFT JOIN   client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
+                                                            JOIN        client ON client.id = client_loan_agreement.client_id
+                                                            WHERE       client_loan_schedule.actived = 1 AND client_id = '$local_id' AND client_loan_schedule.`status` =0 
+                                                            AND         client_loan_schedule.id < '$cal_loan_schedule_id'"));
+        
+        if ($check_count_schedule > 0) {
+            $penalty = round(($remainig_root * ($res[penalty_additional_percent]/100))*$res[gadacilebuli],2);
+        }else{
+            if ($res[gadacilebuli]>0 && $res[gadacilebuli]<=$res[penalty_days]) {
+                $penalty = round(($remainig_root * ($res[penalty_percent]/100))*$res[gadacilebuli],2);
+            }elseif ($res[gadacilebuli]>0 && $res[gadacilebuli]>$res[penalty_days] && $res[penalty_additional_percent]>0){
+                $penalty = round((($remainig_root * ($res[penalty_percent]/100))*$res[penalty_days])+($remainig_root * ($res[penalty_additional_percent]/100))*($res[gadacilebuli]-$res[penalty_days]),2);
+            }elseif($res[gadacilebuli]>0 && $res[penalty_additional_percent] <= 0){
+                $penalty = round(($remainig_root * ($res[penalty_percent]/100))*$res[gadacilebuli],2);
+            }
         }
-       
+        
         if ($res[status] == 1) {
             $res1 = mysql_fetch_assoc(mysql_query("SELECT SUM(pay_amount) AS pay_amount
                                                    FROM   money_transactions
@@ -2702,13 +2713,20 @@ switch ($action) {
                                     AND    client_loan_schedule.`status` = 0
                                     AND    client_loan_schedule.actived = 1");
         $penalty = 0;
+        $i       = 0;
         while ($row_all = mysql_fetch_array($check_count)) {
             $remainig_root = $row_all[remaining_root];
-            if ($row_all[gadacilebuli]>0 && $row_all[gadacilebuli]<=$row_all[penalty_days]) {
-                $penalty1 = round(($remainig_root * ($row_all[penalty_percent]/100))*$row_all[gadacilebuli],2);
-            }elseif ($row_all[gadacilebuli]>0 && $row_all[gadacilebuli]>$row_all[penalty_days]){
-                $penalty1 = round(round(($remainig_root * ($row_all[penalty_percent]/100))*$row_all[penalty_days],2)+round(($remainig_root * ($row_all[penalty_additional_percent]/100))*($row_all[gadacilebuli]-$row_all[penalty_days]),2),2);
+            if ($i == 0) {
+                if ($row_all[gadacilebuli]>0 && $row_all[gadacilebuli]<=$row_all[penalty_days]) {
+                    $penalty1 = round(($remainig_root * ($row_all[penalty_percent]/100))*$row_all[gadacilebuli],2);
+                }elseif ($row_all[gadacilebuli]>0 && $row_all[gadacilebuli]>$row_all[penalty_days]){
+                    $penalty1 = round(round(($remainig_root * ($row_all[penalty_percent]/100))*$row_all[penalty_days],2)+round(($remainig_root * ($row_all[penalty_additional_percent]/100))*($row_all[gadacilebuli]-$row_all[penalty_days]),2),2);
+                }
+            }else{
+                $penalty1 = round(($remainig_root * ($row_all[penalty_additional_percent]/100))*$row_all[gadacilebuli],2);
             }
+            $i++;
+            
             $penalty = $penalty+$penalty1;
         }
         
@@ -2729,10 +2747,12 @@ switch ($action) {
         
         $rercent        = $resultt[percent];
         $remaining_root = $resultt[remaining_root];
-        $nasargeblebi   = round($resultt[erti_dgis_procenti]*$resultt[gadacilebuli],2);
+        $sakomisio      = '0.00';
+        $nasargeblebi   = '0.00';
         
         if ($resultt[check_remaining_root] > 0){
-            $sakomisio = round($remaining_root * ($resultt[loan_beforehand_percent]/100),2);
+            $sakomisio    = round($remaining_root * ($resultt[loan_beforehand_percent]/100),2);
+            $nasargeblebi = round($resultt[erti_dgis_procenti]*$resultt[gadacilebuli],2);
         }
         
         if (mysql_num_rows($check_count)>1) {
