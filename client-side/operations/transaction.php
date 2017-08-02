@@ -598,7 +598,8 @@
 	        					$("#penalti_fee1").val(data.penalty);
 	        					$("#payable_Fee1").val(data.sakomisio);
 	        					$("#yield1").val(data.nasargeblebebi);
-	    						//$("#add-edit-form-canceled").html(data.page);
+	        					$("#month_fee2").val(data.pay_amount1);
+	        					//$("#add-edit-form-canceled").html(data.page);
 	    					}
 	    				}
 	    	    	}
