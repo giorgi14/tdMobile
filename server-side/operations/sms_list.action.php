@@ -29,23 +29,24 @@ switch ($action) {
 		    $filt="AND sent_list.status = 1";
 		}
 		 
-        $rResult = mysql_query("SELECT  sent_list.id,
-                    					sent_list.datetime,
-                    					CASE 
-                    						WHEN sent_list.client_id > 0 AND sent_list.guarantor_id = 0 AND sent_list.person_id = 0 AND sent_list.trust_person_id = 0 THEN concat(client.`name`, ' ', client.lastname)
-                    						WHEN sent_list.guarantor_id > 0 THEN CONCAT(client.`name`, ' ', client.lastname, '/თავ.პ./',IFNULL(client_quarantors.`name`,'...'))
-                    						WHEN sent_list.person_id > 0 THEN CONCAT(client.`name`, ' ', client.lastname, '/საკ.პ./',IFNULL(client_person.`person`,'...'))
-                    						WHEN sent_list.trust_person_id > 0 THEN CONCAT(client.`name`, ' ', client.lastname, '/მინდ.პ./',IFNULL(client_trusted_person.`name`,'...'))
-                    					END AS `name`,
-                    					sent_list.`address`,
-                    					sent_list.content,
-                                        IF(sent_list.`status` = 0, 'გასაგზავნი', 'გაგზავნილი')
-                              FROM      sent_list
-                              LEFT JOIN client ON sent_list.client_id = client.id
-                              LEFT JOIN client_quarantors ON client_quarantors.id = sent_list.guarantor_id
-                              LEFT JOIN client_person ON client_person.id = sent_list.person_id
-                              LEFT JOIN client_trusted_person ON client_trusted_person.id = sent_list.trust_person_id
-                              WHERE     sent_list.actived = 1 $filt");
+        $rResult = mysql_query(" SELECT    sent_list.id,
+                    					   sent_list.datetime,
+                    					   CONCAT(CASE 
+                                					  WHEN sent_list.client_id > 0 AND sent_list.guarantor_id = 0 AND sent_list.person_id = 0 AND sent_list.trust_person_id = 0 THEN concat(client.`name`, ' ', client.lastname)
+                                					  WHEN sent_list.guarantor_id > 0 THEN CONCAT(client.`name`, ' ', client.lastname, '/თავ.პ./',IFNULL(client_quarantors.`name`,' '))
+                                					  WHEN sent_list.person_id > 0 THEN CONCAT(client.`name`, ' ', client.lastname, '/საკ.პ./',IFNULL(client_person.`person`,' '))
+                                					  WHEN sent_list.trust_person_id > 0 THEN CONCAT(client.`name`, ' ', client.lastname, '/მინდ.პ./',IFNULL(client_trusted_person.`name`,' '))
+                                				  END,'/', IFNULL(client_car.registration_number, '')) AS `name`,
+                        					sent_list.`address`,
+                        					sent_list.content,
+                                            IF(sent_list.`status` = 0, 'გასაგზავნი', 'გაგზავნილი')
+                                  FROM      sent_list
+                                  LEFT JOIN client ON sent_list.client_id = client.id
+                                  LEFT JOIN client_car ON client.id = client_car.client_id
+                                  LEFT JOIN client_quarantors ON client_quarantors.id = sent_list.guarantor_id
+                                  LEFT JOIN client_person ON client_person.id = sent_list.person_id
+                                  LEFT JOIN client_trusted_person ON client_trusted_person.id = sent_list.trust_person_id
+                                  WHERE     sent_list.actived = 1 $filt");
 
 		$data = array("aaData" => array());
 

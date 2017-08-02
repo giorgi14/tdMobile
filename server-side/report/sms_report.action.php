@@ -24,12 +24,13 @@ switch ($action) {
 		
 		$rResult = mysql_query("SELECT    sent_sms.id,
 		                                  sent_sms.datetime,
-                        				  client.`name`,
+                        				  CONCAT(client.`name`, '/',IFNULL(client_car.registration_number, '')),
                         				  sent_sms.`address`,
                         				  sent_sms.content,
                         				  IF(sent_sms.status = 0, 'გასაგზავნი', 'გაგზავნილი')
                                 FROM      sent_sms
                                 LEFT JOIN client ON sent_sms.client_id = client.id
+		                        LEFT JOIN client_car ON client.id = client_car.client_id
                                 WHERE     sent_sms.actived = 1 AND sent_sms.status = 1 
 		                        AND       DATE(sent_sms.datetime) BETWEEN '$start' AND '$end'");
 

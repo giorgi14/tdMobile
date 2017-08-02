@@ -32,16 +32,17 @@ switch ($action) {
         $rResult = mysql_query("SELECT  sent_sms.id,
                     					sent_sms.datetime,
                     					CASE 
-                    						WHEN sent_sms.client_id > 0 AND sent_sms.guarantor_id = 0 AND sent_sms.person_id = 0 AND sent_sms.trust_person_id = 0 THEN client.`name`
-                    						WHEN sent_sms.guarantor_id > 0 THEN CONCAT(client.`name`,'/თავ.პ./',client_quarantors.`name`)
-                    						WHEN sent_sms.person_id > 0 THEN CONCAT(client.`name`,'/საკ.პ./',client_person.`person`)
-                    						WHEN sent_sms.trust_person_id > 0 THEN CONCAT(client.`name`,'/მინდ.პ./',client_trusted_person.`name`)
-                    					END AS `name`,
+                    					   WHEN sent_sms.client_id > 0 AND sent_sms.guarantor_id = 0 AND sent_sms.person_id = 0 AND sent_sms.trust_person_id = 0 THEN CONCAT(client.`name`,'/',IFNULL(client_car.registration_number, ''))
+                    					   WHEN sent_sms.guarantor_id > 0 THEN CONCAT(client.`name`,'/თავ.პ./',client_quarantors.`name`,'/', IFNULL(client_car.registration_number, ''))
+                    					   WHEN sent_sms.person_id > 0 THEN CONCAT(client.`name`,'/საკ.პ./',client_person.`person`,'/', IFNULL(client_car.registration_number, ''))
+                    					   WHEN sent_sms.trust_person_id > 0 THEN CONCAT(client.`name`,'/მინდ.პ./',client_trusted_person.`name`,'/', IFNULL(client_car.registration_number, ''))
+                    				    END AS `name`,
                     					sent_sms.`address`,
                     					sent_sms.content,
                                         IF(sent_sms.`status` = 0, 'გასაგზავნი', 'გაგზავნილი')
                               FROM      sent_sms
                               LEFT JOIN client ON sent_sms.client_id = client.id
+                              LEFT JOIN client_car ON client.id = client_car.client_id
                               LEFT JOIN client_quarantors ON client_quarantors.id = sent_sms.guarantor_id
                               LEFT JOIN client_person ON client_person.id = sent_sms.person_id
                               LEFT JOIN client_trusted_person ON client_trusted_person.id = sent_sms.trust_person_id
