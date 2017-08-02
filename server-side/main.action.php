@@ -2757,7 +2757,7 @@ switch ($action) {
         
         if (mysql_num_rows($check_count)>1) {
            
-            $pay_amount = round($remaining_root + $rercent + $penalty + $result['sakomisio'] + $nasargeblebi, 2);
+            $pay_amount = round($remaining_root + $rercent + $penalty + $sakomisio + $nasargeblebi, 2);
            
             $data = array('pay_amount' => $pay_amount, 'root' => $remaining_root, 'percent' => $rercent, 'penalty' => $penalty, 'pay_amount1' => $res1[pay_amount], 'nasargeblebebi' => $nasargeblebi, 'sakomisio' => $sakomisio);
         }else{
@@ -2815,9 +2815,9 @@ switch ($action) {
                                                        FROM   money_transactions
                                                        WHERE  money_transactions.client_loan_schedule_id = '$result[id]' AND money_transactions.status in(3) AND actived = 1"));
             
-                $pay_amount = round($remainig_root + $result['percent'] + $penalty + $result['sakomisio'] + $nasargeblebi, 2);
+                $pay_amount = round($remainig_root + $result['percent'] + $penalty + $sakomisio + $nasargeblebi, 2);
             
-                $data = array('pay_amount' => $pay_amount, 'root' => $remainig_root, 'percent' => $result[percent], 'penalty' => $penalty, 'pay_amount1' => $res1[pay_amount], 'nasargeblebebi' => $nasargeblebi, 'sakomisio' => $result[sakomisio]);
+                $data = array('pay_amount' => $pay_amount, 'root' => $remainig_root, 'percent' => $result[percent], 'penalty' => $penalty, 'pay_amount1' => $res1[pay_amount], 'nasargeblebebi' => $nasargeblebi, 'sakomisio' => $sakomisio);
             }else{
                 global  $error;
                 $error = 'ხელშეკრულება არ არის გააქტიურებული';
