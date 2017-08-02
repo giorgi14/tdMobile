@@ -255,7 +255,8 @@
 	    		        			            $("#check_calculation").button();
 	    		        			            GetDate('pay_datee');
 	    		        			            $("#pay_datee").blur();
-	    		        			            
+	    		        			            get_loan_schedule($("#pay_datee").val(), $("#id").val());
+	    		        			            $("#cal_loan_schedule_id").chosen();
 	    		        			        }
 	    		        				}
 	    		        	    	}
@@ -346,15 +347,51 @@
 	        }
 	    }
 
+		$(document).on("change", "#pay_datee", function () {
+			get_loan_schedule($(this).val(), $("#id").val());
+		});
+		
+		function get_loan_schedule(date, local_id){
+			param 	  = new Object();
+			param.act = "get_loan_schedule";
+
+			param.local_id	= local_id;
+			param.pay_datee	= date;
+			
+			$.ajax({
+		        url: aJaxURL,
+			    data: param,
+		        success: function(data) {       
+					if(typeof(data.error) != "undefined"){
+						if(data.error != ""){
+							alert(data.error);
+						}else{
+							$("#cal_loan_schedule_id").html(data.page).trigger("chosen:updated");
+						}
+					}
+		    	}
+		   });
+		    
+		}
+		
 		$(document).on("click", "#check_calculation", function () {
 			param 	  = new Object();
 			param.act = "check_calculation";
 
-			param.local_id	= $("#id").val();
-			param.pay_datee	= $('#pay_datee').val();
+			param.local_id	           = $("#id").val();
+			param.pay_datee	           = $('#pay_datee').val();
+			param.cal_loan_schedule_id = $('#cal_loan_schedule_id').val();
 			
 			if(param.pay_datee == ''){
 				alert('შეავსე თარიღი');
+			}else if(param.cal_loan_schedule_id == 0){
+				//alert('შეავსე გრაფიკი');
+				$("#full_fee2").val('0');
+				$("#root_fee2").val('0');
+				$("#percent_fee2").val('0');
+				$("#penalty_fee2").val('0');
+				$("#full_pay2").val('0');
+				$("#full_fee4").val('0');
 			}else{
     			$.ajax({
     		        url: aJaxURL,
@@ -369,6 +406,7 @@
     							$("#percent_fee2").val(data.percent);
     							$("#penalty_fee2").val(data.penalty);
     							$("#full_pay2").val(data.pay_amount1);
+    							$("#full_fee4").val(parseFloat(data.pay_amount)+parseFloat($("#full_fee4").val()));
     						}
     					}
     		    	}

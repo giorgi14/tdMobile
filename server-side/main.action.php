@@ -2394,6 +2394,13 @@ switch ($action) {
                                        <td style="width: 115px;"><input id="pay_datee" class="idle" style="width: 100px;" type="text" value=""></td>
                                        <td colspan="2"><button id="check_calculation">შემოწმება</button></td>
                                    </tr>
+                                   <tr style="height:5px;"></tr>
+                                   <tr>
+                                       <td style="width: 120px;"><label>გრაფიკი</label></td>
+                                       <td style="width: 115px;"><select id="cal_loan_schedule_id" style="width: 105px;"></select></td>
+                                       <td style="width: 120px;"><label>სულ შესატანი თანხა</label></td>
+                                       <td style="width: 115px;"><input id="full_fee4" class="idle" style="width: 100px;" type="text" value="0" disabled="disabled"></td>
+                                   </tr>
                                    <tr style="height:20px;"></tr>
                                    <tr>
                                        <td style="width: 120px;"><label>სულ შესატანი თანხა</label></td>
@@ -2625,8 +2632,9 @@ switch ($action) {
         break;
     case 'check_calculation':
     
-        $local_id  = $_REQUEST['local_id'];
-        $pay_datee = $_REQUEST['pay_datee'];
+        $local_id             = $_REQUEST['local_id'];
+        $pay_datee            = $_REQUEST['pay_datee'];
+        $cal_loan_schedule_id = $_REQUEST['cal_loan_schedule_id'];
 
         $res = mysql_fetch_assoc(mysql_query("SELECT 	    client_loan_schedule.id,
                                                             client_loan_schedule.pay_amount,
@@ -2646,7 +2654,8 @@ switch ($action) {
                                                 FROM 	   `client_loan_schedule`
                                                 LEFT JOIN   client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
                                                 JOIN        client ON client.id = client_loan_agreement.client_id
-                                                WHERE       client_loan_schedule.actived = 1 AND client_id = $local_id AND client_loan_schedule.`status` != 1
+                                                WHERE       client_loan_schedule.actived = 1 AND client_id = $local_id AND client_loan_schedule.`status` != 1 
+                                                AND         client_loan_schedule.id = '$cal_loan_schedule_id'
                                                 ORDER BY    pay_date ASC
                                                 LIMIT 1"));
         
@@ -2805,6 +2814,15 @@ switch ($action) {
                      WHERE  `client_id` = '$hidde_idd' 
                      AND     actived = 1");
         break;
+        
+    case 'get_loan_schedule':
+        $local_id  = $_REQUEST[local_id];
+        $pay_datee = $_REQUEST[pay_datee];
+        
+        $data = array('page' => get_calculation_page($local_id, $pay_datee));
+        
+        break;
+        
     case 'get_difference':
         $user_id = $_SESSION['USERID'];
         $res = mysql_query("SELECT client.id AS client_id,
@@ -2844,6 +2862,21 @@ switch ($action) {
 $data['error'] = $error;
 
 echo json_encode($data);
+
+function get_calculation_page($id, $date){
+    $req = mysql_query("SELECT client_loan_schedule.id,
+                               client_loan_schedule.schedule_date AS name 
+                        FROM   client_loan_schedule
+                        JOIN   client_loan_agreement ON client_loan_schedule.client_loan_agreement_id = client_loan_agreement.id
+                        WHERE  client_loan_agreement.client_id = '$id' AND client_loan_schedule.schedule_date <= '$date'
+                        AND    client_loan_schedule.`status` = 0 AND client_loan_schedule.actived = 1");
+
+    $data .= '<option value="0" selected="selected">----</option>';
+    while( $res = mysql_fetch_assoc($req)){
+        $data .= '<option value="' . $res['id'] . '" >' . $res['name'] . '</option>';
+    }
+    return $data;
+}
 
 function loan_type($id){
     $req = mysql_query("SELECT id,
