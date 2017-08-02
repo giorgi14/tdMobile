@@ -2757,9 +2757,9 @@ switch ($action) {
         
         if (mysql_num_rows($check_count)>1) {
            
-        $pay_amount = round($remaining_root + $rercent + $penalty + $result['sakomisio'] + $nasargeblebi, 2);
-       
-        $data = array('pay_amount' => $pay_amount, 'root' => $remaining_root, 'percent' => $rercent, 'penalty' => $penalty, 'pay_amount1' => $res1[pay_amount], 'nasargeblebebi' => $nasargeblebi, 'sakomisio' => $sakomisio);
+            $pay_amount = round($remaining_root + $rercent + $penalty + $result['sakomisio'] + $nasargeblebi, 2);
+           
+            $data = array('pay_amount' => $pay_amount, 'root' => $remaining_root, 'percent' => $rercent, 'penalty' => $penalty, 'pay_amount1' => $res1[pay_amount], 'nasargeblebebi' => $nasargeblebi, 'sakomisio' => $sakomisio);
         }else{
         
             $res = mysql_query("SELECT   client_loan_schedule.id,
