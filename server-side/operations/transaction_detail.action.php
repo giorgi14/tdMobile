@@ -220,6 +220,7 @@ switch ($action) {
 	case 'save_pledge_distribution':
 	    
 	    $tr_id                     = $_REQUEST['tr_id'];
+	    $client_amount             = $_REQUEST['client_amount'];
 		$client_pledge_amount      = $_REQUEST['client_pledge_amount'];
 		$received_currency_id      = $_REQUEST['received_currency_id'];
 		$course                    = $_REQUEST['course'];
@@ -229,24 +230,33 @@ switch ($action) {
 		
 		$user_id	               = $_SESSION['USERID'];
 		
-		
-        mysql_query("UPDATE `money_transactions`
-                    	SET `agreement_id` = '$pledge_client_id',
-                    		`client_id`    = '$pledge_client_loan_number',
-                    		`pay_datetime` = '$transaction_date',
-                    		`course`       = '$course',
-                    		`currency_id`  = '$received_currency_id',
-                    		`type_id`      = '2',
-                            `status`       = '1',
-                    		`actived`      = '1'
-                      WHERE `id`           = '$tr_id'");
+		if ($tr_id == '') {
+		    mysql_query("INSERT INTO `money_transactions`
+                    		        (`datetime`, `user_id`,  `agreement_id`, `client_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `type_id`, `status`, `actived`)
+                    		  VALUES
+                    		        (NOW(), '$user_id', '$pledge_client_loan_number', '$pledge_client_id', '$transaction_date', '$client_amount', '$course', '$currency_id', '$received_currency_id', '2', '0', '1')");
+		     
+		    $tr_id = mysql_insert_id();
+		}else{
+		    mysql_query("UPDATE `money_transactions`
+        		            SET `agreement_id` = '$pledge_client_id',
+                		        `client_id`    = '$pledge_client_loan_number',
+                		        `pay_datetime` = '$transaction_date',
+                		        `course`       = '$course',
+                		        `currency_id`  = '$received_currency_id',
+                		        `type_id`      = '2',
+                		        `status`       = '1',
+                		        `actived`      = '1'
+        		          WHERE `id`           = '$tr_id'");
+		}
+        
                             
         mysql_query("INSERT INTO `money_transactions_detail` 
                                 (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `payed_status`,  `actived`) 
                           VALUES 
                                 (NOW(), '$user_id', '$tr_id', '$transaction_date', '$client_pledge_amount', '$course', '$received_currency_id', '$received_currency_id', '', '', '2', '7', '1', '1')");
         
-        $data = array('pledge_client_id' => $pledge_client_id);
+        $data = array('pledge_client_id' => $pledge_client_id, 'tr_id' => $tr_id);
         break;
     case 'save_other_distribution':
 	    
@@ -619,7 +629,7 @@ function currency($id){
 }
 
 function client_car($id){
-    $req = mysql_query("SELECT    cl.id,
+    $req = mysql_query("SELECT    client_loan_agreement.id,
             					  CASE
             						  WHEN cl.attachment_id = 0 AND cl.`name` != '' THEN concat(client_car.registration_number, '/', client_loan_agreement.oris_code)
             						  WHEN cl.attachment_id = 0 AND cl.`name` = '' THEN CONCAT(client_car.registration_number, '/', client_loan_agreement.oris_code)
@@ -667,7 +677,8 @@ function client($id){
 }
 
 function pledge_client_loan_number($id){
-    $req = mysql_query("SELECT  client.id,
+    $req = mysql_query("SELECT  client_loan_agreement.id as agr_id,
+                                client.id,
                                 CASE
             						 WHEN NOT ISNULL(client.sub_client) AND client_loan_agreement.agreement_id>0 THEN CONCAT('სხ ',client_loan_agreement.agreement_id)
             						 WHEN client.attachment_id > 0 AND client_loan_agreement.agreement_id>0 THEN CONCAT('სხ ',client_loan_agreement.agreement_id, ' დანართი ', client_loan_agreement.attachment_number)
@@ -686,9 +697,9 @@ function pledge_client_loan_number($id){
     $data .= '<option value="0" selected="selected">----</option>';
     while( $res = mysql_fetch_assoc($req)){
         if($res['id'] == $id){
-            $data .= '<option value="' . $res['id'] . '" selected="selected">' . $res['name'] . '</option>';
+            $data .= '<option value="' . $res['agr_id'] . '" selected="selected">' . $res['name'] . '</option>';
         } else {
-            $data .= '<option value="' . $res['id'] . '">' . $res['name'] . '</option>';
+            $data .= '<option value="' . $res['agr_id'] . '">' . $res['name'] . '</option>';
         }
     }
     return $data;

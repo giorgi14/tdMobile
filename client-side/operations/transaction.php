@@ -1070,6 +1070,7 @@
 		    
 		    param.tr_id	                    =  $("#tr_id").val();
 		    param.course                    =  $("#course").val();
+		    param.client_amount             =  $("#client_amount").val();
 		    param.received_currency_id      =  $("#received_currency_id").val();
 		    param.transaction_date          =  $("#transaction_date").val();
 		    param.pledge_client_id          =  $("#pledge_client_id").val();
@@ -1087,6 +1088,7 @@
 							CloseDialog('pledge_dialog');
 							GetDataTable("table_transaction_detail", aJaxURL_det, 'get_list', 9, "&transaction_id="+$("#tr_id").val(), 0, "", 0, "desc", "", "<'F'Cpl>");
 							$("#hidde_cl_id1").val(data.pledge_client_id);
+							$("#tr_id").val(data.tr_id);
 		    			}
 					}
 			    }
@@ -1099,6 +1101,7 @@
 		    param.act                     = "save_other_distribution";
 		    
 		    param.tr_id	                  =  $("#tr_id").val();
+		    param.client_amount           =  $("#client_amount").val();
 		    param.other_cource            =  $("#other_cource").val();
 		    param.other_currency_id       =  $("#other_curense_id").val();
 		    param.other_date              =  $("#other_date").val();
