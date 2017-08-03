@@ -120,6 +120,7 @@ switch ($action) {
 
 		break;
 	case 'get_list_pledge' :
+	    
 	    $count	 = $_REQUEST['count'];
 	    $hidden	 = $_REQUEST['hidden'];
 	    
