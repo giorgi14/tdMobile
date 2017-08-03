@@ -425,7 +425,7 @@ switch ($action) {
                              				FROM     money_transactions
                             				JOIN     client ON client.id = money_transactions.client_id
                             				JOIN     money_transactions_detail ON money_transactions_detail.transaction_id = money_transactions.id
-                            				WHERE    client_id = '$id' AND money_transactions.type_id = 2 AND money_transactions_detail.`status` = 8 
+                            				WHERE    client_id = '$id' AND money_transactions_detail.`status` = 8 
                                             AND      money_transactions_detail.actived = 1 
                                             AND      money_transactions.actived = 1
                                             GROUP BY money_transactions.id
@@ -551,12 +551,12 @@ switch ($action) {
                                             GROUP BY money_transactions.client_loan_schedule_id
                                     		UNION ALL
                                     		SELECT  client_loan_agreement.client_id,
-                                    				client_loan_schedule.id AS `id`,
+                                    				'' AS `id`,
 	                                                '5' AS number1,
 	                                                '6' AS sort3,
                                     				DATE(money_transactions_detail.pay_datetime) AS sort,
                                     				'2' AS sort1,
-                                    				client_loan_schedule.number,
+                                    				'' AS number,
                                     				DATE_FORMAT(money_transactions_detail.pay_datetime, '%d/%m/%Y') AS `date`,
                                     				money_transactions_detail.course AS `exchange`,
                                     				'' AS `loan_amount`,
@@ -585,9 +585,8 @@ switch ($action) {
                                         			'' as  other_delta
                                             FROM   money_transactions
                                             JOIN   money_transactions_detail ON money_transactions_detail.transaction_id = money_transactions.id
-                                            JOIN   client_loan_schedule ON client_loan_schedule.id = money_transactions.client_loan_schedule_id
-                                            JOIN   client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
-                                            WHERE  client_loan_agreement.client_id = '$id' AND client_loan_schedule.actived=1 AND money_transactions_detail.`status` = 3 AND money_transactions_detail.actived = 1 AND money_transactions_detail.pay_amount > 0
+                                            LEFT JOIN client_loan_agreement ON client_loan_agreement.id = money_transactions.agreement_id
+                                            WHERE  client_loan_agreement.client_id = '$id' AND money_transactions_detail.`status` = 3 AND money_transactions_detail.actived = 1 AND money_transactions_detail.pay_amount > 0
 	                                        UNION ALL
 	                                        SELECT  client_loan_agreement.client_id,
                                     				client_loan_schedule.id AS `id`,
@@ -895,7 +894,7 @@ switch ($action) {
                              				FROM     money_transactions
                             				JOIN     client ON client.id = money_transactions.client_id
                             				JOIN     money_transactions_detail ON money_transactions_detail.transaction_id = money_transactions.id
-                            				WHERE    client_id = '$sub_client' AND money_transactions.type_id = 2 AND money_transactions_detail.`status` = 8 
+                            				WHERE    client_id = '$sub_client' AND money_transactions_detail.`status` = 8 
                                             AND      money_transactions_detail.actived = 1 
                                             AND      money_transactions.actived = 1
                                             GROUP BY money_transactions.id
@@ -1099,12 +1098,12 @@ switch ($action) {
                                             WHERE  client_loan_agreement.client_id = '$sub_client' AND client_loan_schedule.actived=1 AND money_transactions_detail.`status` = 6 AND money_transactions_detail.actived = 1 AND money_transactions_detail.pay_amount > 0
                             				UNION ALL
                                 			SELECT  client_loan_agreement.client_id,
-                        							client_loan_schedule.id AS `id`,
+                        							'' AS `id`,
 	                                                '5' AS number1,
 	                                                '6' AS sort3,
                         							DATE(money_transactions_detail.pay_datetime) AS sort,
                         							'2' AS sort1,
-                        							client_loan_schedule.number,
+                        							'' AS number,
                         							DATE_FORMAT(money_transactions_detail.pay_datetime, '%d/%m/%Y') AS `date`,
                         							money_transactions_detail.course AS `exchange`,
                         							'' AS `loan_amount`,
@@ -1133,9 +1132,8 @@ switch ($action) {
                                         			'' as  other_delta
                                 			FROM   money_transactions
 											JOIN   money_transactions_detail ON money_transactions_detail.transaction_id = money_transactions.id
-                                			JOIN   client_loan_schedule ON client_loan_schedule.id = money_transactions.client_loan_schedule_id
-                                			JOIN   client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
-                                			WHERE  client_loan_agreement.client_id = '$sub_client' AND client_loan_schedule.actived=1 AND money_transactions_detail.actived=1 AND money_transactions_detail.`status` = 3
+                                			LEFT JOIN client_loan_agreement ON client_loan_agreement.id = money_transactions.agreement_id
+                                			WHERE  client_loan_agreement.client_id = '$sub_client' AND money_transactions_detail.actived=1 AND money_transactions_detail.`status` = 3
                                 			UNION ALL
     	                                    SELECT  difference_cource.client_id,
                                     				client_loan_schedule.id AS `id`,
@@ -1394,7 +1392,7 @@ switch ($action) {
                              				FROM     money_transactions
                             				JOIN     client ON client.id = money_transactions.client_id
                             				JOIN     money_transactions_detail ON money_transactions_detail.transaction_id = money_transactions.id
-                            				WHERE    client_id = '$id' AND money_transactions.type_id = 2 AND money_transactions_detail.`status` = 8 
+                            				WHERE    client_id = '$id' AND money_transactions_detail.`status` = 8 
                                             AND      money_transactions_detail.actived = 1 
                                             AND      money_transactions.actived = 1
                                             GROUP BY money_transactions.id
@@ -1520,12 +1518,12 @@ switch ($action) {
                                     		GROUP BY money_transactions.client_loan_schedule_id
                                     		UNION ALL
                                     		SELECT  client_loan_agreement.client_id,
-                            						client_loan_schedule.id AS `id`,
+                            						'' AS `id`,
     	                                            '5' AS number1,
     	                                            '6' AS sort3,
                             						DATE(money_transactions_detail.pay_datetime) AS sort,
     	                                            '2' AS sort1,
-                            						client_loan_schedule.number,
+                            						'' AS number,
                             						DATE_FORMAT(money_transactions_detail.pay_datetime, '%d/%m/%Y') AS `date`,
                             						money_transactions_detail.course AS `exchange`,
                             						'' AS `loan_amount`,
@@ -1554,9 +1552,8 @@ switch ($action) {
                                         			'' as  other_delta
                             				FROM   money_transactions
                                             JOIN money_transactions_detail ON money_transactions.id = money_transactions_detail.transaction_id
-                            				JOIN   client_loan_schedule ON client_loan_schedule.id = money_transactions.client_loan_schedule_id
-                            				JOIN   client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
-                            				WHERE  client_loan_agreement.client_id = '$id' AND client_loan_schedule.actived=1 AND money_transactions_detail.`status` = 3 AND money_transactions_detail.actived = 1
+                            				LEFT JOIN client_loan_agreement ON client_loan_agreement.id = money_transactions.agreement_id
+                            				WHERE  client_loan_agreement.client_id = '$id' AND money_transactions_detail.`status` = 3 AND money_transactions_detail.actived = 1
                             				UNION ALL
     	                                    SELECT  client_loan_agreement.client_id,
                         							client_loan_schedule.id AS `id`,
@@ -1898,7 +1895,7 @@ switch ($action) {
                              				FROM     money_transactions
                             				JOIN     client ON client.id = money_transactions.client_id
                             				JOIN     money_transactions_detail ON money_transactions_detail.transaction_id = money_transactions.id
-                            				WHERE    client_id = '$sub_client' AND money_transactions.type_id = 2 AND money_transactions_detail.`status` = 8 
+                            				WHERE    client_id = '$sub_client' AND money_transactions_detail.`status` = 8 
                                             AND      money_transactions_detail.actived = 1 
                                             AND      money_transactions.actived = 1
                                             GROUP BY money_transactions.id
@@ -2024,12 +2021,12 @@ switch ($action) {
                                 			GROUP BY money_transactions.client_loan_schedule_id
                                 			UNION ALL
                                 			SELECT  client_loan_agreement.client_id,
-                        							client_loan_schedule.id AS `id`,
+                        							'' AS `id`,
     	                                            '5' AS number1,
     	                                            '6' AS sort3,
                         							DATE(money_transactions_detail.pay_datetime) AS sort,
                         							'2' AS sort1,
-                        							client_loan_schedule.number,
+                        							'' AS number,
                         							DATE_FORMAT(money_transactions_detail.pay_datetime, '%d/%m/%Y') AS `date`,
                         							money_transactions_detail.course AS `exchange`,
                         							'' AS `loan_amount`,
@@ -2058,9 +2055,8 @@ switch ($action) {
                                         			'' as  other_delta
     	                                    FROM   money_transactions
                                             JOIN money_transactions_detail on money_transactions_detail.transaction_id = money_transactions.id
-                                			JOIN   client_loan_schedule ON client_loan_schedule.id = money_transactions.client_loan_schedule_id
-                                			JOIN   client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
-                                			WHERE  client_loan_agreement.client_id = '$sub_client' AND client_loan_schedule.actived=1 AND money_transactions_detail.`status` = 3 AND money_transactions_detail.actived = 1
+                                			LEFT JOIN client_loan_agreement ON client_loan_agreement.id = money_transactions.agreement_id
+                                			WHERE  client_loan_agreement.client_id = '$sub_client' AND money_transactions_detail.`status` = 3 AND money_transactions_detail.actived = 1
                                 			UNION ALL
     	                                    SELECT  client_loan_agreement.client_id,
                         							client_loan_schedule.id AS `id`,
@@ -2760,8 +2756,7 @@ switch ($action) {
             $res1 = mysql_fetch_assoc(mysql_query("SELECT  IFNULL(SUM(money_transactions_detail.pay_amount),0) AS pay_amount
                                                    FROM    money_transactions_detail
                                                    JOIN    money_transactions ON money_transactions.id = money_transactions_detail.transaction_id
-                                                   JOIN    client_loan_schedule ON client_loan_schedule.id = money_transactions.client_loan_schedule_id
-                                                   JOIN    client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
+                                                   LEFT JOIN client_loan_agreement ON client_loan_agreement.id = money_transactions.agreement_id
                                                    WHERE   client_loan_agreement.client_id = '$local_id'
                                                    AND     money_transactions_detail.`status` = 3
                                                    AND     money_transactions_detail.actived = 1"));
@@ -2828,8 +2823,7 @@ switch ($action) {
                 $res1 = mysql_fetch_assoc(mysql_query("SELECT  IFNULL(SUM(money_transactions_detail.pay_amount),0) AS pay_amount
                                                        FROM    money_transactions_detail
                                                        JOIN    money_transactions ON money_transactions.id = money_transactions_detail.transaction_id
-                                                       JOIN    client_loan_schedule ON client_loan_schedule.id = money_transactions.client_loan_schedule_id
-                                                       JOIN    client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
+                                                       LEFT JOIN client_loan_agreement ON client_loan_agreement.id = money_transactions.agreement_id
                                                        WHERE   client_loan_agreement.client_id = '$local_id' 
                                                        AND     money_transactions_detail.`status` = 3
                                                        AND     money_transactions_detail.actived = 1"));
