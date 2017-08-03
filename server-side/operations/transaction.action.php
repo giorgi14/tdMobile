@@ -127,9 +127,11 @@ switch ($action) {
                         				  DATE_FORMAT(money_transactions.pay_datetime,'%d/%m/%Y'),
                         				  client_loan_agreement.oris_code,
                                           CASE
-                                              WHEN client.id >= (SELECT old_client_id.number FROM `old_client_id` LIMIT 1) THEN CONCAT(client.`name`, ' ', client.lastname, ' / ს/ხ', client_loan_agreement.id, ' / ', client_car.car_marc, ' / ', client_car.registration_number)
-                                              WHEN client.id < (SELECT old_client_id.number FROM `old_client_id` LIMIT 1) THEN CONCAT(client.`name`, ' ', client.lastname, ' / ს/ხ', client.exel_agreement_id, ' / ', client_car.car_marc, ' / ', client_car.registration_number)
-                                          END AS `name`,
+                    						 WHEN NOT ISNULL(client.sub_client) AND client_loan_agreement.agreement_id>0 THEN CONCAT(client.`name`, ' ', client.lastname, ' / ს/ხ', client_loan_agreement.agreement_id, ' / ', client_car.car_marc, ' / ', client_car.registration_number)
+                    						 WHEN client.attachment_id > 0 AND client_loan_agreement.agreement_id>0 THEN CONCAT(client.`name`, ' ', client.lastname, ' / ს/ხ', client_loan_agreement.agreement_id, ' დანართი ', client_loan_agreement.attachment_number, ' / ', client_car.car_marc, ' / ', client_car.registration_number)
+                    						 WHEN ISNULL(client.sub_client) AND client.attachment_id = 0 AND client_loan_agreement.agreement_id > 0 THEN CONCAT(client.`name`, ' ', client.lastname, ' / ს/ხ', client_loan_agreement.agreement_id, ' / ', client_car.car_marc, ' / ', client_car.registration_number)
+                    						 WHEN ISNULL(client.sub_client) AND client.attachment_id = 0 AND client_loan_agreement.agreement_id = 0 THEN CONCAT(client.ltd_name, 'ს/ხ', client_loan_agreement.oris_code, ' / ', client_car.car_marc, ' / ', client_car.registration_number)
+                    					  END AS new_name,
                         			      money_transactions.pay_amount,
                         				  IFNULL(loan_currency.name,ln_currency.name),
                             		      money_transactions.course,
