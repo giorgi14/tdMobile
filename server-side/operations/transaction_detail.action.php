@@ -460,6 +460,15 @@ function Add1($tr_id, $hidde_id, $transaction_date, $pledge_or_other_payed, $ple
     $user_id	= $_SESSION['USERID'];
     $client_id  = $_REQUEST['client_id'];
     
+    $res = mysql_fetch_assoc(mysql_query("  SELECT  IFNULL(SUM(money_transactions_detail.pay_amount),0) AS pay_amount
+                                            FROM    money_transactions_detail
+                                            JOIN    money_transactions ON money_transactions.id = money_transactions_detail.transaction_id
+                                            JOIN    client ON client.id = money_transactions.client_id
+                                            JOIN    client_loan_agreement ON client_loan_agreement.id = money_transactions.agreement_id
+                                            WHERE   client_loan_agreement.client_id = '$client_id'
+                                            AND     money_transactions_detail.`status` = 3
+                                            AND     money_transactions_detail.actived = 1"));
+    
     $month_fee_gel   = $_REQUEST['month_fee_gel'];
     $month_fee_usd   = $_REQUEST['month_fee_usd'];
     $month_payed_gel = $_REQUEST['month_payed_gel'];
@@ -472,7 +481,19 @@ function Add1($tr_id, $hidde_id, $transaction_date, $pledge_or_other_payed, $ple
                           VALUES
                                 (NOW(), '$user_id', '$tr_id', '$transaction_date', '$pledge_or_other_payed', '$course', '$currency_id', '$received_currency_id', '', '', '2', '8', 1)");
     
+        mysql_query(" UPDATE  money_transactions_detail
+                      JOIN    money_transactions ON money_transactions.id = money_transactions_detail.transaction_id
+                      JOIN    client_loan_schedule ON client_loan_schedule.id = money_transactions.client_loan_schedule_id
+                      JOIN    client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
+                      SET     money_transactions_detail.actived = 0,
+                              money_transactions_detail.balance_transaction_id = '$tr_id'
+                      WHERE   client_loan_agreement.client_id = '$client_id'
+                      AND     money_transactions_detail.`status` = 9
+                      AND     money_transactions_detail.actived = 1");
+        
         if ($month_fee_gel<=$month_payed_gel || $month_fee_usd<= $month_payed_usd) {
+            
+            
             
             $tr_id1 = mysql_fetch_array(mysql_query("SELECT MAX(money_transactions_detail.id) AS tr_id,
                                                             money_transactions_detail.course
@@ -482,25 +503,10 @@ function Add1($tr_id, $hidde_id, $transaction_date, $pledge_or_other_payed, $ple
                                                      AND    money_transactions_detail.`status` = 7 AND money_transactions_detail.payed_status = 1
                                                      AND    money_transactions.type_id = 2 AND money_transactions.client_id = '$client_id'"));
         
-            mysql_query("SELECT MAX(money_transactions_detail.id) AS tr_id,
-                                money_transactions_detail.course
-                         FROM   money_transactions
-                         JOIN   money_transactions_detail ON money_transactions_detail.transaction_id = money_transactions.id
-                         WHERE  money_transactions_detail.actived = 1 AND money_transactions.actived = 1
-                         AND    money_transactions_detail.`status` = 7 AND money_transactions_detail.payed_status = 1
-                         AND    money_transactions.type_id = 2 AND money_transactions.client_id = '$client_id'");
-            
             mysql_query("UPDATE money_transactions_detail
                             SET payed_status = 2
                          WHERE  id           = $tr_id1[tr_id]");
             
-            $course = $tr_id[course];
-            
-            mysql_query("UPDATE money_transactions_detail
-                            SET course  = '$course'
-                         WHERE  id      = '$tr_id'
-                         AND    status  = 8
-                         AND    actived = 1");
         }
         
         if ($pledge_or_other_surplus>0) {
@@ -1043,8 +1049,8 @@ function GetPage($res = ''){
 			<!-- ID -->
 			<input type="hidden" id="id" value="' . $res['id'] . '" />
 			<input type="hidden" id="hidde_status" value="' . $res['status'] . '" />
-			   
-		    <input type="hidden" id="hidde_root" value="0" />
+			    
+			<input type="hidden" id="hidde_root" value="0" />
 	        <input type="hidden" id="hidde_percent" value="0" />
             <input type="hidden" id="hidde_penalty" value="0" />
 		    <input type="hidden" id="hidde_payable_Fee" value="0" />
@@ -1054,8 +1060,8 @@ function GetPage($res = ''){
 			    
 			<input type="hidden" id="hidde_pledge_amount" value="0" />
 			<input type="hidden" id="hidde_pledge_surplus" value="0" />
-                
-		</fieldset>
+			    
+        </fieldset>
     </div>
     ';
 	return $data;
