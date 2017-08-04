@@ -239,8 +239,8 @@ switch ($action) {
 		    $tr_id = mysql_insert_id();
 		}else{
 		    mysql_query("UPDATE `money_transactions`
-        		            SET `agreement_id` = '$pledge_client_id',
-                		        `client_id`    = '$pledge_client_loan_number',
+        		            SET `agreement_id` = '$pledge_client_loan_number',
+                		        `client_id`    = '$pledge_client_id',
                 		        `pay_datetime` = '$transaction_date',
                 		        `course`       = '$course',
                 		        `currency_id`  = '$received_currency_id',
