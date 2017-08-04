@@ -3006,10 +3006,10 @@ function GetPage($id){
                         <th style="width: 6%;">ვალდე-<br>ბულება<br>დოლარი</th>
                         <th style="width: 6%;">კურსთა<br>შორისი<br>სხვაობა</th>
             
-                        <th style="width: 6%;">დაზღვევა<br>ლარი</th>
-                        <th style="width: 6%;">დაზღვევა-<br>დოლარი</th>
                         <th style="width: 6%;">დარიცხ.<br>დაზღვევა<br>ლარი</th>
                         <th style="width: 6%;">დარიცხ.<br>დაზღვევა<br>დოლარი</th>
+                        <th style="width: 6%;">გადახდა<br>დაზღვევა<br>ლარი</th>
+                        <th style="width: 6%;">გადახდა<br>დაზღვევა<br>დოლარი</th>
                         <th style="width: 6%;">დაზღვევა<br>ვალდებ.<br>ლარი</th>
                         <th style="width: 6%;">დაზღვევა<br>ვალდებ.<br>დოლარი</th>
                         
@@ -3154,10 +3154,10 @@ function GetPage($id){
                         <th style="width: 6%;">ვალდე-<br>ბულება<br>ლარი</th>
                         <th style="width: 6%;">კურსთა<br>შორისი<br>სხვაობა</th>
             
-                        <th style="width: 6%;">დაზღვევა<br>დოლარი</th>
-                        <th style="width: 6%;">დაზღვევა<br>ლარი</th>
                         <th style="width: 6%;">ჩარიცხ.<br>დაზღვევა<br>დოლარი</th>
                         <th style="width: 6%;">ჩარიცხ.<br>დაზღვევა<br>ლარი</th>
+                        <th style="width: 6%;">გადახდა<br>დაზღვევა<br>დოლარი</th>
+                        <th style="width: 6%;">გადახდა<br>დაზღვევა<br>ლარი</th>
                         <th style="width: 6%;">დაზღვევა<br>ვალდებ.<br>დოლარი</th>
                         <th style="width: 6%;">დაზღვევა<br>ვალდებ.<br>ლარი</th>
             
