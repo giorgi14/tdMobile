@@ -151,7 +151,7 @@ switch ($action) {
                                 LEFT JOIN client_car ON client_car.client_id = client.id
                                 LEFT JOIN user_info ON user_info.user_id = money_transactions.user_id
                                 WHERE     money_transactions.actived = '1' AND money_transactions.id > 59  AND money_transactions.type_id=2
-                                ORDER BY  money_transactions.pay_datetime DESC");
+                                ORDER BY  money_transactions.pay_datetime DESC, money_transactions.datetime DESC");
 	
 	        $data = array("aaData"	=> array());
 	
