@@ -629,7 +629,8 @@ function currency($id){
 }
 
 function client_car($id){
-    $req = mysql_query("SELECT    client_loan_agreement.id,
+    $req = mysql_query("SELECT    cl.id AS cl_id,
+                                  client_loan_agreement.id,
             					  CASE
             						  WHEN cl.attachment_id = 0 AND cl.`name` != '' THEN concat(client_car.registration_number, '/', client_loan_agreement.oris_code)
             						  WHEN cl.attachment_id = 0 AND cl.`name` = '' THEN CONCAT(client_car.registration_number, '/', client_loan_agreement.oris_code)
@@ -644,9 +645,9 @@ function client_car($id){
     $data .= '<option value="0" selected="selected">----</option>';
     while( $res = mysql_fetch_assoc($req)){
         if($res['id'] == $id){
-            $data .= '<option value="' . $res['id'] . '" selected="selected">' . $res['name'] . '</option>';
+            $data .= '<option value="' . $res['cl_id'] . '" selected="selected">' . $res['name'] . '</option>';
         } else {
-            $data .= '<option value="' . $res['id'] . '">' . $res['name'] . '</option>';
+            $data .= '<option value="' . $res['cl_id'] . '">' . $res['name'] . '</option>';
         }
     }
     return $data;
