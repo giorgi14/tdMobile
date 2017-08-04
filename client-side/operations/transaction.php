@@ -147,11 +147,15 @@
     		        	        						    ins_delta = (parseFloat(insurance_fee) - parseFloat(insurance_payed)).toFixed(2);
     		        	        						    ins_delta1 = (parseFloat(insurance_fee1) - parseFloat(insurance_payed1)).toFixed(2);
 
+    		        	        						    
     		        	        						    other  = $("#other").html();
     		        	        						    other1 = $("#other1").html();
     		        	        							
     		        	        						    other_delta = (parseFloat(other) - parseFloat(other1)).toFixed(2);
-
+    		        	        						    if(ins_delta == '0.00' || ins_delta1=='0.00'){
+    		        	        						    	ins_delta  = '0.00';
+    		        	        						    	ins_delta1 = '0.00';
+        		        	        						}
     		        	        						    $("#insurance_delta").html(ins_delta);
     		        	        						    $("#insurance_delta1").html(ins_delta1);
     		        	        						    $("#other_delta").html(other_delta);
@@ -299,10 +303,10 @@
                 }
     	        
 				
-        	    if($("#id").val()!=''){
-					$('#currency_id').prop('disabled', true).trigger("chosen:updated");
-        	        $('#type_id').prop('disabled', true).trigger("chosen:updated");
-        	    }
+        	    //if($("#id").val()!=''){
+				$('#currency_id').prop('disabled', false).trigger("chosen:updated");
+    	        $('#type_id').prop('disabled', false).trigger("chosen:updated");
+        	    //}
 				
     	        $('#client_id').prop('disabled', true).trigger("chosen:updated");
     	        $('#client_loan_number').prop('disabled', true).trigger("chosen:updated");
