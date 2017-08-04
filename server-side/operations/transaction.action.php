@@ -514,7 +514,7 @@ switch ($action) {
                                     		       JOIN    money_transactions ON money_transactions.id = money_transactions_detail.transaction_id
                                     		       JOIN    client ON client.id = money_transactions.client_id
                                     		       JOIN    client_loan_agreement ON client_loan_agreement.id = money_transactions.agreement_id
-                                    		       WHERE   client_loan_agreement.client_id = '$res[client_id]'
+                                    		       WHERE   client_loan_agreement.client_id = '$id'
                                     		       AND     money_transactions_detail.`status` = 9
                                     		       AND     money_transactions_detail.actived = 1"));
 		    
