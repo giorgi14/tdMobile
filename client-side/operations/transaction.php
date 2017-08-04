@@ -1076,23 +1076,29 @@
 		    param.pledge_client_id          =  $("#pledge_client_id").val();
 		    param.pledge_client_loan_number =  $("#pledge_client_loan_number").val();
 		    param.client_pledge_amount      =  $("#client_pledge_amount").val();
-		    
-		    $.ajax({
-		        url: aJaxURL_det,
-			    data: param,
-		        success: function(data) {			        
-					if(typeof(data.error) != 'undefined'){
-						if(data.error != ''){
-							alert(data.error);
-						}else{
-							CloseDialog('pledge_dialog');
-							GetDataTable("table_transaction_detail", aJaxURL_det, 'get_list', 9, "&transaction_id="+$("#tr_id").val(), 0, "", 0, "desc", "", "<'F'Cpl>");
-							$("#hidde_cl_id1").val(data.pledge_client_id);
-							$("#tr_id").val(data.tr_id);
-		    			}
-					}
-			    }
-		    });
+
+		    if(param.pledge_client_loan_number == 0){
+			    alert('შეავსე ხელშეკრულების ნომერი');
+			}else if(param.pledge_client_id == 0){
+				alert('შეავსე კლიენტი');
+			}else{
+    		    $.ajax({
+    		        url: aJaxURL_det,
+    			    data: param,
+    		        success: function(data) {			        
+    					if(typeof(data.error) != 'undefined'){
+    						if(data.error != ''){
+    							alert(data.error);
+    						}else{
+    							CloseDialog('pledge_dialog');
+    							GetDataTable("table_transaction_detail", aJaxURL_det, 'get_list', 9, "&transaction_id="+$("#tr_id").val(), 0, "", 0, "desc", "", "<'F'Cpl>");
+    							$("#hidde_cl_id1").val(data.pledge_client_id);
+    							$("#tr_id").val(data.tr_id);
+    		    			}
+    					}
+    			    }
+    		    });
+			}
     	});
 
 		$(document).on("click", "#save_other_dialog", function () {
