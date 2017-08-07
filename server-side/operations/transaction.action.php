@@ -490,7 +490,7 @@ switch ($action) {
     		
 		}elseif ($type_id == 2){
 		    $receivedd_currency_id = $_REQUEST['received_currency_id'];
-		    $res_pledge = mysql_fetch_array(mysql_query("SELECT CASE
+		    $res_pledge = mysql_fetch_assoc(mysql_query("SELECT CASE
                                                                    WHEN money_transactions.received_currency_id = 2 THEN ROUND(money_transactions_detail.pay_amount*money_transactions.course,2)
                                                                    WHEN money_transactions.received_currency_id = 1 THEN money_transactions_detail.pay_amount
                                                                 END AS fee_lari,
@@ -509,12 +509,19 @@ switch ($action) {
 		                                                 ORDER BY money_transactions.pay_datetime ASC
                                                          LIMIT 1"));
 		    
-		    $res1 = mysql_fetch_assoc(mysql_query("SELECT  IFNULL(SUM(money_transactions_detail.pay_amount),0) AS pay_amount
+		    $res1 = mysql_fetch_assoc(mysql_query("SELECT  CASE
+                                            					WHEN money_transactions.currency_id = 2 THEN ROUND(IFNULL(SUM(money_transactions_detail.pay_amount),0),2)
+                                            					WHEN money_transactions.currency_id = 1 THEN ROUND(IFNULL(SUM(money_transactions_detail.pay_amount/money_transactions_detail.course),0),2)
+                                            				END  AS pay_amount_usd,
+                                                            CASE
+                                            					WHEN money_transactions.currency_id = 2 THEN ROUND(IFNULL(SUM(money_transactions_detail.pay_amount*money_transactions_detail.course),0),2)
+                                            					WHEN money_transactions.currency_id = 1 THEN ROUND(IFNULL(SUM(money_transactions_detail.pay_amount),0),2)
+                                            				END  AS pay_amount_gel
                                     		       FROM    money_transactions_detail
                                     		       JOIN    money_transactions ON money_transactions.id = money_transactions_detail.transaction_id
                                     		       JOIN    client ON client.id = money_transactions.client_id
                                     		       JOIN    client_loan_agreement ON client_loan_agreement.id = money_transactions.agreement_id
-                                    		       WHERE   client_loan_agreement.client_id = '$id'
+                                    		       WHERE  (client_loan_agreement.client_id = '$id' OR money_transactions.agreement_id = '$agr_id')
                                     		       AND     money_transactions_detail.`status` = 9
                                     		       AND     money_transactions_detail.actived = 1"));
 		    
@@ -523,7 +530,7 @@ switch ($action) {
                                                            FROM   client_loan_agreement 
                                                            WHERE  client_id = '$id' OR id = '$agr_id'"));
 		    
-		    $data = array('status' => 2, 'fee_lari' => $res_pledge[fee_lari], 'fee_dolari' => $res_pledge[fee_dolari], 'trasnsaction_detail_id' => $res_pledge[id], 'client_data' => client($check_client[client_id]), 'agrement_data' => client_loan_number($check_client[id]), 'currency_data' => currency($receivedd_currency_id), 'pay_amount1' => $res1[pay_amount],);
+		    $data = array('status' => 2, 'fee_lari' => $res_pledge[fee_lari], 'fee_dolari' => $res_pledge[fee_dolari], 'trasnsaction_detail_id' => $res_pledge[id], 'client_data' => client($check_client[client_id]), 'agrement_data' => client_loan_number($check_client[id]), 'currency_data' => currency($receivedd_currency_id), 'pay_amount1' => $res1[pay_amount_gel], 'pay_amount2' => $res1[pay_amount_usd]);
 		}elseif ($type_id == 3){
 		    $check_client = mysql_fetch_array(mysql_query("SELECT id,
                                             		              client_id

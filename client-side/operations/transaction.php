@@ -262,18 +262,23 @@
              			    	        $("#pledge_or_other_mont_fee").val('0');
              			    	        $("#pledge_or_other_extra_fee").val('0');
                 					}else{
-                						$("#month_fee_trasaction").val($('#client_amount').val());
-             			    	        $("#pledge_or_other_mont_fee").val($('#client_amount').val());
-             			    	        $("#pledge_or_other_extra_fee").val($('#client_amount').val());
-             			    	        
+                						
+                                        var pay_amount = $('#client_amount').val();
+                						if($('#client_amount').val()=='' || $('#client_amount').val() == null){pay_amount == 0;}
+                						$("#month_fee_trasaction").val(pay_amount);
+             			    	        $("#pledge_or_other_mont_fee").val(pay_amount);
+             			    	        $("#pledge_or_other_extra_fee").val(pay_amount);
+
+              			    	        var amount = $("#client_amount").val();
+                  						if($("#client_amount").val() == '' || $("#client_amount").val() == null){amount = 0;}else{amount = $("#client_amount").val();}
                 						if($("#received_currency_id").val()==1){
-                	                        lari   = $("#client_amount").val();
-                	                        dolari = (parseFloat($("#client_amount").val())/parseFloat($("#course").val())).toFixed(2);
+                    						lari   = amount;
+                	                        dolari = (parseFloat(amount)/parseFloat($("#course").val())).toFixed(2);
                 	                        $("#month_payed_gel").val(lari);
                 	                        $("#month_payed_usd").val(dolari);
                 	                    }else{
-                	                        lari   = (parseFloat($("#client_amount").val())*parseFloat($("#course").val())).toFixed(2);
-                	                        dolari = parseFloat($("#client_amount").val());
+                	                        lari   = (parseFloat(amount)*parseFloat($("#course").val())).toFixed(2);
+                	                        dolari = parseFloat(amount);
                 	                        $("#month_payed_gel").val(lari);
                 	                        $("#month_payed_usd").val(dolari);
                 	                    }
@@ -284,18 +289,23 @@
         			});
                 }else{
                     
-                   	$("#month_fee_trasaction").val($('#client_amount').val());
-          	        $("#pledge_or_other_mont_fee").val($('#client_amount').val());
-          	        $("#pledge_or_other_extra_fee").val($('#client_amount').val());
-          	        
-                    if($("#received_currency_id").val()==1){
-                        lari   = $("#client_amount").val();
-                        dolari = (parseFloat($("#client_amount").val())/parseFloat($("#course").val())).toFixed(2);
+                	var pay_amount = $('#client_amount').val();
+					if($('#client_amount').val()=='' || $('#client_amount').val() == null){pay_amount == 0;}
+					$("#month_fee_trasaction").val(pay_amount);
+	    	        $("#pledge_or_other_mont_fee").val(pay_amount);
+	    	        $("#pledge_or_other_extra_fee").val(pay_amount);
+
+	    	        var amount = $("#client_amount").val();
+					if($("#client_amount").val() == '' || $("#client_amount").val() == null){amount = 0;}else{amount = $("#client_amount").val();}
+
+	    	        if($("#received_currency_id").val()==1){
+						lari   = amount;
+                        dolari = (parseFloat(amount)/parseFloat($("#course").val())).toFixed(2);
                         $("#month_payed_gel").val(lari);
                         $("#month_payed_usd").val(dolari);
                     }else{
-                        lari   = (parseFloat($("#client_amount").val())*parseFloat($("#course").val())).toFixed(2);
-                        dolari = parseFloat($("#client_amount").val());
+                        lari   = (parseFloat(amount)*parseFloat($("#course").val())).toFixed(2);
+                        dolari = parseFloat(amount);
                         $("#month_payed_gel").val(lari);
                         $("#month_payed_usd").val(dolari);
                     }
@@ -467,6 +477,7 @@
 	    	param.percent		       = $("#percent").val();
 	    	param.penalti_fee	       = $("#penalti_fee").val();
 	    	param.surplus	           = $("#surplus").val();
+	    	param.surplus1             = $("#surplus1").val();
 	    	param.client_id	           = $("#client_id").val();
 
 	    	param.month_fee_trasaction = $("#month_fee_trasaction").val();
@@ -480,14 +491,22 @@
 
 	    	param.pledge_or_other_payed	    = $("#pledge_or_other_payed").val();
 	    	param.pledge_or_other_surplus   = $('#pledge_or_other_surplus').val();
+	    	param.pledge_or_other_surplus1  = $("#pledge_or_other_surplus1").val();
 	    	param.pledge_or_other_extra_fee	= $("#pledge_or_other_extra_fee").val();
-	    	
-	    	param.month_fee_gel         	= $("#month_fee_gel").val();
-	    	param.month_fee_usd         	= $("#month_fee_usd").val();
-	    	param.month_payed_gel         	= $("#month_payed_gel").val();
-	    	param.month_payed_usd         	= $("#month_payed_usd").val();
 
-	    	param.surplus_type          	= $("#surplus_type").val();
+	    	param.pledge_or_other_balance_gel = $("#pledge_or_other_balance_gel").val();
+	    	param.pledge_or_other_balance_usd = $("#pledge_or_other_balance_usd").val();
+
+	    	if(param.pledge_or_other_balance_gel == '' || param.pledge_or_other_balance_gel == null){param.pledge_or_other_balance_gel = 0;}
+	    	if(param.pledge_or_other_balance_usd == '' || param.pledge_or_other_balance_usd == null){param.pledge_or_other_balance_usd = 0;}
+
+	    	param.month_fee_gel = $("#month_fee_gel").val();
+	    	param.month_fee_usd = $("#month_fee_usd").val();
+	    	
+	    	param.month_payed_gel = parseFloat($("#month_payed_gel").val())+parseFloat(param.pledge_or_other_balance_gel);
+	    	param.month_payed_usd = parseFloat($("#month_payed_usd").val())+parseFloat(param.pledge_or_other_balance_usd);
+
+	    	param.surplus_type = $("#surplus_type").val();
 	    	
 	    	param.hidde_id		       = $("#hidde_id").val();
 	    	param.hidde_transaction_id = $("#hidde_transaction_id").val();
@@ -526,7 +545,25 @@
     		    });
 			}
 		});
-	    
+
+	    $(document).on("change", "#surplus_type", function () {
+	    	surplus_type = $(this).val();
+
+	    	if(surplus_type == 3 && $("#type_id").val()<=1){
+	    		$(".surplus").css('display','');
+		    	$("#surplus_label").html('მეტობა(სესხი)');
+		    }else if(surplus_type == 3 && $("#type_id").val()>1){
+		    	$(".pledge_or_other_surplus1").css('display','');
+		    	$("#pledge_or_other_surplus1_label").html('მეტობა(სესხი)');
+	    	}else{
+	    		$(".pledge_or_other_surplus1").css('display','none');
+	    		$(".surplus").css('display','none');
+	    		$("#surplus_label").html('მეტობა');
+	    		$("#pledge_or_other_surplus1_label").html('მეტობა');
+		    }
+		    
+		});
+    	
 		$(document).on("click", "#move-transaction", function () {
 		    param = new Object();
 		    
@@ -765,14 +802,30 @@
     							$("#month_fee_gel").val(data.fee_lari);
     							$("#month_fee_usd").val(data.fee_dolari);
     							$("#pledge_or_other_balance_usd").val(data.pay_amount1);
-
-    							if(data.fee_lari == ''){month_fee_gel = 0;}else{month_fee_gel = data.fee_lari;}
-    							if(data.pay_amount1 == ''){pledge_or_other_balance_gel = 0;}else{pledge_or_other_balance_gel = data.pay_amount1;}
+    							$("#pledge_or_other_balance_gel").val(data.pay_amount2);
+    							
+    							var pay_amount = $('#client_amount').val();
+        						if($('#client_amount').val()=='' || $('#client_amount').val() == null){pay_amount == 0;}
+        						
+    							$("#month_fee_trasaction").val(pay_amount);
+    			    	        $("#pledge_or_other_mont_fee").val(pay_amount);
+    			    	        $("#pledge_or_other_extra_fee").val(pay_amount);
+     			    	        
+    							if(data.fee_lari == ''  || data.fee_lari==null){month_fee_gel = 0;}else{month_fee_gel = data.fee_lari;}
+    							
+    							if(data.pay_amount1 == '' || data.pay_amount1==null){pledge_or_other_balance_gel = 0;}else{pledge_or_other_balance_gel = data.pay_amount1;}
+    							if(data.pay_amount2 == '' || data.pay_amount2==null){pledge_or_other_balance_usd = 0;}else{pledge_or_other_balance_usd = data.pay_amount2;}
+    							
     							pledge_or_other_extra_fee = $("#pledge_or_other_extra_fee").val();
     							
     							if(pledge_or_other_extra_fee == ''){pledge_or_other_extra_fee = 0;}
-    							$("#pledge_or_other_extra_fee").val(parseFloat(pledge_or_other_extra_fee)+parseFloat(pledge_or_other_balance_gel));   
-    														
+    							
+                                if($("#received_currency_id").val() == 1){
+                                    $("#pledge_or_other_extra_fee").val(parseFloat(pledge_or_other_extra_fee)+parseFloat(pledge_or_other_balance_gel));   
+                                }else{
+                                	$("#pledge_or_other_extra_fee").val(parseFloat(pledge_or_other_extra_fee)+parseFloat(pledge_or_other_balance_usd));
+                                } 
+                                 														
     							$("#root1").val('');
     							$("#percent1").val('');
     							$("#penalti_fee1").val('');
@@ -786,10 +839,23 @@
     							
     							$('#currency_id').html(data.currency_data).trigger("chosen:updated");
     							$('#currency_id').prop('disabled', true).trigger("chosen:updated");
-	    					}
+							}
     					}
     			    }
     		    });
+
+    			surplus_type = $("#surplus_type").val();
+
+		    	if(surplus_type == 3 && $("#type_id").val()>1){
+			    	$(".pledge_or_other_surplus1").css('display','');
+			    	$("#pledge_or_other_surplus1_label").html('მეტობა(სესხი)');
+		    	}else{
+		    		$(".pledge_or_other_surplus1").css('display','none');
+		    		$(".surplus").css('display','none');
+		    		$("#surplus_label").html('მეტობა');
+		    		$("#pledge_or_other_surplus1_label").html('მეტობა');
+			    }
+			    
 	        }else{
 	        	if($(this).val() == 1 && $("#client_id").val()>0){
 	        		document.getElementById("car_out").disabled = false;
@@ -823,7 +889,7 @@
 	    							$("#extra_fee").val(parseFloat(data.loan_pay_amount)+parseFloat(data.pay_amount1));
 	    							$("#hidde_id").val(data.id);
 	    							$('#currency_id').prop('disabled', true).trigger("chosen:updated");
-			    				}
+								}
 	    					}
 	    			    }
 	    		    });
@@ -831,7 +897,18 @@
 	        	
 	       		$("#loan_table").css('display','block');
 	       		$("#pledge_table").css('display','none');
-	       		
+
+	       		var surplus_type = $("#surplus_type").val();
+
+		    	if(surplus_type == 3 && $("#type_id").val()<=1){
+		    		$(".surplus").css('display','');
+			    	$("#surplus_label").html('მეტობა(სესხი)');
+			    }else{
+		    		$(".pledge_or_other_surplus1").css('display','none');
+		    		$(".surplus").css('display','none');
+		    		$("#surplus_label").html('მეტობა');
+		    		$("#pledge_or_other_surplus1_label").html('მეტობა');
+			    }
 	        }
 
 	        if($(this).val()>0){
@@ -893,15 +970,29 @@
 	    					}else if(data.status==2){
 	    						$("#month_fee_gel").val(data.fee_lari);
     							$("#month_fee_usd").val(data.fee_dolari);
-    							$("#pledge_or_other_balance_usd").val(data.pay_amount1);
+    							$("#pledge_or_other_balance_gel").val(data.pay_amount1);
+    							$("#pledge_or_other_balance_usd").val(data.pay_amount2);
 
+    							var pay_amount = $('#client_amount').val();
+        						if($('#client_amount').val()=='' || $('#client_amount').val() == null){pay_amount == 0;}
+    							$("#month_fee_trasaction").val(pay_amount);
+    			    	        $("#pledge_or_other_mont_fee").val(pay_amount);
+    			    	        $("#pledge_or_other_extra_fee").val(pay_amount);
+     			    	        
     							if(data.fee_lari == ''){month_fee_gel = 0;}else{month_fee_gel = data.fee_lari;}
-    							if(data.pay_amount1 == ''){pledge_or_other_balance_gel = 0;}else{pledge_or_other_balance_gel = data.pay_amount1;}
+    							
+    							if(data.pay_amount1 == '' || data.pay_amount1 == null){pledge_or_other_balance_gel = 0;}else{pledge_or_other_balance_gel = data.pay_amount1;}
+    							if(data.pay_amount2 == '' || data.pay_amount2 == null){pledge_or_other_balance_usd = 0;}else{pledge_or_other_balance_usd = data.pay_amount2;}
+
     							pledge_or_other_extra_fee = $("#pledge_or_other_extra_fee").val();
     							
     							if(pledge_or_other_extra_fee == ''){pledge_or_other_extra_fee = 0;}
-    							$("#pledge_or_other_extra_fee").val(parseFloat(pledge_or_other_extra_fee)+parseFloat(pledge_or_other_balance_gel));   
-    														
+    							if($("#received_currency_id").val() == 1){
+    								$("#pledge_or_other_extra_fee").val(parseFloat(pledge_or_other_extra_fee)+parseFloat(pledge_or_other_balance_gel));   
+                                }else{
+                                	$("#pledge_or_other_extra_fee").val(parseFloat(pledge_or_other_extra_fee)+parseFloat(pledge_or_other_balance_usd));
+                                } 
+    							
     							$('#client_loan_number').html(data.agrement_data).trigger("chosen:updated");
     						}else if(data.status==3){
     							$('#client_loan_number').html(data.agrement_data).trigger("chosen:updated");
@@ -961,16 +1052,32 @@
     							$('#currency_id').prop('disabled', true).trigger("chosen:updated");
     							$('#client_id').html(data.client_data).trigger("chosen:updated");
 	    					}else if(data.status==2){
-	    						$("#month_fee_gel").val(data.fee_lari);
+		    					$("#month_fee_gel").val(data.fee_lari);
     							$("#month_fee_usd").val(data.fee_dolari);
-    							$("#pledge_or_other_balance_usd").val(data.pay_amount1);
+    							$("#pledge_or_other_balance_gel").val(data.pay_amount1);
+    							$("#pledge_or_other_balance_usd").val(data.pay_amount2);
 
+    							var pay_amount = $('#client_amount').val(); 
+    							if($('#client_amount').val()=='' || $('#client_amount').val() == null){pay_amount == 0;}
+    							
+    							$("#month_fee_trasaction").val(pay_amount);
+    			    	        $("#pledge_or_other_mont_fee").val(pay_amount);
+    			    	        $("#pledge_or_other_extra_fee").val(pay_amount);
+    			    	        
     							if(data.fee_lari == ''){month_fee_gel = 0;}else{month_fee_gel = data.fee_lari;}
-    							if(data.pay_amount1 == ''){pledge_or_other_balance_gel = 0;}else{pledge_or_other_balance_gel = data.pay_amount1;}
+    							
+    							if(data.pay_amount1 == '' || data.pay_amount1 == null){pledge_or_other_balance_gel = 0;}else{pledge_or_other_balance_gel = data.pay_amount1;}
+    							if(data.pay_amount2 == '' || data.pay_amount2 == null){pledge_or_other_balance_usd = 0;}else{pledge_or_other_balance_usd = data.pay_amount2;}
+
     							pledge_or_other_extra_fee = $("#pledge_or_other_extra_fee").val();
     							
     							if(pledge_or_other_extra_fee == ''){pledge_or_other_extra_fee = 0;}
-    							$("#pledge_or_other_extra_fee").val(parseFloat(pledge_or_other_extra_fee)+parseFloat(pledge_or_other_balance_gel));   
+    							
+    							if($("#received_currency_id").val() == 1){
+        							$("#pledge_or_other_extra_fee").val(parseFloat(pledge_or_other_extra_fee)+parseFloat(pledge_or_other_balance_gel));   
+                                }else{
+                                	$("#pledge_or_other_extra_fee").val(parseFloat(pledge_or_other_extra_fee)+parseFloat(pledge_or_other_balance_usd));
+                                }    
     														
     							$('#client_id').html(data.client_data).trigger("chosen:updated");
     						}else if(data.status==3){
@@ -1290,7 +1397,33 @@
     					$("#hidde_surplus").val(1);
     					$("#extra_fee").val(delta);
     					$("#surplus").css('background','rgb(255, 255, 255)');
-    					$("#error_mesage").html('');
+    					if($("#surplus_type").val() != 3){
+        					$("#surplus").focus();
+    					}else{
+    						$("#surplus1").focus();
+    					}
+    				}
+				}
+				if($("#surplus_type").val() != 3){
+					$("#surplus").focus();
+				}else{
+					$("#surplus1").focus();
+				}
+            }
+		});
+
+		$(document).on("keydown", "#surplus1", function (event) {
+			if (event.keyCode == $.ui.keyCode.ENTER){
+				if($(this).val()==''){this_value = 0;}else{this_value = $(this).val();}
+				if($("#hidde_surplus1").val()==0){
+    				delta = (parseFloat($("#extra_fee").val())-parseFloat(this_value)).toFixed(2);
+    				if(delta<0){
+    					alert('მიუთითეთ კორექტული თანხა');
+    					$("#surplus1").css('background','#fb5959');
+    				}else{
+    					$("#hidde_surplus1").val(1);
+    					$("#extra_fee").val(delta);
+    					$("#surplus1").css('background','rgb(255, 255, 255)');
     				}
 				}
             }
@@ -1328,10 +1461,38 @@
     					$("#hidde_pledge_surplus").val(1);
         				$("#pledge_or_other_extra_fee").val(delta);
         				$("#pledge_or_other_surplus").css('background','rgb(255, 255, 255)');
-        				$("#pledge_or_other_surplus").focus();
+        				if($("#surplus_type").val() != 3){
+        					$("#pledge_or_other_surplus").focus();
+    					}else{
+    						$("#pledge_or_other_surplus1").focus();
+    					}
         			}
 				}else{
-    				$("#pledge_or_other_surplus").focus();
+					if($("#surplus_type").val() != 3){
+    					$("#pledge_or_other_surplus").focus();
+					}else{
+						$("#pledge_or_other_surplus1").focus();
+					}
+        		}
+            }
+		});
+
+		$(document).on("keydown", "#pledge_or_other_surplus1", function (event) {
+			if (event.keyCode == $.ui.keyCode.ENTER){
+				if($(this).val()==''){this_value = 0;}else{this_value = $(this).val();}
+				if($("#hidde_pledge_surplus1").val()==0){
+    				delta = (parseFloat($("#pledge_or_other_extra_fee").val())-parseFloat(this_value)).toFixed(2);
+    				if(delta<0){
+    					alert('მიუთითეთ კორექტული თანხა');
+    					$("#pledge_or_other_surplus1").css('background','#fb5959');
+    				}else{
+    					$("#hidde_pledge_surplus1").val(1);
+        				$("#pledge_or_other_extra_fee").val(delta);
+        				$("#pledge_or_other_surplus1").css('background','rgb(255, 255, 255)');
+        				$("#pledge_or_other_surplus1").focus();
+        			}
+				}else{
+    				$("#pledge_or_other_surplus1").focus();
         		}
             }
 		});
@@ -1432,6 +1593,22 @@
 		    }
 	    });
 
+		$(document).on("click", "#delete_surplus1", function () {
+			surplus1 = $("#surplus1").val();
+	        if(surplus1 == ''){surplus1 = 0;}
+
+	        if($("#hidde_surplus1").val() == 1){
+	        	$("#extra_fee").val(parseFloat($("#extra_fee").val()) + parseFloat(surplus1));
+	        	$("#surplus1").val('');
+	        	$("#hidde_surplus1").val(0);
+	        	$("#surplus1").focus();
+	        }else{
+	        	$("#extra_fee").val(parseFloat($("#extra_fee").val()));
+	        	$("#surplus1").val('');
+	        	$("#surplus1").focus();
+		    }
+	    });
+	    
 		$(document).on("click", "#delete_pledge_surplus", function () {
 			pledge_or_other_surplus = $("#pledge_or_other_surplus").val();
 	        if(pledge_or_other_surplus == ''){pledge_or_other_surplus = 0;}
@@ -1448,6 +1625,22 @@
 		    }
 	    });
 
+		$(document).on("click", "#delete_pledge_surplus1", function () {
+			pledge_or_other_surplus1 = $("#pledge_or_other_surplus1").val();
+	        if(pledge_or_other_surplus1 == ''){pledge_or_other_surplus1 = 0;}
+
+	        if($("#hidde_pledge_surplus1").val() == 1){
+	        	$("#pledge_or_other_extra_fee").val(parseFloat($("#pledge_or_other_extra_fee").val()) + parseFloat(pledge_or_other_surplus1));
+	        	$("#pledge_or_other_surplus1").val('');
+	        	$("#hidde_pledge_surplus1").val(0);
+	        	$("#pledge_or_other_surplus1").focus();
+	        }else{
+	        	$("#pledge_or_other_extra_fee").val(parseFloat($("#pledge_or_other_extra_fee").val()));
+	        	$("#pledge_or_other_surplus1").val('');
+	        	$("#pledge_or_other_surplus1").focus();
+		    }
+	    });
+	    
 		$(document).on("click", "#delete_amount", function () {
 			pledge_or_other_payed = $("#pledge_or_other_payed").val();
 	        if(pledge_or_other_payed == ''){pledge_or_other_payed = 0;}
