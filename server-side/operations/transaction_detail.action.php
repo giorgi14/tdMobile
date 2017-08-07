@@ -520,9 +520,7 @@ function Add1($tr_id, $hidde_id, $transaction_date, $pledge_or_other_payed, $ple
                       AND     money_transactions_detail.`status` = 9
                       AND     money_transactions_detail.actived = 1");
         
-        if ($month_fee_gel<=$month_payed_gel || $month_fee_usd<= $month_payed_usd) {
-            
-            
+        if (($month_fee_gel<=$month_payed_gel || $month_fee_usd<= $month_payed_usd) && $month_payed_gel>0 && $month_payed_usd>0){
             
             $tr_id1 = mysql_fetch_array(mysql_query("SELECT MAX(money_transactions_detail.id) AS tr_id,
                                                             money_transactions_detail.course
