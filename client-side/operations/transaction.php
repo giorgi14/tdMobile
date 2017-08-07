@@ -741,7 +741,6 @@
 	    							$("#percent2").val('');
 	    							$("#penalti_fee2").val('');
 
-	    							$("#hidde_id").val(data.id);
 	    							$('#currency_id').prop('disabled', false).trigger("chosen:updated");
 	    							$('#client_loan_number').html(data.agrement_data).trigger("chosen:updated");
 	    						}else if(data.status==3){
@@ -758,7 +757,6 @@
 	    							$("#percent2").val('');
 	    							$("#penalti_fee2").val('');
 
-	    							$("#hidde_id").val(data.id);
 	    							$('#currency_id').prop('disabled', false).trigger("chosen:updated");
 	    						}
 							}
@@ -835,8 +833,6 @@
     							$("#percent2").val('');
     							$("#penalti_fee2").val('');
 
-    							$("#hidde_id").val(data.id);
-    							
     							$('#currency_id').html(data.currency_data).trigger("chosen:updated");
     							$('#currency_id').prop('disabled', true).trigger("chosen:updated");
 							}
