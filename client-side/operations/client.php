@@ -1424,7 +1424,7 @@
 		param.loan_amount	      = $('#sub_loan_amount').val();
 		param.month_percent	      = $("#sub_month_percent").val();
 		param.loan_months	      = $('#sub_loan_month').val();
-		param.loan_agreement_type = $('#loan_agreement_type').val();
+		param.loan_agreement_type = $('#sub_loan_agreement_type').val();
 		if(param.loan_amount == ''){
 			alert('შეავსეთ "სესხის სრული მოცულობა"');
 		}else if(param.month_percent == ''){
