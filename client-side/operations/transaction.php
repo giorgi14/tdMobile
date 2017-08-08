@@ -1091,7 +1091,89 @@
 		    });
     	});
 
+		$(document).on("change", "#other_penalty", function () {
+			
+			param         =  new Object();
+		    param.act     = "get_shedule";
+		    param.id      = $("#client_id").val();
+		    param.agr_id  = $("#client_loan_number").val();
+		    param.status  = 1;
+		    param.type_id =  $('#type_id').val();
+		    param.transaction_date  =  $("#transaction_date").val();
+		    param.month_fee_trasaction = $("#month_fee_trasaction").val();
+		    param.check_loan_penalty   = $("input[id='other_penalty']:checked").val();
+		    param.received_currency_id = $("#received_currency_id").val();
+		    param.course               = $("#course").val();
 
+		    if(param.type_id>0 && param.agr_id>0 && param.id >0){
+    		    $.ajax({
+    		        url: aJaxURL,
+    			    data: param,
+    		        success: function(data) {			        
+    					if(typeof(data.error) != 'undefined'){
+    						if(data.error != ''){
+    							alert(data.error);
+    						}else{
+    							if(data.status==1){
+        							$("#month_fee1").val(data.pay_amount);
+        							$("#root1").val(data.root);
+        							$("#percent1").val(data.percent);
+        							$("#penalti_fee1").val(data.penalty);
+    
+        							$("#month_fee2").val(data.pay_amount1);
+        							$("#root2").val(data.root1);
+        							$("#percent2").val(data.percent1);
+        							$("#penalti_fee2").val(data.penalty1);
+        							
+        							$("#month_fee").val(data.loan_pay_amount);
+        							extra_fee = data.loan_pay_amount;
+        							if(data.loan_pay_amount==''){
+        								extra_fee = 0;
+            						}
+        							$("#extra_fee").val(parseFloat(extra_fee)+parseFloat(data.pay_amount1));
+        							
+        							$("#hidde_id").val(data.id);
+        							$("#currency_id").html(data.currenc).trigger("chosen:updated");
+        							$('#currency_id').prop('disabled', true).trigger("chosen:updated");
+        							$('#client_id').html(data.client_data).trigger("chosen:updated");
+    	    					}else if(data.status==2){
+    		    					$("#month_fee_gel").val(data.fee_lari);
+        							$("#month_fee_usd").val(data.fee_dolari);
+        							$("#pledge_or_other_balance_gel").val(data.pay_amount1);
+        							$("#pledge_or_other_balance_usd").val(data.pay_amount2);
+    
+        							var pay_amount = $('#client_amount').val(); 
+        							if($('#client_amount').val()=='' || $('#client_amount').val() == null){pay_amount == 0;}
+        							
+    //     							$("#month_fee_trasaction").val(pay_amount);
+    //     			    	        $("#pledge_or_other_mont_fee").val(pay_amount);
+    //     			    	        $("#pledge_or_other_extra_fee").val(pay_amount);
+        			    	        
+        							if(data.fee_lari == ''){month_fee_gel = 0;}else{month_fee_gel = data.fee_lari;}
+        							
+        							if(data.pay_amount1 == '' || data.pay_amount1 == null){pledge_or_other_balance_gel = 0;}else{pledge_or_other_balance_gel = data.pay_amount1;}
+        							if(data.pay_amount2 == '' || data.pay_amount2 == null){pledge_or_other_balance_usd = 0;}else{pledge_or_other_balance_usd = data.pay_amount2;}
+    
+        							pledge_or_other_extra_fee = $("#pledge_or_other_extra_fee").val();
+        							
+        							if(pledge_or_other_extra_fee == ''){pledge_or_other_extra_fee = 0;}
+        							
+        							if($("#received_currency_id").val() == 1){
+            							$("#pledge_or_other_extra_fee").val(parseFloat(pledge_or_other_extra_fee)+parseFloat(pledge_or_other_balance_gel));   
+                                    }else{
+                                    	$("#pledge_or_other_extra_fee").val(parseFloat(pledge_or_other_extra_fee)+parseFloat(pledge_or_other_balance_usd));
+                                    }    
+        														
+        							$('#client_id').html(data.client_data).trigger("chosen:updated");
+        						}else if(data.status==3){
+        							$('#client_id').html(data.client_data).trigger("chosen:updated");
+        						}
+    						}
+    					}
+    			    }
+    		    });
+    		}
+    	});
 		$(document).on("change", "#pledge_client_loan_number", function () {
 			
             param         =  new Object();
