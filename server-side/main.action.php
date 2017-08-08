@@ -432,6 +432,50 @@ switch ($action) {
 	                                        UNION ALL
 	                                        SELECT   client.id,
                                     				 '' AS `id`,
+                                    				 '3' AS number1,
+                                    				 '8' AS sort3,
+                                    				 DATE(money_transactions.pay_datetime) AS sort,
+                                    				 '2' AS sort1,
+                                    				 '' AS number,
+                                    				 DATE_FORMAT(money_transactions.pay_datetime, '%d/%m/%Y') AS `date`,
+                                    				(SELECT cur_cource.cource FROM cur_cource WHERE cur_cource.actived = 1 AND DATE(cur_cource.datetime) = DATE(money_transactions.pay_datetime) LIMIT 1) AS `exchange`,
+                                    				 '' AS `loan_amount`,
+                                    				 '' AS `loan_amount_gel`,
+                                    				 '' AS `delta`,
+                                    				 '' AS `delta1`,
+                                    				 '' AS percent,
+                                    				 '' AS percent_gel,
+                                    				 '' AS percent1,
+                                    				 '' AS percent_gel1,
+                                    				 '' AS pay_root,
+                                    				 '' AS pay_root_gel,
+                                    				 '' AS jh,
+                                    				 '' AS kj,
+                                    				 '' AS difference,
+                                    				 '' AS pledge_fee,
+                                                     '' AS pledge_fee1,
+                                                     CASE 
+                                            			WHEN money_transactions.currency_id = 2 THEN CONCAT(ROUND(SUM(money_transactions_detail.pay_amount*money_transactions.course),2), ' GEL')
+                                                        WHEN money_transactions.currency_id = 1 THEN CONCAT(ROUND(SUM(money_transactions_detail.pay_amount),2), ' GEL')
+                                                     END as  pledge_payed,
+                                                     CASE 
+                                            			WHEN money_transactions.currency_id = 2 THEN CONCAT(ROUND(SUM(money_transactions_detail.pay_amount),2), ' USD')
+                                                        WHEN money_transactions.currency_id = 1 THEN CONCAT(ROUND(SUM(money_transactions_detail.pay_amount/money_transactions.course),2), ' USD')
+                                                     END as  pledge_payed1,
+                                    				 '' AS  pledge_delta,
+                                                     '' as  other,
+                                    				 '' as  other1,
+                                    				 '' as  other_delta
+                             				FROM     money_transactions
+                            				JOIN     client ON client.id = money_transactions.client_id
+                            				JOIN     money_transactions_detail ON money_transactions_detail.transaction_id = money_transactions.id
+                            				WHERE    client_id = '$id' AND money_transactions_detail.`status` = 9 
+                                            AND      money_transactions_detail.actived = 1 
+                                            AND      money_transactions.actived = 1
+                                            GROUP BY money_transactions.id
+	                                        UNION ALL
+	                                        SELECT   client.id,
+                                    				 '' AS `id`,
                                     				 '' AS number1,
                                     				 '10' AS sort3,
                                     				 DATE(money_transactions.pay_datetime) AS sort,
@@ -895,6 +939,50 @@ switch ($action) {
                             				JOIN     client ON client.id = money_transactions.client_id
                             				JOIN     money_transactions_detail ON money_transactions_detail.transaction_id = money_transactions.id
                             				WHERE    client_id = '$sub_client' AND money_transactions_detail.`status` = 8 
+                                            AND      money_transactions_detail.actived = 1 
+                                            AND      money_transactions.actived = 1
+                                            GROUP BY money_transactions.id
+	                                       UNION ALL
+	                                        SELECT   client.id,
+                                    				 '' AS `id`,
+                                    				 '3' AS number1,
+                                    				 '8' AS sort3,
+                                    				 DATE(money_transactions.pay_datetime) AS sort,
+                                    				 '2' AS sort1,
+                                    				 '' AS number,
+                                    				 DATE_FORMAT(money_transactions.pay_datetime, '%d/%m/%Y') AS `date`,
+                                    				(SELECT cur_cource.cource FROM cur_cource WHERE cur_cource.actived = 1 AND DATE(cur_cource.datetime) = DATE(money_transactions.pay_datetime) LIMIT 1) AS `exchange`,
+                                    				 '' AS `loan_amount`,
+                                    				 '' AS `loan_amount_gel`,
+                                    				 '' AS `delta`,
+                                    				 '' AS `delta1`,
+                                    				 '' AS percent,
+                                    				 '' AS percent_gel,
+                                    				 '' AS percent1,
+                                    				 '' AS percent_gel1,
+                                    				 '' AS pay_root,
+                                    				 '' AS pay_root_gel,
+                                    				 '' AS jh,
+                                    				 '' AS kj,
+                                    				 '' AS difference,
+                                    				 '' AS pledge_fee,
+                                                     '' AS pledge_fee1,
+                                                     CASE 
+                                            			WHEN money_transactions.currency_id = 2 THEN CONCAT(ROUND(SUM(money_transactions_detail.pay_amount*money_transactions.course),2), 'GEL')
+                                                        WHEN money_transactions.currency_id = 1 THEN CONCAT(ROUND(SUM(money_transactions_detail.pay_amount),2), 'GEL')
+                                                     END as pledge_payed,
+                                                     CASE 
+                                            			WHEN money_transactions.currency_id = 2 THEN CONCAT(ROUND(SUM(money_transactions_detail.pay_amount),2),' USD')
+                                                        WHEN money_transactions.currency_id = 1 THEN CONCAT(ROUND(SUM(money_transactions_detail.pay_amount/money_transactions.course),2), ' USD')
+                                                     END as pledge_payed1,
+                                    				 '' AS  pledge_delta,
+                                                     '' as  other,
+                                    				 '' as  other1,
+                                    				 '' as  other_delta
+                             				FROM     money_transactions
+                            				JOIN     client ON client.id = money_transactions.client_id
+                            				JOIN     money_transactions_detail ON money_transactions_detail.transaction_id = money_transactions.id
+                            				WHERE    client_id = '$sub_client' AND money_transactions_detail.`status` = 9 
                                             AND      money_transactions_detail.actived = 1 
                                             AND      money_transactions.actived = 1
                                             GROUP BY money_transactions.id
@@ -1393,6 +1481,50 @@ switch ($action) {
                             				JOIN     client ON client.id = money_transactions.client_id
                             				JOIN     money_transactions_detail ON money_transactions_detail.transaction_id = money_transactions.id
                             				WHERE    client_id = '$id' AND money_transactions_detail.`status` = 8 
+                                            AND      money_transactions_detail.actived = 1 
+                                            AND      money_transactions.actived = 1
+                                            GROUP BY money_transactions.id
+    	                                    UNION ALL
+    	                                    SELECT   client.id,
+                                    				 '' AS `id`,
+                                    				 '3' AS number1,
+                                    				 '8' AS sort3,
+                                    				 DATE(money_transactions.pay_datetime) AS sort,
+                                    				 '2' AS sort1,
+                                    				 '' AS number,
+                                    				 DATE_FORMAT(money_transactions.pay_datetime, '%d/%m/%Y') AS `date`,
+                                    				(SELECT cur_cource.cource FROM cur_cource WHERE cur_cource.actived = 1 AND DATE(cur_cource.datetime) = DATE(money_transactions.pay_datetime) LIMIT 1) AS `exchange`,
+                                    				 '' AS `loan_amount`,
+                                    				 '' AS `loan_amount_gel`,
+                                    				 '' AS `delta`,
+                                    				 '' AS `delta1`,
+                                    				 '' AS percent,
+                                    				 '' AS percent_gel,
+                                    				 '' AS percent1,
+                                    				 '' AS percent_gel1,
+                                    				 '' AS pay_root,
+                                    				 '' AS pay_root_gel,
+                                    				 '' AS jh,
+                                    				 '' AS kj,
+                                    				 '' AS difference,
+                                    				 '' AS pledge_fee,
+                                                     '' AS pledge_fee1,
+                                                     CASE 
+                                            			WHEN money_transactions.currency_id = 2 THEN CONCAT(ROUND(SUM(money_transactions_detail.pay_amount),2),' USD')
+                                                        WHEN money_transactions.currency_id = 1 THEN CONCAT(ROUND(SUM(money_transactions_detail.pay_amount/money_transactions.course),2), ' USD')
+                                                     END as  pledge_payed,
+                                                     CASE 
+                                            			WHEN money_transactions.currency_id = 2 THEN CONCAT(ROUND(SUM(money_transactions_detail.pay_amount*money_transactions.course),2),' GEL')
+                                                        WHEN money_transactions.currency_id = 1 THEN CONCAT(ROUND(SUM(money_transactions_detail.pay_amount),2),' GEL')
+                                                     END as  pledge_payed1,
+                                    				 '' AS  pledge_delta,
+                                                     '' as  other,
+                                    				 '' as  other1,
+                                    				 '' as  other_delta
+                             				FROM     money_transactions
+                            				JOIN     client ON client.id = money_transactions.client_id
+                            				JOIN     money_transactions_detail ON money_transactions_detail.transaction_id = money_transactions.id
+                            				WHERE    client_id = '$id' AND money_transactions_detail.`status` = 9 
                                             AND      money_transactions_detail.actived = 1 
                                             AND      money_transactions.actived = 1
                                             GROUP BY money_transactions.id
@@ -1899,6 +2031,50 @@ switch ($action) {
                                             AND      money_transactions_detail.actived = 1 
                                             AND      money_transactions.actived = 1
                                             GROUP BY money_transactions.id
+    	                                    UNION ALL
+    	                                    SELECT   client.id,
+                                    				 '' AS `id`,
+                                    				 '5' AS number1,
+                                    				 '8' AS sort3,
+                                    				 DATE(money_transactions.pay_datetime) AS sort,
+                                    				 '2' AS sort1,
+                                    				 '' AS number,
+                                    				 DATE_FORMAT(money_transactions.pay_datetime, '%d/%m/%Y') AS `date`,
+                                    				(SELECT cur_cource.cource FROM cur_cource WHERE cur_cource.actived = 1 AND DATE(cur_cource.datetime) = DATE(money_transactions.pay_datetime) LIMIT 1) AS `exchange`,
+                                    				 '' AS `loan_amount`,
+                                    				 '' AS `loan_amount_gel`,
+                                    				 '' AS `delta`,
+                                    				 '' AS `delta1`,
+                                    				 '' AS percent,
+                                    				 '' AS percent_gel,
+                                    				 '' AS percent1,
+                                    				 '' AS percent_gel1,
+                                    				 '' AS pay_root,
+                                    				 '' AS pay_root_gel,
+                                    				 '' AS jh,
+                                    				 '' AS kj,
+                                    				 '' AS difference,
+                                    				 '' AS pledge_fee,
+                                                     '' AS pledge_fee1,
+                                                     CASE 
+                                            			WHEN money_transactions.currency_id = 2 THEN CONCAT(ROUND(SUM(money_transactions_detail.pay_amount),2),' USD')
+                                                        WHEN money_transactions.currency_id = 1 THEN CONCAT(ROUND(SUM(money_transactions_detail.pay_amount/money_transactions.course),2),' USD')
+                                                     END as  pledge_payed,
+                                                     CASE 
+                                            			WHEN money_transactions.currency_id = 2 THEN CONCAT(ROUND(SUM(money_transactions_detail.pay_amount*money_transactions.course),2),' GEL')
+                                                        WHEN money_transactions.currency_id = 1 THEN CONCAT(ROUND(SUM(money_transactions_detail.pay_amount),2),' GEL')
+                                                     END as  pledge_payed1,
+                                    				 '' AS  pledge_delta,
+                                                     '' as  other,
+                                    				 '' as  other1,
+                                    				 '' as  other_delta
+                             				FROM     money_transactions
+                            				JOIN     client ON client.id = money_transactions.client_id
+                            				JOIN     money_transactions_detail ON money_transactions_detail.transaction_id = money_transactions.id
+                            				WHERE    client_id = '$sub_client' AND money_transactions_detail.`status` = 9 
+                                            AND      money_transactions_detail.actived = 1 
+                                            AND      money_transactions.actived = 1
+                                            GROUP BY money_transactions.id
 	                                        UNION ALL
     	                                    SELECT   client.id,
                                     				 '' AS `id`,
@@ -2244,6 +2420,20 @@ switch ($action) {
 	                   }else{
 	                       $row[] = $aRow[$i];
 	                   }
+	               }elseif ($i == 19){
+	                   $sumpercent19+=$aRow[$i];
+	                   if($aRow[number1]==3){
+	                       $row[] = '<div title="მეტობა" style="background: #F44336; color: #fff;">'.$aRow[$i].'</div>';
+	                   }else{
+	                       $row[] = $aRow[$i];
+	                   }
+	               }elseif ($i == 20){
+	                   $sumpercent20+=$aRow[$i];
+	                   if($aRow[number1]==3){
+	                       $row[] = '<div title="მეტობა" style="background: #F44336; color: #fff;">'.$aRow[$i].'</div>';
+	                   }else{
+	                       $row[] = $aRow[$i];
+	                   }
 	               }else{
 	                   $row[] = $aRow[$i];
 	               }
@@ -2259,6 +2449,8 @@ switch ($action) {
 	    $data['aaData4'][] = $sumpercent3;
 	    $data['aaData5'][] = $sumpercent4;
 	    $data['aaData6'][] = $sumpercent5;
+	    $data['aaData7'][] = $sumpercent19;
+	    $data['aaData8'][] = $sumpercent20;
 	    
 	    break;
     case 'get_canceled-loan_dialog':
@@ -3154,12 +3346,12 @@ function GetPage($id){
                         <th style="width: 6%;">ვალდე-<br>ბულება<br>ლარი</th>
                         <th style="width: 6%;">კურსთა<br>შორისი<br>სხვაობა</th>
             
-                        <th style="width: 6%;">ჩარიცხ.<br>დაზღვევა<br>დოლარი</th>
                         <th style="width: 6%;">ჩარიცხ.<br>დაზღვევა<br>ლარი</th>
-                        <th style="width: 6%;">გადახდა<br>დაზღვევა<br>დოლარი</th>
+                        <th style="width: 6%;">ჩარიცხ.<br>დაზღვევა<br>დოლარი</th>
                         <th style="width: 6%;">გადახდა<br>დაზღვევა<br>ლარი</th>
-                        <th style="width: 6%;">დაზღვევა<br>ვალდებ.<br>დოლარი</th>
+                        <th style="width: 6%;">გადახდა<br>დაზღვევა<br>დოლარი</th>
                         <th style="width: 6%;">დაზღვევა<br>ვალდებ.<br>ლარი</th>
+                        <th style="width: 6%;">დაზღვევა<br>ვალდებ.<br>დოლარი</th>
             
                         <th style="width: 6%;">დარიცხვა<<br>>სხვა<br>ხარჯი</th>
                         <th style="width: 6%;">გადახდა<br>სხვა<br>ხარჯი</th>

@@ -597,6 +597,7 @@
 			    data: param,
 		        success: function(data) {			        
 					if(typeof(data.error) != 'undefined'){
+						
 						if(data.error != ''){
 							alert(data.error);
 						}else{

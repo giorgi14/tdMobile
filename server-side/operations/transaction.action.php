@@ -17,7 +17,26 @@ switch ($action) {
 
 		break;
 		
-	case 'delete_transaction':
+    case 'delete_detail':
+    
+        $tr_id	= $_REQUEST['tr_id'];
+        
+        $res = mysql_fetch_array(mysql_query("SELECT money_transactions.client_loan_schedule_id
+                                              FROM   money_transactions 
+                                              WHERE  id = '$tr_id'"));
+        
+        mysql_query("UPDATE  client_loan_schedule
+                        SET `status` = 0
+                     WHERE   id      = '$res[client_loan_schedule_id]'");
+        
+        mysql_query("UPDATE  money_transactions
+                        SET `client_loan_schedule_id` = null
+                      WHERE  id                       = '$tr_id'");
+        
+        mysql_query("DELETE FROM money_transactions_detail
+                     WHERE  money_transactions_detail.transaction_id = '$tr_id'");
+        break;
+    case 'delete_transaction':
 		$id      = $_REQUEST['tr_id'];
 		$user_id = $_SESSION['USERID'];
 		

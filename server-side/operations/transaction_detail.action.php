@@ -24,6 +24,7 @@ switch ($action) {
 	
 	    $data = array('client_data' => client_car($id));
 	    break;
+    
 	case 'get_loan_number_chosen':
     
         $id	= $_REQUEST['id'];

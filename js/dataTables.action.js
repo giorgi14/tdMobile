@@ -302,6 +302,8 @@ function GetDataTable1(tname, aJaxURL, action, count, data, hidden, length, sort
                     $("#procenti_lari1").html(data.aaData4);
                     $("#dziri_lari").html(data.aaData5);
                     $("#dziri_lari1").html(data.aaData6);
+                    $("#insurance_payed").html(data.aaData7);
+                    $("#insurance_payed1").html(data.aaData8);
                 }
             });
         },
