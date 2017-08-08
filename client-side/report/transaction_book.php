@@ -199,6 +199,7 @@
 	    	param.transaction_date	   = $("#transaction_date").val();
 	    	
 			param.client_id            = $("#client_id").val();
+			param.client_loan_number   = $("#client_loan_number").val();
 
 	    	if(param.course == '' || param.course == '0.0000'){
 		    	alert('შეავსე დარიცხვის კურსი');

@@ -287,6 +287,9 @@ switch ($action) {
         $penalti_fee          = $_REQUEST['penalti_fee'];
         $surplus              = $_REQUEST['surplus'];
         
+        $client_id            = $_REQUEST['client_id'];
+        $client_loan_number   = $_REQUEST['client_loan_number'];
+        
         
         
     
@@ -297,9 +300,9 @@ switch ($action) {
     
         $pay_amount = $month_fee + $month_fee2;
         mysql_query("INSERT INTO `money_transactions`
-                                (`datetime`, `user_id`, `client_loan_schedule_id`, `pay_datetime`, `pay_amount`, `extra_fee`, `course`, `currency_id`, `received_currency_id`, `month_fee_trasaction`, `type_id`, `status`, `actived`)
+                                (`datetime`, `user_id`, `client_loan_schedule_id`, `agreement_id`, `client_id`, `pay_datetime`, `pay_amount`, `extra_fee`, `course`, `currency_id`, `received_currency_id`, `month_fee_trasaction`, `type_id`, `status`, `actived`)
                           VALUES
-                                (NOW(), '$user_id', '$id', '$transaction_date', '$pay_amount', '$extra_fee', '$course', '$currency_id', '$received_currency_id', '$month_fee_trasaction', '$type_id', '1', '1')");
+                                (NOW(), '$user_id', '$id', '$client_loan_number', '$client_id', '$transaction_date', '$pay_amount', '$extra_fee', '$course', '$currency_id', '$received_currency_id', '$month_fee_trasaction', '$type_id', '1', '1')");
          
         $tr_id = mysql_insert_id();
     

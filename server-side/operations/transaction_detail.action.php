@@ -1128,7 +1128,7 @@ function GetPage($res = ''){
 				</table>
 			</table>
 			<!-- ID -->
-			<input type="hidden" id="id" value="' . $res['id'] . '" />
+			<input type="hidden" id="idd" value="' . $res['id'] . '" />
 			<input type="hidden" id="hidde_status" value="' . $res['status'] . '" />
 			    
 			<input type="hidden" id="hidde_root" value="0" />
