@@ -412,11 +412,13 @@ switch ($action) {
         
 	    break;
 	case 'get_shedule':
-		$id	               = $_REQUEST['id'];
-		$type_id           = $_REQUEST['type_id'];
-		$agr_id            = $_REQUEST['agr_id'];
-		$status            = $_REQUEST['status'];
-		$transaction_date  = $_REQUEST['transaction_date'];
+		$id	                = $_REQUEST['id'];
+		$type_id            = $_REQUEST['type_id'];
+		$agr_id             = $_REQUEST['agr_id'];
+		$status             = $_REQUEST['status'];
+		$transaction_date   = $_REQUEST['transaction_date'];
+		$check_loan_penalty = $_REQUEST['check_loan_penalty'];
+		
 		if ($type_id==1) {
     		  
     		if ($status == 1) {
@@ -448,13 +450,18 @@ switch ($action) {
     		
     		$remaining_root = $check_penalty[remaining_root];
     		$penalty = 0;
-    		if ($check_penalty[datediff]>0 && $check_penalty[datediff]<=$check_penalty[penalty_days]) {
-    		    $penalty = round(($remaining_root * ($check_penalty[penalty_percent]/100))*$check_penalty[datediff],2);
-    		}elseif ($check_penalty[datediff]>0 && $check_penalty[datediff]>$check_penalty[penalty_days] && $check_penalty[penalty_additional_percent] > 0){
-    		    $penalty = round((($remaining_root * ($check_penalty[penalty_percent]/100))*$check_penalty[penalty_days])+($remaining_root * ($check_penalty[penalty_additional_percent]/100))*($check_penalty[datediff]-$check_penalty[penalty_days]),2);
-    		}elseif($check_penalty[datediff]>0 && $check_penalty[penalty_additional_percent] <= 0){
-    		    $penalty = round(($remaining_root * ($check_penalty[penalty_percent]/100))*$check_penalty[datediff],2);
+    		if ($check_loan_penalty == 1) {
+    		    $penalty = round(($remaining_root * ($check_penalty[penalty_additional_percent]/100))*$check_penalty[datediff],2);
+    		}else{
+    		    if ($check_penalty[datediff]>0 && $check_penalty[datediff]<=$check_penalty[penalty_days]) {
+    		        $penalty = round(($remaining_root * ($check_penalty[penalty_percent]/100))*$check_penalty[datediff],2);
+    		    }elseif ($check_penalty[datediff]>0 && $check_penalty[datediff]>$check_penalty[penalty_days] && $check_penalty[penalty_additional_percent] > 0){
+    		        $penalty = round((($remaining_root * ($check_penalty[penalty_percent]/100))*$check_penalty[penalty_days])+($remaining_root * ($check_penalty[penalty_additional_percent]/100))*($check_penalty[datediff]-$check_penalty[penalty_days]),2);
+    		    }elseif($check_penalty[datediff]>0 && $check_penalty[penalty_additional_percent] <= 0){
+    		        $penalty = round(($remaining_root * ($check_penalty[penalty_percent]/100))*$check_penalty[datediff],2);
+    		    }  
     		}
+    		
     		
     		
 		    mysql_query("UPDATE `client_loan_schedule`
@@ -490,7 +497,7 @@ switch ($action) {
     		
     		$month_fee_trasaction  = $_REQUEST['month_fee_trasaction'];
     		$receivedd_currency_id = $_REQUEST['received_currency_id'];
-    		$loan_cource_id        = $res[loan_currency_id];
+    		$loan_cource_id        = $res['loan_currency_id'];
     		$course                = $_REQUEST['course'];
     		
     		if ($receivedd_currency_id == $loan_cource_id) {
@@ -507,8 +514,7 @@ switch ($action) {
     		if ($type_id == 1 || $type_id == 0) {	
         		$data = array('status' => 1, 'id' => $res[id],'pay_amount' => $res[root] + $res[percent] + $penalty, 'root' => $res[root], 'percent' => $res[percent], 'penalty' => $penalty, 'client_data' => client($res[client_id]), 'agrement_data' => client_loan_number($res[agrement_id]), 'currenc' => currency($res[loan_currency_id]),'pay_amount1' => $res1[pay_amount], 'root1' => $res1[pay_root], 'percent1' => $res1[pay_percent], 'penalty1' => $res1[pay_penalty], 'loan_pay_amount' => $loan_pay_amount);
     		}
-    		
-		}elseif ($type_id == 2){
+    	}elseif ($type_id == 2){
 		    $receivedd_currency_id = $_REQUEST['received_currency_id'];
 		    $res_pledge = mysql_fetch_assoc(mysql_query("SELECT CASE
                                                                    WHEN money_transactions.received_currency_id = 2 THEN ROUND(money_transactions_detail.pay_amount*money_transactions.course,2)

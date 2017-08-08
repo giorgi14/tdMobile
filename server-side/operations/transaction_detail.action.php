@@ -889,7 +889,17 @@ function GetPage($res = ''){
 	<div id="dialog-form">
 	    <fieldset>
 	    	<table class="dialog-form-table">
-	            <table>
+	            <table id="loan_table1" style="'.$loan_table_hidde.'">
+	                <tr>
+    	                <td style="width: 240px; padding-top: 4px;">
+                	       <label calss="label" style="padding-top: 5px;" for="name">ჯარიმა მეორე პირგასამტეხლოს მიხედვით</label>
+                	    </td>
+    					<td style="width: 120px;">
+                	       <input class="idle" style="width: 15px;" id="other_penalty" value="1" type="checkbox">
+                	    </td>
+    				</tr>
+	           </table>
+	           <table>
 	                <tr>
     	                <td style="width: 200px;"><label calss="label" style="padding-top: 5px;" for="name">ტიპი</label></td>
     					<td style="width: 280px;"><label calss="label" style="padding-top: 5px;" for="date">მსესხებელი</label></td>

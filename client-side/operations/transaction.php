@@ -773,6 +773,7 @@
 	    	
 	        if($(this).val() > 1 ){
 	            $("#loan_table").css('display','none');
+	            $("#loan_table1").css('display','none');
 	            $("#pledge_table").css('display','');
 	            $("#month_fee1").val('');
 				$("#root1").val('');
@@ -863,6 +864,7 @@
 	    		    param.agr_id               = $("#client_loan_number").val();
 	    		    param.transaction_date     = $("#transaction_date").val();
 	    		    param.month_fee_trasaction = $("#month_fee_trasaction").val();
+	    		    param.check_loan_penalty   = $("input[id='other_penalty']:checked").val();
 	    		    param.received_currency_id = $("#received_currency_id").val();
 	    		    param.course               = $("#course").val();
 	    		    param.type_id              = $(this).val();
@@ -893,6 +895,7 @@
 	        	}
 	        	
 	       		$("#loan_table").css('display','block');
+	       		$("#loan_table1").css('display','block');
 	       		$("#pledge_table").css('display','none');
 
 	       		var surplus_type = $("#surplus_type").val();
@@ -932,6 +935,7 @@
 		    param.type_id              = $('#type_id').val();
 		    param.transaction_date     = $("#transaction_date").val();
 		    param.month_fee_trasaction = $("#month_fee_trasaction").val();
+		    param.check_loan_penalty   = $("input[id='other_penalty']:checked").val();
 		    param.received_currency_id = $("#received_currency_id").val();
 		    param.course               = $("#course").val();
 		    
@@ -1015,6 +1019,7 @@
 		    param.type_id =  $('#type_id').val();
 		    param.transaction_date  =  $("#transaction_date").val();
 		    param.month_fee_trasaction = $("#month_fee_trasaction").val();
+		    param.check_loan_penalty   = $("input[id='other_penalty']:checked").val();
 		    param.received_currency_id = $("#received_currency_id").val();
 		    param.course               = $("#course").val();
 		    
