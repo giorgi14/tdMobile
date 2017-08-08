@@ -461,7 +461,7 @@
 		    
 			param.act	                    = "save_transaction";
 			
-		    param.id	                    = $("#id").val();
+		    param.id	                    = $("#idd").val();
 		    param.tr_id	                    = $("#tr_id").val();
 		    param.client_id                 = $("#client_id").val();
 		    param.client_loan_number        = $("#client_loan_number").val();
