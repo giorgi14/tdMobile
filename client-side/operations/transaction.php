@@ -806,9 +806,9 @@
     							var pay_amount = $('#client_amount').val();
         						if($('#client_amount').val()=='' || $('#client_amount').val() == null){pay_amount == 0;}
         						
-    							$("#month_fee_trasaction").val(pay_amount);
-    			    	        $("#pledge_or_other_mont_fee").val(pay_amount);
-    			    	        $("#pledge_or_other_extra_fee").val(pay_amount);
+//     							$("#month_fee_trasaction").val(pay_amount);
+//     			    	        $("#pledge_or_other_mont_fee").val(pay_amount);
+//     			    	        $("#pledge_or_other_extra_fee").val(pay_amount);
      			    	        
     							if(data.fee_lari == ''  || data.fee_lari==null){month_fee_gel = 0;}else{month_fee_gel = data.fee_lari;}
     							
@@ -972,9 +972,9 @@
 
     							var pay_amount = $('#client_amount').val();
         						if($('#client_amount').val()=='' || $('#client_amount').val() == null){pay_amount == 0;}
-    							$("#month_fee_trasaction").val(pay_amount);
-    			    	        $("#pledge_or_other_mont_fee").val(pay_amount);
-    			    	        $("#pledge_or_other_extra_fee").val(pay_amount);
+//     							$("#month_fee_trasaction").val(pay_amount);
+//     			    	        $("#pledge_or_other_mont_fee").val(pay_amount);
+//     			    	        $("#pledge_or_other_extra_fee").val(pay_amount);
      			    	        
     							if(data.fee_lari == ''){month_fee_gel = 0;}else{month_fee_gel = data.fee_lari;}
     							
@@ -1057,9 +1057,9 @@
     							var pay_amount = $('#client_amount').val(); 
     							if($('#client_amount').val()=='' || $('#client_amount').val() == null){pay_amount == 0;}
     							
-    							$("#month_fee_trasaction").val(pay_amount);
-    			    	        $("#pledge_or_other_mont_fee").val(pay_amount);
-    			    	        $("#pledge_or_other_extra_fee").val(pay_amount);
+//     							$("#month_fee_trasaction").val(pay_amount);
+//     			    	        $("#pledge_or_other_mont_fee").val(pay_amount);
+//     			    	        $("#pledge_or_other_extra_fee").val(pay_amount);
     			    	        
     							if(data.fee_lari == ''){month_fee_gel = 0;}else{month_fee_gel = data.fee_lari;}
     							
