@@ -545,7 +545,7 @@ switch ($action) {
                              				FROM     money_transactions
                             				JOIN     client ON client.id = money_transactions.client_id
                             				JOIN     money_transactions_detail ON money_transactions_detail.transaction_id = money_transactions.id
-                            				WHERE    client_id = '$id' AND money_transactions.type_id = 3 AND money_transactions_detail.`status` = 11
+                            				WHERE    client_id = '$id' AND money_transactions_detail.type_id = 3 AND money_transactions_detail.`status` = 11
                                             AND      money_transactions_detail.actived = 1 
                                             AND      money_transactions.actived = 1
                                             GROUP BY money_transactions.id
@@ -1059,7 +1059,7 @@ switch ($action) {
                              				FROM     money_transactions
                             				JOIN     client ON client.id = money_transactions.client_id
                             				JOIN     money_transactions_detail ON money_transactions_detail.transaction_id = money_transactions.id
-                            				WHERE    client_id = '$sub_client' AND money_transactions.type_id = 3 AND money_transactions_detail.`status` = 11
+                            				WHERE    client_id = '$sub_client' AND money_transactions_detail.type_id = 3 AND money_transactions_detail.`status` = 11
                                             AND      money_transactions_detail.actived = 1 
                                             AND      money_transactions.actived = 1
                                             GROUP BY money_transactions.id
@@ -1601,7 +1601,7 @@ switch ($action) {
                              				FROM     money_transactions
                             				JOIN     client ON client.id = money_transactions.client_id
                             				JOIN     money_transactions_detail ON money_transactions_detail.transaction_id = money_transactions.id
-                            				WHERE    client_id = '$id' AND money_transactions.type_id = 3 AND money_transactions_detail.`status` = 11
+                            				WHERE    client_id = '$id' AND money_transactions_detail.type_id = 3 AND money_transactions_detail.`status` = 11
                                             AND      money_transactions_detail.actived = 1 
                                             AND      money_transactions.actived = 1
                                             GROUP BY money_transactions.id
@@ -2148,7 +2148,7 @@ switch ($action) {
                              				FROM     money_transactions
                             				JOIN     client ON client.id = money_transactions.client_id
                             				JOIN     money_transactions_detail ON money_transactions_detail.transaction_id = money_transactions.id
-                            				WHERE    client_id = '$sub_client' AND money_transactions.type_id = 3 AND money_transactions_detail.`status` = 11
+                            				WHERE    client_id = '$sub_client' AND money_transactions_detail.type_id = 3 AND money_transactions_detail.`status` = 11
                                             AND      money_transactions_detail.actived = 1 
                                             AND      money_transactions.actived = 1
                                             GROUP BY money_transactions.id
