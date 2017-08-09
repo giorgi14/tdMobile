@@ -466,6 +466,7 @@
 		    param.client_id                 = $("#client_id").val();
 		    param.client_loan_number        = $("#client_loan_number").val();
 		    param.type_id	                = $("#type_id").val();
+		    param.car_out                   = $("input[id='car_out']:checked").val();
 		    
 		    param.month_fee		       = $("#month_fee").val();
 		    param.month_fee1		   = $("#month_fee1").val();
