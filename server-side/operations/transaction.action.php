@@ -28,11 +28,11 @@ switch ($action) {
         mysql_query("UPDATE money_transactions_detail
                         SET payed_status           = 1,
                             balance_transaction_id = 0
-                     WHERE  id                     = '$tr_id'");
+                     WHERE  balance_transaction_id = '$tr_id' AND status IN(7)");
         
         mysql_query("UPDATE money_transactions_detail
                         SET actived  = 1
-                     WHERE  id       = '$tr_id' AND status IN(3,9)");
+                     WHERE  balance_transaction_id = '$tr_id' AND status IN(3,9)");
         
         mysql_query("UPDATE  client_loan_schedule
                         SET `status` = 0
