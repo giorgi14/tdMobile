@@ -571,11 +571,12 @@ function Add1($tr_id, $hidde_id, $transaction_date, $pledge_or_other_payed, $ple
         }
         
     }else if($type_id == 3){
-        mysql_query("INSERT INTO `money_transactions_detail`
-                                (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
-                          VALUES
-                                (NOW(), '$user_id', '$tr_id', '$transaction_date', '$pledge_or_other_surplus', '$course', '$currency_id', '$received_currency_id', '', '', '3', '11', 1)");
-        
+        if ($pledge_or_other_payed>0) {
+            mysql_query("INSERT INTO `money_transactions_detail`
+                                    (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
+                              VALUES
+                                    (NOW(), '$user_id', '$tr_id', '$transaction_date', '$pledge_or_other_payed', '$course', '$currency_id', '$received_currency_id', '', '', '3', '11', 1)");
+        }
         if ($surplus_type==1) {
             if ($pledge_or_other_surplus>0) {
                 mysql_query("INSERT INTO `money_transactions_detail`
