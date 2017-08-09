@@ -518,7 +518,7 @@
 		    	alert('შეავსე ტიპი');
 			}else if(param.client_id == 0){
 		    	alert('შეავსე კლიენტი');
-			}else if(param.month_fee == '' && param.type_id != 3){
+			}else if(param.month_fee == '' && param.type_id == 1){
 		    	alert('შეავსე ჩარიცხული თანხა');
 			}else if(param.surplus_type == 0 && (param.pledge_or_other_surplus != '' || param.surplus != '')){
 		    	alert('შეავსე მეტობის ტიპი');
