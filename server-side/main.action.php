@@ -833,13 +833,14 @@ switch ($action) {
                         							 (SELECT cur_cource.cource FROM cur_cource WHERE cur_cource.actived = 1 AND DATE(cur_cource.datetime) = DATE(client_loan_schedule.schedule_date) LIMIT 1) AS `exchange`,
                         							 '' AS `loan_amount`,
                         							 '' AS `loan_amount_gel`,
+	                                                 '' AS `delta`,
+	                                                 '' AS `delta1`,
                         							 CONCAT(ROUND(client_loan_schedule.percent,2), if(client_loan_agreement.loan_currency_id = 1, ' GEL', ' USD')) AS percent,
                         							 CASE 
                     									WHEN client_loan_agreement.loan_currency_id = 1 THEN CONCAT(ROUND(client_loan_schedule.percent/(SELECT cur_cource.cource FROM cur_cource WHERE cur_cource.actived = 1 AND DATE(cur_cource.datetime) = DATE(client_loan_schedule.schedule_date) LIMIT 1),2), ' USD')
                     									WHEN client_loan_agreement.loan_currency_id = 2 THEN CONCAT(ROUND(client_loan_schedule.percent*(SELECT cur_cource.cource FROM cur_cource WHERE cur_cource.actived = 1 AND DATE(cur_cource.datetime) = DATE(client_loan_schedule.schedule_date) LIMIT 1),2), ' GEL')
                         							 END AS percent_gel,
-	                                                 '' AS `delta`,
-	                                                 '' AS `delta1`,
+	                                                 
                         							 '' AS percent1,
                         							 '' AS percent_gel1,
                         							 '' AS pay_root,
