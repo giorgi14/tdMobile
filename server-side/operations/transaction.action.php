@@ -25,6 +25,11 @@ switch ($action) {
                                               FROM   money_transactions 
                                               WHERE  id = '$tr_id'"));
         
+        mysql_query("UPDATE money_transactions_detail
+                        SET payed_status           = 1,
+                            balance_transaction_id = 0
+                     WHERE  id                     = '$tr_id'");
+        
         mysql_query("UPDATE  client_loan_schedule
                         SET `status` = 0
                      WHERE   id      = '$res[client_loan_schedule_id]'");

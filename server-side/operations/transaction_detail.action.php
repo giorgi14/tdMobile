@@ -532,8 +532,9 @@ function Add1($tr_id, $hidde_id, $transaction_date, $pledge_or_other_payed, $ple
                                                      AND    money_transactions.type_id = 2 AND money_transactions.client_id = '$client_id'"));
         
             mysql_query("UPDATE money_transactions_detail
-                            SET payed_status = 2
-                         WHERE  id           = $tr_id1[tr_id]");
+                            SET payed_status           = 2,
+                                balance_transaction_id = '$tr_id'
+                         WHERE  id                     = '$tr_id1[tr_id]'");
             
         }
         
