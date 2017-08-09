@@ -30,6 +30,10 @@ switch ($action) {
                             balance_transaction_id = 0
                      WHERE  id                     = '$tr_id'");
         
+        mysql_query("UPDATE money_transactions_detail
+                        SET actived  = 1
+                     WHERE  id       = '$tr_id' AND status IN(3,9)");
+        
         mysql_query("UPDATE  client_loan_schedule
                         SET `status` = 0
                      WHERE   id      = '$res[client_loan_schedule_id]'");
