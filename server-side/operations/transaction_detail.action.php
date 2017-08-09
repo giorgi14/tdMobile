@@ -506,11 +506,13 @@ function Add1($tr_id, $hidde_id, $transaction_date, $pledge_or_other_payed, $ple
     
     
     if($type_id == 2){
-        mysql_query("INSERT INTO `money_transactions_detail`
+        if ($pledge_or_other_payed > 0) {
+            mysql_query("INSERT INTO `money_transactions_detail`
                                 (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
                           VALUES
                                 (NOW(), '$user_id', '$tr_id', '$transaction_date', '$pledge_or_other_payed', '$course', '$currency_id', '$received_currency_id', '', '', '2', '8', 1)");
-    
+        }
+        
         mysql_query(" UPDATE  money_transactions_detail
                       JOIN    money_transactions ON money_transactions.id = money_transactions_detail.transaction_id
                       JOIN    client_loan_schedule ON client_loan_schedule.id = money_transactions.client_loan_schedule_id
