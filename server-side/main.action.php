@@ -266,7 +266,7 @@ switch ($action) {
 	                                         '' as  pledge_delta,
                             	             '' as  pledge_delta1,
 	                                         letter.other,
-                            	             '' as  other1,
+                            	             letter.other1,
 	                                         '' as  other_delta,
                             				 letter.sort1,
                             				 letter.loan_amount_gel,
