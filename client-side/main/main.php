@@ -119,7 +119,12 @@
 
         						    other  = $("#other").html();
         						    other1 = $("#other1").html();
-        							
+
+        						    if(ins_delta == '0.00' || ins_delta1=='0.00'){
+        						    	ins_delta  = '0.00';
+        						    	ins_delta1 = '0.00';
+	        						}
+	        						
         						    other_delta = (parseFloat(other) - parseFloat(other1)).toFixed(2);
 
         						    $("#insurance_delta").html(ins_delta);
