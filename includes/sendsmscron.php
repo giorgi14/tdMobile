@@ -21,7 +21,7 @@ $result = mysql_query("SELECT id,
                               address,
                               content
                        FROM   sent_list
-                       WHERE  actived = 1 AND status = 0 $filt");
+                       WHERE  actived = 1 $filt");
 
 while ($row = mysql_fetch_array($result)) {
     
