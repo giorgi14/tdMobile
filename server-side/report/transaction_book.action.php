@@ -240,9 +240,8 @@ switch ($action) {
                                         (SELECT IFNULL(SUM(money_transactions_detail.pay_amount),0.00)
                                          FROM   money_transactions_detail 
                                          JOIN   money_transactions ON money_transactions.id = money_transactions_detail.transaction_id
-                                         JOIN   client_loan_schedule ON money_transactions.client_loan_schedule_id = client_loan_schedule.id
                                          WHERE  money_transactions_detail.actived = 1 AND money_transactions_detail.`status` = 3
-                                         AND    client_loan_schedule.client_loan_agreement_id = client_loan_agreement.id) AS extra_fee,
+                                         AND    money_transactions.agreement_id = client_loan_agreement.id) AS extra_fee,
                                         (SELECT IF(shd.`status` = 0,'გადაუხდელი','გადახდილი') FROM client_loan_schedule AS shd WHERE shd.actived = 1 AND shd.id = MAX(client_loan_schedule.id)) AS `status`,
 		                                 client.id AS client_id,
 		                                 client_loan_agreement.loan_currency_id
