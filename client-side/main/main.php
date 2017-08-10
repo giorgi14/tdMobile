@@ -209,24 +209,43 @@
 	    		            id: "car-depriving",
 	    		            click: function () {
 	    		            	param 	       = new Object();
-	    		    			param.act      = "cancel_loan";
-	    		    			param.hidde_id = $("#id").val();
-	    		    			
-	    		    			$.ajax({
-	    		    		        url: aJaxURL,
-	    		    			    data: param,
-	    		    		        success: function(data) {       
-	    		    					if(typeof(data.error) != "undefined"){
-	    		    						if(data.error != ""){
-	    		    							alert(data.error);
-	    		    						}else{
-	    		    							alert('ხელშეკრულება წარმატებით დაიხურა');
-	    		    							$("#add-edit-form").dialog("close");
-	    		    							LoadTable('index',colum_number,main_act,change_colum_main,aJaxURL,'','');
-	    		    						}
-	    		    					}
-	    		    		    	}
-	    		    		    });
+	    		        		param.act      = "cancel_loan";
+	    		        		param.hidde_id = $("#id").val();
+	    		        		
+	    		        		$.ajax({
+	    		        	        url: aJaxURL,
+	    		        		    data: param,
+	    		        	        success: function(data) {       
+	    		        				if(typeof(data.error) != "undefined"){
+	    		        					if(data.error != ""){
+	    		        						alert(data.error);
+	    		        					}else{
+	    		        						$("#add-edit-form-ltd").html(data.page);
+	    		        						var buttons = {
+    		        								"": {
+			        			    		            text: "გადაფორმება",
+			        			    		            id: "reregistering_ltd",
+			        			    		            click: function () {
+			        			    		            	$(this).dialog("close");
+			        			    		            }
+			        			    		        },
+			        			    				"cancel": {
+			        			    		            text: "დახურვა",
+			        			    		            id: "cancel-dialog",
+			        			    		            click: function () {
+			        			    		            	$(this).dialog("close");
+			        			    		            }
+			        			    		        }
+			        			    		    };
+	    		        			            GetDialog("add-edit-form-ltd", 380, "auto", buttons, 'left+43 top');
+	    		        			            
+	    		        			            $("#check_reregistering_ltd").button();
+	    		        			            GetDate('reregistering_date');
+	    		        			            $("#reregistering_date").blur();
+	    		        			        }
+	    		        				}
+	    		        	    	}
+	    		        	    });
 	    		            }
 	    		        },
 	        			"calculation-dialog": {
@@ -341,7 +360,7 @@
 		   });
 		    
 		}
-		
+
 		$(document).on("click", "#check_calculation", function () {
 			param 	  = new Object();
 			param.act = "check_calculation";
@@ -382,12 +401,42 @@
 		    }
 		});
 		
+		$(document).on("click", "#check_reregistering_ltd", function () {
+			param 	  = new Object();
+			param.act = "check_calculation_out";
+
+			param.local_id	 = $("#cl_iddd").val();
+			param.pay_datee1 = $('#reregistering_date').val();
+
+			if(param.pay_datee1 == ''){
+				alert('შეავსე თარიღი');
+			}else{
+    			$.ajax({
+    		        url: aJaxURL,
+    			    data: param,
+    		        success: function(data) {       
+    					if(typeof(data.error) != "undefined"){
+    						if(data.error != ""){
+    							alert(data.error);
+    						}else{
+    							$("#reregistering_fee").val(data.pay_amount);
+    							$("#reregistering_root_fee").val(data.root);
+    							$("#reregistering_percent_fee").val(data.percent);
+    							$("#reregistering_penalty_fee").val(data.penalty);
+    							$("#reregistering_sakomiso").val(data.nasargeblebebi);
+    							$("#reregistering_nasargeblebi").val(data.sakomisio);
+    						}
+    					}
+    		    	}
+    		   });
+    		}
+		});
 		
 		$(document).on("click", "#check_calculation_out", function () {
 			param 	  = new Object();
 			param.act = "check_calculation_out";
 
-			param.local_id	 = $("#id").val();
+			param.local_id	 = $("#cl_iddd").val();
 			param.pay_datee1 = $('#pay_datee1').val();
 
 			if(param.pay_datee1 == ''){
@@ -688,6 +737,7 @@
 </html>
 <div  id="add-edit-form" class="form-dialog" title="ბარათები"></div>
 <div id="add-edit-form-calculation" class="form-dialog" title="წინასწარი კალკულაცია"></div>
+<div id="add-edit-form-ltd" class="form-dialog" title="მანქანის გადაფორმება შპს-ზე"></div>
 <div id="add-edit-form-canceled" class="form-dialog" title="დაანგარიშებული თანხა"></div>
 <div id="add-edit-form-cource" class="form-dialog" title="შეიყვანეთ დღევანდელი კურსი"></div>
 <div id="add-edit-form-loan" class="form-dialog" title="ხელშეკრულების პირობები"></div>

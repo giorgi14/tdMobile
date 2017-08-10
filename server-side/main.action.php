@@ -2961,11 +2961,55 @@ switch ($action) {
         
     case 'cancel_loan':
         $hidde_idd	= $_REQUEST[hidde_id];
-    
-        mysql_query("UPDATE `client_loan_agreement` SET `status` = '1',
-                            `canceled_status` = '1'
-                     WHERE  `client_id` = '$hidde_idd' 
-                     AND     actived = 1");
+        $res = mysql_fetch_array(mysql_query("SELECT loan_currency.`name`
+                                              FROM   client_loan_agreement
+                                              JOIN   loan_currency ON loan_currency.id = client_loan_agreement.loan_currency_id
+                                              WHERE  client_id = '$hidde_idd'"));
+        $page = '<div id="dialog-form">
+                    <fieldset>
+                        <table class="dialog-form-table" style="width: 100%;">
+                           <tr>
+                               <td colspan="3" style="width: 120px;"><label>სესხის ვალუტა: '.$res[name].'</label></td>
+                           </tr>
+                           <tr>
+                               <td style="width: 120px;"><label>აირჩიე თარიღი</label></td>
+                               <td style="width: 115px;"><input id="reregistering_date" class="idle" style="width: 100px;" type="text" value=""></td>
+                               <td colspan="2"><button id="check_reregistering_ltd">შემოწმება</button></td>
+                           </tr>
+                           <tr style="height:10px;"></tr>
+                           <tr>
+                               <td style="width: 120px;"><label>სულ შესატანი</label></td>
+                               <td cospan="3"><input id="reregistering_fee" class="idle" style="width: 100px;" type="text" value="" disabled="disabled"></td>
+                           </tr>
+                           <tr style="height:10px;"></tr>
+                           <tr>
+                               <td style="width: 120px;"><label>ძირი თანხა</label></td>
+                               <td cospan="3"><input id="reregistering_root_fee" class="idle" style="width: 100px;" type="text" value="" disabled="disabled"></td>
+                           </tr>
+                           <tr style="height:10px;"></tr>
+                           <tr>
+                               <td style="width: 120px;"><label>პროცენტი</label></td>
+                               <td colspan="3"><input id="reregistering_percent_fee" class="idle" style="width: 100px;" type="text" value="" disabled="disabled"></td>
+                           </tr>
+                           <tr style="height:10px;"></tr>
+                           <tr>
+                               <td style="width: 120px;"><label>ჯარიმა</label></td>
+                               <td colspan="3"><input id="reregistering_penalty_fee" class="idle" style="width: 100px;" type="text" value="" disabled="disabled"></td>
+                           </tr>
+                           <tr style="height:10px;"></tr>
+                           <tr>
+                               <td style="width: 120px;"><label>საკომისიო</label></td>
+                               <td colspan="3"><input id="reregistering_sakomiso" class="idle" style="width: 100px;" type="text" value="" disabled="disabled"></td>
+                           </tr>
+                           <tr style="height:10px;"></tr>
+                           <tr>
+                               <td style="width: 120px;"><label>ნასარგებლები<br>დღეები</label></td>
+                               <td colspan="3"><input id="reregistering_nasargeblebi" class="idle" style="width: 100px;" type="text" value="" disabled="disabled"></td>
+                           </tr>
+                       </table>
+                    </fieldset>
+                </div>';
+            $data = array('page' => $page);
         break;
         
     case 'get_loan_schedule':
@@ -3689,6 +3733,7 @@ function GetPage($id){
                    </table>
                </fieldset>
         <input type="hidden" id="id" value="' . $id . '" />
+        <input type="hidden" id="cl_iddd" value="' . $id . '" />
         <input type="hidden" id="hidde_cl_id" value="' .$res[cl_hidde_id]. '" />
         <input type="hidden" id="loan_currency_id" value="' . $res[loan_currency_id] . '" />
         <input type="hidden" id="canceled_status" value="' . $res[canceled_status] . '" />
