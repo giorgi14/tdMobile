@@ -268,43 +268,6 @@
 	    		        	    });
 	    		            }
 	    		        },
-	    		        "cancel-loan": {
-	    		            text: "სესხის დახურვა",
-	    		            id: "cancel-loan",
-	    		            click: function () {
-	    		            	param 	       = new Object();
-	    		        		param.act      = "get_canceled-loan_dialog";
-	    		        		param.hidde_id = $("#id").val();
-	    		        		
-	    		        		$.ajax({
-	    		        	        url: aJaxURL,
-	    		        		    data: param,
-	    		        	        success: function(data) {       
-	    		        				if(typeof(data.error) != "undefined"){
-	    		        					if(data.error != ""){
-	    		        						alert(data.error);
-	    		        					}else{
-	    		        						$("#add-edit-form-canceled").html(data.page);
-	    		        						var buttons = {
-			        			    				"save": {
-			        			    		            text: "ხელშეკრულების დახურვა",
-			        			    		            id: "canceled_client_loan"
-			        			    		        },
-			        			    	        	"cancel": {
-			        			    		            text: "დახურვა",
-			        			    		            id: "cancel-dialog",
-			        			    		            click: function () {
-			        			    		            	$(this).dialog("close");
-			        			    		            }
-			        			    		        }
-			        			    		    };
-	    		        			            GetDialog("add-edit-form-canceled", 300, "auto", buttons, 'center top');
-	    		        			        }
-	    		        				}
-	    		        	    	}
-	    		        	    });
-	    		            }
-	    		        },
 	    		        "save_comment": {
 	    		            text: "შენახვა",
 	    		            id: "save_comment",
