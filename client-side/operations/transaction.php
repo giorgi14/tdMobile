@@ -722,7 +722,7 @@
 	    							$("#penalti_fee2").val(data.penalty1);
 	    							$("#month_fee").val(data.loan_pay_amount);
 	    							$("#extra_fee").val(parseFloat(data.loan_pay_amount)+parseFloat(data.pay_amount1));
-	    							
+	    							$("#daricxvis_tarigi").html(data.schedule_date);
 	    							$("#hidde_id").val(data.id);
 	    							$("#currency_id").html(data.currenc).trigger("chosen:updated");
 	    							$('#currency_id').prop('disabled', true).trigger("chosen:updated");
@@ -884,6 +884,7 @@
 	    							$("#root2").val(data.root1);
 	    							$("#percent2").val(data.percent1);
 	    							$("#penalti_fee2").val(data.penalty1);
+	    							$("#daricxvis_tarigi").html(data.schedule_date);
 	    							$("#extra_fee").val(parseFloat(data.loan_pay_amount)+parseFloat(data.pay_amount1));
 	    							$("#hidde_id").val(data.id);
 	    							$('#currency_id').prop('disabled', true).trigger("chosen:updated");
@@ -957,6 +958,7 @@
     							$("#percent2").val(data.percent1);
     							$("#penalti_fee2").val(data.penalty1);
     							$("#month_fee").val(data.loan_pay_amount);
+    							$("#daricxvis_tarigi").html(data.schedule_date);
     							extra_fee = data.loan_pay_amount;
     							if(data.loan_pay_amount==''){
     								extra_fee = 0;
@@ -1040,6 +1042,7 @@
     							$("#root2").val(data.root1);
     							$("#percent2").val(data.percent1);
     							$("#penalti_fee2").val(data.penalty1);
+    							$("#daricxvis_tarigi").html(data.schedule_date);
     							
     							$("#month_fee").val(data.loan_pay_amount);
     							extra_fee = data.loan_pay_amount;

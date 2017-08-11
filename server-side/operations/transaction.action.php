@@ -526,6 +526,7 @@ switch ($action) {
                                             			     client_loan_agreement.loan_currency_id,
     		                                                 client_loan_agreement.id AS agrement_id,
     		                                                 client_loan_agreement.loan_amount,
+    		                                                 client_loan_schedule.schedule_date,
                                             				 client.id AS client_id
                                                    FROM 	`client_loan_schedule`
                                                    LEFT JOIN client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
@@ -560,7 +561,7 @@ switch ($action) {
     		$penalty = $res[penalty];
     
     		if ($type_id == 1 || $type_id == 0) {	
-        		$data = array('status' => 1, 'id' => $res[id],'pay_amount' => $res[root] + $res[percent] + $penalty, 'root' => $res[root], 'percent' => $res[percent], 'penalty' => $penalty, 'client_data' => client($res[client_id]), 'agrement_data' => client_loan_number($res[agrement_id]), 'currenc' => currency($res[loan_currency_id]),'pay_amount1' => $res1[pay_amount], 'root1' => $res1[pay_root], 'percent1' => $res1[pay_percent], 'penalty1' => $res1[pay_penalty], 'loan_pay_amount' => $loan_pay_amount);
+        		$data = array('status' => 1, 'schedule_date'=>$res[schedule_date], 'id' => $res[id],'pay_amount' => $res[root] + $res[percent] + $penalty, 'root' => $res[root], 'percent' => $res[percent], 'penalty' => $penalty, 'client_data' => client($res[client_id]), 'agrement_data' => client_loan_number($res[agrement_id]), 'currenc' => currency($res[loan_currency_id]),'pay_amount1' => $res1[pay_amount], 'root1' => $res1[pay_root], 'percent1' => $res1[pay_percent], 'penalty1' => $res1[pay_penalty], 'loan_pay_amount' => $loan_pay_amount);
     		}
     	}elseif ($type_id == 2){
 		    $receivedd_currency_id = $_REQUEST['received_currency_id'];

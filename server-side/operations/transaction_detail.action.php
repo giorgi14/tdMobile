@@ -932,6 +932,12 @@ function GetPage($res = ''){
     					<td style="width: 120px;">
                 	       <input class="idle" style="width: 15px;" id="other_penalty" value="1" type="checkbox">
                 	    </td>
+	                    <td style="width: 114px;">
+                	       <label calss="label" style="padding-top: 5px;" for="name">დარიცხვის თარიღი:</label>
+                	    </td>
+    					<td style="width: 120px;">
+                	       <label calss="label" id="daricxvis_tarigi" style="padding-top: 5px;" for="name"></label>
+                	    </td>
     				</tr>
 	           </table>
 	           <table>
