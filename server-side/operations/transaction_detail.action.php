@@ -354,7 +354,7 @@ function Add($hidde_transaction_id, $hidde_id, $transaction_date, $month_fee, $c
                       AND     money_transactions_detail.`status` = 3
                       AND     money_transactions_detail.actived = 1");
 	    
-	    if ($root>0 && $percent>0) {
+	    if ($root>0 || $percent>0) {
 	        
 	        mysql_query("INSERT INTO `money_transactions_detail` 
                                     (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
@@ -432,7 +432,7 @@ function Add($hidde_transaction_id, $hidde_id, $transaction_date, $month_fee, $c
                     	            (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '$penalti_fee', '$course', '$currency_id', '$received_currency_id', '', '', '$type_id', 2, 1)");
 	    }
 	    
-	    if($root>0 && $percent>0){
+	    if($root>0 || $percent>0){
     	    mysql_query("INSERT INTO `money_transactions_detail`
                         	        (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
                         	  VALUES
