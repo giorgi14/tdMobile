@@ -95,7 +95,7 @@
 		        			    		    };
     		        			            GetDialog("add-edit-show_letter", 1200, "auto", buttons, 'left+43 top');
     		        			            $('#add-edit-show_letter, .add-edit-show_letter-class').css('overflow-y','scroll');
-    		        			            var dLength = [[10, 30, 50, -1], [10, 30, 50, "ყველა"]];
+    		        			            var dLength = [[-1], ["ყველა"]];
     		        			            var total =	[4,5,6,7,17,18,19,20,23,24];
     		        			            GetDataTable1("table_letter", aJaxURL_show_letter, "get_list1", 26, "&id="+param.id+"&loan_currency_id="+$("#loan_currency_id").val(), 0, dLength, 4, "desc", total, "<'F'Cpl>");
     		        			            setTimeout(function(){$('.ColVis, .dataTable_buttons').css('display','none');}, 90);
