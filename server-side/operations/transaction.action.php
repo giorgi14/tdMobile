@@ -503,9 +503,18 @@ switch ($action) {
     		    }  
     		}
     		
+    		$res_sch_id = mysql_fetch_assoc(mysql_query("SELECT    client_loan_schedule.id
+                                                		    
+                                            		     FROM 	  `client_loan_schedule`
+                                            		     LEFT JOIN client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
+                                            		     JOIN      client ON client.id = client_loan_agreement.client_id
+                                            		     WHERE     client_loan_schedule.actived = 1 $filt AND client_loan_schedule.`status` != 1
+                                            		     ORDER BY  pay_date ASC
+                                            		     LIMIT 1"));
+    		
     		mysql_query("UPDATE `client_loan_schedule`
         		            SET `penalty` = '$penalty'
-        		         WHERE  `id`      = '$check_penalty[schedule_id]'");
+        		         WHERE  `id`      = '$res_sch_id[id]'");
     		
     		
     		$res = mysql_fetch_assoc(mysql_query("SELECT 	 client_loan_schedule.id,
