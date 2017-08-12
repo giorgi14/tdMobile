@@ -555,7 +555,7 @@ function GetPage($id){
      
     
     
-    $res2 = mysql_fetch_assoc(mysql_query(" SELECT  CASE
+    $res2 = mysql_fetch_assoc(mysql_query(" SELECT  IFNULL(ROUND(SUM(CASE
                 										WHEN money_transactions_detail.currency_id = client_loan_agreement.loan_currency_id THEN money_transactions_detail.pay_amount
                 										WHEN money_transactions_detail.currency_id !=client_loan_agreement.loan_currency_id AND money_transactions_detail.currency_id = 1 THEN money_transactions_detail.pay_amount/money_transactions_detail.course
                 										WHEN money_transactions_detail.currency_id !=client_loan_agreement.loan_currency_id AND money_transactions_detail.currency_id = 2 THEN money_transactions_detail.pay_amount*money_transactions_detail.course
