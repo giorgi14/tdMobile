@@ -443,12 +443,13 @@ switch ($action) {
         
 	    break;
 	case 'get_shedule':
-		$id	                = $_REQUEST['id'];
-		$type_id            = $_REQUEST['type_id'];
-		$agr_id             = $_REQUEST['agr_id'];
-		$status             = $_REQUEST['status'];
-		$transaction_date   = $_REQUEST['transaction_date'];
-		$check_loan_penalty = $_REQUEST['check_loan_penalty'];
+		$id	                  = $_REQUEST['id'];
+		$type_id              = $_REQUEST['type_id'];
+		$agr_id               = $_REQUEST['agr_id'];
+		$status               = $_REQUEST['status'];
+		$transaction_date     = $_REQUEST['transaction_date'];
+		$received_currency_id = $_REQUEST['received_currency_id'];
+		$check_loan_penalty   = $_REQUEST['check_loan_penalty'];
 		
 		if ($type_id==1) {
     		  
@@ -751,8 +752,7 @@ function GetHolidays($id){
 	                                               money_transactions.status,
 	                                               money_transactions.actived
                                             FROM  `money_transactions`
-                                            LEFT JOIN   client_loan_schedule ON client_loan_schedule.id = money_transactions.client_loan_schedule_id
-                                            LEFt JOIN   client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
+                                            LEFT JOIN   client_loan_agreement ON client_loan_agreement.id = money_transactions.agreement_id
                                             WHERE  money_transactions.id = $id" ));
     return $res;
 }
