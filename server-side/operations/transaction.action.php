@@ -349,7 +349,11 @@ switch ($action) {
         }
         
         if (mysql_num_rows($check_count)>1) {
-            $res1 = mysql_fetch_assoc(mysql_query(" SELECT  IFNULL(SUM(money_transactions_detail.pay_amount),0) AS pay_amount
+            $res1 = mysql_fetch_assoc(mysql_query(" SELECT  CASE
+                        										WHEN money_transactions_detail.currency_id = client_loan_agreement.loan_currency_id THEN money_transactions_detail.pay_amount
+                        										WHEN money_transactions_detail.currency_id != client_loan_agreement.loan_currency_id AND money_transactions_detail.currency_id = 1 THEN money_transactions_detail.pay_amount/money_transactions_detail.course
+                        										WHEN money_transactions_detail.currency_id != client_loan_agreement.loan_currency_id AND money_transactions_detail.currency_id = 2 THEN money_transactions_detail.pay_amount*money_transactions_detail.course
+                        								    END),2),0) AS pay_amount
                                                     FROM    money_transactions_detail
                                                     JOIN    money_transactions ON money_transactions.id = money_transactions_detail.transaction_id
                                                     JOIN    client_loan_schedule ON client_loan_schedule.id = money_transactions.client_loan_schedule_id
@@ -379,6 +383,7 @@ switch ($action) {
                                          client_loan_agreement.loan_beforehand_percent,
                         				 client_loan_agreement.penalty_days,
                         				 client_loan_agreement.penalty_percent,
+                                         client_loan_agreement.loan_currency_id,
                         				 client_loan_agreement.penalty_additional_percent
                                 FROM     client_loan_schedule
                                 JOIN     client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
@@ -422,7 +427,11 @@ switch ($action) {
             
         
             if ($result[st] == 1){
-                $res1 = mysql_fetch_assoc(mysql_query("SELECT  IFNULL(SUM(money_transactions_detail.pay_amount),0) AS pay_amount
+                $res1 = mysql_fetch_assoc(mysql_query("SELECT  CASE
+                            										WHEN money_transactions_detail.currency_id = client_loan_agreement.loan_currency_id THEN money_transactions_detail.pay_amount
+                            										WHEN money_transactions_detail.currency_id !=client_loan_agreement.loan_currency_id AND money_transactions_detail.currency_id = 1 THEN money_transactions_detail.pay_amount/money_transactions_detail.course
+                            										WHEN money_transactions_detail.currency_id !=client_loan_agreement.loan_currency_id AND money_transactions_detail.currency_id = 2 THEN money_transactions_detail.pay_amount*money_transactions_detail.course
+                            								   END),2),0) AS pay_amount
                                                        FROM    money_transactions_detail
                                                        JOIN    money_transactions ON money_transactions.id = money_transactions_detail.transaction_id
                                                        JOIN    client_loan_schedule ON client_loan_schedule.id = money_transactions.client_loan_schedule_id
@@ -536,7 +545,12 @@ switch ($action) {
                                                    ORDER BY  pay_date ASC
                                                    LIMIT 1"));
     		
-    		$res1 = mysql_fetch_assoc(mysql_query("SELECT  IFNULL(SUM(money_transactions_detail.pay_amount),0) AS pay_amount
+    		$res1 = mysql_fetch_assoc(mysql_query("SELECT  IFNULL(ROUND(SUM(
+                                        									CASE
+                                        										WHEN money_transactions_detail.currency_id = client_loan_agreement.loan_currency_id THEN money_transactions_detail.pay_amount
+                                        										WHEN money_transactions_detail.currency_id !=client_loan_agreement.loan_currency_id AND money_transactions_detail.currency_id = 1 THEN money_transactions_detail.pay_amount/money_transactions_detail.course
+                                        										WHEN money_transactions_detail.currency_id !=client_loan_agreement.loan_currency_id AND money_transactions_detail.currency_id = 2 THEN money_transactions_detail.pay_amount*money_transactions_detail.course
+                                        									END),2),0) AS pay_amount
                                                    FROM    money_transactions_detail
                                                    JOIN    money_transactions ON money_transactions.id = money_transactions_detail.transaction_id
                                                    JOIN    client ON client.id = money_transactions.client_id

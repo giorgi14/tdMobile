@@ -1138,7 +1138,7 @@ function GetPage($res = ''){
     				<tr>
     					<td style="width: 105px;"><label id="" style="padding-top: 5px;" for="date">თანხა:</label></td>
     					<td style="width: 100px;">
-    						<input style="width: 70px; float:left;" id="pledge_or_other_payed" onkeydown="if(event.which == 8 || event.keyCode == 46) return false;" type="text" value="'.$res['pay_root'].'"><span style="float: right; display: inline; margin-top: 4px;"><button id="delete_amount" style="width:20px; padding: 0 0 2px 0; color: #fb0000;">x</button></span>
+    						<input style="width: 70px; float:left;" id="pledge_or_other_payed" onkeydown="if(event.which == 8 || event.keyCode == 46) return false;" type="text" value="'.$res['pay_amount'].'"><span style="float: right; display: inline; margin-top: 4px;"><button id="delete_amount" style="width:20px; padding: 0 0 2px 0; color: #fb0000;">x</button></span>
     					</td>
     					<td style="width: 100px;"></td>
     					<td style="width: 80px;"></td>
