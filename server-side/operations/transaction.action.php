@@ -738,7 +738,7 @@ function client_loan_number($id){
 function GetHolidays($id){
     
 	$res = mysql_fetch_assoc(mysql_query("	SELECT money_transactions.id,
-                                    			   IFNULL(client_loan_agreement.`client_id`,money_transactions.client_id) AS client_id,
+                                    			   money_transactions.client_id AS client_id,
                                     			   money_transactions.pay_amount,
 	                                               money_transactions.type_id,
 	                                               money_transactions.course,

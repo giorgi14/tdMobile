@@ -173,7 +173,7 @@
 		    param 		= new Object();
 		    
 			param.act	               = "save_transaction";
-		    param.id	               = $("#id").val();
+		    param.id	               = $("#cl_sched_id").val();
 		    param.tr_id	               = $("#tr_id").val();
 		    
 		    param.month_fee		       = $("#month_fee").val();

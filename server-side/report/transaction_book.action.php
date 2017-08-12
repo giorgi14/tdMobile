@@ -738,7 +738,7 @@ function GetPage($id){
 				</table>
 			</table>
 			<!-- ID -->
-			<input type="hidden" id="id" value="' . $id . '" />
+			<input type="hidden" id="cl_sched_id" value="' . $id . '" />
 			<input type="hidden" id="tr_id" value="" />
 			    
 			<input type="hidden" id="hidde_status" value="' . $res['status'] . '" />
