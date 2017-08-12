@@ -475,8 +475,12 @@
 		    param.yield		           = $("#yield").val();
 		    
 	    	param.root		           = $("#root").val();
+	    	
 	    	param.percent		       = $("#percent").val();
 	    	param.penalti_fee	       = $("#penalti_fee").val();
+	    	param.percent1		       = $("#percent1").val();
+	    	param.penalti_fee1	       = $("#penalti_fee1").val();
+	    	
 	    	param.surplus	           = $("#surplus").val();
 	    	param.surplus1             = $("#surplus1").val();
 	    	param.client_id	           = $("#client_id").val();
