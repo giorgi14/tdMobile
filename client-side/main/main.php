@@ -224,10 +224,7 @@
 	    		        						var buttons = {
     		        								"": {
 			        			    		            text: "გადაფორმება",
-			        			    		            id: "reregistering_ltd",
-			        			    		            click: function () {
-			        			    		            	$(this).dialog("close");
-			        			    		            }
+			        			    		            id: "reregistering_ltd"
 			        			    		        },
 			        			    				"cancel": {
 			        			    		            text: "დახურვა",
@@ -361,6 +358,37 @@
 		    
 		}
 
+		$(document).on("click", "#reregistering_ltd", function () {
+			param 	  = new Object();
+			param.act = "reregistering_ltd";
+
+			param.local_id	                 = $("#cl_iddd").val();
+			param.reregistering_fee          = $('#reregistering_fee').val();
+			param.reregistering_date         = $('#reregistering_date').val();
+			param.reregistering_root_fee     = $('#reregistering_root_fee').val();
+			param.reregistering_percent_fee  = $('#reregistering_percent_fee').val();
+			param.reregistering_penalty_fee  = $('#reregistering_penalty_fee').val();
+			param.reregistering_sakomiso     = $('#reregistering_sakomiso').val();
+			param.reregistering_nasargeblebi = $('#reregistering_nasargeblebi').val();
+			
+			$.ajax({
+		        url: aJaxURL,
+			    data: param,
+		        success: function(data) {       
+					if(typeof(data.error) != "undefined"){
+						if(data.error != ""){
+							alert(data.error);
+						}else{
+							alert('ოპერაცია წარმატებით განხორციელდა');
+							$("#add-edit-form-ltd").dialog("close");
+							$("#add-edit-form").dialog("close");
+							LoadTable("example",colum_number,'get_list',change_colum_main,aJaxURL);
+						}
+					}
+		    	}
+		   });
+		});
+		
 		$(document).on("click", "#check_calculation", function () {
 			param 	  = new Object();
 			param.act = "check_calculation";

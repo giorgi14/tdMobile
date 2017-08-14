@@ -38,6 +38,85 @@ switch ($action) {
                      WHERE  id = '$id'");
     
         break;
+    case 'reregistering_ltd':
+    
+        $local_id	                = $_REQUEST['local_id'];
+        $reregistering_date	        = $_REQUEST['reregistering_date'];
+        $reregistering_root_fee	    = $_REQUEST['reregistering_root_fee'];
+        $reregistering_percent_fee	= $_REQUEST['reregistering_percent_fee'];
+        $reregistering_penalty_fee	= $_REQUEST['reregistering_penalty_fee'];
+        $reregistering_sakomiso	    = $_REQUEST['reregistering_sakomiso'];
+        $reregistering_nasargeblebi	= $_REQUEST['reregistering_nasargeblebi'];
+        $reregistering_fee	        = $_REQUEST['reregistering_fee'];
+    
+        $reg_cource = mysql_fetch_array(mysql_query("SELECT cource
+                                                     FROM   cur_cource
+                                                     WHERE  actived = 1 
+                                                     AND    DATE(cur_cource.datetime) = '$reregistering_date' 
+                                                     LIMIT 1"));
+        
+        $agr_info = mysql_fetch_array(mysql_query("  SELECT    client_loan_agreement.id,
+                                                               client_loan_agreement.loan_currency_id,
+                                                               client_loan_schedule.id AS sh_id 
+                                                     FROM      client_loan_agreement 
+                                                     JOIN      client_loan_schedule ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
+                                                     WHERE     client_loan_agreement.client_id = '$local_id' AND client_loan_schedule.`status` = 0 
+                                                     AND       client_loan_schedule.schedule_date < '$reregistering_date'
+                                                     ORDER BY  pay_date DESC"));
+        if ($reregistering_fee>0) {
+            mysql_query("INSERT INTO `money_transactions`
+                                    (`datetime`, `user_id`, `client_loan_schedule_id`, `agreement_id`, `client_id`, `pay_datetime`, `pay_amount`, `extra_fee`, `course`, `currency_id`, `received_currency_id`, `month_fee_trasaction`, `type_id`, `status`, `reg_ltd`, `actived`)
+                              VALUES
+                                    (NOW(), '$user_id', '$agr_info[sh_id]', '$agr_info[id]', '$local_id', '$reregistering_date', '$reregistering_fee', '$reregistering_fee', '$reg_cource[cource]', '$agr_info[loan_currency_id]', '$agr_info[loan_currency_id]', '', '1', '1', '1', '1')");
+            
+            $tr_id = mysql_insert_id();
+            
+            mysql_query("UPDATE client_loan_schedule
+                            SET activ_status = 1,
+                               `status`     = 1
+                         WHERE  client_loan_schedule.client_loan_agreement_id = '$agr_info[id]'
+                         AND    client_loan_schedule.actived = 1
+                         AND    client_loan_schedule.status  = 0
+                         AND    client_loan_schedule.id > $agr_info[sh_id]
+                         AND    client_loan_schedule.schedule_date > '$reregistering_date'");
+             
+            mysql_query("UPDATE client_loan_agreement
+                            SET canceled_status = 1
+                         WHERE  client_loan_agreement.id = '$agr_info[id]'");
+           
+            if ($reregistering_root_fee>0 || $reregistering_percent_fee>0) {
+                 
+                mysql_query("INSERT INTO `money_transactions_detail`
+                                        (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
+                                  VALUES
+                                        (NOW(), '$user_id', '$tr_id', '$reregistering_date', '', '$reg_cource[cource]', '$agr_info[loan_currency_id]', '$agr_info[loan_currency_id]', '$reregistering_root_fee', '$reregistering_percent_fee', '1', 1, 1)");
+            }
+            
+            if ($reregistering_penalty_fee>0){
+                mysql_query("INSERT INTO `money_transactions_detail`
+                                        (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
+                                  VALUES
+                                        (NOW(), '$user_id', '$tr_id', '$reregistering_date', '$reregistering_penalty_fee', '$reg_cource[cource]', '$agr_info[loan_currency_id]', '$agr_info[loan_currency_id]', '', '', '1', '2', 1)");
+            }
+            
+            if ($reregistering_sakomiso>0) {
+                mysql_query("INSERT INTO `money_transactions_detail`
+                                        (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
+                                  VALUES
+                                        (NOW(), '$user_id', '$tr_id', '$reregistering_date', '$reregistering_sakomiso', '$reg_cource[cource]', '$agr_info[loan_currency_id]', '$agr_info[loan_currency_id]', '', '', '1', 5, 1)");
+            }
+             
+            if ($reregistering_nasargeblebi>0) {
+                mysql_query("INSERT INTO `money_transactions_detail`
+                                        (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
+                                  VALUES
+                                        (NOW(), '$user_id', '$tr_id', '$reregistering_date', '$reregistering_nasargeblebi', '$reg_cource[cource]', '$agr_info[loan_currency_id]', '$agr_info[loan_currency_id]', '', '', '1', 6, 1)");
+            }
+        }
+        
+        
+    
+        break;
 	case 'get_list' :
 		$count	   = $_REQUEST['count'];
 		$hidden	   = $_REQUEST['hidden'];
@@ -3318,8 +3397,8 @@ function GetPage($id){
                         <th style="width: 6%;">ვალდე-<br>ბულება<br>ლარი</th>
                         <th style="width: 6%;">კურსთა<br>შორისი<br>სხვაობა</th>
             
-                        <th style="width: 6%;">ჩარიცხ.<br>დაზღვევა<br>ლარი</th>
-                        <th style="width: 6%;">ჩარიცხ.<br>დაზღვევა<br>დოლარი</th>
+                        <th style="width: 6%;">დარიცხ.<br>დაზღვევა<br>ლარი</th>
+                        <th style="width: 6%;">დარიცხ.<br>დაზღვევა<br>დოლარი</th>
                         <th style="width: 6%;">გადახდა<br>დაზღვევა<br>ლარი</th>
                         <th style="width: 6%;">გადახდა<br>დაზღვევა<br>დოლარი</th>
                         <th style="width: 6%;">დაზღვევა<br>ვალდებ.<br>ლარი</th>
