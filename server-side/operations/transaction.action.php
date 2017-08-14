@@ -356,9 +356,7 @@ switch ($action) {
                                         									END),2),0) AS pay_amount
                                                     FROM    money_transactions_detail
                                                     JOIN    money_transactions ON money_transactions.id = money_transactions_detail.transaction_id
-                                                    JOIN    client_loan_schedule ON client_loan_schedule.id = money_transactions.client_loan_schedule_id
-                                                    JOIN    client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
-                                                    WHERE   client_loan_agreement.client_id = '$local_id'
+                                                    JOIN    client_loan_agreement ON client_loan_agreement.id = money_transactions.agreement_idWHERE   client_loan_agreement.client_id = '$local_id'
                                                     AND     money_transactions_detail.`status` = 3
                                                     AND     money_transactions_detail.actived = 1"));
             

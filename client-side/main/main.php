@@ -370,6 +370,9 @@
 			param.reregistering_penalty_fee  = $('#reregistering_penalty_fee').val();
 			param.reregistering_sakomiso     = $('#reregistering_sakomiso').val();
 			param.reregistering_nasargeblebi = $('#reregistering_nasargeblebi').val();
+			param.reregistering_avans        = $('#reregistering_avans').val();
+			param.reregistering_pledge       = $('#reregistering_pledge').val();
+			param.reregistering_other        = $('#reregistering_other').val();
 			
 			$.ajax({
 		        url: aJaxURL,
@@ -453,6 +456,10 @@
     							$("#reregistering_penalty_fee").val(data.penalty);
     							$("#reregistering_sakomiso").val(data.sakomisio);
     							$("#reregistering_nasargeblebi").val(data.nasargeblebebi);
+    							$("#reregistering_avans").val(data.pay_amount1);
+    							$("#reregistering_pledge").val(data.reg_pledge);
+    							$("#reregistering_other").val(data.reg_other);
+    							
     						}
     					}
     		    	}
