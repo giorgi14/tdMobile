@@ -451,8 +451,8 @@
     							$("#reregistering_root_fee").val(data.root);
     							$("#reregistering_percent_fee").val(data.percent);
     							$("#reregistering_penalty_fee").val(data.penalty);
-    							$("#reregistering_sakomiso").val(data.nasargeblebebi);
-    							$("#reregistering_nasargeblebi").val(data.sakomisio);
+    							$("#reregistering_sakomiso").val(data.sakomisio);
+    							$("#reregistering_nasargeblebi").val(data.nasargeblebebi);
     						}
     					}
     		    	}
