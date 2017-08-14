@@ -119,7 +119,7 @@ switch ($action) {
                                            IFNULL(loan_currency.name,ln_currency.name),
 		                                   money_transactions.course,
 		                                   $val
-                                           IF(money_transactions.`status` = 0,'დაუდასტურებელი','დადასტურებული'),
+                                           IF(money_transactions.`status` = 0,'დაუდასტურებელი',IF(money_transactions.`reg_ltd`=1,'გადაფორმება შპს-ზე', 'დადასტურებული')),
 		                                   user_info.`name`,
 		                                   DATE_FORMAT(money_transactions.datetime,'%d/%m/%Y')
                                  FROM     `money_transactions`
