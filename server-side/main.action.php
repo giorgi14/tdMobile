@@ -90,8 +90,6 @@ switch ($action) {
                                `status`     = 1
                          WHERE  client_loan_schedule.client_loan_agreement_id = '$agr_info[id]'
                          AND    client_loan_schedule.actived = 1
-                         AND    client_loan_schedule.status  = 0
-                         AND    client_loan_schedule.id > $agr_info[sh_id]
                          AND    client_loan_schedule.schedule_date > '$reregistering_date'");
              
             mysql_query("UPDATE client_loan_agreement
