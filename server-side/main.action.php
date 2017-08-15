@@ -696,7 +696,7 @@ switch ($action) {
                                             JOIN    client_loan_schedule ON client_loan_schedule.id = money_transactions.client_loan_schedule_id
                                             JOIN    client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
                                             WHERE   client_loan_agreement.client_id = '$id' AND client_loan_schedule.actived=1 
-                                            AND     money_transactions_detail.status IN (1) AND money_transactions_detail.pay_percent != '0.00'
+                                            AND     money_transactions_detail.status IN (1) AND (money_transactions_detail.pay_percent != '0.00' OR money_transactions_detail.pay_root!='0.00')
                                             GROUP BY money_transactions.client_loan_schedule_id
                                     		UNION ALL
                                     		SELECT  client_loan_agreement.client_id,
@@ -1210,7 +1210,7 @@ switch ($action) {
                                             JOIN     client_loan_schedule ON client_loan_schedule.id = money_transactions.client_loan_schedule_id
                                             JOIN     client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
                                             WHERE    client_loan_agreement.client_id = '$sub_client' AND client_loan_schedule.actived=1 
-                                            AND      money_transactions_detail.`status` IN (1) AND money_transactions_detail.pay_percent != '0.00'
+                                            AND      money_transactions_detail.`status` IN (1) AND (money_transactions_detail.pay_percent != '0.00' OR money_transactions_detail.pay_root!='0.00')
                                             GROUP BY money_transactions.client_loan_schedule_id
                                 			UNION ALL
 	                                        SELECT  client_loan_agreement.client_id,
@@ -1752,7 +1752,7 @@ switch ($action) {
                                     		JOIN    client_loan_schedule ON client_loan_schedule.id = money_transactions.client_loan_schedule_id
                                     		JOIN    client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
                                     		WHERE   client_loan_agreement.client_id = '$id' AND client_loan_schedule.actived=1 
-                                    		AND     money_transactions_detail.`status` IN (1) AND money_transactions_detail.pay_percent != '0.00'
+                                    		AND     money_transactions_detail.`status` IN (1) AND (money_transactions_detail.pay_percent != '0.00' OR money_transactions_detail.pay_root!='0.00')
                                     		GROUP BY money_transactions.client_loan_schedule_id
                                     		UNION ALL
                                     		SELECT  client_loan_agreement.client_id,
@@ -2299,7 +2299,7 @@ switch ($action) {
                                 			JOIN    client_loan_schedule ON client_loan_schedule.id = money_transactions.client_loan_schedule_id
                                 			JOIN    client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
                                 			WHERE   client_loan_agreement.client_id = '$sub_client' AND client_loan_schedule.actived=1 
-                                			AND     money_transactions_detail.`status` IN (1) AND money_transactions_detail.pay_percent != '0.00'
+                                			AND     money_transactions_detail.`status` IN (1) AND (money_transactions_detail.pay_percent != '0.00' OR money_transactions_detail.pay_root!='0.00')
                                 			GROUP BY money_transactions.client_loan_schedule_id
                                 			UNION ALL
                                 			SELECT  client_loan_agreement.client_id,
