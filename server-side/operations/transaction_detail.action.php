@@ -419,7 +419,6 @@ function Add($hidde_transaction_id, $hidde_id, $transaction_date, $month_fee, $c
                                `status`     = 1
                          WHERE  client_loan_schedule.client_loan_agreement_id = '$client_loan_number'
                             AND client_loan_schedule.actived = 1
-	                        AND client_loan_schedule.id > $res1[id]
 	                        AND client_loan_schedule.schedule_date > '$transaction_date'");
 	        
 	        mysql_query("UPDATE client_loan_agreement
