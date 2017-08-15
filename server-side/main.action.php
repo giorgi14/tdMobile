@@ -2984,6 +2984,19 @@ switch ($action) {
             $penalty = $penalty+$penalty1;
         }
         
+        $resultt = mysql_fetch_array(mysql_query("SELECT (SELECT ROUND(clsh.remaining_root+clsh.root,2) FROM client_loan_schedule AS clsh WHERE clsh.id = MIN(client_loan_schedule.id)) AS `remaining_root`,
+                                                         (SELECT DATEDIFF('$pay_datee', clsh.pay_date) FROM client_loan_schedule AS clsh WHERE clsh.id = MAX(client_loan_schedule.id)) AS `gadacilebuli`,
+                                                         (SELECT ROUND(clsh.percent/30,2) FROM client_loan_schedule AS clsh WHERE clsh.id = MAX(client_loan_schedule.id)) AS `erti_dgis_procenti`,
+                                                         client_loan_agreement.loan_beforehand_percent,
+                                                         (SELECT clsh.remaining_root FROM client_loan_schedule AS clsh WHERE clsh.id = MAX(client_loan_schedule.id)) AS `check_remaining_root`
+                                                        
+                                                  FROM   client_loan_schedule
+                                                  JOIN   client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
+                                                  WHERE  client_loan_agreement_id = $local_id
+                                                  AND    DATE(client_loan_schedule.schedule_date)<='$pay_datee'
+                                                  AND    client_loan_schedule.`status` = 0
+                                                  AND    client_loan_schedule.actived = 1"));
+        
         $rercent        = $resultt[percent];
         $remaining_root = $resultt[remaining_root];
         $sakomisio      = '0.00';
@@ -2993,7 +3006,7 @@ switch ($action) {
             $sakomisio    = round($remaining_root * ($resultt[loan_beforehand_percent]/100),2);
             $nasargeblebi = round($resultt[erti_dgis_procenti]*$resultt[gadacilebuli],2);
         }
-        
+
         if (mysql_num_rows($check_count)>1) {
             
             $res1 = mysql_fetch_assoc(mysql_query("SELECT  IFNULL(SUM(money_transactions_detail.pay_amount),0) AS pay_amount
