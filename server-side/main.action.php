@@ -93,7 +93,8 @@ switch ($action) {
                          AND    client_loan_schedule.schedule_date > '$reregistering_date'");
              
             mysql_query("UPDATE client_loan_agreement
-                            SET canceled_status = 1
+                            SET canceled_status = 1,
+                                canseled_date   = '$reregistering_date'
                          WHERE  client_loan_agreement.id = '$agr_info[id]'");
             if ($reregistering_other > 0) {
                 mysql_query("INSERT INTO `money_transactions_detail`

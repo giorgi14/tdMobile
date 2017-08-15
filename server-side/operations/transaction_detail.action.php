@@ -432,7 +432,8 @@ function Add($hidde_transaction_id, $hidde_id, $transaction_date, $month_fee, $c
 	                        AND client_loan_schedule.schedule_date > '$transaction_date'");
 	        
 	        mysql_query("UPDATE client_loan_agreement
-        	                SET canceled_status = 1
+        	                SET canceled_status = 1,
+	                            canceled = '$transaction_date'
         	             WHERE  client_loan_agreement.id = '$client_loan_number'");
 	    }
 	}elseif ($all_fee < $all_pay){
@@ -516,7 +517,8 @@ function Add($hidde_transaction_id, $hidde_id, $transaction_date, $month_fee, $c
 	     
 	    if (mysqli_num_rows($res_car_out) == 0) {
 	        mysql_query("UPDATE client_loan_agreement
-        	                SET canceled_status = 1
+        	                SET canceled_status = 1,
+	                            canseled_date   = '$transaction_date'
         	             WHERE  client_loan_agreement.id = '$client_loan_number'");
 	    }
 	    
