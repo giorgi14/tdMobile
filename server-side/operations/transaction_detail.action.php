@@ -413,6 +413,16 @@ function Add($hidde_transaction_id, $hidde_id, $transaction_date, $month_fee, $c
                     	            (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '$yield', '$course', '$currency_id', '$received_currency_id', '', '', '$type_id', 6, 1)");
 	    }
 	    
+	    $res_car_out = mysql_query("SELECT id 
+                                    FROM   client_loan_schedule 
+                                    WHERE  id > '$hidde_id' AND client_loan_schedule.client_loan_agreement_id = '$client_loan_number'");
+	    
+	    if (mysqli_num_rows($res_car_out) == 0) {
+	        mysql_query("UPDATE client_loan_agreement
+        	                SET canceled_status = 1
+        	             WHERE  client_loan_agreement.id = '$client_loan_number'");
+	    }
+	    
 	    if ($car_out == 1) {
 	        mysql_query("UPDATE client_loan_schedule
                             SET activ_status = 1,
@@ -498,6 +508,16 @@ function Add($hidde_transaction_id, $hidde_id, $transaction_date, $month_fee, $c
                     	            (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
                     	      VALUES
                     	            (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '$yield', '$course', '$currency_id', '$received_currency_id', '', '', '$type_id', 6, 1)");
+	    }
+	    
+	    $res_car_out = mysql_query("SELECT id
+                        	        FROM   client_loan_schedule
+                        	        WHERE  id > '$hidde_id' AND client_loan_schedule.client_loan_agreement_id = '$client_loan_number'");
+	     
+	    if (mysqli_num_rows($res_car_out) == 0) {
+	        mysql_query("UPDATE client_loan_agreement
+        	                SET canceled_status = 1
+        	             WHERE  client_loan_agreement.id = '$client_loan_number'");
 	    }
 	    
 	    if ($car_out == 1) {
