@@ -150,7 +150,10 @@
     		        	        						    
     		        	        						    other  = $("#other").html();
     		        	        						    other1 = $("#other1").html();
-    		        	        							
+
+    		        	        						    if(delta<=0.05 && delta>=-0.05){delta='0.00';}
+    		        	        						    if(delta1<=0.05 && delta1>=-0.05 ){delta1='0.00';}
+    		        	        						    
     		        	        						    other_delta = (parseFloat(other) - parseFloat(other1)).toFixed(2);
     		        	        						    if(ins_delta == '0.00' || ins_delta1=='0.00'){
     		        	        						    	ins_delta  = '0.00';

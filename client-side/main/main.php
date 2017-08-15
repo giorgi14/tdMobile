@@ -117,6 +117,9 @@
         						    ins_delta = (parseFloat(insurance_fee) - parseFloat(insurance_payed)).toFixed(2);
         						    ins_delta1 = (parseFloat(insurance_fee1) - parseFloat(insurance_payed1)).toFixed(2);
 
+        						    if(delta<=0.05 && delta>=-0.05){delta='0.00';}
+        						    if(delta1<=0.05 && delta1>=-0.05 ){delta1='0.00';}
+        						    
         						    other  = $("#other").html();
         						    other1 = $("#other1").html();
 
