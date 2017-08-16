@@ -3126,7 +3126,7 @@ switch ($action) {
                                                    AND     money_transactions_detail.`status` = 3
                                                    AND     money_transactions_detail.actived = 1"));
            
-            $pay_amount = round($remaining_root + $rercent + $penalty + $sakomisio + $nasargeblebi - $res1[pay_amount] + $res_pledge[peg_pledge]+$other_pay, 2);
+            $pay_amount = round($remaining_root + $rercent + $penalty + $sakomisio + $nasargeblebi - $res1[pay_amount], 2);
            
             $data = array('pay_amount' => $pay_amount, 'root' => $remaining_root, 'percent' => $rercent, 'penalty' => $penalty, 'pay_amount1' => $res_avans[pay_amount], 'nasargeblebebi' => $nasargeblebi, 'sakomisio' => $sakomisio, 'reg_pledge' => $res_pledge[peg_pledge], 'reg_other' => $other_pay);
         }else{
@@ -3216,7 +3216,7 @@ switch ($action) {
                                                        AND     money_transactions_detail.`status` = 3
                                                        AND     money_transactions_detail.actived = 1"));
             
-                $pay_amount = round($remainig_root + $result['percent'] + $penalty + $sakomisio + $nasargeblebi-$res1[pay_amount] + $res_pledge[peg_pledge] + $other_pay, 2);
+                $pay_amount = round($remainig_root + $result['percent'] + $penalty + $sakomisio + $nasargeblebi-$res1[pay_amount], 2);
             
                 $data = array('pay_amount' => $pay_amount, 'root' => $remainig_root, 'percent' => $result[percent], 'penalty' => $penalty, 'pay_amount1' => $res1[pay_amount], 'nasargeblebebi' => $nasargeblebi, 'sakomisio' => $sakomisio, 'reg_pledge' => $res_pledge[peg_pledge], 'reg_other' => $other_pay);
             }else{
