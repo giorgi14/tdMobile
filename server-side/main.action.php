@@ -3038,6 +3038,7 @@ switch ($action) {
         if ($other_pay<=1) {
             $other_pay = 0;
         }
+        
         $check_count = mysql_query("SELECT client_loan_schedule.id,
                                            DATEDIFF('$pay_datee', client_loan_schedule.pay_date) AS gadacilebuli,
                                            client_loan_agreement.penalty_days,
@@ -3063,40 +3064,12 @@ switch ($action) {
                                                     WHERE   client_loan_agreement.client_id = '$local_id'
                                                     AND     money_transactions_detail.`status` = 3
                                                     AND     money_transactions_detail.actived = 1"));
-        $penalty = 0;
-        $i       = 0;
-        while ($row_all = mysql_fetch_array($check_count)) {
-            $remainig_root = $row_all[remaining_root];
-            
-            $gadacilebuli_day_count = $row_all[gadacilebuli];
-            
-            $check_holliday_day = mysql_fetch_array(mysql_query("SELECT COUNT(*) AS count
-                                                                 FROM   holidays
-                                                                 WHERE  actived = 1
-                                                                 AND    DATE(date)>='$row_all[pay_date]'
-                                                                 AND    DATE(date)<= '$pay_datee'"));
-            
-            $gadacilebuli_day_count = $gadacilebuli_day_count - $check_holliday_day[count];
-            
-            if ($i == 0) {
-                if ($gadacilebuli_day_count>0 && $gadacilebuli_day_count<=$row_all[penalty_days]) {
-                    $penalty1 = round(($remainig_root * ($row_all[penalty_percent]/100))*$gadacilebuli_day_count,2);
-                }elseif ($gadacilebuli_day_count>0 && $gadacilebuli_day_count>$row_all[penalty_days]){
-                    $penalty1 = round(round(($remainig_root * ($row_all[penalty_percent]/100))*$row_all[penalty_days],2)+round(($remainig_root * ($row_all[penalty_additional_percent]/100))*($gadacilebuli_day_count-$row_all[penalty_days]),2),2);
-                }
-            }else{
-                $penalty1 = round(($remainig_root * ($row_all[penalty_additional_percent]/100))*$gadacilebuli_day_count,2);
-            }
-            $i++;
-            
-            $penalty = $penalty+$penalty1;
-        }
+        
         
         $resultt = mysql_fetch_array(mysql_query("SELECT (SELECT ROUND(clsh.remaining_root+clsh.root,2) FROM client_loan_schedule AS clsh WHERE clsh.id = MIN(client_loan_schedule.id)) AS `remaining_root`,
                                                          (SELECT DATEDIFF('$pay_datee', clsh.pay_date) FROM client_loan_schedule AS clsh WHERE clsh.id = MAX(client_loan_schedule.id)) AS `gadacilebuli`,
-                                                         (SELECT ROUND(clsh.percent/30,2) FROM client_loan_schedule AS clsh WHERE clsh.id = MAX(client_loan_schedule.id)) AS `erti_dgis_procenti`,
-                                                         client_loan_agreement.loan_beforehand_percent,
-                                                         SUM(client_loan_schedule.percent) AS percent,
+                                                          client_loan_agreement.loan_beforehand_percent,
+                                                          SUM(client_loan_schedule.percent) AS percent,
                                                          (SELECT clsh.remaining_root FROM client_loan_schedule AS clsh WHERE clsh.id = MAX(client_loan_schedule.id)) AS `check_remaining_root`
                                                         
                                                   FROM   client_loan_schedule
@@ -3106,14 +3079,52 @@ switch ($action) {
                                                   AND    client_loan_schedule.`status` = 0
                                                   AND    client_loan_schedule.actived = 1"));
         
-        $rercent        = $resultt[percent];
+        $res1 = mysql_query("SELECT   client_loan_schedule.percent/30 AS `percent`
+                             FROM     client_loan_schedule
+                             JOIN     client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
+                             WHERE    client_loan_agreement.client_id = '$local_id' AND client_loan_schedule.schedule_date >= '$pay_datee'
+                             ORDER BY client_loan_schedule.id ASC
+                             LIMIT 1");
+        
+        $result1 = mysql_fetch_assoc($res1);
+        
         $remaining_root = $resultt[remaining_root];
+        $rercent        = $resultt[percent];
         $sakomisio      = '0.00';
         $nasargeblebi   = '0.00';
         
+        $penalty = 0;
+        $i       = 0;
+        while ($row_all = mysql_fetch_array($check_count)) {
+        
+            $gadacilebuli_day_count = $row_all[gadacilebuli];
+        
+            $check_holliday_day = mysql_fetch_array(mysql_query("SELECT COUNT(*) AS count
+                                                                FROM   holidays
+                                                                WHERE  actived = 1
+                                                                AND    DATE(date)>='$row_all[pay_date]'
+                                                                AND    DATE(date)<= '$pay_datee'"));
+        
+            $gadacilebuli_day_count = $gadacilebuli_day_count - $check_holliday_day[count];
+        
+            if ($i == 0) {
+                if ($gadacilebuli_day_count>0 && $gadacilebuli_day_count<=$row_all[penalty_days]) {
+                    $penalty1 = round(($remaining_root * ($row_all[penalty_percent]/100))*$gadacilebuli_day_count,2);
+                }elseif ($gadacilebuli_day_count>0 && $gadacilebuli_day_count>$row_all[penalty_days]){
+                    $penalty1 = round(round(($remaining_root * ($row_all[penalty_percent]/100))*$row_all[penalty_days],2)+round(($remaining_root * ($row_all[penalty_additional_percent]/100))*($gadacilebuli_day_count-$row_all[penalty_days]),2),2);
+                }
+            }else{
+                $penalty1 = round(($remaining_root * ($row_all[penalty_additional_percent]/100))*$gadacilebuli_day_count,2);
+            }
+            $i++;
+            $penalty = $penalty+$penalty1;
+        }
+        
+       
+        
         if ($resultt[check_remaining_root] > 0){
             $sakomisio    = round($remaining_root * ($resultt[loan_beforehand_percent]/100),2);
-            $nasargeblebi = round($resultt[erti_dgis_procenti]*$resultt[gadacilebuli],2);
+            $nasargeblebi = round($result1[percent]*$resultt[gadacilebuli],2);
         }
 
         if (mysql_num_rows($check_count)>1) {
