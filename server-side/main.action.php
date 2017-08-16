@@ -54,15 +54,6 @@ switch ($action) {
     
         $reregistering_fee = round($reregistering_fee+$reregistering_avans,2);
         
-        mysql_query("UPDATE  money_transactions_detail
-                     JOIN    money_transactions ON money_transactions.id = money_transactions_detail.transaction_id
-                     JOIN    client_loan_agreement ON client_loan_agreement.id = money_transactions.agreement_id
-                       SET   money_transactions_detail.actived = 0
-                     WHERE   client_loan_agreement.client_id = '$local_id' 
-                     AND     money_transactions_detail.`status` = 3
-                     AND     money_transactions_detail.actived = 1");
-        
-        
         $reg_cource = mysql_fetch_array(mysql_query("SELECT cource
                                                      FROM   cur_cource
                                                      WHERE  actived = 1 
@@ -84,6 +75,21 @@ switch ($action) {
                                     (NOW(), '$user_id', '$agr_info[sh_id]', '$agr_info[id]', '$local_id', '$reregistering_date', '$reregistering_fee', '$reregistering_fee', '$reg_cource[cource]', '$agr_info[loan_currency_id]', '$agr_info[loan_currency_id]', '', '1', '1', '1', '1')");
             
             $tr_id = mysql_insert_id();
+            
+            $res_avans = mysql_query("SELECT  money_transactions_detail.id AS id
+                                      FROM    money_transactions_detail
+                                      JOIN    money_transactions ON money_transactions.id = money_transactions_detail.transaction_id
+                                      JOIN    client_loan_agreement ON client_loan_agreement.id = money_transactions.agreement_id
+                                      WHERE   client_loan_agreement.client_id = '$local_id'
+                                      AND     money_transactions_detail.`status` = 3
+                                      AND     money_transactions_detail.actived = 1");
+            
+            while ($arow_avans = mysql_fetch_array($res_avans)) {
+                
+                mysql_query("UPDATE money_transactions_detail
+                                SET ltd_regist_tr_id = '$tr_id'
+                             WHERE  id               = '$arow_avans[id]'");
+            }
             
             mysql_query("UPDATE client_loan_schedule
                             SET activ_status = 1,
@@ -669,10 +675,35 @@ switch ($action) {
 	                                                '' AS `delta1`,
                                     				'' AS percent,
                                     				'' AS percent_gel,
-                                    				CONCAT(ROUND(SUM(money_transactions_detail.pay_percent)+(SELECT IFNULL(SUM(money_transactions_detail.pay_amount),0) FROM money_transactions_detail WHERE money_transactions_detail.`status` IN(2,5,6) AND money_transactions_detail.actived = 1 AND money_transactions_detail.transaction_id = money_transactions.id),2), if(client_loan_agreement.loan_currency_id = 1, ' GEL', ' USD')) AS percent1,
+                                    				CONCAT(ROUND(SUM(money_transactions_detail.pay_percent)+(SELECT IFNULL(SUM(money_transactions_detail.pay_amount),0) FROM money_transactions_detail WHERE money_transactions_detail.`status` IN(2,5,6) AND money_transactions_detail.actived = 1 AND money_transactions_detail.transaction_id = money_transactions.id)-
+                                    	            IFNULL((SELECT CASE
+                                                                      WHEN cl_agr.loan_currency_id = 1 THEN IFNULL(SUM(IF(mon_tr_det.currency_id = 1,mon_tr_det.pay_amount,mon_tr_det.pay_amount*mon_tr_det.course)),0) 
+                                                                      WHEN cl_agr.loan_currency_id = 2 THEN IFNULL(SUM(IF(mon_tr_det.currency_id = 1,mon_tr_det.pay_amount/mon_tr_det.course,mon_tr_det.pay_amount)),0) 
+                                                                   END AS jigari
+                                                            FROM   money_transactions_detail AS mon_tr_det
+                                                            JOIN   money_transactions AS mon_tr ON mon_tr.id = mon_tr_det.transaction_id
+        	                                                JOIN   client_loan_agreement AS cl_agr ON mon_tr.agreement_id = cl_agr.id
+                                                            WHERE  mon_tr_det.actived = 1 
+                                                            AND    mon_tr_det.`status` = 3
+                                                            AND    mon_tr.actived = 1 AND mon_tr_det.ltd_regist_tr_id = money_transactions_detail.transaction_id
+                                                            AND    mon_tr.client_id = money_transactions.client_id),0),2), if(client_loan_agreement.loan_currency_id = 1, ' GEL', ' USD')) AS percent1,
                                     				CASE 
-                                    					WHEN client_loan_agreement.loan_currency_id = 1 THEN CONCAT(ROUND((SUM(money_transactions_detail.pay_percent)+(SELECT IFNULL(SUM(money_transactions_detail.pay_amount),0) FROM money_transactions_detail WHERE money_transactions_detail.`status` IN(2,5,6) AND money_transactions_detail.actived = 1 AND money_transactions_detail.transaction_id = money_transactions.id))/money_transactions_detail.course,2), ' USD')
-                                    					WHEN client_loan_agreement.loan_currency_id = 2 THEN CONCAT(ROUND((SUM(money_transactions_detail.pay_percent)+(SELECT IFNULL(SUM(money_transactions_detail.pay_amount),0) FROM money_transactions_detail WHERE money_transactions_detail.`status` IN(2,5,6) AND money_transactions_detail.actived = 1 AND money_transactions_detail.transaction_id = money_transactions.id))*money_transactions_detail.course,2), ' GEL')
+                                    					WHEN client_loan_agreement.loan_currency_id = 1 THEN CONCAT(ROUND((SUM(money_transactions_detail.pay_percent)+(SELECT IFNULL(SUM(money_transactions_detail.pay_amount),0) FROM money_transactions_detail WHERE money_transactions_detail.`status` IN(2,5,6) AND money_transactions_detail.actived = 1 AND money_transactions_detail.transaction_id = money_transactions.id)-
+                                            	            IFNULL((SELECT IFNULL(SUM(IF(mon_tr_det.currency_id = 1,mon_tr_det.pay_amount,mon_tr_det.pay_amount*mon_tr_det.course)),0) 
+                                                                     FROM   money_transactions_detail AS mon_tr_det
+                                                                     JOIN   money_transactions AS mon_tr ON mon_tr.id = mon_tr_det.transaction_id
+                                                                     WHERE  mon_tr_det.actived = 1 
+                                                                     AND    mon_tr_det.`status` = 3
+                                                                     AND    mon_tr.actived = 1 AND mon_tr_det.ltd_regist_tr_id = mon_tr.id
+                                                                     AND    mon_tr.client_id = money_transactions.client_id),0))/money_transactions_detail.course,2), ' USD')
+                                    					WHEN client_loan_agreement.loan_currency_id = 2 THEN CONCAT(ROUND((SUM(money_transactions_detail.pay_percent)+(SELECT IFNULL(SUM(money_transactions_detail.pay_amount),0) FROM money_transactions_detail WHERE money_transactions_detail.`status` IN(2,5,6) AND money_transactions_detail.actived = 1 AND money_transactions_detail.transaction_id = money_transactions.id)-
+    	                                                    IFNULL((SELECT IFNULL(SUM(IF(mon_tr_det.currency_id = 1,mon_tr_det.pay_amount/mon_tr_det.course,mon_tr_det.pay_amount)),0) 
+                                                                    FROM   money_transactions_detail AS mon_tr_det
+                                                                    JOIN   money_transactions AS mon_tr ON mon_tr.id = mon_tr_det.transaction_id
+                                                                    WHERE  mon_tr_det.actived = 1 
+                                                                    AND    mon_tr_det.`status` = 3
+                                                                    AND    mon_tr.actived = 1 AND mon_tr_det.ltd_regist_tr_id = money_transactions_detail.transaction_id
+                                                                    AND    mon_tr.client_id = money_transactions.client_id),0))*money_transactions_detail.course,2), ' GEL')
                                     				END AS percent_gel1,
                                     				CONCAT(ROUND(SUM(money_transactions_detail.pay_root),2), if(client_loan_agreement.loan_currency_id = 1, ' GEL', ' USD')) AS pay_root,
                                     				CASE 
@@ -1183,10 +1214,35 @@ switch ($action) {
 	                                                '' AS `delta1`,
                                 					'' AS percent,
                                 					'' AS percent_gel,
-                                					CONCAT(ROUND(SUM(money_transactions_detail.pay_percent)+(SELECT IFNULL(SUM(money_transactions_detail.pay_amount),0) FROM money_transactions_detail WHERE money_transactions_detail.`status` IN(2,5,6) AND money_transactions_detail.actived = 1 AND money_transactions_detail.transaction_id = money_transactions.id),2), if(client_loan_agreement.loan_currency_id = 1, ' GEL', ' USD')) AS percent1,
+                                					CONCAT(ROUND(SUM(money_transactions_detail.pay_percent)+(SELECT IFNULL(SUM(money_transactions_detail.pay_amount),0) FROM money_transactions_detail WHERE money_transactions_detail.`status` IN(2,5,6) AND money_transactions_detail.actived = 1 AND money_transactions_detail.transaction_id = money_transactions.id)-
+	                                                IFNULL((SELECT CASE
+                                                                      WHEN cl_agr.loan_currency_id = 1 THEN IFNULL(SUM(IF(mon_tr_det.currency_id = 1,mon_tr_det.pay_amount,mon_tr_det.pay_amount*mon_tr_det.course)),0) 
+                                                                      WHEN cl_agr.loan_currency_id = 2 THEN IFNULL(SUM(IF(mon_tr_det.currency_id = 1,mon_tr_det.pay_amount/mon_tr_det.course,mon_tr_det.pay_amount)),0) 
+                                                                   END AS jigari
+                                                            FROM   money_transactions_detail AS mon_tr_det
+                                                            JOIN   money_transactions AS mon_tr ON mon_tr.id = mon_tr_det.transaction_id
+        	                                                JOIN   client_loan_agreement AS cl_agr ON mon_tr.agreement_id = cl_agr.id
+                                                            WHERE  mon_tr_det.actived = 1 
+                                                            AND    mon_tr_det.`status` = 3
+                                                            AND    mon_tr.actived = 1 AND mon_tr_det.ltd_regist_tr_id = money_transactions_detail.transaction_id
+                                                            AND    mon_tr.client_id = money_transactions.client_id),0),2), if(client_loan_agreement.loan_currency_id = 1, ' GEL', ' USD')) AS percent1,
                                 					CASE 
-                                    					WHEN client_loan_agreement.loan_currency_id = 1 THEN CONCAT(ROUND((SUM(money_transactions_detail.pay_percent)+(SELECT IFNULL(SUM(money_transactions_detail.pay_amount),0) FROM money_transactions_detail WHERE money_transactions_detail.`status` IN(2,5,6) AND money_transactions_detail.actived = 1 AND money_transactions_detail.transaction_id = money_transactions.id))/money_transactions_detail.course,2), ' USD')
-                                    					WHEN client_loan_agreement.loan_currency_id = 2 THEN CONCAT(ROUND((SUM(money_transactions_detail.pay_percent)+(SELECT IFNULL(SUM(money_transactions_detail.pay_amount),0) FROM money_transactions_detail WHERE money_transactions_detail.`status` IN(2,5,6) AND money_transactions_detail.actived = 1 AND money_transactions_detail.transaction_id = money_transactions.id))*money_transactions_detail.course,2), ' GEL')
+                                    					WHEN client_loan_agreement.loan_currency_id = 1 THEN CONCAT(ROUND((SUM(money_transactions_detail.pay_percent)+(SELECT IFNULL(SUM(money_transactions_detail.pay_amount),0) FROM money_transactions_detail WHERE money_transactions_detail.`status` IN(2,5,6) AND money_transactions_detail.actived = 1 AND money_transactions_detail.transaction_id = money_transactions.id)-
+    	                                                    IFNULL((SELECT IFNULL(SUM(IF(mon_tr_det.currency_id = 1,mon_tr_det.pay_amount,mon_tr_det.pay_amount*mon_tr_det.course)),0) 
+                                                                     FROM   money_transactions_detail AS mon_tr_det
+                                                                     JOIN   money_transactions AS mon_tr ON mon_tr.id = mon_tr_det.transaction_id
+                                                                     WHERE  mon_tr_det.actived = 1 
+                                                                     AND    mon_tr_det.`status` = 3
+                                                                     AND    mon_tr.actived = 1 AND mon_tr_det.ltd_regist_tr_id = money_transactions_detail.transaction_id
+                                                                     AND    mon_tr.client_id = money_transactions.client_id),2))/money_transactions_detail.course,2), ' USD')
+                                    					 WHEN client_loan_agreement.loan_currency_id = 2 THEN CONCAT(ROUND((SUM(money_transactions_detail.pay_percent)+(SELECT IFNULL(SUM(money_transactions_detail.pay_amount),0) FROM money_transactions_detail WHERE money_transactions_detail.`status` IN(2,5,6) AND money_transactions_detail.actived = 1 AND money_transactions_detail.transaction_id = money_transactions.id)-
+	                                                       IFNULL((SELECT IFNULL(SUM(IF(mon_tr_det.currency_id = 1,mon_tr_det.pay_amount/mon_tr_det.course,mon_tr_det.pay_amount)),0) 
+                                                                    FROM   money_transactions_detail AS mon_tr_det
+                                                                    JOIN   money_transactions AS mon_tr ON mon_tr.id = mon_tr_det.transaction_id
+                                                                    WHERE  mon_tr_det.actived = 1 
+                                                                    AND    mon_tr_det.`status` = 3
+                                                                    AND    mon_tr.actived = 1 AND mon_tr_det.ltd_regist_tr_id = money_transactions_detail.transaction_id
+                                                                    AND    mon_tr.client_id = money_transactions.client_id),0))*money_transactions_detail.course,2), ' GEL')
                                 					END AS percent_gel1,
                                 					CONCAT(ROUND(SUM(money_transactions_detail.pay_root),2), if(client_loan_agreement.loan_currency_id = 1, ' GEL', ' USD')) AS pay_root,
                                 					CASE 
@@ -1725,10 +1781,36 @@ switch ($action) {
 	                                                '' AS `delta1`,
                             						'' AS percent,
                             						'' AS percent_gel,
-                            						CONCAT(ROUND(SUM(money_transactions_detail.pay_percent)+(SELECT IFNULL(SUM(money_transactions_detail.pay_amount),0) FROM money_transactions_detail WHERE money_transactions_detail.`status` IN(2,5,6) AND money_transactions_detail.actived = 1 AND money_transactions_detail.transaction_id = money_transactions.id),2), if(client_loan_agreement.loan_currency_id = 1, ' GEL', ' USD')) AS percent1,
+                            						CONCAT(ROUND(SUM(money_transactions_detail.pay_percent)+(SELECT IFNULL(SUM(money_transactions_detail.pay_amount),0) FROM money_transactions_detail WHERE money_transactions_detail.`status` IN(2,5,6) AND money_transactions_detail.actived = 1 AND money_transactions_detail.transaction_id = money_transactions.id)-
+    	                                            IFNULL((SELECT CASE
+                                                                      WHEN cl_agr.loan_currency_id = 1 THEN IFNULL(SUM(IF(mon_tr_det.currency_id = 1,mon_tr_det.pay_amount,mon_tr_det.pay_amount*mon_tr_det.course)),0) 
+                                                                      WHEN cl_agr.loan_currency_id = 2 THEN IFNULL(SUM(IF(mon_tr_det.currency_id = 1,mon_tr_det.pay_amount/mon_tr_det.course,mon_tr_det.pay_amount)),0) 
+                                                                    END AS jigari
+                                                            FROM   money_transactions_detail AS mon_tr_det
+                                                            JOIN   money_transactions AS mon_tr ON mon_tr.id = mon_tr_det.transaction_id
+        	                                                JOIN   client_loan_agreement AS cl_agr ON mon_tr.agreement_id = cl_agr.id
+                                                            WHERE  mon_tr_det.actived = 1 
+                                                            AND    mon_tr_det.`status` = 3
+                                                            AND    mon_tr.actived = 1 AND mon_tr_det.ltd_regist_tr_id = money_transactions_detail.transaction_id
+                                                            AND    mon_tr.client_id = money_transactions.client_id),0),2), if(client_loan_agreement.loan_currency_id = 1, ' GEL', ' USD')) AS percent1,
                             						CASE 
-                            							WHEN client_loan_agreement.loan_currency_id = 1 THEN CONCAT(ROUND((SUM(money_transactions_detail.pay_percent)+(SELECT IFNULL(SUM(money_transactions_detail.pay_amount),0) FROM money_transactions_detail WHERE money_transactions_detail.`status` IN(2,5,6) AND money_transactions_detail.actived = 1 AND money_transactions_detail.transaction_id = money_transactions.id))/money_transactions_detail.course,2), ' USD')
-                            							WHEN client_loan_agreement.loan_currency_id = 2 THEN CONCAT(ROUND((SUM(money_transactions_detail.pay_percent)+(SELECT IFNULL(SUM(money_transactions_detail.pay_amount),0) FROM money_transactions_detail WHERE money_transactions_detail.`status` IN(2,5,6) AND money_transactions_detail.actived = 1 AND money_transactions_detail.transaction_id = money_transactions.id))*money_transactions_detail.course,2), ' GEL')
+                            							WHEN client_loan_agreement.loan_currency_id = 1 THEN CONCAT(ROUND((SUM(money_transactions_detail.pay_percent)+(SELECT IFNULL(SUM(money_transactions_detail.pay_amount),0) FROM money_transactions_detail WHERE money_transactions_detail.`status` IN(2,5,6) AND money_transactions_detail.actived = 1 AND money_transactions_detail.transaction_id = money_transactions.id)-
+        	                                                IFNULL((SELECT IFNULL(SUM(IF(mon_tr_det.currency_id = 1,mon_tr_det.pay_amount,mon_tr_det.pay_amount*mon_tr_det.course)),0) 
+                                                                    FROM   money_transactions_detail AS mon_tr_det
+                                                                    JOIN   money_transactions AS mon_tr ON mon_tr.id = mon_tr_det.transaction_id
+                                                                    JOIN   client_loan_agreement ON client_loan_agreement.id = mon_tr.agreement_id
+                                                                    WHERE  mon_tr_det.actived = 1 
+                                                                    AND    mon_tr_det.`status` = 3
+                                                                    AND    mon_tr.actived = 1 AND mon_tr_det.ltd_regist_tr_id = money_transactions_detail.transaction_id
+                                                                    AND    mon_tr.client_id = money_transactions.client_id),0))/money_transactions_detail.course,2), ' USD')
+                            							WHEN client_loan_agreement.loan_currency_id = 2 THEN CONCAT(ROUND((SUM(money_transactions_detail.pay_percent)+(SELECT IFNULL(SUM(money_transactions_detail.pay_amount),0) FROM money_transactions_detail WHERE money_transactions_detail.`status` IN(2,5,6) AND money_transactions_detail.actived = 1 AND money_transactions_detail.transaction_id = money_transactions.id)-
+    	                                                    IFNULL((SELECT IFNULL(SUM(IF(mon_tr_det.currency_id = 1,mon_tr_det.pay_amount/mon_tr_det.course,mon_tr_det.pay_amount)),0) 
+                                                                    FROM   money_transactions_detail AS mon_tr_det
+                                                                    JOIN   money_transactions AS mon_tr ON mon_tr.id = mon_tr_det.transaction_id
+                                                                    WHERE  mon_tr_det.actived = 1 
+                                                                    AND    mon_tr_det.`status` = 3
+                                                                    AND    mon_tr.actived = 1 AND mon_tr_det.ltd_regist_tr_id = money_transactions_detail.transaction_id
+                                                                    AND    mon_tr.client_id = money_transactions.client_id),2))*money_transactions_detail.course,2), ' GEL')
                             						END AS percent_gel1,
                             						CONCAT(ROUND(SUM(money_transactions_detail.pay_root),2), if(client_loan_agreement.loan_currency_id = 1, ' GEL', ' USD')) AS pay_root,
                             						CASE 
@@ -2272,10 +2354,36 @@ switch ($action) {
 	                                                '' AS `delta1`,
                         							'' AS percent,
                         							'' AS percent_gel,
-                        							CONCAT(ROUND(SUM(money_transactions_detail.pay_percent)+(SELECT IFNULL(SUM(money_transactions_detail.pay_amount),0) FROM money_transactions_detail WHERE money_transactions_detail.`status` IN(2,5,6) AND money_transactions_detail.actived = 1 AND money_transactions_detail.transaction_id = money_transactions.id),2), if(client_loan_agreement.loan_currency_id = 1, ' GEL', ' USD')) AS percent1,
+                        							CONCAT(ROUND(SUM(money_transactions_detail.pay_percent)+(SELECT IFNULL(SUM(money_transactions_detail.pay_amount),0) FROM money_transactions_detail WHERE money_transactions_detail.`status` IN(2,5,6) AND money_transactions_detail.actived = 1 AND money_transactions_detail.transaction_id = money_transactions.id)-
+    	                                            IFNULL((SELECT CASE
+                                                                      WHEN cl_agr.loan_currency_id = 1 THEN IFNULL(SUM(IF(mon_tr_det.currency_id = 1,mon_tr_det.pay_amount,mon_tr_det.pay_amount*mon_tr_det.course)),0) 
+                                                                      WHEN cl_agr.loan_currency_id = 2 THEN IFNULL(SUM(IF(mon_tr_det.currency_id = 1,mon_tr_det.pay_amount/mon_tr_det.course,mon_tr_det.pay_amount)),0) 
+                                                                    END AS jigari
+                                                            FROM   money_transactions_detail AS mon_tr_det
+                                                            JOIN   money_transactions AS mon_tr ON mon_tr.id = mon_tr_det.transaction_id
+        	                                                JOIN   client_loan_agreement AS cl_agr ON mon_tr.agreement_id = cl_agr.id
+                                                            WHERE  mon_tr_det.actived = 1 
+                                                            AND    mon_tr_det.`status` = 3
+                                                            AND    mon_tr.actived = 1 AND mon_tr_det.ltd_regist_tr_id = money_transactions_detail.transaction_id
+                                                            AND    mon_tr.client_id = money_transactions.client_id),0),2), if(client_loan_agreement.loan_currency_id = 1, ' GEL', ' USD')) AS percent1,
                         							CASE 
-                        								WHEN client_loan_agreement.loan_currency_id = 1 THEN CONCAT(ROUND((SUM(money_transactions_detail.pay_percent)+(SELECT IFNULL(SUM(money_transactions_detail.pay_amount),0) FROM money_transactions_detail WHERE money_transactions_detail.`status` IN(2,5,6) AND money_transactions_detail.actived = 1 AND money_transactions_detail.transaction_id = money_transactions.id))/money_transactions_detail.course,2), ' USD')
-                        								WHEN client_loan_agreement.loan_currency_id = 2 THEN CONCAT(ROUND((SUM(money_transactions_detail.pay_percent)+(SELECT IFNULL(SUM(money_transactions_detail.pay_amount),0) FROM money_transactions_detail WHERE money_transactions_detail.`status` IN(2,5,6) AND money_transactions_detail.actived = 1 AND money_transactions_detail.transaction_id = money_transactions.id))*money_transactions_detail.course,2), ' GEL')
+                        								WHEN client_loan_agreement.loan_currency_id = 1 THEN CONCAT(ROUND((SUM(money_transactions_detail.pay_percent)+(SELECT IFNULL(SUM(money_transactions_detail.pay_amount),0) FROM money_transactions_detail WHERE money_transactions_detail.`status` IN(2,5,6) AND money_transactions_detail.actived = 1 AND money_transactions_detail.transaction_id = money_transactions.id)-
+    	                                                   IFNULL((SELECT IFNULL(SUM(IF(mon_tr_det.currency_id = 1,mon_tr_det.pay_amount,mon_tr_det.pay_amount*mon_tr_det.course)),0) 
+                                                                    FROM   money_transactions_detail AS mon_tr_det
+                                                                    JOIN   money_transactions AS mon_tr ON mon_tr.id = mon_tr_det.transaction_id
+                                                                    JOIN   client_loan_agreement ON client_loan_agreement.id = mon_tr.agreement_id
+                                                                    WHERE  mon_tr_det.actived = 1 
+                                                                    AND    mon_tr_det.`status` = 3
+                                                                    AND    mon_tr.actived = 1 AND mon_tr_det.ltd_regist_tr_id = money_transactions_detail.transaction_id
+                                                                    AND    mon_tr.client_id = money_transactions.client_id),2))/money_transactions_detail.course,2), ' USD')
+                        								WHEN client_loan_agreement.loan_currency_id = 2 THEN CONCAT(ROUND((SUM(money_transactions_detail.pay_percent)+(SELECT IFNULL(SUM(money_transactions_detail.pay_amount),0) FROM money_transactions_detail WHERE money_transactions_detail.`status` IN(2,5,6) AND money_transactions_detail.actived = 1 AND money_transactions_detail.transaction_id = money_transactions.id)-
+    	                                                     IFNULL((SELECT IFNULL(SUM(IF(mon_tr_det.currency_id = 1,mon_tr_det.pay_amount/mon_tr_det.course,mon_tr_det.pay_amount)),0) 
+                                                                      FROM   money_transactions_detail AS mon_tr_det
+                                                                      JOIN   money_transactions AS mon_tr ON mon_tr.id = mon_tr_det.transaction_id
+                                                                      WHERE  mon_tr_det.actived = 1 
+                                                                      AND    mon_tr_det.`status` = 3
+                                                                      AND    mon_tr.actived = 1 AND mon_tr_det.ltd_regist_tr_id = money_transactions_detail.transaction_id
+                                                                      AND    mon_tr.client_id = money_transactions.client_id),0))*money_transactions_detail.course,2), ' GEL')
                         							END AS percent_gel1,
                         							CONCAT(ROUND(SUM(money_transactions_detail.pay_root),2), if(client_loan_agreement.loan_currency_id = 1, ' GEL', ' USD')) AS pay_root,
                         							CASE 
@@ -2988,6 +3096,7 @@ switch ($action) {
                                                          (SELECT DATEDIFF('$pay_datee', clsh.pay_date) FROM client_loan_schedule AS clsh WHERE clsh.id = MAX(client_loan_schedule.id)) AS `gadacilebuli`,
                                                          (SELECT ROUND(clsh.percent/30,2) FROM client_loan_schedule AS clsh WHERE clsh.id = MAX(client_loan_schedule.id)) AS `erti_dgis_procenti`,
                                                          client_loan_agreement.loan_beforehand_percent,
+                                                         SUM(client_loan_schedule.percent) AS percent,
                                                          (SELECT clsh.remaining_root FROM client_loan_schedule AS clsh WHERE clsh.id = MAX(client_loan_schedule.id)) AS `check_remaining_root`
                                                         
                                                   FROM   client_loan_schedule
