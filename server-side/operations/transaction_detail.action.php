@@ -417,25 +417,6 @@ function Add($hidde_transaction_id, $hidde_id, $transaction_date, $month_fee, $c
                                     FROM   client_loan_schedule 
                                     WHERE  id > '$hidde_id' AND client_loan_schedule.client_loan_agreement_id = '$client_loan_number'");
 	    
-	    if (mysqli_num_rows($res_car_out) == 0) {
-	        mysql_query("UPDATE client_loan_agreement
-        	                SET canceled_status = 1
-        	             WHERE  client_loan_agreement.id = '$client_loan_number'");
-	    }
-	    
-	    if ($car_out == 1) {
-	        mysql_query("UPDATE client_loan_schedule
-                            SET activ_status = 1,
-                               `status`     = 1
-                         WHERE  client_loan_schedule.client_loan_agreement_id = '$client_loan_number'
-                            AND client_loan_schedule.actived = 1
-	                        AND client_loan_schedule.schedule_date > '$transaction_date'");
-	        
-	        mysql_query("UPDATE client_loan_agreement
-        	                SET canceled_status = 1,
-	                            canceled = '$transaction_date'
-        	             WHERE  client_loan_agreement.id = '$client_loan_number'");
-	    }
 	}elseif ($all_fee < $all_pay){
 	    if ($penalti_fee>0){
 	        mysql_query("INSERT INTO `money_transactions_detail`
@@ -515,28 +496,6 @@ function Add($hidde_transaction_id, $hidde_id, $transaction_date, $month_fee, $c
                         	        FROM   client_loan_schedule
                         	        WHERE  id > '$hidde_id' AND client_loan_schedule.client_loan_agreement_id = '$client_loan_number'");
 	     
-	    if (mysqli_num_rows($res_car_out) == 0) {
-	        mysql_query("UPDATE client_loan_agreement
-        	                SET canceled_status = 1,
-	                            canseled_date   = '$transaction_date'
-        	             WHERE  client_loan_agreement.id = '$client_loan_number'");
-	    }
-	    
-	    if ($car_out == 1) {
-	        mysql_query("UPDATE client_loan_schedule
-            	            SET activ_status = 1,
-            	               `status`     = 1
-        	             WHERE  client_loan_schedule.client_loan_agreement_id = '$client_loan_number'
-        	             AND    client_loan_schedule.actived = 1
-        	             AND    client_loan_schedule.status  = 0
-        	             AND    client_loan_schedule.id > $res1[id]
-        	             AND    client_loan_schedule.schedule_date > '$transaction_date'");
-	         
-	        mysql_query("UPDATE client_loan_agreement
-	                        SET canceled_status = 1
-	                     WHERE  client_loan_agreement.id = '$client_loan_number'");
-	    }
-	    
 	}else{
 	    
 	    $check_loan_type = mysql_fetch_array(mysql_query("SELECT loan_type_id 
