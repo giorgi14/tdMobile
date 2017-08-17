@@ -1280,6 +1280,7 @@
 		    param.pledge_client_id          =  $("#pledge_client_id").val();
 		    param.pledge_client_loan_number =  $("#pledge_client_loan_number").val();
 		    param.client_pledge_amount      =  $("#client_pledge_amount").val();
+		    param.pledge_comment            =  $("#pledge_comment").val();
 
 		    if(param.pledge_client_loan_number == 0){
 			    alert('შეავსე ხელშეკრულების ნომერი');

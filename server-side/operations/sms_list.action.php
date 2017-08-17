@@ -36,13 +36,14 @@ switch ($action) {
                                 					  WHEN sent_list.guarantor_id > 0 THEN CONCAT(client.`name`, ' ', client.lastname, '/თავ.პ./',IFNULL(client_quarantors.`name`,' '))
                                 					  WHEN sent_list.person_id > 0 THEN CONCAT(client.`name`, ' ', client.lastname, '/საკ.პ./',IFNULL(client_person.`person`,' '))
                                 					  WHEN sent_list.trust_person_id > 0 THEN CONCAT(client.`name`, ' ', client.lastname, '/მინდ.პ./',IFNULL(client_trusted_person.`name`,' '))
-                                				  END,'/', IFNULL(client_car.registration_number, '')) AS `name`,
+                                				  END,'/', IFNULL(client_car.registration_number, ''), '/', IFNULL(client_loan_agreement.agreement_id, '')) AS `name`,
                         					sent_list.`address`,
                         					sent_list.content,
                                             IF(sent_list.`status` = 0, 'გასაგზავნი', 'გაგზავნილი')
                                   FROM      sent_list
                                   LEFT JOIN client ON sent_list.client_id = client.id
                                   LEFT JOIN client_car ON client.id = client_car.client_id
+                                  LEFT JOIN client_loan_agreement ON client.id = client_loan_agreement.client_id
                                   LEFT JOIN client_quarantors ON client_quarantors.id = sent_list.guarantor_id
                                   LEFT JOIN client_person ON client_person.id = sent_list.person_id
                                   LEFT JOIN client_trusted_person ON client_trusted_person.id = sent_list.trust_person_id

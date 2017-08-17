@@ -53,6 +53,14 @@ switch ($action) {
             						<input class="idle" style="width: 135px;" id="client_pledge_amount" type="text" value="">
             				    </td>
             				</tr>
+                            <tr>
+            	                <td colspan="3" style="width: 330px;"><label calss="label" style="padding-top: 5px;" for="date">კომენტარი</label></td>
+            				</tr>
+            				<tr>
+            	                <td colspan="3">
+                                   <textarea class="idle" id="pledge_comment" style="resize: vertical;width: 99%;height: 40px;"></textarea>
+                                </td>
+            				</tr>
                         </table>
                         <input id="local_sub_id" type="hidden" value="">
                      </fieldset>
@@ -228,14 +236,15 @@ switch ($action) {
 		$transaction_date          = $_REQUEST['transaction_date'];
 		$pledge_client_id          = $_REQUEST['pledge_client_id'];
 		$pledge_client_loan_number = $_REQUEST['pledge_client_loan_number'];
+		$pledge_comment            = $_REQUEST['pledge_comment'];
 		
 		$user_id	               = $_SESSION['USERID'];
 		
 		if ($tr_id == '') {
 		    mysql_query("INSERT INTO `money_transactions`
-                    		        (`datetime`, `user_id`,  `agreement_id`, `client_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `type_id`, `status`, `actived`)
+                    		        (`datetime`, `user_id`,  `agreement_id`, `client_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `type_id`, `comment`, `status`, `actived`)
                     		  VALUES
-                    		        (NOW(), '$user_id', '$pledge_client_loan_number', '$pledge_client_id', '$transaction_date', '$client_amount', '$course', '$currency_id', '$received_currency_id', '2', '0', '1')");
+                    		        (NOW(), '$user_id', '$pledge_client_loan_number', '$pledge_client_id', '$transaction_date', '$client_amount', '$course', '$currency_id', '$received_currency_id', '2', '$pledge_comment', '0', '1')");
 		     
 		    $tr_id = mysql_insert_id();
 		}else{
