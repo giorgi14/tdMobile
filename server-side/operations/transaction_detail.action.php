@@ -576,7 +576,12 @@ function Add($hidde_transaction_id, $hidde_id, $transaction_date, $month_fee, $c
                     	                    (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
                     	              VALUES
                     	                    (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '$surplus1', '$course', '$currency_id', '$received_currency_id', '', '', '2', '9', 1)");
-	            } 
+	            }
+	            
+	            if ($surplus1 <= 0 && $surplus1 <= 0) {
+	                global  $error;
+	                $error = 'გადანწილებული თანხა არა საკმარისი';
+	            }
 	        }
 	        
 	    }else{
