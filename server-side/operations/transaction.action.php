@@ -620,12 +620,36 @@ switch ($action) {
 		    
 		    $data = array('status' => 2, 'fee_lari' => $res_pledge[fee_lari], 'fee_dolari' => $res_pledge[fee_dolari], 'trasnsaction_detail_id' => $res_pledge[id], 'client_data' => client($check_client[client_id]), 'agrement_data' => client_loan_number($check_client[id]), 'currency_data' => currency($receivedd_currency_id), 'pay_amount1' => $res1[pay_amount_gel], 'pay_amount2' => $res1[pay_amount_usd]);
 		}elseif ($type_id == 3){
+		    
+		    $res_other = mysql_fetch_assoc(mysql_query("SELECT ROUND(SUM(money_transactions_detail.pay_amount),2) AS pay_amount
+                                        		        FROM   money_transactions_detail
+                                        		        JOIN   money_transactions ON money_transactions_detail.transaction_id = money_transactions.id
+                                        		        WHERE  money_transactions.client_id = '$id'
+                                        		        AND    money_transactions.actived = 1
+                                        		        AND    money_transactions_detail.actived = 1
+                                        		        AND    money_transactions_detail.`status` = 10"));
+		    
+		    $res_other1 = mysql_fetch_assoc(mysql_query("SELECT ROUND(SUM(money_transactions_detail.pay_amount),2) AS pay_amount
+                                        		         FROM   money_transactions_detail
+                                        		         JOIN   money_transactions ON money_transactions_detail.transaction_id = money_transactions.id
+                                        		         WHERE  money_transactions.client_id = '$id'
+                                        		         AND    money_transactions.actived = 1
+                                        		         AND    money_transactions_detail.actived = 1
+                                        		         AND    money_transactions_detail.`status` = 11"));
+		    
+		    
+		    $other_pay = round($res_other[pay_amount] - $res_other1[pay_amount],2);
+		    
+		    if ($other_pay<=1) {
+		        $other_pay = 0;
+		    }
+		    
 		    $check_client = mysql_fetch_array(mysql_query("SELECT id,
                                             		              client_id
                                             		       FROM   client_loan_agreement
                                             		       WHERE  client_id = '$id' OR id = '$agr_id'"));
 		    
-		    $data = array('status'=>3, 'client_data' => client($check_client[client_id]), 'agrement_data' => client_loan_number($check_client[id]));
+		    $data = array('status'=>3, 'client_data' => client($check_client[client_id]), 'agrement_data' => client_loan_number($check_client[id]), 'other_pay' => $other_pay);
 		}
 		
 		break;
@@ -842,6 +866,7 @@ function GetPage($res = ''){
                         <div id="button_area">
                         	<button id="add_button_dettail">დამატება</button>
     						<button id="pledge_distribution">დაზღვევის დარიცხვა</button>
+    						<button id="add_other">სხვა ხარჯის დარიცხვა</button>
     						<button id="delete_detail">განაწილების გაუქმება</button>
                         </div>
                         <table class="display" id="table_transaction_detail" style="width: 100%;">

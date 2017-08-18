@@ -24,21 +24,21 @@
         	if (tab == 0) {
         		LoadTable(tName,9,change_colum_main,aJaxURL);	
          	}else if(tab == 1){
-             	GetButtons("add_button1", "");
+             	
              	GetDataTable1("example1", aJaxURL, 'get_list', 14, "tab=1", 0, "", "", "desc", "", change_colum_main);
              	SetEvents("", "", "", "example1", fName, aJaxURL,'',tName,10,change_colum_main,aJaxURL,'','','');
              	setTimeout(function(){$('.ColVis, .dataTable_buttons').css('display','none');}, 90);
             }else if(tab == 2){
-				GetButtons("add_button2", "");
+				
 				GetDataTable1("example2", aJaxURL, 'get_list_pledge', 11, "tab=2", 0, "", "", "desc", "", change_colum_main);
 				SetEvents("", "", "", "example2", fName, aJaxURL,'',tName,10,change_colum_main,aJaxURL,'','','');
 				
 				setTimeout(function(){$('.ColVis, .dataTable_buttons').css('display','none');}, 90);
 			}else if(tab == 3){
-          		GetButtons("add_button3", "");
+          		
           		GetDataTable1("example3", aJaxURL, 'get_list_other', 11, "tab=3", 0, "", "", "desc", "", change_colum_main);
           		SetEvents("", "", "", "example3", fName, aJaxURL,'',tName,10,change_colum_main,aJaxURL,'','','');
-          		$("#add_other").button();
+          		//$("#add_other").button();
           		setTimeout(function(){$('.ColVis, .dataTable_buttons').css('display','none');}, 90);
           	}else{
           		GetDataTable1("example4", aJaxURL, 'get_list', 11, "tab=4", 0, "", "", "desc", "", change_colum_main);
@@ -204,15 +204,18 @@
     	        GetDateTimes('transaction_date');
     	        $("#delete_detail").button();
     	        $("#pledge_distribution").button();
+    	        $("#add_other").button();
 
     	        if($('#transaction_date').val() != ''){
     		        $('#add_button_dettail').button("enable");
     		        $('#delete_detail').button("enable");
     		        $('#pledge_distribution').button("enable");
+    		        $('#add_other').button("enable");
     		    }else{
     		    	$('#add_button_dettail').button("disable");
     		    	$('#delete_detail').button("disable");
     		        $('#pledge_distribution').button("disable");
+    		        $('#add_other').button("disable");
     			}
 
     			if($("#hidde_actived").val() == 0){
@@ -396,10 +399,8 @@
 
 							$("#other_client_id").chosen();
 							$("#other_client_loan_number").chosen();
-							$("#other_curense_id").chosen();
-							GetDateTimes('other_date');
-							$("#other_date").blur();
 							$('#other_dialog, .other_dialog-class').css('overflow','visible');
+							$("#other_pledge_amount").val($("#client_amount").val());
 						}
 					}
 			    }
@@ -451,10 +452,12 @@
 		        $('#add_button_dettail').button("enable");
 		        $('#delete_detail').button("enable");
 		        $('#pledge_distribution').button("enable");
+		        $('#add_other').button("enable");
 		    }else{
 		    	$('#add_button_dettail').button("disable");
 		    	$('#delete_detail').button("disable");
 		        $('#pledge_distribution').button("disable");
+		        $('#add_other').button("disable");
 			}
 	    });
 	    
@@ -754,6 +757,7 @@
 			    					$("#month_fee1").val(data.pledge_fee);
 			    					$("#month_fee").val(data.loan_pay_amount);
 			    					$("#extra_fee").val(parseFloat(data.loan_pay_amount)+parseFloat(data.pay_amount1));
+			    					$("#month_fee_gel").val(data.other_pay);
 			    					
 			    					$("#root1").val('');
 	    							$("#percent1").val('');
@@ -1005,6 +1009,7 @@
     							$('#client_loan_number').html(data.agrement_data).trigger("chosen:updated");
     						}else if(data.status==3){
     							$('#client_loan_number').html(data.agrement_data).trigger("chosen:updated");
+    							$("#month_fee_gel").val(data.other_pay);
     						}
 						}
 					}
@@ -1093,6 +1098,7 @@
     							$('#client_id').html(data.client_data).trigger("chosen:updated");
     						}else if(data.status==3){
     							$('#client_id').html(data.client_data).trigger("chosen:updated");
+    							$("#month_fee_gel").val(data.other_pay);
     						}
 						}
 					}
@@ -1316,8 +1322,9 @@
 		    param.other_cource            =  $("#other_cource").val();
 		    param.other_currency_id       =  $("#other_curense_id").val();
 		    param.other_date              =  $("#other_date").val();
+		    
 		    param.other_client_id         =  $("#other_client_id").val();
-		    param.ther_client_loan_number =  $("#other_client_loan_number").val();
+		    param.other_client_loan_number =  $("#other_client_loan_number").val();
 		    param.client_other_amount     =  $("#other_pledge_amount").val();
 		    param.other_comment           =  $("#other_comment").val();
 		    
@@ -2027,7 +2034,7 @@
        </div>
        <div id="tab-3">
             <div id="button_area">
-            	<button id="add_other">დამატება</button>
+            	
             </div>
        		<table id="table_right_menu">
                 <tr>

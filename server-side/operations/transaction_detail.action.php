@@ -75,22 +75,6 @@ switch ($action) {
                      <legend>ძირითადი ინფორმაცია</legend>
                         <table class="dialog-form-table" style="width: 100%;">
 		                    <tr>
-            	                <td style="width: 250px;"><label calss="label" style="padding-top: 5px;" for="date">დარიცხვის თარიღი</label></td>
-            					<td style="width: 200px;"><label calss="label" style="padding-top: 5px;" for="date">მიმდინარე კურსი</label></td>
-                                <td style="width: 135px;"><label>ვალუტა</label></td>
-            				</tr>
-            				<tr>
-            	                <td style="width: 250px;">
-            						<input class="idle" style="width: 245px;" id="other_date" type="text" value="">
-            					</td>
-            					<td style="width: 200px;">
-            						<input class="idle" style="width: 195px;" id="other_cource" type="text" value="" disabled="disabled">
-            					</td>
-            					<td style="width: 141px;">
-            						<select id="other_curense_id" calss="label" style="width: 141px;">'.currency().'</select>
-            				    </td>
-            				</tr>
-                            <tr>
             	                <td style="width: 250px;"><label calss="label" style="padding-top: 5px;" for="date">მსესხებელი</label></td>
             					<td style="width: 200px;"><label calss="label" style="padding-top: 5px;" for="date">სესხის ნომერი</label></td>
                                 <td style="width: 135px;"><label>თანხა</label></td>
@@ -276,18 +260,31 @@ switch ($action) {
 		$course                    = $_REQUEST['other_cource'];
 		$transaction_date          = $_REQUEST['other_date'];
 		$pledge_client_id          = $_REQUEST['other_client_id'];
-		$pledge_client_loan_number = $_REQUEST['ther_client_loan_number'];
+		$pledge_client_loan_number = $_REQUEST['other_client_loan_number'];
 		$other_comment             = $_REQUEST['other_comment'];
 		
 		$user_id	               = $_SESSION['USERID'];
 		
+		if ($tr_id == '') {
+            mysql_query("INSERT INTO `money_transactions` 
+                                    (`datetime`, `user_id`, `agreement_id`, `client_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `type_id`, `comment`, `status`, `actived`) 
+                              VALUES 
+                                    (NOW(), '$user_id', '$pledge_client_loan_number', '$pledge_client_id', '$transaction_date', '$client_pledge_amount', '$course', '$received_currency_id', '$received_currency_id', '3', '$other_comment', '1', '1')");
+            
+            $tr_id = mysql_insert_id();
+		}else {
+		    mysql_query("UPDATE `money_transactions`
+            		        SET `agreement_id` = '$pledge_client_loan_number',
+		                        `client_id`    = '$pledge_client_id',
+                		        `pay_datetime` = '$transaction_date',
+                		        `course`       = '$course',
+                		        `currency_id`  = '$received_currency_id',
+                		        `type_id`      = '2',
+                		        `status`       = '1',
+                		        `actived`      = '1'
+            		      WHERE `id`           = '$tr_id'");
+		}
 		
-        mysql_query("INSERT INTO `money_transactions` 
-                                (`datetime`, `user_id`, `agreement_id`, `client_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `type_id`, `comment`, `status`, `actived`) 
-                          VALUES 
-                                (NOW(), '$user_id', '$pledge_client_loan_number', '$pledge_client_id', '$transaction_date', '$client_pledge_amount', '$course', '$received_currency_id', '$received_currency_id', '3', '$other_comment', '1', '1')");
-        
-        $tr_id = mysql_insert_id();
         mysql_query("INSERT INTO `money_transactions_detail` 
                                 (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `payed_status`,  `actived`) 
                           VALUES 
