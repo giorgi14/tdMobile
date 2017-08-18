@@ -137,7 +137,7 @@ switch ($action) {
                                 LEFT JOIN   loan_currency ON loan_currency.id = money_transactions_detail.currency_id
 		                        LEFT JOIN   loan_currency AS fact_cource ON fact_cource.id = money_transactions_detail.received_currency_id
                                 JOIN        money_transaction_status ON money_transaction_status.id = money_transactions_detail.`status`
-                                WHERE       money_transactions_detail.transaction_id = '$transaction_id' AND money_transactions_detail.actived = 1");
+                                WHERE       money_transactions_detail.transaction_id = '$transaction_id'");
 
 		$data = array("aaData"	=> array());
 
@@ -426,6 +426,13 @@ function Add($hidde_transaction_id, $hidde_id, $transaction_date, $month_fee, $c
                                     FROM   client_loan_schedule 
                                     WHERE  id > '$hidde_id' AND client_loan_schedule.client_loan_agreement_id = '$client_loan_number'");
 	    
+	    if ($car_out == 1) {
+	       mysql_query("UPDATE  client_loan_schedule
+                            SET activ_status = 1
+                         WHERE  client_loan_schedule.client_loan_agreement_id = '$client_loan_number'
+                         AND    client_loan_schedule.actived = 1
+                         AND    client_loan_schedule.schedule_date > '$transaction_date'");
+	    }
 	}elseif ($all_fee < $all_pay){
 	    if ($penalti_fee>0){
 	        mysql_query("INSERT INTO `money_transactions_detail`
@@ -505,6 +512,13 @@ function Add($hidde_transaction_id, $hidde_id, $transaction_date, $month_fee, $c
                         	        FROM   client_loan_schedule
                         	        WHERE  id > '$hidde_id' AND client_loan_schedule.client_loan_agreement_id = '$client_loan_number'");
 	     
+	    if ($car_out == 1) {
+	        mysql_query("UPDATE client_loan_schedule
+        	                SET activ_status = 1
+        	             WHERE  client_loan_schedule.client_loan_agreement_id = '$client_loan_number'
+        	             AND    client_loan_schedule.actived = 1
+        	             AND    client_loan_schedule.schedule_date > '$transaction_date'");
+	    }
 	}else{
 	    
 	    $check_loan_type = mysql_fetch_array(mysql_query("SELECT loan_type_id 

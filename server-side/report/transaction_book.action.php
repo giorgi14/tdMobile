@@ -218,8 +218,8 @@ switch ($action) {
 		$rResult = mysql_query("SELECT 	MAX(client_loan_schedule.id),
                         				DATE_FORMAT(MAX(client_loan_schedule.schedule_date),'%d/%m/%Y') AS daricxvis_tarigi,
                         				CASE
-                        					 WHEN client.id >= (SELECT old_client_id.number FROM `old_client_id` LIMIT 1) THEN CONCAT(client.`name`, ' ', client.lastname, ' / ს/ხ', client_loan_agreement.id, ' / ', client_car.car_marc, ' / ', client_car.registration_number)
-                        					 WHEN client.id < (SELECT old_client_id.number FROM `old_client_id` LIMIT 1) THEN CONCAT(client.`name`, ' ', client.lastname, ' / ს/ხ', client.exel_agreement_id, ' / ', client_car.car_marc, ' / ', client_car.registration_number)
+                        					 WHEN client.id >= (SELECT old_client_id.number FROM `old_client_id` LIMIT 1) THEN CONCAT(IFNULL(client.`name`, ''), ' ', IFNULL(client.lastname, ''), '/', IFNULL(client_car.car_marc, ''), ' / ', IFNULL(client_car.registration_number, ''), '/', IFNULL(client_loan_agreement.oris_code, ''))
+                        					 WHEN client.id < (SELECT old_client_id.number FROM `old_client_id` LIMIT 1) THEN CONCAT(IFNULL(client.`name`, ''), ' ', IFNULL(client.lastname, ''), '/', IFNULL(client_car.car_marc, ''), ' / ', IFNULL(client_car.registration_number, ''), '/', IFNULL(client_loan_agreement.oris_code, ''))
                         				END AS `name`,
                         				client_loan_agreement.oris_code,
                         				CASE
@@ -540,7 +540,7 @@ function GetPage($id){
                                                       client_loan_agreement.client_id,
                                                       client_loan_agreement.loan_currency_id,
                                                       client_loan_schedule.id,
-                                					  client_loan_schedule.pay_amount,
+                                					  ROUND(client_loan_schedule.root+client_loan_schedule.percent,2) AS pay_amount,
                                 					  client_loan_schedule.root,
                                 					  client_loan_schedule.percent,
                                                       client_loan_schedule.schedule_date,
