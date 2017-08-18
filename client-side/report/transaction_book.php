@@ -640,19 +640,7 @@
 	            $(this).attr('myvar','0');
 	        }
 	    });
-	    $(document).on("click", "#show_copy_prit_exel", function () {
-	        if($(this).attr('myvar') == 0){
-	            $('.ColVis,.dataTable_buttons').css('display','block');
-	            $(this).css('background','#2681DC');
-	            $(this).children('img').attr('src','media/images/icons/select_w.png');
-	            $(this).attr('myvar','1');
-	        }else{
-	        	$('.ColVis,.dataTable_buttons').css('display','none');
-	        	$(this).css('background','#FAFAFA');
-	            $(this).children('img').attr('src','media/images/icons/select.png');
-	            $(this).attr('myvar','0');
-	        }
-	    });
+	   
 	   
     </script>
     <style type="text/css">
