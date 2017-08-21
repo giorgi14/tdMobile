@@ -3248,7 +3248,7 @@ switch ($action) {
             $nasargeblebi   = '0.00';
             
             if ($result[check_remaining_root] > 0){
-                $sakomisio    = round($remaining_root * ($result[loan_beforehand_percent]/100),2);
+                $sakomisio    = round($remainig_root * ($result[loan_beforehand_percent]/100),2);
                 $nasargeblebi = round($result1[percent]*$result[gadacilebuli],2);
             }
             
