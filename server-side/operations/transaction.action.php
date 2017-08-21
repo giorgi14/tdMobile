@@ -458,7 +458,6 @@ switch ($action) {
                 
             }
          
-        
             if ($result[st] == 1){
                 $res1 = mysql_fetch_assoc(mysql_query("SELECT  IFNULL(ROUND(SUM(CASE
                                             										WHEN money_transactions_detail.currency_id = client_loan_agreement.loan_currency_id THEN money_transactions_detail.pay_amount

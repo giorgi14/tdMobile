@@ -3192,7 +3192,7 @@ switch ($action) {
                                                          AND      money_transactions_detail.payed_status = 1 AND money_transactions.actived = 1
                                                          ORDER BY money_transactions.pay_datetime ASC
                                                          LIMIT 1"));
-       
+      
             $res = mysql_query("SELECT   client_loan_schedule.id,
                         				 client_loan_agreement.status AS st,
                         				 client_loan_schedule.pay_date,
