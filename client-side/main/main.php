@@ -324,9 +324,11 @@
 	            if($("#canceled_status").val()==1){
 	            	$("#calculation-dialog").button("disable");
 	            	$("#car-depriving").button("disable");
+	            	$("#save_comment").button("disable");
 		        }else{
 		        	$("#calculation-dialog").button("enable");
 	            	$("#car-depriving").button("enable");
+	            	$("#save_comment").button("enable");
 			    }
 	            $(".add-edit-form-class").css('position','fixed');
 	            LoadTable('letter', 26, 'get_list1', "<'F'Cpl>", aJaxURL, '');
