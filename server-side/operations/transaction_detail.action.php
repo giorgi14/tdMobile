@@ -162,7 +162,8 @@ switch ($action) {
 		$pledge_or_other_surplus   = $_REQUEST['pledge_or_other_surplus'];
 		$pledge_or_other_extra_fee = $_REQUEST['pledge_or_other_extra_fee'];
 		
-		$surplus_type              = $_REQUEST['surplus_type'];
+		$surplus_type          = $_REQUEST['surplus_type'];
+		$attachment_client_id  = $_REQUEST['attachment_client_id'];
 		
 		
 		$hidde_id             = $_REQUEST['hidde_id'];
@@ -179,6 +180,10 @@ switch ($action) {
 	            
 	            $tr_id = mysql_insert_id();
 	        }else{
+// 	            if ($attachment_client_id>0) {
+	                
+// 	            }
+	            
 	            mysql_query("UPDATE `money_transactions`
             	                SET `datetime`                = NOW(),
                 	                `user_id`                 = '$user_id',
@@ -424,6 +429,10 @@ function Add($hidde_transaction_id, $hidde_id, $transaction_date, $month_fee, $c
                                     WHERE  id > '$hidde_id' AND client_loan_schedule.client_loan_agreement_id = '$client_loan_number'");
 	    
 	    if ($car_out == 1) {
+	       mysql_query("UPDATE client_loan_agreement
+        	               SET canceled_status = 1
+        	            WHERE  client_loan_agreement.id = '$client_loan_number' ");
+	       
 	       mysql_query("UPDATE  client_loan_schedule
                             SET activ_status = 1
                          WHERE  client_loan_schedule.client_loan_agreement_id = '$client_loan_number'
@@ -510,6 +519,10 @@ function Add($hidde_transaction_id, $hidde_id, $transaction_date, $month_fee, $c
                         	        WHERE  id > '$hidde_id' AND client_loan_schedule.client_loan_agreement_id = '$client_loan_number'");
 	     
 	    if ($car_out == 1) {
+	        mysql_query("UPDATE client_loan_agreement
+        	                SET canceled_status = 1
+        	             WHERE  client_loan_agreement.id = '$client_loan_number' ");
+	        
 	        mysql_query("UPDATE client_loan_schedule
         	                SET activ_status = 1
         	             WHERE  client_loan_schedule.client_loan_agreement_id = '$client_loan_number'
