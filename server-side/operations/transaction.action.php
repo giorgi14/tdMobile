@@ -457,7 +457,7 @@ switch ($action) {
                 }
                 
             }
-            
+         
         
             if ($result[st] == 1){
                 $res1 = mysql_fetch_assoc(mysql_query("SELECT  IFNULL(ROUND(SUM(CASE
