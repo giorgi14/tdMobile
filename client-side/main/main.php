@@ -323,10 +323,10 @@
 	            
 	            if($("#canceled_status").val()==1){
 	            	$("#calculation-dialog").button("disable");
-	            	$("#cancel-loan").button("disable");
+	            	$("#car-depriving").button("disable");
 		        }else{
 		        	$("#calculation-dialog").button("enable");
-	            	$("#cancel-loan").button("enable");
+	            	$("#car-depriving").button("enable");
 			    }
 	            $(".add-edit-form-class").css('position','fixed');
 	            LoadTable('letter', 26, 'get_list1', "<'F'Cpl>", aJaxURL, '');
