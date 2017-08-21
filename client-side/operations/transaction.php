@@ -1331,9 +1331,10 @@
     							alert(data.error);
     						}else{
     							CloseDialog('pledge_dialog');
+    							$("#tr_id").val(data.tr_id);
     							GetDataTable("table_transaction_detail", aJaxURL_det, 'get_list', 9, "&transaction_id="+$("#tr_id").val(), 0, "", 0, "desc", "", "<'F'Cpl>");
     							$("#hidde_cl_id1").val(data.pledge_client_id);
-    							$("#tr_id").val(data.tr_id);
+    							
     		    			}
     					}
     			    }
@@ -1366,7 +1367,8 @@
 							alert(data.error);
 						}else{
 							CloseDialog('other_dialog');
-							GetDataTable1("example3", aJaxURL, 'get_list_other', 11, "tab=3", 0, "", "", "desc", "", change_colum_main);
+							$("#tr_id").val(data.tr_id);
+							GetDataTable("table_transaction_detail", aJaxURL_det, 'get_list', 9, "&transaction_id="+$("#tr_id").val(), 0, "", 0, "desc", "", "<'F'Cpl>");
 			          		setTimeout(function(){$('.ColVis, .dataTable_buttons').css('display','none');}, 90);
 							$("#hidde_cl_id1").val(data.pledge_client_id);
 		    			}

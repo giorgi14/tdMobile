@@ -105,8 +105,8 @@ switch ($action) {
 		
 		break;
 	case 'get_list' :
-		$count	= $_REQUEST['count'];
-		$hidden	= $_REQUEST['hidden'];
+		$count	        = $_REQUEST['count'];
+		$hidden	        = $_REQUEST['hidden'];
 		$tab	        = $_REQUEST['tab'];
 		$transaction_id	= $_REQUEST['transaction_id'];
 		
@@ -290,7 +290,7 @@ switch ($action) {
                           VALUES 
                                 (NOW(), '$user_id', '$tr_id', '$transaction_date', '$client_pledge_amount', '$course', '$received_currency_id', '$received_currency_id', '$course', '$received_currency_id', '3', '10', '1', '1')");
         
-        $data = array('pledge_client_id' => $pledge_client_id);
+        $data = array('pledge_client_id' => $pledge_client_id, 'tr_id' => $tr_id);
         break;
 		
 	
@@ -1079,6 +1079,16 @@ function GetPage($res = ''){
     						<input class="idle" style="width: 15px;" id="car_out" value="1" disabled type="checkbox">
     					</td>
     					<td style="width: 120px;"><select id="surplus_type"  calss="label" style="width: 180px;">'.surplus_type($res[currency_id]).'</select></td>
+    				</tr>
+    			    <tr>
+    	                <td style="width: 200px;"></td>
+    					<td style="width: 280px;"></td>
+    					<td style="width: 120px;"><label calss="label" style="padding-top: 5px;" for="date">დანართი</label></td>
+    				</tr>
+    				<tr>
+    	                <td style="width: 200px;"></td>
+    					<td style="width: 280px;"></td>
+    					<td style="width: 120px;"><select id="attachment_client_id"  calss="label" style="width: 180px;"></select></td>
     				</tr>
     			</table>
     			<table id="loan_table" style="'.$loan_table_hidde.'">
