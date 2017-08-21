@@ -345,7 +345,10 @@ switch ($action) {
         
         if ($resultt[check_remaining_root] > 0){
             $sakomisio    = round($remaining_root * ($resultt[loan_beforehand_percent]/100),2);
-            $nasargeblebi = round($resultt[erti_dgis_procenti]*$resultt[gadacilebuli],2);
+            if ($resultt[gadacilebuli]>=0) {
+                $nasargeblebi = round($resultt[erti_dgis_procenti]*$resultt[gadacilebuli],2);
+            }
+            
         }
         
         if (mysql_num_rows($check_count)>1) {
@@ -389,6 +392,34 @@ switch ($action) {
                                 ORDER BY client_loan_schedule.id DESC
                                 LIMIT 1");
             
+            if (mysql_num_rows($res)==0) {
+                $res = mysql_query("SELECT   client_loan_schedule.id,
+                        				 client_loan_agreement.status AS st,
+                        				 client_loan_schedule.pay_date,
+                        				 client_loan_schedule.`status`,
+                                         CASE
+                                             WHEN client_loan_schedule.`status` = 1 THEN 0
+                        					 WHEN client_loan_schedule.`status` = 0 THEN ROUND(client_loan_schedule.percent,2)
+                                         END AS percent,
+                                         CASE
+                                             WHEN client_loan_schedule.`status` = 1 THEN client_loan_schedule.remaining_root
+                        					 WHEN client_loan_schedule.`status` = 0 THEN ROUND(client_loan_schedule.root + client_loan_schedule.remaining_root,2)
+                                         END AS remaining_root,
+                                         
+                        				 DATEDIFF('$pay_datee', client_loan_schedule.pay_date) AS gadacilebuli,
+                                         client_loan_schedule.remaining_root as check_remaining_root,
+                                         client_loan_agreement.loan_beforehand_percent,
+                        				 client_loan_agreement.penalty_days,
+                        				 client_loan_agreement.penalty_percent,
+                                         client_loan_agreement.loan_currency_id,
+                        				 client_loan_agreement.penalty_additional_percent
+                                FROM     client_loan_schedule
+                                JOIN     client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
+                                WHERE    client_loan_agreement.client_id = '$local_id' AND client_loan_schedule.schedule_date > '$pay_datee'
+                                ORDER BY client_loan_schedule.id ASC
+                                LIMIT 1");
+            }
+            
             $res1 = mysql_query("SELECT   client_loan_schedule.percent/30 AS `percent`
                                  FROM     client_loan_schedule
                                  JOIN     client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
@@ -420,7 +451,10 @@ switch ($action) {
             
             if ($result[check_remaining_root] > 0){
                 $sakomisio    = round($result[remaining_root] * ($result[loan_beforehand_percent]/100),2);
-                $nasargeblebi = round($result1[percent]*$result[gadacilebuli],2);
+                if ($result[gadacilebuli]>=0) {
+                    $nasargeblebi = round($result1[percent]*$result[gadacilebuli],2);
+                }
+                
             }
             
         
