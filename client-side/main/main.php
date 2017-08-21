@@ -634,7 +634,7 @@
 <div id="button_area">
 	<table>
 		<tr>
-			<td style="width: 280px;">
+			<td style="width: 280px; display: none;">
         		<button id="difference_cource">კურსთა შორის სხვაობის დაანგარიშება</button>
         	</td>
         	<td>
