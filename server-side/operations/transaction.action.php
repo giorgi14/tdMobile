@@ -10,7 +10,6 @@ switch ($action) {
 		$data		= array('page'	=> $page);
 
 		break;
-		
 	case 'get_edit_page':
 		$id		= $_REQUEST['id'];
 	    $page	= GetPage(GetHolidays($id));
