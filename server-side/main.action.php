@@ -12,8 +12,9 @@ switch ($action) {
         
         break;
     case 'gel_footer':
+        
         $id	= $_REQUEST['id'];
-
+ 
         $req = mysql_fetch_array(mysql_query("SELECT IFNULL(MAX(client_loan_schedule.remaining_root+client_loan_schedule.root),0.00) AS remaining_root,
                                                      CASE 
                                         				  WHEN client_loan_agreement.loan_currency_id = 1 THEN ROUND(MAX(client_loan_schedule.remaining_root + client_loan_schedule.root) / client_loan_agreement.exchange_rate,2)
