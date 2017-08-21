@@ -3205,7 +3205,7 @@ switch ($action) {
                                              WHEN client_loan_schedule.`status` = 1 THEN client_loan_schedule.remaining_root
                         					 WHEN client_loan_schedule.`status` = 0 THEN ROUND(client_loan_schedule.root + client_loan_schedule.remaining_root,2)
                                          END AS remaining_root,
-                                         
+                                         0 AS nasargeblebi_dgeebi,
                         				 DATEDIFF('$pay_datee', client_loan_schedule.pay_date) AS gadacilebuli,
                                          client_loan_schedule.remaining_root as check_remaining_root,
                                          client_loan_agreement.loan_beforehand_percent,
@@ -3226,7 +3226,8 @@ switch ($action) {
                                          CASE
                                              WHEN client_loan_schedule.`status` = 1 THEN 0
                         					 WHEN client_loan_schedule.`status` = 0 THEN ROUND(client_loan_schedule.percent,2)
-                                         END AS percent,
+                                         END AS nasargeblebi_dgeebi,
+                                         0 AS percent,
                                          CASE
                                              WHEN client_loan_schedule.`status` = 1 THEN client_loan_schedule.remaining_root
                         					 WHEN client_loan_schedule.`status` = 0 THEN ROUND(client_loan_schedule.root + client_loan_schedule.remaining_root,2)
@@ -3275,7 +3276,7 @@ switch ($action) {
             }
             
             $sakomisio      = '0.00';
-            $nasargeblebi   = '0.00';
+            $nasargeblebi   = $result[nasargeblebi_dgeebi];
             
             if ($result[check_remaining_root] > 0){
                 $sakomisio    = round($remainig_root * ($result[loan_beforehand_percent]/100),2);
