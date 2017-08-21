@@ -245,7 +245,9 @@
 				$('#type_id').chosen();
     	        $('#client_id').chosen();
     	        $('#client_loan_number').chosen();
+    	        $('#attachment_client_id').chosen();
     	        $('#currency_id').chosen();
+    	        $('#attachment_client_id').attr('disabled', true).trigger("chosen:updated");
 
     	        if($("#tr_id").val()!=''){
         	        param 	    = new Object();
@@ -426,8 +428,8 @@
 					}
 			    }
 			});
-		});   
-		 
+		});
+
 		$(document).on("change", "#transaction_date",  function (event) {
 			param 	                = new Object();
 		    
@@ -517,7 +519,8 @@
 	    	param.month_payed_gel = parseFloat($("#month_payed_gel").val())+parseFloat(param.pledge_or_other_balance_gel);
 	    	param.month_payed_usd = parseFloat($("#month_payed_usd").val())+parseFloat(param.pledge_or_other_balance_usd);
 
-	    	param.surplus_type = $("#surplus_type").val();
+	    	param.surplus_type         = $("#surplus_type").val();
+	    	param.attachment_client_id = $("#attachment_client_id").val();
 	    	
 	    	param.hidde_id		       = $("#hidde_id").val();
 	    	param.hidde_transaction_id = $("#hidde_transaction_id").val();
@@ -557,18 +560,31 @@
 
 	    $(document).on("change", "#surplus_type", function () {
 	    	surplus_type = $(this).val();
-
+	    	
 	    	if(surplus_type == 3 && $("#type_id").val()<=1){
 	    		$(".surplus").css('display','');
 		    	$("#surplus_label").html('მეტობა(სესხი)');
+		    	$('#attachment_client_id').attr('disabled', false).trigger("chosen:updated");
+		    	if(surplus_type==0){
+		    		$('#attachment_client_id').attr('disabled', true).trigger("chosen:updated");
+		    	}
 		    }else if(surplus_type == 3 && $("#type_id").val()>1){
 		    	$(".pledge_or_other_surplus1").css('display','');
 		    	$("#pledge_or_other_surplus1_label").html('მეტობა(სესხი)');
+		    	$('#attachment_client_id').attr('disabled', false).trigger("chosen:updated");
+		    	if(surplus_type==0){
+		    		$('#attachment_client_id').attr('disabled', true).trigger("chosen:updated");
+		    	}
 	    	}else{
 	    		$(".pledge_or_other_surplus1").css('display','none');
 	    		$(".surplus").css('display','none');
 	    		$("#surplus_label").html('მეტობა');
 	    		$("#pledge_or_other_surplus1_label").html('მეტობა');
+	    		
+	    		$('#attachment_client_id').attr('disabled', false).trigger("chosen:updated");
+	    		if(surplus_type==0){
+		    		$('#attachment_client_id').attr('disabled', true).trigger("chosen:updated");
+		    	}
 		    }
 		    
 		});
@@ -737,6 +753,8 @@
 	    							$("#currency_id").html(data.currenc).trigger("chosen:updated");
 	    							$('#currency_id').prop('disabled', true).trigger("chosen:updated");
 	    							$('#client_loan_number').html(data.agrement_data).trigger("chosen:updated");
+	    							$('#attachment_client_id').html(data.client_attachment_data).trigger("chosen:updated");
+	    							
 		    					}else if(data.status==2){
 		    						$("#month_fee1").val(data.insurance_fee);
 		    						$("#month_fee").val(data.loan_pay_amount);
@@ -753,6 +771,7 @@
 
 	    							$('#currency_id').prop('disabled', false).trigger("chosen:updated");
 	    							$('#client_loan_number').html(data.agrement_data).trigger("chosen:updated");
+	    							$('#attachment_client_id').html(data.client_attachment_data).trigger("chosen:updated");
 	    						}else if(data.status==3){
 			    					$("#month_fee1").val(data.pledge_fee);
 			    					$("#month_fee").val(data.loan_pay_amount);
@@ -769,6 +788,7 @@
 	    							$("#penalti_fee2").val('');
 
 	    							$('#currency_id').prop('disabled', false).trigger("chosen:updated");
+	    							$('#attachment_client_id').html(data.client_attachment_data).trigger("chosen:updated");
 	    						}
 							}
 						}
@@ -847,7 +867,7 @@
 
     							$('#currency_id').html(data.currency_data).trigger("chosen:updated");
     							$('#currency_id').prop('disabled', true).trigger("chosen:updated");
-							}
+    						}
     					}
     			    }
     		    });
@@ -980,6 +1000,8 @@
     							$("#currency_id").html(data.currenc).trigger("chosen:updated");
     							$('#currency_id').prop('disabled', true).trigger("chosen:updated");
     							$('#client_loan_number').html(data.agrement_data).trigger("chosen:updated");
+    							$('#attachment_client_id').html(data.client_attachment_data).trigger("chosen:updated");
+    							$('#attachment_client_id').html(data.client_attachment_data).trigger("chosen:updated");
 	    					}else if(data.status==2){
 	    						$("#month_fee_gel").val(data.fee_lari);
     							$("#month_fee_usd").val(data.fee_dolari);
@@ -1010,6 +1032,7 @@
     						}else if(data.status==3){
     							$('#client_loan_number').html(data.agrement_data).trigger("chosen:updated");
     							$("#month_fee_gel").val(data.other_pay);
+    							$('#attachment_client_id').html(data.client_attachment_data).trigger("chosen:updated");
     						}
 						}
 					}
@@ -1067,6 +1090,7 @@
     							$("#currency_id").html(data.currenc).trigger("chosen:updated");
     							$('#currency_id').prop('disabled', true).trigger("chosen:updated");
     							$('#client_id').html(data.client_data).trigger("chosen:updated");
+    							$('#attachment_client_id').html(data.client_attachment_data).trigger("chosen:updated");
 	    					}else if(data.status==2){
 		    					$("#month_fee_gel").val(data.fee_lari);
     							$("#month_fee_usd").val(data.fee_dolari);
@@ -1096,9 +1120,11 @@
                                 }    
     														
     							$('#client_id').html(data.client_data).trigger("chosen:updated");
+    							$('#attachment_client_id').html(data.client_attachment_data).trigger("chosen:updated");
     						}else if(data.status==3){
     							$('#client_id').html(data.client_data).trigger("chosen:updated");
     							$("#month_fee_gel").val(data.other_pay);
+    							$('#attachment_client_id').html(data.client_attachment_data).trigger("chosen:updated");
     						}
 						}
 					}
@@ -1151,6 +1177,7 @@
         							$("#currency_id").html(data.currenc).trigger("chosen:updated");
         							$('#currency_id').prop('disabled', true).trigger("chosen:updated");
         							$('#client_id').html(data.client_data).trigger("chosen:updated");
+        							$('#attachment_client_id').html(data.client_attachment_data).trigger("chosen:updated");
     	    					}else if(data.status==2){
     		    					$("#month_fee_gel").val(data.fee_lari);
         							$("#month_fee_usd").val(data.fee_dolari);
@@ -1180,8 +1207,10 @@
                                     }    
         														
         							$('#client_id').html(data.client_data).trigger("chosen:updated");
+        							$('#attachment_client_id').html(data.client_attachment_data).trigger("chosen:updated");
         						}else if(data.status==3){
         							$('#client_id').html(data.client_data).trigger("chosen:updated");
+        							$('#attachment_client_id').html(data.client_attachment_data).trigger("chosen:updated");
         						}
     						}
     					}
@@ -1319,9 +1348,9 @@
 		    
 		    param.tr_id	                  =  $("#tr_id").val();
 		    param.client_amount           =  $("#client_amount").val();
-		    param.other_cource            =  $("#other_cource").val();
-		    param.other_currency_id       =  $("#other_curense_id").val();
-		    param.other_date              =  $("#other_date").val();
+		    param.other_cource            =  $("#course").val();
+		    param.other_currency_id       =  $("#received_currency_id").val();
+		    param.other_date              =  $("#transaction_date").val();
 		    
 		    param.other_client_id         =  $("#other_client_id").val();
 		    param.other_client_loan_number =  $("#other_client_loan_number").val();
