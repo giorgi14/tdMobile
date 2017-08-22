@@ -39,7 +39,9 @@ switch ($action) {
                      WHERE   id      = '$res[client_loan_schedule_id]'");
         
         mysql_query("UPDATE  money_transactions
-                        SET `client_loan_schedule_id` = null
+                        SET `client_loan_schedule_id` = null,
+                            `status`                  = 0,
+                            `type_id`                 = 0
                       WHERE  id                       = '$tr_id'");
         
         mysql_query("DELETE FROM money_transactions_detail
