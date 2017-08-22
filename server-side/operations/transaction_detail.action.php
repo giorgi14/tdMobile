@@ -842,19 +842,21 @@ function Add1($tr_id, $hidde_id, $transaction_date, $pledge_or_other_payed, $ple
         
         if (($month_fee_gel<=$month_payed_gel || $month_fee_usd<= $month_payed_usd) && $month_payed_gel>0 && $month_payed_usd>0){
             
-            $tr_id1 = mysql_fetch_array(mysql_query("SELECT MAX(money_transactions_detail.id) AS tr_id,
-                                                            money_transactions_detail.course
-                                                     FROM   money_transactions
-                                                     JOIN   money_transactions_detail ON money_transactions_detail.transaction_id = money_transactions.id
-                                                     WHERE  money_transactions_detail.actived = 1 AND money_transactions.actived = 1
-                                                     AND    money_transactions_detail.`status` = 7 AND money_transactions_detail.payed_status = 1
-                                                     AND    money_transactions.type_id = 2 AND money_transactions.client_id = '$client_id'"));
-        
-            mysql_query("UPDATE money_transactions_detail
-                            SET payed_status           = 2,
-                                balance_transaction_id = '$tr_id'
-                         WHERE  id                     = '$tr_id1[tr_id]'");
+            $tr_id1 = mysql_query("SELECT money_transactions_detail.id AS tr_id,
+                                          money_transactions_detail.course
+                                   FROM   money_transactions
+                                   JOIN   money_transactions_detail ON money_transactions_detail.transaction_id = money_transactions.id
+                                   WHERE  money_transactions_detail.actived = 1 AND money_transactions.actived = 1
+                                   AND    money_transactions_detail.`status` = 7 AND money_transactions_detail.payed_status = 1
+                                   AND    money_transactions.type_id = 2 AND money_transactions.client_id = '$client_id'
+                                   AND    money_transactions.pay_datetime <= '$transaction_date'");
             
+            while ($row = mysql_fetch_array($tr_id1)) {
+                mysql_query("UPDATE money_transactions_detail
+                                SET payed_status           = 2,
+                                    balance_transaction_id = '$tr_id'
+                             WHERE  id                     = '$row[tr_id]'");
+            }
         }
         
         if ($surplus_type==1) {
