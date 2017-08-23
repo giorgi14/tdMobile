@@ -160,7 +160,7 @@ switch ($action) {
                         					concat(client_car.car_marc, ' / ', client_car.registration_number, ' / ', client.name, ' / ', client.lastname),
                         					client_loan_agreement.oris_code,
 		                                    CASE
-                        						 WHEN NOT ISNULL(client.sub_client) AND client_loan_agreement.agreement_id>0 THEN CONCAT('ს/ხ ', client_loan_agreement.agreement_id, IF(client_loan_agreement.attachment_number='','','დ.'), IF(client_loan_agreement.attachment_number='', '', client_loan_agreement.attachment_number))
+                        						 WHEN NOT ISNULL(client.sub_client) AND client_loan_agreement.agreement_id>0 THEN CONCAT('ს/ხ ', client_loan_agreement.agreement_id, IF(client_loan_agreement.attachment_number='','',' დ.'), IF(client_loan_agreement.attachment_number='', '', client_loan_agreement.attachment_number))
                         						 WHEN client.attachment_id > 0 AND client_loan_agreement.agreement_id>0 THEN CONCAT('ს/ხ ', client_loan_agreement.agreement_id, ' დ.', client_loan_agreement.attachment_number)
                                                  WHEN ISNULL(client.sub_client) AND client.attachment_id = 0 AND client_loan_agreement.agreement_id > 0 THEN CONCAT('ს/ხ ', client_loan_agreement.agreement_id)
                                                  WHEN ISNULL(client.sub_client) AND client.attachment_id = 0 AND client_loan_agreement.agreement_id = 0 THEN CONCAT('ს/ხ ', client_loan_agreement.oris_code)
@@ -309,7 +309,7 @@ switch ($action) {
 	    
 	    $id	              = $_REQUEST['id'];
 	    
-	    $sub_client = check_sub_client($id);
+	    //$sub_client = check_sub_client($id);
 	    $cl_id = $id;
 	    $check = 1;
 	    $i = 0;
@@ -1441,9 +1441,9 @@ switch ($action) {
             while ($check == 1) {
                 $i++;
                 $sub_client_id = mysql_fetch_array(mysql_query("SELECT IFNULL(sub_client,0) AS sub_client,
-                    id
-                    FROM   client
-                    WHERE  client.id = $cl_id"));
+                                                                       id
+                                                                FROM   client
+                                                                WHERE  client.id = $cl_id"));
                 $cl_id = $sub_client_id[sub_client];
                 $sub   = $sub_client_id[id];
                  
@@ -1521,7 +1521,7 @@ switch ($action) {
                 			'' as  other_delta
                     FROM    client_loan_agreement
                     JOIN    client_loan_schedule ON client_loan_agreement.old_schedule_id = client_loan_schedule.id
-                    WHERE   client_loan_agreement.actived = 1 AND client_loan_agreement.client_id = '$id'
+                    WHERE   client_loan_agreement.actived = 1 AND client_loan_agreement.client_id = '$sub'
                     UNION ALL
             		SELECT   client_loan_agreement.client_id,
     						 client_loan_schedule.id AS `id`,
@@ -1559,7 +1559,7 @@ switch ($action) {
             		FROM     client_loan_schedule
             		JOIN     client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
             		LEFT JOIN money_transactions ON money_transactions.client_loan_schedule_id = client_loan_schedule.id
-            		WHERE    client_loan_agreement.client_id = '$id' AND client_loan_schedule.activ_status = 0 AND client_loan_schedule.actived=1 AND client_loan_schedule.pay_date <= CURDATE()
+            		WHERE    client_loan_agreement.client_id = '$sub' AND client_loan_schedule.activ_status = 0 AND client_loan_schedule.actived=1 AND client_loan_schedule.pay_date <= CURDATE()
             		GROUP BY client_loan_schedule.id
             		UNION ALL 
                     SELECT   client.id,
@@ -1595,7 +1595,7 @@ switch ($action) {
      				FROM     money_transactions
     				JOIN     client ON client.id = money_transactions.client_id
     				JOIN     money_transactions_detail ON money_transactions_detail.transaction_id = money_transactions.id
-    				WHERE    client_id = '$id' AND money_transactions.type_id = 2 AND money_transactions_detail.`status` = 7 
+    				WHERE    client_id = '$sub' AND money_transactions.type_id = 2 AND money_transactions_detail.`status` = 7 
                     AND      money_transactions_detail.actived = 1 
                     AND    money_transactions.actived = 1
                     GROUP BY money_transactions.id
@@ -1639,7 +1639,7 @@ switch ($action) {
      				FROM     money_transactions
     				JOIN     client ON client.id = money_transactions.client_id
     				JOIN     money_transactions_detail ON money_transactions_detail.transaction_id = money_transactions.id
-    				WHERE    client_id = '$id' AND money_transactions_detail.`status` = 8 
+    				WHERE    client_id = '$sub' AND money_transactions_detail.`status` = 8 
                     AND      money_transactions_detail.actived = 1 
                     AND      money_transactions.actived = 1
                     GROUP BY money_transactions.id
@@ -1683,7 +1683,7 @@ switch ($action) {
      				FROM     money_transactions
     				JOIN     client ON client.id = money_transactions.client_id
     				JOIN     money_transactions_detail ON money_transactions_detail.transaction_id = money_transactions.id
-    				WHERE    client_id = '$id' AND money_transactions_detail.`status` = 9 
+    				WHERE    client_id = '$sub' AND money_transactions_detail.`status` = 9 
                     AND      money_transactions_detail.actived = 1 
                     AND      money_transactions.actived = 1
                     GROUP BY money_transactions.id
@@ -1721,7 +1721,7 @@ switch ($action) {
      				FROM     money_transactions
     				JOIN     client ON client.id = money_transactions.client_id
     				JOIN     money_transactions_detail ON money_transactions_detail.transaction_id = money_transactions.id
-    				WHERE    client_id = '$id' AND money_transactions.type_id = 3 AND money_transactions_detail.`status` = 10 
+    				WHERE    client_id = '$sub' AND money_transactions.type_id = 3 AND money_transactions_detail.`status` = 10 
                     AND      money_transactions_detail.actived = 1 
                     AND      money_transactions.actived = 1
                     GROUP BY money_transactions.id
@@ -1759,7 +1759,7 @@ switch ($action) {
      				FROM     money_transactions
     				JOIN     client ON client.id = money_transactions.client_id
     				JOIN     money_transactions_detail ON money_transactions_detail.transaction_id = money_transactions.id
-    				WHERE    client_id = '$id' AND money_transactions_detail.type_id = 3 AND money_transactions_detail.`status` = 11
+    				WHERE    client_id = '$sub' AND money_transactions_detail.type_id = 3 AND money_transactions_detail.`status` = 11
                     AND      money_transactions_detail.actived = 1 
                     AND      money_transactions.actived = 1
                     GROUP BY money_transactions.id
@@ -1830,7 +1830,7 @@ switch ($action) {
                     JOIN    money_transactions_detail ON money_transactions.id = money_transactions_detail.transaction_id
             		JOIN    client_loan_schedule ON client_loan_schedule.id = money_transactions.client_loan_schedule_id
             		JOIN    client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
-            		WHERE   client_loan_agreement.client_id = '$id' AND client_loan_schedule.actived=1 
+            		WHERE   client_loan_agreement.client_id = '$sub' AND client_loan_schedule.actived=1 
             		AND     money_transactions_detail.`status` IN (1) AND (money_transactions_detail.pay_percent != '0.00' OR money_transactions_detail.pay_root!='0.00')
             		GROUP BY money_transactions.client_loan_schedule_id
             		UNION ALL
@@ -1870,7 +1870,7 @@ switch ($action) {
     				FROM   money_transactions
                     JOIN money_transactions_detail ON money_transactions.id = money_transactions_detail.transaction_id
     				LEFT JOIN client_loan_agreement ON client_loan_agreement.id = money_transactions.agreement_id
-    				WHERE  client_loan_agreement.client_id = '$id' AND money_transactions_detail.`status` = 3 AND money_transactions_detail.actived = 1
+    				WHERE  client_loan_agreement.client_id = '$sub' AND money_transactions_detail.`status` = 3 AND money_transactions_detail.actived = 1
     				UNION ALL
                     SELECT  client_loan_agreement.client_id,
 							client_loan_schedule.id AS `id`,
@@ -1909,7 +1909,7 @@ switch ($action) {
                     JOIN money_transactions_detail on money_transactions_detail.transaction_id = money_transactions.id
         			JOIN   client_loan_schedule ON client_loan_schedule.id = money_transactions.client_loan_schedule_id
         			JOIN   client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
-        			WHERE  client_loan_agreement.client_id = '$id' AND client_loan_schedule.actived=1 AND money_transactions_detail.`status` = 5 AND money_transactions_detail.actived = 1
+        			WHERE  client_loan_agreement.client_id = '$sub' AND client_loan_schedule.actived=1 AND money_transactions_detail.`status` = 5 AND money_transactions_detail.actived = 1
                     UNION ALL
                     SELECT  client_loan_agreement.client_id,
 							client_loan_schedule.id AS `id`,
@@ -1948,7 +1948,7 @@ switch ($action) {
                     JOIN money_transactions_detail on money_transactions_detail.transaction_id = money_transactions.id
         			JOIN   client_loan_schedule ON client_loan_schedule.id = money_transactions.client_loan_schedule_id
         			JOIN   client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
-        			WHERE  client_loan_agreement.client_id = '$id' AND client_loan_schedule.actived=1 AND money_transactions_detail.`status` = 6 AND money_transactions_detail.actived = 1
+        			WHERE  client_loan_agreement.client_id = '$sub' AND client_loan_schedule.actived=1 AND money_transactions_detail.`status` = 6 AND money_transactions_detail.actived = 1
                     UNION ALL
                     SELECT  difference_cource.client_id,
             				client_loan_schedule.id AS `id`,
@@ -1982,7 +1982,7 @@ switch ($action) {
                 			'' as  other_delta
                     FROM    difference_cource
                     JOIN    client_loan_schedule ON client_loan_schedule.id = difference_cource.cliet_loan_schedule_id
-                    WHERE   difference_cource.client_id = '$id' AND client_loan_schedule.actived=1 AND client_loan_schedule.actived = 1
+                    WHERE   difference_cource.client_id = '$sub' AND client_loan_schedule.actived=1 AND client_loan_schedule.actived = 1
                     UNION ALL
     				SELECT  client_loan_agreement.client_id,
 							client_loan_schedule.id AS `id`,
@@ -2021,7 +2021,7 @@ switch ($action) {
                     JOIN money_transactions_detail ON money_transactions_detail.transaction_id = money_transactions.id
     				JOIN   client_loan_schedule ON client_loan_schedule.id = money_transactions.client_loan_schedule_id
     				JOIN   client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
-    				WHERE  client_loan_agreement.client_id = '$id' AND client_loan_schedule.actived=1 AND money_transactions_detail.actived=1 AND money_transactions_detail.`status` = 2";
+    				WHERE  client_loan_agreement.client_id = '$sub' AND client_loan_schedule.actived=1 AND money_transactions_detail.actived=1 AND money_transactions_detail.`status` = 2";
                 }else{
                     $qvr.=" SELECT  client_loan_agreement.client_id,
                         			client_loan_agreement.id AS `id`,
