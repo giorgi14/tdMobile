@@ -315,7 +315,7 @@ function Add($hidde_transaction_id, $hidde_id, $transaction_date, $month_fee, $c
 	$month_fee1  = $_REQUEST['month_fee1'];
 	$payable_Fee = $_REQUEST['payable_Fee'];
 	$yield       = $_REQUEST['yield'];
-	
+	$other_penalty = $_REQUEST['other_penalty'];
 	$surplus1 = $_REQUEST['surplus1'];
 	
 	$client_loan_number = $_REQUEST['client_loan_number'];
@@ -377,9 +377,16 @@ function Add($hidde_transaction_id, $hidde_id, $transaction_date, $month_fee, $c
                               VALUES 
                                     (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '', '$course', '$currency_id', '$received_currency_id', '$root', '$percent', '$type_id', 1, 1)");
 	        
-	        mysql_query("UPDATE  `client_loan_schedule`
-	                        SET  `status` = '1'
-	                      WHERE  `id`     = '$res1[id]'");
+	        if ($other_penalty == 1) {
+	            mysql_query("UPDATE  `client_loan_schedule`
+            	                SET  `status`        = '1',
+	                                 `penalty_check` = 1
+            	              WHERE  `id`     = '$res1[id]'");
+	        }else{
+    	        mysql_query("UPDATE  `client_loan_schedule`
+    	                        SET  `status` = '1'
+    	                      WHERE  `id`     = '$res1[id]'");
+	        }
 	    }
 	    
 	    if ($surplus_type==1) {
@@ -513,9 +520,16 @@ function Add($hidde_transaction_id, $hidde_id, $transaction_date, $month_fee, $c
                         	  VALUES
                         	        (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '', '$course', '$currency_id', '$received_currency_id', '$root', '$percent', '$type_id', 1, 1)");
     	    
-    	    mysql_query("UPDATE  `client_loan_schedule`
-            	            SET  `status` = '1'
-            	         WHERE   `id`     = '$res1[id]'");
+	        if ($other_penalty == 1) {
+	            mysql_query("UPDATE  `client_loan_schedule`
+            	                SET  `status`        = '1',
+	                                 `penalty_check` = 1
+            	              WHERE  `id`     = '$res1[id]'");
+	        }else{
+    	        mysql_query("UPDATE  `client_loan_schedule`
+    	                        SET  `status` = '1'
+    	                      WHERE  `id`     = '$res1[id]'");
+	        }
 	    
 	    }
 	    

@@ -465,16 +465,17 @@
 	    
 		// Add - Save
 	    $(document).on("click", "#save-dialog", function () {
-		    param 		= new Object();
+		    param 		               = new Object();
 		    
-			param.act	                    = "save_transaction";
+			param.act	               = "save_transaction";
 			
-		    param.id	                    = $("#idd").val();
-		    param.tr_id	                    = $("#tr_id").val();
-		    param.client_id                 = $("#client_id").val();
-		    param.client_loan_number        = $("#client_loan_number").val();
-		    param.type_id	                = $("#type_id").val();
-		    param.car_out                   = $("input[id='car_out']:checked").val();
+		    param.id	               = $("#idd").val();
+		    param.tr_id	               = $("#tr_id").val();
+		    param.client_id            = $("#client_id").val();
+		    param.client_loan_number   = $("#client_loan_number").val();
+		    param.type_id	           = $("#type_id").val();
+		    param.car_out              = $("input[id='car_out']:checked").val();
+		    param.other_penalty        = $("input[id='other_penalty']:checked").val();
 		    
 		    param.month_fee		       = $("#month_fee").val();
 		    param.month_fee1		   = $("#month_fee1").val();
