@@ -223,7 +223,7 @@ switch ($action) {
                         				END AS `name`,
                         				client_loan_agreement.oris_code,
                         				CASE
-    										 WHEN NOT ISNULL(client.sub_client) AND client_loan_agreement.agreement_id>0 THEN CONCAT('ს/ხ ', client_loan_agreement.agreement_id)
+    										 WHEN NOT ISNULL(client.sub_client) AND client_loan_agreement.agreement_id>0 THEN CONCAT('ს/ხ ', client_loan_agreement.agreement_id, IF(client_loan_agreement.attachment_number='','',' დ.'), IF(client_loan_agreement.attachment_number='', '', client_loan_agreement.attachment_number))
     										 WHEN client.attachment_id > 0 AND client_loan_agreement.agreement_id>0 THEN CONCAT('ს/ხ ', client_loan_agreement.agreement_id, ' დ.', client_loan_agreement.attachment_number)
     										 WHEN ISNULL(client.sub_client) AND client.attachment_id = 0 AND client_loan_agreement.agreement_id > 0 THEN CONCAT('ს/ხ ', client_loan_agreement.agreement_id)
     										 WHEN ISNULL(client.sub_client) AND client.attachment_id = 0 AND client_loan_agreement.agreement_id = 0 THEN CONCAT('ს/ხ ', client_loan_agreement.oris_code)
@@ -533,9 +533,6 @@ function GetPage($id){
     $today = date("Y-m-d H:i:s");
     
     $hidde_out_car = 'display:none;';
-    
-    
-    
     
     $res1= mysql_fetch_assoc(mysql_query("SELECT      client_loan_agreement.id,
                                                       client_loan_agreement.client_id,

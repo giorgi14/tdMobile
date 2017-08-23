@@ -615,12 +615,12 @@ switch ($action) {
     	}elseif ($type_id == 2){
 		    $receivedd_currency_id = $_REQUEST['received_currency_id'];
 		    $res_pledge = mysql_fetch_assoc(mysql_query("SELECT CASE
-                                                                   WHEN money_transactions.received_currency_id = 2 THEN ROUND(money_transactions_detail.pay_amount*money_transactions.course,2)
-                                                                   WHEN money_transactions.received_currency_id = 1 THEN money_transactions_detail.pay_amount
+                                                                   WHEN money_transactions.received_currency_id = 2 THEN ROUND(SUM(money_transactions_detail.pay_amount*money_transactions.course),2)
+                                                                   WHEN money_transactions.received_currency_id = 1 THEN SUM(money_transactions_detail.pay_amount)
                                                                 END AS fee_lari,
                                                                 CASE
-                                                                   WHEN money_transactions.received_currency_id = 2 THEN money_transactions_detail.pay_amount
-                                                                   WHEN money_transactions.received_currency_id = 1 THEN ROUND(money_transactions_detail.pay_amount/money_transactions.course,2)
+                                                                   WHEN money_transactions.received_currency_id = 2 THEN SUM(money_transactions_detail.pay_amount)
+                                                                   WHEN money_transactions.received_currency_id = 1 THEN ROUND(SUM(money_transactions_detail.pay_amount/money_transactions.course),2)
                                                                 END AS fee_dolari,
 		                                                        money_transactions_detail.id,
 		                                                        money_transactions.client_id,
