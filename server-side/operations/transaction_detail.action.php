@@ -1080,15 +1080,7 @@ function update($hidde_status, $id, $transaction_date, $month_fee, $root,  $perc
                                    `pay_percent`  = '$percent'
                             WHERE  `id`           = '$id'");
         
-    }elseif ($hidde_status == 2){
-        $req = mysql_query("UPDATE `money_transactions_detail`
-                               SET `datetime`     = NOW(),
-                                   `user_id`      = '$user_id',
-                                   `pay_datetime` = '$transaction_date',
-                                   `pay_amount`   = '$penalti_fee'
-                            WHERE  `id`           = '$id'");
-        
-    }elseif ($hidde_status == 3){
+    }else{
         $req = mysql_query("UPDATE `money_transactions_detail`
                                SET `datetime`     = NOW(),
                                    `user_id`      = '$user_id',
@@ -1173,7 +1165,11 @@ function client_car($id){
     return $data;
 }
 
-function client($id){
+function client($id, $tr_det_id){
+    $where = '';
+    if ($tr_det_id == '') {
+        $where = 'AND    client_loan_agreement.canceled_status = 0';
+    }
     $req = mysql_query("SELECT    cl.id,
                                   CASE
                         			  WHEN cl.attachment_id = 0 AND cl.`name` != '' THEN concat(cl.`name`, ' ', cl.lastname)
@@ -1183,7 +1179,7 @@ function client($id){
                                   END AS `name`
                         FROM      client AS cl
                         JOIN      client_loan_agreement ON cl.id = client_loan_agreement.client_id
-                        WHERE     cl.actived=1 AND client_loan_agreement.`status`=1 AND client_loan_agreement.canceled_status=0
+                        WHERE     cl.actived=1 AND client_loan_agreement.`status`=1 $where
                         ORDER BY `name` ASC");
 
     $data .= '<option value="0" selected="selected">----</option>';
@@ -1198,6 +1194,7 @@ function client($id){
 }
 
 function pledge_client_loan_number($id){
+    
     $req = mysql_query("SELECT  client_loan_agreement.id as agr_id,
                                 client.id,
                                 CASE
@@ -1226,7 +1223,11 @@ function pledge_client_loan_number($id){
     return $data;
 }
 
-function client_loan_number($id){
+function client_loan_number($id, $tr_det_id){
+    $where = '';
+    if ($tr_det_id == '') {
+        $where = 'AND    client_loan_agreement.canceled_status = 0';
+    }
     $req = mysql_query("SELECT  client_loan_agreement.id,
                                 CASE
             						 WHEN NOT ISNULL(client.sub_client) AND client_loan_agreement.agreement_id>0 THEN CONCAT('ს/ხ ', client_loan_agreement.agreement_id, IF(client_loan_agreement.attachment_number='','',' დ.'), IF(client_loan_agreement.attachment_number='', '', client_loan_agreement.attachment_number))
@@ -1239,7 +1240,7 @@ function client_loan_number($id){
                          JOIN   client ON client.id = client_loan_agreement.client_id
                          WHERE  client_loan_agreement.actived = 1 
                          AND    client_loan_agreement.`status` = 1
-                         AND    client_loan_agreement.canceled_status = 0 
+                         $where 
                          AND    client.actived = 1
                          ORDER BY `name` ASC");
 
@@ -1259,6 +1260,7 @@ function GetHolidays($id){
 	$res = mysql_fetch_assoc(mysql_query(" SELECT   money_transactions_detail.id,
 	                                                money_transactions_detail.type_id,
                                     				client_loan_agreement.`client_id`,
+	                                                client_loan_agreement.`id` AS agr_id,
                                     				money_transactions_detail.pay_amount,
                                     				money_transactions_detail.pay_root,
                                     				money_transactions_detail.pay_percent,
@@ -1371,10 +1373,10 @@ function GetPage($res = ''){
     						<select id="type_id"  calss="label" style="width: 175px;">'.type($res[type_id]).'</select>
     					</td>
     					<td style="width: 280px;">
-    						<select id="client_id" calss="label" style="width: 260px;">'.client($res[client_id]).'</select>
+    						<select id="client_id" calss="label" style="width: 260px;">'.client($res[client_id], $res[id]).'</select>
     					</td>
     					<td style="width: 120px;">
-    						<select id="client_loan_number" calss="label" style="width: 175px;">'.client_loan_number($res[client_id]).'</select>
+    						<select id="client_loan_number" calss="label" style="width: 175px;">'.client_loan_number($res[agr_id], $res[id]).'</select>
     					</td>
     				</tr>
     				<tr>

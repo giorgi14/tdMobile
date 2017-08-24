@@ -533,7 +533,7 @@
 		    	alert('შეავსე ტიპი');
 			}else if(param.client_id == 0){
 		    	alert('შეავსე კლიენტი');
-			}else if(param.surplus_type == 0 && (param.pledge_or_other_surplus != '' || param.surplus != '')){
+			}else if(param.surplus_type == 0 && param.id == '' && (param.pledge_or_other_surplus != '' || param.surplus != '')){
 		    	alert('შეავსე მეტობის ტიპი');
 			}else{
 				$.ajax({
