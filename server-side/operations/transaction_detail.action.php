@@ -497,7 +497,8 @@ function Add($hidde_transaction_id, $hidde_id, $transaction_date, $month_fee, $c
 	    
 	    if ($car_out == 1) {
 	       mysql_query("UPDATE client_loan_agreement
-        	               SET canceled_status = 1
+        	               SET canceled_status = 1,
+	                           canseled_date   = '$transaction_date'
         	            WHERE  client_loan_agreement.id = '$client_loan_number' ");
 	       
 	       mysql_query("UPDATE  client_loan_schedule
@@ -651,7 +652,8 @@ function Add($hidde_transaction_id, $hidde_id, $transaction_date, $month_fee, $c
 	     
 	    if ($car_out == 1) {
 	        mysql_query("UPDATE client_loan_agreement
-        	                SET canceled_status = 1
+        	                SET canceled_status = 1,
+	                            canseled_date   = '$transaction_date'
         	             WHERE  client_loan_agreement.id = '$client_loan_number' ");
 	        
 	        mysql_query("UPDATE client_loan_schedule
