@@ -1563,6 +1563,14 @@
           return true;
         }
     });
+
+    $(document).on("keypress", "#car_ident", function(event){
+        var ew = event.keyCode;
+        if(ew == 111){
+        	alert('არასწორი სიმბოლო!');
+        	return false;
+        }
+    });
     
     $(document).on("click", "#save-guarantor", function () {
 		param 	  = new Object();
