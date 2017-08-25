@@ -1127,7 +1127,6 @@ function update($hidde_status, $id, $transaction_date, $month_fee, $root,  $perc
         
     }
     
-    
 }
 
 function type($id){
