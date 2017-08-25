@@ -388,7 +388,7 @@ function Add($hidde_transaction_id, $hidde_id, $transaction_date, $month_fee, $c
     	                      WHERE  `id`     = '$res1[id]'");
 	        }
 	    }
-	    
+	    //მეტობა სესხი
 	    if ($surplus_type==1) {
 	        if ($attachment_client_id>0) {
 	            if ($surplus>0) {
@@ -412,6 +412,7 @@ function Add($hidde_transaction_id, $hidde_id, $transaction_date, $month_fee, $c
                                     	    (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '$surplus', '$course', '$currency_id', '$received_currency_id', '', '', '$type_id', '3', 1)");
     	        }
 	        }
+	    //მეტობა ალდაგი
 	    }elseif ($surplus_type==2){
 	        if ($attachment_client_id>0) {
 	            if ($surplus>0) {
@@ -435,6 +436,8 @@ function Add($hidde_transaction_id, $hidde_id, $transaction_date, $month_fee, $c
                         	                (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '$surplus', '$course', '$currency_id', '$received_currency_id', '', '', '2', '9', 1)");
     	        }
 	        }
+	        
+	    //მეტობა სესხი + ალდაგი
 	    }elseif ($surplus_type==3){
 	        if ($attachment_client_id>0) {
 	            if ($surplus>0 || $surplus1>0) {
@@ -544,7 +547,7 @@ function Add($hidde_transaction_id, $hidde_id, $transaction_date, $month_fee, $c
                      AND     money_transactions_detail.actived = 1");
 	    
 	    
-	    
+	    //მეტობა სესხი
 	    if ($surplus_type==1) {
 	        if ($attachment_client_id>0) {
 	            if ($surplus>0) {
@@ -568,6 +571,7 @@ function Add($hidde_transaction_id, $hidde_id, $transaction_date, $month_fee, $c
                                     	       (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '$surplus', '$course', '$currency_id', '$received_currency_id', '', '', '$type_id', '3', 1)");
     	        }
 	        }
+	    //ალდაგი
 	    }elseif ($surplus_type==2){
 	        if ($attachment_client_id>0) {
 	            if ($surplus>0) {
@@ -591,6 +595,7 @@ function Add($hidde_transaction_id, $hidde_id, $transaction_date, $month_fee, $c
                         	                (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '$surplus', '$course', '$currency_id', '$received_currency_id', '', '', '2', '9', 1)");
     	        }
 	        }
+	    //მეტობა სესხი + ალდაგი
 	    }elseif ($surplus_type==3){
 	        if ($attachment_client_id>0) {
 	            if ($surplus>0 || $surplus1>0) {
@@ -705,6 +710,7 @@ function Add($hidde_transaction_id, $hidde_id, $transaction_date, $month_fee, $c
             	                  WHERE  `id`     = '$res1[id]'");
 	            }
 	            if ($attachment_client_id>0) {
+	                //მეტობა
 	                if ($surplus>0 || $surplus1>0) {
 	                    mysql_query("INSERT INTO `money_transactions`
                     	                        (`datetime`, `user_id`, `client_loan_schedule_id`, `agreement_id`, `client_id`, `pay_datetime`, `pay_amount`, `extra_fee`, `course`, `currency_id`, `received_currency_id`, `month_fee_trasaction`, `type_id`, `status`, `actived`)
@@ -751,6 +757,7 @@ function Add($hidde_transaction_id, $hidde_id, $transaction_date, $month_fee, $c
             	                AND     money_transactions_detail.`status` = 3
             	                AND     money_transactions_detail.actived = 1");
 	            if ($attachment_client_id>0) {
+	                //მეტობა
 	                if ($surplus>0 || $surplus1>0) {
 	                    mysql_query("INSERT INTO `money_transactions`
                     	                        (`datetime`, `user_id`, `client_loan_schedule_id`, `agreement_id`, `client_id`, `pay_datetime`, `pay_amount`, `extra_fee`, `course`, `currency_id`, `received_currency_id`, `month_fee_trasaction`, `type_id`, `status`, `actived`)
@@ -802,7 +809,10 @@ function Add($hidde_transaction_id, $hidde_id, $transaction_date, $month_fee, $c
         	             WHERE   client_loan_agreement.client_id = '$client_id'
         	             AND     money_transactions_detail.`status` = 3
         	             AND     money_transactions_detail.actived = 1");
+	       
+	       
 	       if ($attachment_client_id>0) {
+	           //მეტობა
 	           if ($surplus>0 || $surplus1>0) {
 	               mysql_query("INSERT INTO `money_transactions`
 	                   (`datetime`, `user_id`, `client_loan_schedule_id`, `agreement_id`, `client_id`, `pay_datetime`, `pay_amount`, `extra_fee`, `course`, `currency_id`, `received_currency_id`, `month_fee_trasaction`, `type_id`, `status`, `actived`)
@@ -824,6 +834,7 @@ function Add($hidde_transaction_id, $hidde_id, $transaction_date, $month_fee, $c
 	               }
 	           }
 	       }else{
+	           //მეტობა
     	        if ($surplus>0) {
     	            mysql_query("INSERT INTO `money_transactions_detail`
                                     	       (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
@@ -896,7 +907,7 @@ function Add1($tr_id, $hidde_id, $transaction_date, $pledge_or_other_payed, $ple
                              WHERE  id                     = '$row[tr_id]'");
             }
         }
-        
+        //მეტობა სესხი
         if ($surplus_type==1) {
             if ($attachment_client_id>0) {
                 if ($pledge_or_other_surplus>0) {
@@ -920,6 +931,7 @@ function Add1($tr_id, $hidde_id, $transaction_date, $pledge_or_other_payed, $ple
                                             (NOW(), '$user_id', '$tr_id', '$transaction_date', '$pledge_or_other_surplus', '$course', '$currency_id', '$received_currency_id', '', '', '1', '3', 1)");
                 }
             }
+        //ალდაგი
         }elseif ($surplus_type==2){
             if ($attachment_client_id>0) {
                 if ($pledge_or_other_surplus>0) {
@@ -943,6 +955,7 @@ function Add1($tr_id, $hidde_id, $transaction_date, $pledge_or_other_payed, $ple
                                             (NOW(), '$user_id', '$tr_id', '$transaction_date', '$pledge_or_other_surplus', '$course', '$currency_id', '$received_currency_id', '', '', '2', '9', 1)");
                 }
             }
+        //მეტობა სესხი + ალდაგი
         }elseif ($surplus_type==3){
             if ($attachment_client_id>0) {
                 
@@ -992,7 +1005,7 @@ function Add1($tr_id, $hidde_id, $transaction_date, $pledge_or_other_payed, $ple
                               VALUES
                                     (NOW(), '$user_id', '$tr_id', '$transaction_date', '$pledge_or_other_payed', '$course', '$currency_id', '$received_currency_id', '', '', '3', '11', 1)");
         }
-        
+        //მეტობა სესხი
         if ($surplus_type==1) {
             if ($attachment_client_id>0) {
                 if ($pledge_or_other_surplus>0) {
@@ -1016,6 +1029,7 @@ function Add1($tr_id, $hidde_id, $transaction_date, $pledge_or_other_payed, $ple
                                             (NOW(), '$user_id', '$tr_id', '$transaction_date', '$pledge_or_other_surplus', '$course', '$currency_id', '$received_currency_id', '', '', '1', '3', 1)");
                 }
             }
+        //მეტობა ალდაგი
         }elseif ($surplus_type==2){
             if ($attachment_client_id>0) {
                 if ($pledge_or_other_surplus>0) {
@@ -1039,6 +1053,7 @@ function Add1($tr_id, $hidde_id, $transaction_date, $pledge_or_other_payed, $ple
                                             (NOW(), '$user_id', '$tr_id', '$transaction_date', '$pledge_or_other_surplus', '$course', '$currency_id', '$received_currency_id', '', '', '2', '9', 1)");
                 }
             }
+        //მეტობა სესხი + ალდაგი
         }elseif ($surplus_type==3){
             if ($attachment_client_id>0) {
                 if ($pledge_or_other_surplus>0 || $pledge_or_other_surplus1>0) {
