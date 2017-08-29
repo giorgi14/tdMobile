@@ -20,6 +20,7 @@ Menu Array,
 Sort Colum ID,
 Sort Method
 */
+
 function GetDataTable(tname, aJaxURL, action, count, data, hidden, length, sorting, sortMeth, total, colum_change) {
     if (empty(data))
         data = "";
@@ -99,7 +100,7 @@ function GetDataTable(tname, aJaxURL, action, count, data, hidden, length, sorti
                 data: "act=" + action + "&count=" + count + "&hidden=" + hidden + "&" + data,           //Server Side Requests
                 success: function (data) {
                     fnCallback(data);
-                    onhovercolor('#A3D0E4');
+                    //onhovercolor('#A3D0E4');
                     $('#'+tname+' tbody td').each(function(index){
                 		$this = $(this);
                 		var titleVal = $this.text();
@@ -148,6 +149,10 @@ function GetDataTable(tname, aJaxURL, action, count, data, hidden, length, sorti
         /* Filter on the column (the index) of this element */
         oTable.fnFilter(this.value, $("#"+tname+" thead input, .dataTables_scrollFoot .dataTable tfoot input").index(this));
     });
+    
+    $("#"+tname+" tbody").on("click", "tr", function () {
+	    $(this).addClass("selected").siblings().removeClass("selected"); 
+	});
 
     /*
     * Support functions to provide a little bit of 'user friendlyness' to the textboxes in
@@ -274,7 +279,7 @@ function GetDataTable1(tname, aJaxURL, action, count, data, hidden, length, sort
                 data: "act=" + action + "&count=" + count + "&hidden=" + hidden + "&" + data,           //Server Side Requests
                 success: function (data) {
                     fnCallback(data);
-                    onhovercolor('#A3D0E4');
+                    //onhovercolor('#A3D0E4');
                     $('#'+tname+' tbody td').each(function(index){
                 		$this = $(this);
                 		var titleVal = $this.text();
@@ -351,6 +356,10 @@ function GetDataTable1(tname, aJaxURL, action, count, data, hidden, length, sort
         }
     });
 
+    $("#"+tname+" tbody").on("click", "tr", function () {
+	    $(this).addClass("selected").siblings().removeClass("selected"); 
+	});
+    
     $("#"+tname+" thead input, .dataTables_scrollFoot .dataTable tfoot input").blur(function (i) {
         if (this.value == "") {
             this.className = "search_init";
@@ -469,7 +478,7 @@ function GetDataTable_loan(tname, aJaxURL, action, count, data, hidden, length, 
                 data: "act=" + action + "&count=" + count + "&hidden=" + hidden + "&" + data,           //Server Side Requests
                 success: function (data) {
                     fnCallback(data);
-                    onhovercolor('#A3D0E4');
+                    //onhovercolor('#A3D0E4');
                     $('#'+tname+' tbody td').each(function(index){
                 		$this = $(this);
                 		var titleVal = $this.text();
@@ -540,7 +549,9 @@ function GetDataTable_loan(tname, aJaxURL, action, count, data, hidden, length, 
             this.value = asInitVals[$("#"+tname+" thead input, .dataTables_scrollFoot .dataTable tfoot input").index(this)];
         }
     });
-
+    $("#"+tname+" tbody").on("click", "tr", function () {
+	    $(this).addClass("selected").siblings().removeClass("selected"); 
+	});
     $(".DTTT_button").hover(
 		  function () {
 		    $(this).addClass("ui-state-hover");
@@ -676,7 +687,9 @@ function GetDataTableServer(tname, aJaxURL, action, count, data, hidden, length,
             this.value = "";
         }
     });
-
+    $("#"+tname+" tbody").on("click", "tr", function () {
+	    $(this).addClass("selected").siblings().removeClass("selected"); 
+	});
     $("#" + tname + " thead input").blur(function (i) {
         if (this.value == "") {
             this.className = "search_init";

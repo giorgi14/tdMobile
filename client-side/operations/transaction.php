@@ -17,6 +17,7 @@
 			/* Add Button ID, Delete Button ID */
 			GetButtons("add_button");
 			SetEvents("add_button", "", "", tName, fName, aJaxURL,'',tName,10,change_colum_main,aJaxURL,'','','');
+			
 		});
 
 		$(document).on("tabsactivate", "#tabs1", function() {
@@ -462,7 +463,9 @@
 		        $('#add_other').button("disable");
 			}
 	    });
+
 	    
+		
 		// Add - Save
 	    $(document).on("click", "#save-dialog", function () {
 		    param 		               = new Object();
@@ -1835,6 +1838,7 @@
             padding: 0;
             height: 18px;
         }
+        
     </style>
 </head>
 

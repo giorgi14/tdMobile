@@ -33,3 +33,6 @@
 	padding: 0 !important;
 	color: #555 !important;
 }
+.selected {
+    background: #8bc34a !important;
+}
