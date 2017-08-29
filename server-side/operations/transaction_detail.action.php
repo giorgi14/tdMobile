@@ -1278,7 +1278,7 @@ function pledge_client_loan_number($id){
 function client_loan_number($id, $tr_det_id){
     $where = '';
     if ($tr_det_id == '') {
-        $where = 'AND    client_loan_agreement.canceled_status = 0';
+        $where = 'AND client_loan_agreement.canceled_status = 0';
     }
     $req = mysql_query("SELECT  client_loan_agreement.id,
                                 CASE
