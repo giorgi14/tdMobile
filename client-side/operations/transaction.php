@@ -321,12 +321,9 @@
                     
                 }
     	        
-				
-        	    //if($("#id").val()!=''){
 				$('#currency_id').prop('disabled', false).trigger("chosen:updated");
     	        $('#type_id').prop('disabled', false).trigger("chosen:updated");
-        	    //}
-				
+        	    
     	        $('#client_id').prop('disabled', true).trigger("chosen:updated");
     	        $('#client_loan_number').prop('disabled', true).trigger("chosen:updated");
     	        $('#surplus_type').chosen();
@@ -479,6 +476,7 @@
 		    param.type_id	           = $("#type_id").val();
 		    param.car_out              = $("input[id='car_out']:checked").val();
 		    param.other_penalty        = $("input[id='other_penalty']:checked").val();
+		    param.exception_agr        = $("input[id='exception_agr']:checked").val();
 		    
 		    param.month_fee		       = $("#month_fee").val();
 		    param.month_fee1		   = $("#month_fee1").val();
@@ -689,11 +687,129 @@
     	    }
 		});
 
+	    $(document).on("change", "#exception_agr", function () {
+	    	exception_agr = $("input[id='exception_agr']:checked").val();
+	    	
+	    	if(exception_agr == 1){
+	    		document.getElementById("car_out").disabled = true;
+	    		document.getElementById("other_penalty").disabled = true;
+	    		param = new Object();
+		    	
+	    		param.act              = "get_canceled-loan";
+	    		param.client_id        = $("#client_id").val();
+	    		param.transaction_date = $("#transaction_date").val();
+	    		param.exception_agr    = 1;
+	    		
+		    	$.ajax({
+	    	        url: aJaxURL,
+	    		    data: param,
+	    	        success: function(data) {       
+	    				if(typeof(data.error) != "undefined"){
+	    					if(data.error != ""){
+	    						alert(data.error);
+	    					}else{
+	        					$("#month_fee1").val(data.all_fee);
+	        					$("#root1").val(data.remaining_root);
+	        					$("#percent1").val(data.percent);
+	        					$("#penalti_fee1").val(data.penalty);
+	        					$("#payable_Fee1").val(data.sakomisio);
+	        					$("#yield1").val(data.nasargeblebebi);
+	        					$("#month_fee2").val(data.pay_amount1);
+	        				}
+	    				}
+	    	    	}
+	    	    });
+		    }else{
+		    	document.getElementById("car_out").disabled = false;
+		    	document.getElementById("other_penalty").disabled = false;
+		    	param         =  new Object();
+			    param.act     = "get_shedule";
+			    param.status  = 1;
+			    param.id                   = $("#client_id").val();
+			    param.type_id              = $('#type_id').val();
+			    param.transaction_date     = $("#transaction_date").val();
+			    param.month_fee_trasaction = $("#month_fee_trasaction").val();
+			    param.received_currency_id = $("#received_currency_id").val();
+			    param.course               = $("#course").val();
+			    
+			    $.ajax({
+			        url: aJaxURL,
+				    data: param,
+			        success: function(data) {			        
+						if(typeof(data.error) != 'undefined'){
+							if(data.error != ''){
+								alert(data.error);
+							}else{
+								if(data.status==1){
+	    							$("#month_fee1").val(data.pay_amount);
+	    							$("#root1").val(data.root);
+	    							$("#percent1").val(data.percent);
+	    							$("#penalti_fee1").val(data.penalty);
+
+	    							$("#month_fee2").val(data.pay_amount1);
+	    							$("#root2").val(data.root1);
+	    							$("#percent2").val(data.percent1);
+	    							$("#penalti_fee2").val(data.penalty1);
+	    							$("#month_fee").val(data.loan_pay_amount);
+	    							$("#extra_fee").val(parseFloat(data.loan_pay_amount)+parseFloat(data.pay_amount1));
+	    							$("#daricxvis_tarigi").html(data.schedule_date);
+	    							$("#hidde_id").val(data.id);
+	    							$("#currency_id").html(data.currenc).trigger("chosen:updated");
+	    							$('#currency_id').prop('disabled', true).trigger("chosen:updated");
+	    							$('#client_loan_number').html(data.agrement_data).trigger("chosen:updated");
+	    							$('#attachment_client_id').html(data.client_attachment_data).trigger("chosen:updated");
+	    							
+		    					}else if(data.status==2){
+		    						$("#month_fee1").val(data.insurance_fee);
+		    						$("#month_fee").val(data.loan_pay_amount);
+		    						$("#extra_fee").val(parseFloat(data.loan_pay_amount)+parseFloat(data.pay_amount1));
+		    						
+		    						$("#root1").val('');
+	    							$("#percent1").val('');
+	    							$("#penalti_fee1").val('');
+
+	    							$("#month_fee2").val('');
+	    							$("#root2").val('');
+	    							$("#percent2").val('');
+	    							$("#penalti_fee2").val('');
+
+	    							$('#currency_id').prop('disabled', false).trigger("chosen:updated");
+	    							$('#client_loan_number').html(data.agrement_data).trigger("chosen:updated");
+	    							$('#attachment_client_id').html(data.client_attachment_data).trigger("chosen:updated");
+	    						}else if(data.status==3){
+			    					$("#month_fee1").val(data.pledge_fee);
+			    					$("#month_fee").val(data.loan_pay_amount);
+			    					$("#extra_fee").val(parseFloat(data.loan_pay_amount)+parseFloat(data.pay_amount1));
+			    					$("#month_fee_gel").val(data.other_pay);
+			    					
+			    					$("#root1").val('');
+	    							$("#percent1").val('');
+	    							$("#penalti_fee1").val('');
+
+	    							$("#month_fee2").val('');
+	    							$("#root2").val('');
+	    							$("#percent2").val('');
+	    							$("#penalti_fee2").val('');
+
+	    							$('#currency_id').prop('disabled', false).trigger("chosen:updated");
+	    							$('#attachment_client_id').html(data.client_attachment_data).trigger("chosen:updated");
+	    						}
+							}
+						}
+				    }
+			    });
+		    }
+
+	    	
+		});
+		
 	    $(document).on("change", "#car_out", function () {
 	    	car_out = $("input[id='car_out']:checked").val();
 	    	
 	    	if(car_out == 1){
 	    		$(".car_out_class").css('display', '');
+	    		document.getElementById("exception_agr").disabled = true;
+	    		document.getElementById("other_penalty").disabled = true;
 	    		param = new Object();
 		    	
 	    		param.act              = "get_canceled-loan";
@@ -722,6 +838,8 @@
 	    	    });
 		    }else{
 		    	$(".car_out_class").css('display', 'none');
+		    	document.getElementById("exception_agr").disabled = false;
+		    	document.getElementById("other_penalty").disabled = false;
 		    	param         =  new Object();
 			    param.act     = "get_shedule";
 			    param.status  = 1;
@@ -841,11 +959,7 @@
     							var pay_amount = $('#client_amount').val();
         						if($('#client_amount').val()=='' || $('#client_amount').val() == null){pay_amount == 0;}
         						
-//     							$("#month_fee_trasaction").val(pay_amount);
-//     			    	        $("#pledge_or_other_mont_fee").val(pay_amount);
-//     			    	        $("#pledge_or_other_extra_fee").val(pay_amount);
-     			    	        
-    							if(data.fee_lari == ''  || data.fee_lari==null){month_fee_gel = 0;}else{month_fee_gel = data.fee_lari;}
+								if(data.fee_lari == ''  || data.fee_lari==null){month_fee_gel = 0;}else{month_fee_gel = data.fee_lari;}
     							
     							if(data.pay_amount1 == '' || data.pay_amount1==null){pledge_or_other_balance_gel = 0;}else{pledge_or_other_balance_gel = data.pay_amount1;}
     							if(data.pay_amount2 == '' || data.pay_amount2==null){pledge_or_other_balance_usd = 0;}else{pledge_or_other_balance_usd = data.pay_amount2;}
@@ -899,6 +1013,7 @@
 	    		    param.transaction_date     = $("#transaction_date").val();
 	    		    param.month_fee_trasaction = $("#month_fee_trasaction").val();
 	    		    param.check_loan_penalty   = $("input[id='other_penalty']:checked").val();
+	    		    param.exception_agr        = $("input[id='exception_agr']:checked").val();
 	    		    param.received_currency_id = $("#received_currency_id").val();
 	    		    param.course               = $("#course").val();
 	    		    param.type_id              = $(this).val();
@@ -957,10 +1072,12 @@
 
 		$(document).on("change", "#client_id", function () {
 			
-			if($(this).val()>0 && $('#type_id').val() == 1){
+			if($(this).val()>0 && $('#type_id').val() == 1 && $("input[id='other_penalty']:checked").val()!=1){
             	document.getElementById("car_out").disabled = false;
+            	document.getElementById("exception_agr").disabled = false;
             }else{
             	document.getElementById("car_out").disabled = true;
+            	document.getElementById("exception_agr").disabled = true;
             }
             
 			param         =  new Object();
@@ -971,6 +1088,7 @@
 		    param.transaction_date     = $("#transaction_date").val();
 		    param.month_fee_trasaction = $("#month_fee_trasaction").val();
 		    param.check_loan_penalty   = $("input[id='other_penalty']:checked").val();
+		    param.exception_agr        = $("input[id='exception_agr']:checked").val();
 		    param.received_currency_id = $("#received_currency_id").val();
 		    param.course               = $("#course").val();
 		    
@@ -1046,9 +1164,11 @@
 
 		$(document).on("change", "#client_loan_number", function () {
 			
-            if($(this).val()>0 && $('#type_id').val() == 1){
+            if($(this).val()>0 && $('#type_id').val() == 1 && $("input[id='other_penalty']:checked").val()!=1){
+            	document.getElementById("exception_agr").disabled = false;
             	document.getElementById("car_out").disabled = false;
             }else{
+            	document.getElementById("exception_agr").disabled = true;
             	document.getElementById("car_out").disabled = true;
             }
 			
@@ -1060,6 +1180,7 @@
 		    param.transaction_date  =  $("#transaction_date").val();
 		    param.month_fee_trasaction = $("#month_fee_trasaction").val();
 		    param.check_loan_penalty   = $("input[id='other_penalty']:checked").val();
+		    param.exception_agr        = $("input[id='exception_agr']:checked").val();
 		    param.received_currency_id = $("#received_currency_id").val();
 		    param.course               = $("#course").val();
 		    
@@ -1137,7 +1258,13 @@
     	});
 
 		$(document).on("change", "#other_penalty", function () {
-			
+			if($("input[id='other_penalty']:checked").val() == 1){
+    			document.getElementById("exception_agr").disabled = true;
+            	document.getElementById("car_out").disabled = true;
+			}else{
+				document.getElementById("exception_agr").disabled = false;
+	        	document.getElementById("car_out").disabled = false;
+			}
 			param         =  new Object();
 		    param.act     = "get_shedule";
 		    param.id      = $("#client_id").val();
@@ -1191,11 +1318,7 @@
         							var pay_amount = $('#client_amount').val(); 
         							if($('#client_amount').val()=='' || $('#client_amount').val() == null){pay_amount == 0;}
         							
-    //     							$("#month_fee_trasaction").val(pay_amount);
-    //     			    	        $("#pledge_or_other_mont_fee").val(pay_amount);
-    //     			    	        $("#pledge_or_other_extra_fee").val(pay_amount);
-        			    	        
-        							if(data.fee_lari == ''){month_fee_gel = 0;}else{month_fee_gel = data.fee_lari;}
+									if(data.fee_lari == ''){month_fee_gel = 0;}else{month_fee_gel = data.fee_lari;}
         							
         							if(data.pay_amount1 == '' || data.pay_amount1 == null){pledge_or_other_balance_gel = 0;}else{pledge_or_other_balance_gel = data.pay_amount1;}
         							if(data.pay_amount2 == '' || data.pay_amount2 == null){pledge_or_other_balance_usd = 0;}else{pledge_or_other_balance_usd = data.pay_amount2;}

@@ -312,11 +312,12 @@ function Add($hidde_transaction_id, $hidde_id, $transaction_date, $month_fee, $c
 	$user_id	 = $_SESSION['USERID'];
 	$client_id   = $_REQUEST['client_id'];
 	
-	$month_fee1  = $_REQUEST['month_fee1'];
-	$payable_Fee = $_REQUEST['payable_Fee'];
-	$yield       = $_REQUEST['yield'];
+	$month_fee1    = $_REQUEST['month_fee1'];
+	$payable_Fee   = $_REQUEST['payable_Fee'];
+	$yield         = $_REQUEST['yield'];
 	$other_penalty = $_REQUEST['other_penalty'];
-	$surplus1 = $_REQUEST['surplus1'];
+	$exception_agr = $_REQUEST['exception_agr'];
+	$surplus1      = $_REQUEST['surplus1'];
 	
 	$client_loan_number = $_REQUEST['client_loan_number'];
 	$car_out            = $_REQUEST['car_out'];
@@ -351,506 +352,616 @@ function Add($hidde_transaction_id, $hidde_id, $transaction_date, $month_fee, $c
 	
     $all_pay = ROUND($month_fee + $res[pay_amount],2);
 	$all_fee = $month_fee1;
-	
-	if ($all_fee == $all_pay){
-	    
+	if ($exception_agr==1) {
 	    if ($penalti_fee>0){
-            mysql_query("INSERT INTO `money_transactions_detail` 
-                    				(`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`) 
-                    		  VALUES 
-                    			    (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '$penalti_fee', '$course', '$currency_id', '$received_currency_id', '', '', '$type_id', '2', 1)");
+	        mysql_query("INSERT INTO `money_transactions_detail`
+                    	            (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
+                    	      VALUES
+                    	            (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '$penalti_fee', '$course', '$currency_id', '$received_currency_id', '', '', '$type_id', '2', 1)");
 	    }
-	    
-	    mysql_query(" UPDATE  money_transactions_detail
-                      JOIN    money_transactions ON money_transactions.id = money_transactions_detail.transaction_id
-                      JOIN    client_loan_agreement ON client_loan_agreement.id = money_transactions.agreement_id
-	                  SET     money_transactions_detail.actived = 0,
-	                          money_transactions_detail.balance_transaction_id = '$hidde_transaction_id'
-                      WHERE   client_loan_agreement.client_id = '$client_id' 
-                      AND     money_transactions_detail.`status` = 3
-                      AND     money_transactions_detail.actived = 1");
 	    
 	    if ($root>0 || $percent>0) {
-	        
-	        mysql_query("INSERT INTO `money_transactions_detail` 
-                                    (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
-                              VALUES 
-                                    (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '', '$course', '$currency_id', '$received_currency_id', '$root', '$percent', '$type_id', 1, 1)");
-	        
-	        if ($other_penalty == 1) {
-	            mysql_query("UPDATE  `client_loan_schedule`
-            	                SET  `status`        = '1',
-	                                 `penalty_check` = 1
-            	              WHERE  `id`     = '$res1[id]'");
-	        }else{
-    	        mysql_query("UPDATE  `client_loan_schedule`
-    	                        SET  `status` = '1'
-    	                      WHERE  `id`     = '$res1[id]'");
-	        }
-	    }
-	    //მეტობა სესხი
-	    if ($surplus_type==1) {
-	        if ($attachment_client_id>0) {
-	            if ($surplus>0) {
-    	            mysql_query("INSERT INTO `money_transactions`
-                        	                (`datetime`, `user_id`, `client_loan_schedule_id`, `agreement_id`, `client_id`, `pay_datetime`, `pay_amount`, `extra_fee`, `course`, `currency_id`, `received_currency_id`, `month_fee_trasaction`, `type_id`, `status`, `actived`)
-                        	          VALUES
-                        	                (NOW(), '$user_id', '', '$attachment_agreement_id', '$attachment_client_id', '$transaction_date', '$surplus', '', '$course', '$currency_id', '$received_currency_id', '$month_fee_trasaction', '1', '1', '1')");
-    	            
-    	            $tr1_id = mysql_insert_id();
-    	            
-    	            mysql_query("INSERT INTO `money_transactions_detail`
-                        	                (`datetime`, `user_id`, `transaction_id`, `parent_tr_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
-                        	          VALUES
-                        	                (NOW(), '$user_id', '$tr1_id', '$hidde_transaction_id', '$transaction_date', '$surplus', '$course', '$currency_id', '$received_currency_id', '', '', '1', '3', 1)");
-	            }
-	        }else{
-    	        if ($surplus>0) {
-    	            mysql_query("INSERT INTO `money_transactions_detail`
-                                    	    (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
-                                      VALUES
-                                    	    (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '$surplus', '$course', '$currency_id', '$received_currency_id', '', '', '$type_id', '3', 1)");
-    	        }
-	        }
-	    //მეტობა ალდაგი
-	    }elseif ($surplus_type==2){
-	        if ($attachment_client_id>0) {
-	            if ($surplus>0) {
-    	            mysql_query("INSERT INTO `money_transactions`
-                        	                (`datetime`, `user_id`, `client_loan_schedule_id`, `agreement_id`, `client_id`, `pay_datetime`, `pay_amount`, `extra_fee`, `course`, `currency_id`, `received_currency_id`, `month_fee_trasaction`, `type_id`, `status`, `actived`)
-                        	          VALUES
-                        	                (NOW(), '$user_id', '', '$attachment_agreement_id', '$attachment_client_id', '$transaction_date', '$surplus', '', '$course', '$currency_id', '$received_currency_id', '$month_fee_trasaction', '2', '1', '1')");
-    	             
-    	            $tr1_id = mysql_insert_id();
-    	             
-    	            mysql_query("INSERT INTO `money_transactions_detail`
-                        	                (`datetime`, `user_id`, `transaction_id`, `parent_tr_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
-                        	          VALUES
-                        	                (NOW(), '$user_id', '$tr1_id', '$hidde_transaction_id', '$transaction_date', '$surplus', '$course', '$currency_id', '$received_currency_id', '', '', '2', '9', 1)");
-	            }
-	        }else{
-    	        if ($surplus>0) {
-    	            mysql_query("INSERT INTO `money_transactions_detail`
-                        	                (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
-                        	          VALUES
-                        	                (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '$surplus', '$course', '$currency_id', '$received_currency_id', '', '', '2', '9', 1)");
-    	        }
-	        }
-	        
-	    //მეტობა სესხი + ალდაგი
-	    }elseif ($surplus_type==3){
-	        if ($attachment_client_id>0) {
-	            if ($surplus>0 || $surplus1>0) {
-    	            mysql_query("INSERT INTO `money_transactions`
-                        	                (`datetime`, `user_id`, `client_loan_schedule_id`, `agreement_id`, `client_id`, `pay_datetime`, `pay_amount`, `extra_fee`, `course`, `currency_id`, `received_currency_id`, `month_fee_trasaction`, `type_id`, `status`, `actived`)
-                        	          VALUES
-                        	                (NOW(), '$user_id', '', '$attachment_agreement_id', '$attachment_client_id', '$transaction_date', '$surplus', '', '$course', '$currency_id', '$received_currency_id', '$month_fee_trasaction', '1', '1', '1')");
-    	             
-    	            $tr1_id = mysql_insert_id();
-	            }
-	            
-	            if ($surplus>0) { 
-    	            mysql_query("INSERT INTO `money_transactions_detail`
-                        	                (`datetime`, `user_id`, `transaction_id`, `parent_tr_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
-                        	          VALUES
-                        	                (NOW(), '$user_id', '$tr1_id', '$hidde_transaction_id', '$transaction_date', '$surplus', '$course', '$currency_id', '$received_currency_id', '', '', '1', '3', 1)");
-	            }
-	            
-	            if ($surplus1>0) {
-    	            mysql_query("INSERT INTO `money_transactions_detail`
-                        	                (`datetime`, `user_id`, `transaction_id`, `parent_tr_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
-                        	          VALUES
-                        	                (NOW(), '$user_id', '$tr1_id', '$hidde_transaction_id', '$transaction_date', '$surplus1', '$course', '$currency_id', '$received_currency_id', '', '', '2', '9', 1)");
-	            }
-	            
-	        }else{
-    	        if ($surplus>0) {
-    	            mysql_query("INSERT INTO `money_transactions_detail`
-                                    	    (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
-                                      VALUES
-                                    	    (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '$surplus', '$course', '$currency_id', '$received_currency_id', '', '', '$type_id', '3', 1)");
-    	        }
-    	    
-    	        if ($surplus1>0) {
-    	            mysql_query("INSERT INTO `money_transactions_detail`
-                        	                (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
-                        	          VALUES
-                        	                (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '$surplus1', '$course', '$currency_id', '$received_currency_id', '', '', '2', '9', 1)");
-    	        }
-	        }
-	    }
-	    
-	    if ($payable_Fee>0) {
-	        mysql_query("INSERT INTO `money_transactions_detail`
-	                                (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
-            	              VALUES
-            	                     (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '$payable_Fee', '$course', '$currency_id', '$received_currency_id', '', '', '$type_id', 5, 1)");
-	    }
-	    
-	    if ($yield>0) {
 	        mysql_query("INSERT INTO `money_transactions_detail`
                     	            (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
                     	      VALUES
-                    	            (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '$yield', '$course', '$currency_id', '$received_currency_id', '', '', '$type_id', 6, 1)");
+                    	            (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '', '$course', '$currency_id', '$received_currency_id', '$root', '$percent', '$type_id', 1, 1)");
+	        
+	        mysql_query("UPDATE `client_loan_schedule`
+            	            SET `exception_status` = 1
+            	         WHERE  `id`               = '$res1[id]'");
 	    }
-	    
-	    $res_car_out = mysql_query("SELECT id 
-                                    FROM   client_loan_schedule 
-                                    WHERE  id > '$hidde_id' AND client_loan_schedule.client_loan_agreement_id = '$client_loan_number'");
-	    
-	    if ($car_out == 1) {
-	       mysql_query("UPDATE client_loan_agreement
-        	               SET canceled_status = 1,
-	                           canseled_date   = '$transaction_date'
-        	            WHERE  client_loan_agreement.id = '$client_loan_number' ");
-	       
-	       mysql_query("UPDATE  client_loan_schedule
-                            SET activ_status = 1
-                         WHERE  client_loan_schedule.client_loan_agreement_id = '$client_loan_number'
-                         AND    client_loan_schedule.actived = 1
-                         AND    client_loan_schedule.schedule_date > '$transaction_date'");
-	    }
-	}elseif ($all_fee < $all_pay){
-	    if ($penalti_fee>0){
-	        mysql_query("INSERT INTO `money_transactions_detail`
-                    	            (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
-                    	      VALUES
-                    	            (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '$penalti_fee', '$course', '$currency_id', '$received_currency_id', '', '', '$type_id', 2, 1)");
-	    }
-	    
-	    if($root>0 || $percent>0){
-    	    mysql_query("INSERT INTO `money_transactions_detail`
-                        	        (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
-                        	  VALUES
-                        	        (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '', '$course', '$currency_id', '$received_currency_id', '$root', '$percent', '$type_id', 1, 1)");
-    	    
-	        if ($other_penalty == 1) {
-	            mysql_query("UPDATE  `client_loan_schedule`
-            	                SET  `status`        = '1',
-	                                 `penalty_check` = 1
-            	              WHERE  `id`     = '$res1[id]'");
-	        }else{
-    	        mysql_query("UPDATE  `client_loan_schedule`
-    	                        SET  `status` = '1'
-    	                      WHERE  `id`     = '$res1[id]'");
-	        }
-	    
-	    }
-	    
-	    mysql_query("UPDATE  money_transactions_detail
-                     JOIN    money_transactions ON money_transactions.id = money_transactions_detail.transaction_id
-                     JOIN    client_loan_agreement ON client_loan_agreement.id = money_transactions.agreement_id
-	                 SET     money_transactions_detail.actived = 0,
-	                         money_transactions_detail.balance_transaction_id = '$hidde_transaction_id'
-                     WHERE   client_loan_agreement.client_id = '$client_id' 
-                     AND     money_transactions_detail.`status` = 3
-                     AND     money_transactions_detail.actived = 1");
-	    
 	    
 	    //მეტობა სესხი
 	    if ($surplus_type==1) {
 	        if ($attachment_client_id>0) {
 	            if ($surplus>0) {
-    	            mysql_query("INSERT INTO `money_transactions`
-                        	                (`datetime`, `user_id`, `client_loan_schedule_id`, `agreement_id`, `client_id`, `pay_datetime`, `pay_amount`, `extra_fee`, `course`, `currency_id`, `received_currency_id`, `month_fee_trasaction`, `type_id`, `status`, `actived`)
-                        	          VALUES
-                        	                (NOW(), '$user_id', '', '$attachment_agreement_id', '$attachment_client_id', '$transaction_date', '$surplus', '', '$course', '$currency_id', '$received_currency_id', '$month_fee_trasaction', '1', '1', '1')");
-    	             
-    	            $tr1_id = mysql_insert_id();
-    	             
-    	            mysql_query("INSERT INTO `money_transactions_detail`
-                        	                (`datetime`, `user_id`, `transaction_id`, `parent_tr_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
-                        	          VALUES
-                        	                (NOW(), '$user_id', '$tr1_id', '$hidde_transaction_id', '$transaction_date', '$surplus', '$course', '$currency_id', '$received_currency_id', '', '', '1', '3', 1)");
+	                mysql_query("INSERT INTO `money_transactions`
+                    	                    (`datetime`, `user_id`, `client_loan_schedule_id`, `agreement_id`, `client_id`, `pay_datetime`, `pay_amount`, `extra_fee`, `course`, `currency_id`, `received_currency_id`, `month_fee_trasaction`, `type_id`, `status`, `actived`)
+                    	              VALUES
+                    	                    (NOW(), '$user_id', '', '$attachment_agreement_id', '$attachment_client_id', '$transaction_date', '$surplus', '', '$course', '$currency_id', '$received_currency_id', '$month_fee_trasaction', '1', '1', '1')");
+	                 
+	                $tr1_id = mysql_insert_id();
+	                 
+	                mysql_query("INSERT INTO `money_transactions_detail`
+                    	                    (`datetime`, `user_id`, `transaction_id`, `parent_tr_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
+                    	              VALUES
+                    	                    (NOW(), '$user_id', '$tr1_id', '$hidde_transaction_id', '$transaction_date', '$surplus', '$course', '$currency_id', '$received_currency_id', '', '', '1', '3', 1)");
 	            }
 	        }else{
-    	        if ($surplus>0) {
-    	            mysql_query("INSERT INTO `money_transactions_detail`
-                                    	       (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
-                                    	 VALUES
-                                    	       (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '$surplus', '$course', '$currency_id', '$received_currency_id', '', '', '$type_id', '3', 1)");
-    	        }
+	            if ($surplus>0) {
+	                mysql_query("INSERT INTO `money_transactions_detail`
+                    	                    (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
+                    	              VALUES
+                    	                    (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '$surplus', '$course', '$currency_id', '$received_currency_id', '', '', '$type_id', '3', 1)");
+	            }
 	        }
-	    //ალდაგი
+	        //მეტობა ალდაგი
 	    }elseif ($surplus_type==2){
 	        if ($attachment_client_id>0) {
 	            if ($surplus>0) {
-    	            mysql_query("INSERT INTO `money_transactions`
-                        	                (`datetime`, `user_id`, `client_loan_schedule_id`, `agreement_id`, `client_id`, `pay_datetime`, `pay_amount`, `extra_fee`, `course`, `currency_id`, `received_currency_id`, `month_fee_trasaction`, `type_id`, `status`, `actived`)
-                        	          VALUES
-                        	                (NOW(), '$user_id', '', '$attachment_agreement_id', '$attachment_client_id', '$transaction_date', '$surplus', '', '$course', '$currency_id', '$received_currency_id', '$month_fee_trasaction', '2', '1', '1')");
-    	        
-    	            $tr1_id = mysql_insert_id();
-    	        
-    	            mysql_query("INSERT INTO `money_transactions_detail`
-                        	                (`datetime`, `user_id`, `transaction_id`, `parent_tr_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
-                        	          VALUES
-                        	                (NOW(), '$user_id', '$tr1_id', '$hidde_transaction_id', '$transaction_date', '$surplus', '$course', '$currency_id', '$received_currency_id', '', '', '2', '9', 1)");
+	                mysql_query("INSERT INTO `money_transactions`
+                    	                    (`datetime`, `user_id`, `client_loan_schedule_id`, `agreement_id`, `client_id`, `pay_datetime`, `pay_amount`, `extra_fee`, `course`, `currency_id`, `received_currency_id`, `month_fee_trasaction`, `type_id`, `status`, `actived`)
+                    	              VALUES
+                    	                    (NOW(), '$user_id', '', '$attachment_agreement_id', '$attachment_client_id', '$transaction_date', '$surplus', '', '$course', '$currency_id', '$received_currency_id', '$month_fee_trasaction', '2', '1', '1')");
+	    
+	                $tr1_id = mysql_insert_id();
+	    
+	                mysql_query("INSERT INTO `money_transactions_detail`
+                    	                    (`datetime`, `user_id`, `transaction_id`, `parent_tr_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
+                    	              VALUES
+                    	                    (NOW(), '$user_id', '$tr1_id', '$hidde_transaction_id', '$transaction_date', '$surplus', '$course', '$currency_id', '$received_currency_id', '', '', '2', '9', 1)");
 	            }
 	        }else{
 	            if ($surplus>0) {
-    	            mysql_query("INSERT INTO `money_transactions_detail`
-                        	                (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
-                        	          VALUES
-                        	                (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '$surplus', '$course', '$currency_id', '$received_currency_id', '', '', '2', '9', 1)");
-    	        }
+	                mysql_query("INSERT INTO `money_transactions_detail`
+                    	                    (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
+                    	              VALUES
+                    	                    (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '$surplus', '$course', '$currency_id', '$received_currency_id', '', '', '2', '9', 1)");
+	            }
 	        }
-	    //მეტობა სესხი + ალდაგი
+	         
+	        //მეტობა სესხი + ალდაგი
 	    }elseif ($surplus_type==3){
 	        if ($attachment_client_id>0) {
 	            if ($surplus>0 || $surplus1>0) {
-    	            mysql_query("INSERT INTO `money_transactions`
-                        	                (`datetime`, `user_id`, `client_loan_schedule_id`, `agreement_id`, `client_id`, `pay_datetime`, `pay_amount`, `extra_fee`, `course`, `currency_id`, `received_currency_id`, `month_fee_trasaction`, `type_id`, `status`, `actived`)
-                        	          VALUES
-                        	                (NOW(), '$user_id', '', '$attachment_agreement_id', '$attachment_client_id', '$transaction_date', '$surplus', '', '$course', '$currency_id', '$received_currency_id', '$month_fee_trasaction', '1', '1', '1')");
-    	        
-    	            $tr1_id = mysql_insert_id();
-	            } 
+	                mysql_query("INSERT INTO `money_transactions`
+                    	                    (`datetime`, `user_id`, `client_loan_schedule_id`, `agreement_id`, `client_id`, `pay_datetime`, `pay_amount`, `extra_fee`, `course`, `currency_id`, `received_currency_id`, `month_fee_trasaction`, `type_id`, `status`, `actived`)
+                    	              VALUES
+                    	                    (NOW(), '$user_id', '', '$attachment_agreement_id', '$attachment_client_id', '$transaction_date', '$surplus', '', '$course', '$currency_id', '$received_currency_id', '$month_fee_trasaction', '1', '1', '1')");
+	    
+	                $tr1_id = mysql_insert_id();
+	            }
+	        	    
 	            if ($surplus>0) {
 	                mysql_query("INSERT INTO `money_transactions_detail`
                     	                    (`datetime`, `user_id`, `transaction_id`, `parent_tr_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
                     	              VALUES
                     	                    (NOW(), '$user_id', '$tr1_id', '$hidde_transaction_id', '$transaction_date', '$surplus', '$course', '$currency_id', '$received_currency_id', '', '', '1', '3', 1)");
 	            }
-	             
+	        	    
 	            if ($surplus1>0) {
 	                mysql_query("INSERT INTO `money_transactions_detail`
                     	                    (`datetime`, `user_id`, `transaction_id`, `parent_tr_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
                     	              VALUES
                     	                    (NOW(), '$user_id', '$tr1_id', '$hidde_transaction_id', '$transaction_date', '$surplus1', '$course', '$currency_id', '$received_currency_id', '', '', '2', '9', 1)");
 	            }
-	             
 	        }else{
-    	        if ($surplus>0) {
-    	            mysql_query("INSERT INTO `money_transactions_detail`
-                                    	       (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
-                                    	 VALUES
-                                    	       (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '$surplus', '$course', '$currency_id', '$received_currency_id', '', '', '1', '3', 1)");
-    	        }
-    	    
-    	        if ($surplus1>0) {
-    	            mysql_query("INSERT INTO `money_transactions_detail`
-                        	                (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
-                        	          VALUES
-                        	                (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '$surplus1', '$course', '$currency_id', '$received_currency_id', '', '', '2', '9', 1)");
-    	        }
-	        }
-	    }
-	    
-	    if ($payable_Fee>0) {
-	        mysql_query("INSERT INTO `money_transactions_detail`
-                    	            (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
-                    	      VALUES
-                    	            (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '$payable_Fee', '$course', '$currency_id', '$received_currency_id', '', '', '$type_id', 5, 1)");
-	    }
-	     
-	    if ($yield>0) {
-	        mysql_query("INSERT INTO `money_transactions_detail`
-                    	            (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
-                    	      VALUES
-                    	            (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '$yield', '$course', '$currency_id', '$received_currency_id', '', '', '$type_id', 6, 1)");
-	    }
-	    
-	    $res_car_out = mysql_query("SELECT id
-                        	        FROM   client_loan_schedule
-                        	        WHERE  id > '$hidde_id' AND client_loan_schedule.client_loan_agreement_id = '$client_loan_number'");
-	     
-	    if ($car_out == 1) {
-	        mysql_query("UPDATE client_loan_agreement
-        	                SET canceled_status = 1,
-	                            canseled_date   = '$transaction_date'
-        	             WHERE  client_loan_agreement.id = '$client_loan_number' ");
-	        
-	        mysql_query("UPDATE client_loan_schedule
-        	                SET activ_status = 1
-        	             WHERE  client_loan_schedule.client_loan_agreement_id = '$client_loan_number'
-        	             AND    client_loan_schedule.actived = 1
-        	             AND    client_loan_schedule.schedule_date > '$transaction_date'");
-	    }
-	}else{
-	    
-	    $check_loan_type = mysql_fetch_array(mysql_query("SELECT loan_type_id 
-                                                	      FROM   client_loan_agreement 
-                                                	      WHERE  client_id = '$client_id'"));
-	    
-	    if ($check_loan_type[loan_type_id] == 1) {
-	        $percent              = $_REQUEST['percent'];
-	        $penalti_fee          = $_REQUEST['penalti_fee'];
-	        $percent1             = $_REQUEST['percent1'];
-	        $penalti_fee1         = $_REQUEST['penalti_fee1'];
-	        
-	        if ($percent == '') {$percent = 0;}
-	        if ($penalti_fee == '') {$penalti_fee = 0;}
-	        if ($percent1 == '') {$percent1 = 0;}
-	        if ($penalti_fee1 == '') {$penalti_fee1 = 0;}
-	        
-	        $sul_gadasaxdeli = $percent1+$penalti_fee1;
-	        $sul_gadaxdili = $percent+$penalti_fee;
-	        
-	        if ($sul_gadasaxdeli<=$sul_gadaxdili) {
-	            
-	            mysql_query(" UPDATE  money_transactions_detail
-        	                  JOIN    money_transactions ON money_transactions.id = money_transactions_detail.transaction_id
-        	                  JOIN    client_loan_agreement ON client_loan_agreement.id = money_transactions.agreement_id
-        	                  SET     money_transactions_detail.actived = 0,
-        	                          money_transactions_detail.balance_transaction_id = '$hidde_transaction_id'
-        	                  WHERE   client_loan_agreement.client_id = '$client_id'
-        	                  AND     money_transactions_detail.`status` = 3
-        	                  AND     money_transactions_detail.actived = 1");
-	             
-	            if ($percent>=$percent1) {
-	                 
+	            if ($surplus>0) {
 	                mysql_query("INSERT INTO `money_transactions_detail`
                     	                    (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
                     	              VALUES
-                    	                    (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '', '$course', '$currency_id', '$received_currency_id', '$root', '$percent', '$type_id', 1, 1)");
-	                 
-	                mysql_query("UPDATE  `client_loan_schedule`
-            	                    SET  `status` = '1'
-            	                  WHERE  `id`     = '$res1[id]'");
+                    	                    (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '$surplus', '$course', '$currency_id', '$received_currency_id', '', '', '$type_id', '3', 1)");
 	            }
-	            if ($attachment_client_id>0) {
-	                //მეტობა
-	                if ($surplus>0 || $surplus1>0) {
-	                    mysql_query("INSERT INTO `money_transactions`
-                    	                        (`datetime`, `user_id`, `client_loan_schedule_id`, `agreement_id`, `client_id`, `pay_datetime`, `pay_amount`, `extra_fee`, `course`, `currency_id`, `received_currency_id`, `month_fee_trasaction`, `type_id`, `status`, `actived`)
-                    	                  VALUES
-                    	                        (NOW(), '$user_id', '', '$attachment_agreement_id', '$attachment_client_id', '$transaction_date', '$surplus', '', '$course', '$currency_id', '$received_currency_id', '$month_fee_trasaction', '1', '1', '1')");
-	            
-	                    $tr1_id = mysql_insert_id();
-	                    if ($surplus>0) {
-    	                    mysql_query("INSERT INTO `money_transactions_detail`
-                        	                        (`datetime`, `user_id`, `transaction_id`, `parent_tr_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
-                        	                  VALUES
-                        	                        (NOW(), '$user_id', '$tr1_id', '$hidde_transaction_id', '$transaction_date', '$surplus', '$course', '$currency_id', '$received_currency_id', '', '', '1', '3', 1)");
-	                    }
-	                    if ($surplus1>0) {
-	                        mysql_query("INSERT INTO `money_transactions_detail`
-                    	                            (`datetime`, `user_id`, `transaction_id`, `parent_tr_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
-                    	                      VALUES
-                    	                            (NOW(), '$user_id', '$tr1_id', '$hidde_transaction_id', '$transaction_date', '$surplus1', '$course', '$currency_id', '$received_currency_id', '', '', '2', '9', 1)");
-	                    }
-	                }
-	            }else{
-    	            if ($surplus>0) {
-    	                mysql_query("INSERT INTO `money_transactions_detail`
-                        	                    (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
-                        	              VALUES
-                        	                    (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '$surplus', '$course', '$currency_id', '$received_currency_id', '', '', '$type_id', '3', 1)");
-    	            }
-    	             
-    	            if ($surplus1>0) {
-    	                mysql_query("INSERT INTO `money_transactions_detail`
-                        	                    (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
-                        	              VALUES
-                        	                    (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '$surplus1', '$course', '$currency_id', '$received_currency_id', '', '', '2', '9', 1)");
-    	            }
-	            }
-	        }else{
-	            
-	            mysql_query(" UPDATE  money_transactions_detail
-            	                JOIN    money_transactions ON money_transactions.id = money_transactions_detail.transaction_id
-            	                JOIN    client_loan_agreement ON client_loan_agreement.id = money_transactions.agreement_id
-            	                SET     money_transactions_detail.actived = 0,
-            	                money_transactions_detail.balance_transaction_id = '$hidde_transaction_id'
-            	                WHERE   client_loan_agreement.client_id = '$client_id'
-            	                AND     money_transactions_detail.`status` = 3
-            	                AND     money_transactions_detail.actived = 1");
-	            if ($attachment_client_id>0) {
-	                //მეტობა
-	                if ($surplus>0 || $surplus1>0) {
-	                    mysql_query("INSERT INTO `money_transactions`
-                    	                        (`datetime`, `user_id`, `client_loan_schedule_id`, `agreement_id`, `client_id`, `pay_datetime`, `pay_amount`, `extra_fee`, `course`, `currency_id`, `received_currency_id`, `month_fee_trasaction`, `type_id`, `status`, `actived`)
-                    	                  VALUES
-                    	                        (NOW(), '$user_id', '', '$attachment_agreement_id', '$attachment_client_id', '$transaction_date', '$surplus', '', '$course', '$currency_id', '$received_currency_id', '$month_fee_trasaction', '1', '1', '1')");
-	                     
-	                    $tr1_id = mysql_insert_id();
-	                    if ($surplus>0) {
-	                        mysql_query("INSERT INTO `money_transactions_detail`
-                    	                            (`datetime`, `user_id`, `transaction_id`, `parent_tr_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
-                    	                      VALUES
-                    	                            (NOW(), '$user_id', '$tr1_id', '$hidde_transaction_id', '$transaction_date', '$surplus', '$course', '$currency_id', '$received_currency_id', '', '', '1', '3', 1)");
-	                    }
-	                    if ($surplus1>0) {
-	                        mysql_query("INSERT INTO `money_transactions_detail`
-                    	                            (`datetime`, `user_id`, `transaction_id`, `parent_tr_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
-                    	                      VALUES
-                    	                            (NOW(), '$user_id', '$tr1_id', '$hidde_transaction_id', '$transaction_date', '$surplus1', '$course', '$currency_id', '$received_currency_id', '', '', '2', '9', 1)");
-	                    }
-	                }
-	            }else{
-    	            if ($surplus>0) {
-    	                mysql_query("INSERT INTO `money_transactions_detail`
-                        	                    (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
-                        	              VALUES
-                        	                    (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '$surplus', '$course', '$currency_id', '$received_currency_id', '', '', '$type_id', '3', 1)");
-    	            }
-    	             
-    	            if ($surplus1>0) {
-    	                mysql_query("INSERT INTO `money_transactions_detail`
-                        	                    (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
-                        	              VALUES
-                        	                    (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '$surplus1', '$course', '$currency_id', '$received_currency_id', '', '', '2', '9', 1)");
-    	            }
-	            }
-	            if ($surplus1 <= 0 && $surplus1 <= 0) {
-	                global  $error;
-	                $error = 'გადანწილებული თანხა არა საკმარისი';
+	             
+	            if ($surplus1>0) {
+	                mysql_query("INSERT INTO `money_transactions_detail`
+                    	                    (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
+                    	              VALUES
+                    	                    (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '$surplus1', '$course', '$currency_id', '$received_currency_id', '', '', '2', '9', 1)");
 	            }
 	        }
-	        
-	    }else{
-	        
-	       mysql_query(" UPDATE  money_transactions_detail
-        	             JOIN    money_transactions ON money_transactions.id = money_transactions_detail.transaction_id
-        	             JOIN    client_loan_agreement ON client_loan_agreement.id = money_transactions.agreement_id
-        	             SET  money_transactions_detail.actived = 0,
-        	             money_transactions_detail.balance_transaction_id = '$hidde_transaction_id'
-        	             WHERE   client_loan_agreement.client_id = '$client_id'
-        	             AND     money_transactions_detail.`status` = 3
-        	             AND     money_transactions_detail.actived = 1");
-	       
-	       
-	       if ($attachment_client_id>0) {
-	           //მეტობა
-	           if ($surplus>0 || $surplus1>0) {
-	               mysql_query("INSERT INTO `money_transactions`
-	                   (`datetime`, `user_id`, `client_loan_schedule_id`, `agreement_id`, `client_id`, `pay_datetime`, `pay_amount`, `extra_fee`, `course`, `currency_id`, `received_currency_id`, `month_fee_trasaction`, `type_id`, `status`, `actived`)
-	                   VALUES
-	                   (NOW(), '$user_id', '', '$attachment_agreement_id', '$attachment_client_id', '$transaction_date', '$surplus', '', '$course', '$currency_id', '$received_currency_id', '$month_fee_trasaction', '1', '1', '1')");
-	       
-	               $tr1_id = mysql_insert_id();
-	               if ($surplus>0) {
-	                   mysql_query("INSERT INTO `money_transactions_detail`
-	                       (`datetime`, `user_id`, `transaction_id`, `parent_tr_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
-	                       VALUES
-	                       (NOW(), '$user_id', '$tr1_id', '$hidde_transaction_id', '$transaction_date', '$surplus', '$course', '$currency_id', '$received_currency_id', '', '', '1', '3', 1)");
-	               }
-	               if ($surplus1>0) {
-	                   mysql_query("INSERT INTO `money_transactions_detail`
-	                       (`datetime`, `user_id`, `transaction_id`, `parent_tr_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
-	                       VALUES
-	                       (NOW(), '$user_id', '$tr1_id', '$hidde_transaction_id', '$transaction_date', '$surplus1', '$course', '$currency_id', '$received_currency_id', '', '', '2', '9', 1)");
-	               }
-	           }
-	       }else{
-	           //მეტობა
-    	        if ($surplus>0) {
-    	            mysql_query("INSERT INTO `money_transactions_detail`
-                                    	       (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
-                                    	 VALUES
-                                    	       (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '$surplus', '$course', '$currency_id', '$received_currency_id', '', '', '$type_id', '3', 1)");
+	    }
+	}else{
+    	if ($all_fee == $all_pay){
+    	    
+    	    if ($penalti_fee>0){
+                mysql_query("INSERT INTO `money_transactions_detail` 
+                        				(`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`) 
+                        		  VALUES 
+                        			    (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '$penalti_fee', '$course', '$currency_id', '$received_currency_id', '', '', '$type_id', '2', 1)");
+    	    }
+    	    
+    	    mysql_query(" UPDATE  money_transactions_detail
+                          JOIN    money_transactions ON money_transactions.id = money_transactions_detail.transaction_id
+                          JOIN    client_loan_agreement ON client_loan_agreement.id = money_transactions.agreement_id
+    	                  SET     money_transactions_detail.actived = 0,
+    	                          money_transactions_detail.balance_transaction_id = '$hidde_transaction_id'
+                          WHERE   client_loan_agreement.client_id = '$client_id' 
+                          AND     money_transactions_detail.`status` = 3
+                          AND     money_transactions_detail.actived = 1");
+    	    
+    	    if ($root>0 || $percent>0) {
+    	        
+    	        mysql_query("INSERT INTO `money_transactions_detail` 
+                                        (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
+                                  VALUES 
+                                        (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '', '$course', '$currency_id', '$received_currency_id', '$root', '$percent', '$type_id', 1, 1)");
+    	        
+    	        if ($other_penalty == 1) {
+    	            mysql_query("UPDATE  `client_loan_schedule`
+                	                SET  `status`        = '1',
+    	                                 `penalty_check` = 1
+                	              WHERE  `id`     = '$res1[id]'");
+    	        }else{
+        	        mysql_query("UPDATE  `client_loan_schedule`
+        	                        SET  `status` = '1'
+        	                      WHERE  `id`     = '$res1[id]'");
+    	        }
+    	    }
+    	    //მეტობა სესხი
+    	    if ($surplus_type==1) {
+    	        if ($attachment_client_id>0) {
+    	            if ($surplus>0) {
+        	            mysql_query("INSERT INTO `money_transactions`
+                            	                (`datetime`, `user_id`, `client_loan_schedule_id`, `agreement_id`, `client_id`, `pay_datetime`, `pay_amount`, `extra_fee`, `course`, `currency_id`, `received_currency_id`, `month_fee_trasaction`, `type_id`, `status`, `actived`)
+                            	          VALUES
+                            	                (NOW(), '$user_id', '', '$attachment_agreement_id', '$attachment_client_id', '$transaction_date', '$surplus', '', '$course', '$currency_id', '$received_currency_id', '$month_fee_trasaction', '1', '1', '1')");
+        	            
+        	            $tr1_id = mysql_insert_id();
+        	            
+        	            mysql_query("INSERT INTO `money_transactions_detail`
+                            	                (`datetime`, `user_id`, `transaction_id`, `parent_tr_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
+                            	          VALUES
+                            	                (NOW(), '$user_id', '$tr1_id', '$hidde_transaction_id', '$transaction_date', '$surplus', '$course', '$currency_id', '$received_currency_id', '', '', '1', '3', 1)");
+    	            }
+    	        }else{
+        	        if ($surplus>0) {
+        	            mysql_query("INSERT INTO `money_transactions_detail`
+                                        	    (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
+                                          VALUES
+                                        	    (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '$surplus', '$course', '$currency_id', '$received_currency_id', '', '', '$type_id', '3', 1)");
+        	        }
+    	        }
+    	    //მეტობა ალდაგი
+    	    }elseif ($surplus_type==2){
+    	        if ($attachment_client_id>0) {
+    	            if ($surplus>0) {
+        	            mysql_query("INSERT INTO `money_transactions`
+                            	                (`datetime`, `user_id`, `client_loan_schedule_id`, `agreement_id`, `client_id`, `pay_datetime`, `pay_amount`, `extra_fee`, `course`, `currency_id`, `received_currency_id`, `month_fee_trasaction`, `type_id`, `status`, `actived`)
+                            	          VALUES
+                            	                (NOW(), '$user_id', '', '$attachment_agreement_id', '$attachment_client_id', '$transaction_date', '$surplus', '', '$course', '$currency_id', '$received_currency_id', '$month_fee_trasaction', '2', '1', '1')");
+        	             
+        	            $tr1_id = mysql_insert_id();
+        	             
+        	            mysql_query("INSERT INTO `money_transactions_detail`
+                            	                (`datetime`, `user_id`, `transaction_id`, `parent_tr_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
+                            	          VALUES
+                            	                (NOW(), '$user_id', '$tr1_id', '$hidde_transaction_id', '$transaction_date', '$surplus', '$course', '$currency_id', '$received_currency_id', '', '', '2', '9', 1)");
+    	            }
+    	        }else{
+        	        if ($surplus>0) {
+        	            mysql_query("INSERT INTO `money_transactions_detail`
+                            	                (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
+                            	          VALUES
+                            	                (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '$surplus', '$course', '$currency_id', '$received_currency_id', '', '', '2', '9', 1)");
+        	        }
+    	        }
+    	        
+    	    //მეტობა სესხი + ალდაგი
+    	    }elseif ($surplus_type==3){
+    	        if ($attachment_client_id>0) {
+    	            if ($surplus>0 || $surplus1>0) {
+        	            mysql_query("INSERT INTO `money_transactions`
+                            	                (`datetime`, `user_id`, `client_loan_schedule_id`, `agreement_id`, `client_id`, `pay_datetime`, `pay_amount`, `extra_fee`, `course`, `currency_id`, `received_currency_id`, `month_fee_trasaction`, `type_id`, `status`, `actived`)
+                            	          VALUES
+                            	                (NOW(), '$user_id', '', '$attachment_agreement_id', '$attachment_client_id', '$transaction_date', '$surplus', '', '$course', '$currency_id', '$received_currency_id', '$month_fee_trasaction', '1', '1', '1')");
+        	             
+        	            $tr1_id = mysql_insert_id();
+    	            }
+    	            
+    	            if ($surplus>0) { 
+        	            mysql_query("INSERT INTO `money_transactions_detail`
+                            	                (`datetime`, `user_id`, `transaction_id`, `parent_tr_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
+                            	          VALUES
+                            	                (NOW(), '$user_id', '$tr1_id', '$hidde_transaction_id', '$transaction_date', '$surplus', '$course', '$currency_id', '$received_currency_id', '', '', '1', '3', 1)");
+    	            }
+    	            
+    	            if ($surplus1>0) {
+        	            mysql_query("INSERT INTO `money_transactions_detail`
+                            	                (`datetime`, `user_id`, `transaction_id`, `parent_tr_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
+                            	          VALUES
+                            	                (NOW(), '$user_id', '$tr1_id', '$hidde_transaction_id', '$transaction_date', '$surplus1', '$course', '$currency_id', '$received_currency_id', '', '', '2', '9', 1)");
+    	            }
+    	            
+    	        }else{
+        	        if ($surplus>0) {
+        	            mysql_query("INSERT INTO `money_transactions_detail`
+                                        	    (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
+                                          VALUES
+                                        	    (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '$surplus', '$course', '$currency_id', '$received_currency_id', '', '', '$type_id', '3', 1)");
+        	        }
+        	    
+        	        if ($surplus1>0) {
+        	            mysql_query("INSERT INTO `money_transactions_detail`
+                            	                (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
+                            	          VALUES
+                            	                (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '$surplus1', '$course', '$currency_id', '$received_currency_id', '', '', '2', '9', 1)");
+        	        }
+    	        }
+    	    }
+    	    
+    	    if ($payable_Fee>0) {
+    	        mysql_query("INSERT INTO `money_transactions_detail`
+    	                                (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
+                	              VALUES
+                	                     (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '$payable_Fee', '$course', '$currency_id', '$received_currency_id', '', '', '$type_id', 5, 1)");
+    	    }
+    	    
+    	    if ($yield>0) {
+    	        mysql_query("INSERT INTO `money_transactions_detail`
+                        	            (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
+                        	      VALUES
+                        	            (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '$yield', '$course', '$currency_id', '$received_currency_id', '', '', '$type_id', 6, 1)");
+    	    }
+    	    
+    	    $res_car_out = mysql_query("SELECT id 
+                                        FROM   client_loan_schedule 
+                                        WHERE  id > '$hidde_id' AND client_loan_schedule.client_loan_agreement_id = '$client_loan_number'");
+    	    
+    	    if ($car_out == 1) {
+    	       mysql_query("UPDATE client_loan_agreement
+            	               SET canceled_status = 1,
+    	                           canseled_date   = '$transaction_date'
+            	            WHERE  client_loan_agreement.id = '$client_loan_number' ");
+    	       
+    	       mysql_query("UPDATE  client_loan_schedule
+                                SET activ_status = 1
+                             WHERE  client_loan_schedule.client_loan_agreement_id = '$client_loan_number'
+                             AND    client_loan_schedule.actived = 1
+                             AND    client_loan_schedule.schedule_date > '$transaction_date'");
+    	    }
+    	}elseif ($all_fee < $all_pay){
+    	    if ($penalti_fee>0){
+    	        mysql_query("INSERT INTO `money_transactions_detail`
+                        	            (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
+                        	      VALUES
+                        	            (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '$penalti_fee', '$course', '$currency_id', '$received_currency_id', '', '', '$type_id', 2, 1)");
+    	    }
+    	    
+    	    if($root>0 || $percent>0){
+        	    mysql_query("INSERT INTO `money_transactions_detail`
+                            	        (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
+                            	  VALUES
+                            	        (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '', '$course', '$currency_id', '$received_currency_id', '$root', '$percent', '$type_id', 1, 1)");
+        	    
+    	        if ($other_penalty == 1) {
+    	            mysql_query("UPDATE  `client_loan_schedule`
+                	                SET  `status`        = '1',
+    	                                 `penalty_check` = 1
+                	              WHERE  `id`     = '$res1[id]'");
+    	        }else{
+        	        mysql_query("UPDATE  `client_loan_schedule`
+        	                        SET  `status` = '1'
+        	                      WHERE  `id`     = '$res1[id]'");
     	        }
     	    
-    	        if ($surplus1>0) {
-    	            mysql_query("INSERT INTO `money_transactions_detail`
-                        	                (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
-                        	          VALUES
-                        	                (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '$surplus1', '$course', '$currency_id', '$received_currency_id', '', '', '2', '9', 1)");
+    	    }
+    	    
+    	    mysql_query("UPDATE  money_transactions_detail
+                         JOIN    money_transactions ON money_transactions.id = money_transactions_detail.transaction_id
+                         JOIN    client_loan_agreement ON client_loan_agreement.id = money_transactions.agreement_id
+    	                 SET     money_transactions_detail.actived = 0,
+    	                         money_transactions_detail.balance_transaction_id = '$hidde_transaction_id'
+                         WHERE   client_loan_agreement.client_id = '$client_id' 
+                         AND     money_transactions_detail.`status` = 3
+                         AND     money_transactions_detail.actived = 1");
+    	    
+    	    
+    	    //მეტობა სესხი
+    	    if ($surplus_type==1) {
+    	        if ($attachment_client_id>0) {
+    	            if ($surplus>0) {
+        	            mysql_query("INSERT INTO `money_transactions`
+                            	                (`datetime`, `user_id`, `client_loan_schedule_id`, `agreement_id`, `client_id`, `pay_datetime`, `pay_amount`, `extra_fee`, `course`, `currency_id`, `received_currency_id`, `month_fee_trasaction`, `type_id`, `status`, `actived`)
+                            	          VALUES
+                            	                (NOW(), '$user_id', '', '$attachment_agreement_id', '$attachment_client_id', '$transaction_date', '$surplus', '', '$course', '$currency_id', '$received_currency_id', '$month_fee_trasaction', '1', '1', '1')");
+        	             
+        	            $tr1_id = mysql_insert_id();
+        	             
+        	            mysql_query("INSERT INTO `money_transactions_detail`
+                            	                (`datetime`, `user_id`, `transaction_id`, `parent_tr_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
+                            	          VALUES
+                            	                (NOW(), '$user_id', '$tr1_id', '$hidde_transaction_id', '$transaction_date', '$surplus', '$course', '$currency_id', '$received_currency_id', '', '', '1', '3', 1)");
+    	            }
+    	        }else{
+        	        if ($surplus>0) {
+        	            mysql_query("INSERT INTO `money_transactions_detail`
+                                        	       (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
+                                        	 VALUES
+                                        	       (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '$surplus', '$course', '$currency_id', '$received_currency_id', '', '', '$type_id', '3', 1)");
+        	        }
     	        }
-	       }
-	    }
-	}
+    	    //ალდაგი
+    	    }elseif ($surplus_type==2){
+    	        if ($attachment_client_id>0) {
+    	            if ($surplus>0) {
+        	            mysql_query("INSERT INTO `money_transactions`
+                            	                (`datetime`, `user_id`, `client_loan_schedule_id`, `agreement_id`, `client_id`, `pay_datetime`, `pay_amount`, `extra_fee`, `course`, `currency_id`, `received_currency_id`, `month_fee_trasaction`, `type_id`, `status`, `actived`)
+                            	          VALUES
+                            	                (NOW(), '$user_id', '', '$attachment_agreement_id', '$attachment_client_id', '$transaction_date', '$surplus', '', '$course', '$currency_id', '$received_currency_id', '$month_fee_trasaction', '2', '1', '1')");
+        	        
+        	            $tr1_id = mysql_insert_id();
+        	        
+        	            mysql_query("INSERT INTO `money_transactions_detail`
+                            	                (`datetime`, `user_id`, `transaction_id`, `parent_tr_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
+                            	          VALUES
+                            	                (NOW(), '$user_id', '$tr1_id', '$hidde_transaction_id', '$transaction_date', '$surplus', '$course', '$currency_id', '$received_currency_id', '', '', '2', '9', 1)");
+    	            }
+    	        }else{
+    	            if ($surplus>0) {
+        	            mysql_query("INSERT INTO `money_transactions_detail`
+                            	                (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
+                            	          VALUES
+                            	                (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '$surplus', '$course', '$currency_id', '$received_currency_id', '', '', '2', '9', 1)");
+        	        }
+    	        }
+    	    //მეტობა სესხი + ალდაგი
+    	    }elseif ($surplus_type==3){
+    	        if ($attachment_client_id>0) {
+    	            if ($surplus>0 || $surplus1>0) {
+        	            mysql_query("INSERT INTO `money_transactions`
+                            	                (`datetime`, `user_id`, `client_loan_schedule_id`, `agreement_id`, `client_id`, `pay_datetime`, `pay_amount`, `extra_fee`, `course`, `currency_id`, `received_currency_id`, `month_fee_trasaction`, `type_id`, `status`, `actived`)
+                            	          VALUES
+                            	                (NOW(), '$user_id', '', '$attachment_agreement_id', '$attachment_client_id', '$transaction_date', '$surplus', '', '$course', '$currency_id', '$received_currency_id', '$month_fee_trasaction', '1', '1', '1')");
+        	        
+        	            $tr1_id = mysql_insert_id();
+    	            } 
+    	            if ($surplus>0) {
+    	                mysql_query("INSERT INTO `money_transactions_detail`
+                        	                    (`datetime`, `user_id`, `transaction_id`, `parent_tr_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
+                        	              VALUES
+                        	                    (NOW(), '$user_id', '$tr1_id', '$hidde_transaction_id', '$transaction_date', '$surplus', '$course', '$currency_id', '$received_currency_id', '', '', '1', '3', 1)");
+    	            }
+    	             
+    	            if ($surplus1>0) {
+    	                mysql_query("INSERT INTO `money_transactions_detail`
+                        	                    (`datetime`, `user_id`, `transaction_id`, `parent_tr_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
+                        	              VALUES
+                        	                    (NOW(), '$user_id', '$tr1_id', '$hidde_transaction_id', '$transaction_date', '$surplus1', '$course', '$currency_id', '$received_currency_id', '', '', '2', '9', 1)");
+    	            }
+    	             
+    	        }else{
+        	        if ($surplus>0) {
+        	            mysql_query("INSERT INTO `money_transactions_detail`
+                                        	       (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
+                                        	 VALUES
+                                        	       (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '$surplus', '$course', '$currency_id', '$received_currency_id', '', '', '1', '3', 1)");
+        	        }
+        	    
+        	        if ($surplus1>0) {
+        	            mysql_query("INSERT INTO `money_transactions_detail`
+                            	                (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
+                            	          VALUES
+                            	                (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '$surplus1', '$course', '$currency_id', '$received_currency_id', '', '', '2', '9', 1)");
+        	        }
+    	        }
+    	    }
+    	    
+    	    if ($payable_Fee>0) {
+    	        mysql_query("INSERT INTO `money_transactions_detail`
+                        	            (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
+                        	      VALUES
+                        	            (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '$payable_Fee', '$course', '$currency_id', '$received_currency_id', '', '', '$type_id', 5, 1)");
+    	    }
+    	     
+    	    if ($yield>0) {
+    	        mysql_query("INSERT INTO `money_transactions_detail`
+                        	            (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
+                        	      VALUES
+                        	            (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '$yield', '$course', '$currency_id', '$received_currency_id', '', '', '$type_id', 6, 1)");
+    	    }
+    	    
+    	    $res_car_out = mysql_query("SELECT id
+                            	        FROM   client_loan_schedule
+                            	        WHERE  id > '$hidde_id' AND client_loan_schedule.client_loan_agreement_id = '$client_loan_number'");
+    	     
+    	    if ($car_out == 1) {
+    	        mysql_query("UPDATE client_loan_agreement
+            	                SET canceled_status = 1,
+    	                            canseled_date   = '$transaction_date'
+            	             WHERE  client_loan_agreement.id = '$client_loan_number' ");
+    	        
+    	        mysql_query("UPDATE client_loan_schedule
+            	                SET activ_status = 1
+            	             WHERE  client_loan_schedule.client_loan_agreement_id = '$client_loan_number'
+            	             AND    client_loan_schedule.actived = 1
+            	             AND    client_loan_schedule.schedule_date > '$transaction_date'");
+    	    }
+    	}else{
+    	    
+    	    $check_loan_type = mysql_fetch_array(mysql_query("SELECT loan_type_id 
+                                                    	      FROM   client_loan_agreement 
+                                                    	      WHERE  client_id = '$client_id'"));
+    	    
+    	    if ($check_loan_type[loan_type_id] == 1) {
+    	        $percent              = $_REQUEST['percent'];
+    	        $penalti_fee          = $_REQUEST['penalti_fee'];
+    	        $percent1             = $_REQUEST['percent1'];
+    	        $penalti_fee1         = $_REQUEST['penalti_fee1'];
+    	        
+    	        if ($percent == '') {$percent = 0;}
+    	        if ($penalti_fee == '') {$penalti_fee = 0;}
+    	        if ($percent1 == '') {$percent1 = 0;}
+    	        if ($penalti_fee1 == '') {$penalti_fee1 = 0;}
+    	        
+    	        $sul_gadasaxdeli = $percent1+$penalti_fee1;
+    	        $sul_gadaxdili = $percent+$penalti_fee;
+    	        
+    	        if ($sul_gadasaxdeli<=$sul_gadaxdili) {
+    	            
+    	            mysql_query(" UPDATE  money_transactions_detail
+            	                  JOIN    money_transactions ON money_transactions.id = money_transactions_detail.transaction_id
+            	                  JOIN    client_loan_agreement ON client_loan_agreement.id = money_transactions.agreement_id
+            	                  SET     money_transactions_detail.actived = 0,
+            	                          money_transactions_detail.balance_transaction_id = '$hidde_transaction_id'
+            	                  WHERE   client_loan_agreement.client_id = '$client_id'
+            	                  AND     money_transactions_detail.`status` = 3
+            	                  AND     money_transactions_detail.actived = 1");
+    	             
+    	            if ($percent>=$percent1) {
+    	                 
+    	                mysql_query("INSERT INTO `money_transactions_detail`
+                        	                    (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
+                        	              VALUES
+                        	                    (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '', '$course', '$currency_id', '$received_currency_id', '$root', '$percent', '$type_id', 1, 1)");
+    	                 
+    	                mysql_query("UPDATE  `client_loan_schedule`
+                	                    SET  `status` = '1'
+                	                  WHERE  `id`     = '$res1[id]'");
+    	            }
+    	            if ($attachment_client_id>0) {
+    	                //მეტობა
+    	                if ($surplus>0 || $surplus1>0) {
+    	                    mysql_query("INSERT INTO `money_transactions`
+                        	                        (`datetime`, `user_id`, `client_loan_schedule_id`, `agreement_id`, `client_id`, `pay_datetime`, `pay_amount`, `extra_fee`, `course`, `currency_id`, `received_currency_id`, `month_fee_trasaction`, `type_id`, `status`, `actived`)
+                        	                  VALUES
+                        	                        (NOW(), '$user_id', '', '$attachment_agreement_id', '$attachment_client_id', '$transaction_date', '$surplus', '', '$course', '$currency_id', '$received_currency_id', '$month_fee_trasaction', '1', '1', '1')");
+    	            
+    	                    $tr1_id = mysql_insert_id();
+    	                    if ($surplus>0) {
+        	                    mysql_query("INSERT INTO `money_transactions_detail`
+                            	                        (`datetime`, `user_id`, `transaction_id`, `parent_tr_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
+                            	                  VALUES
+                            	                        (NOW(), '$user_id', '$tr1_id', '$hidde_transaction_id', '$transaction_date', '$surplus', '$course', '$currency_id', '$received_currency_id', '', '', '1', '3', 1)");
+    	                    }
+    	                    if ($surplus1>0) {
+    	                        mysql_query("INSERT INTO `money_transactions_detail`
+                        	                            (`datetime`, `user_id`, `transaction_id`, `parent_tr_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
+                        	                      VALUES
+                        	                            (NOW(), '$user_id', '$tr1_id', '$hidde_transaction_id', '$transaction_date', '$surplus1', '$course', '$currency_id', '$received_currency_id', '', '', '2', '9', 1)");
+    	                    }
+    	                }
+    	            }else{
+        	            if ($surplus>0) {
+        	                mysql_query("INSERT INTO `money_transactions_detail`
+                            	                    (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
+                            	              VALUES
+                            	                    (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '$surplus', '$course', '$currency_id', '$received_currency_id', '', '', '$type_id', '3', 1)");
+        	            }
+        	             
+        	            if ($surplus1>0) {
+        	                mysql_query("INSERT INTO `money_transactions_detail`
+                            	                    (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
+                            	              VALUES
+                            	                    (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '$surplus1', '$course', '$currency_id', '$received_currency_id', '', '', '2', '9', 1)");
+        	            }
+    	            }
+    	        }else{
+    	            
+    	            mysql_query(" UPDATE  money_transactions_detail
+                	                JOIN    money_transactions ON money_transactions.id = money_transactions_detail.transaction_id
+                	                JOIN    client_loan_agreement ON client_loan_agreement.id = money_transactions.agreement_id
+                	                SET     money_transactions_detail.actived = 0,
+                	                money_transactions_detail.balance_transaction_id = '$hidde_transaction_id'
+                	                WHERE   client_loan_agreement.client_id = '$client_id'
+                	                AND     money_transactions_detail.`status` = 3
+                	                AND     money_transactions_detail.actived = 1");
+    	            if ($attachment_client_id>0) {
+    	                //მეტობა
+    	                if ($surplus>0 || $surplus1>0) {
+    	                    mysql_query("INSERT INTO `money_transactions`
+                        	                        (`datetime`, `user_id`, `client_loan_schedule_id`, `agreement_id`, `client_id`, `pay_datetime`, `pay_amount`, `extra_fee`, `course`, `currency_id`, `received_currency_id`, `month_fee_trasaction`, `type_id`, `status`, `actived`)
+                        	                  VALUES
+                        	                        (NOW(), '$user_id', '', '$attachment_agreement_id', '$attachment_client_id', '$transaction_date', '$surplus', '', '$course', '$currency_id', '$received_currency_id', '$month_fee_trasaction', '1', '1', '1')");
+    	                     
+    	                    $tr1_id = mysql_insert_id();
+    	                    if ($surplus>0) {
+    	                        mysql_query("INSERT INTO `money_transactions_detail`
+                        	                            (`datetime`, `user_id`, `transaction_id`, `parent_tr_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
+                        	                      VALUES
+                        	                            (NOW(), '$user_id', '$tr1_id', '$hidde_transaction_id', '$transaction_date', '$surplus', '$course', '$currency_id', '$received_currency_id', '', '', '1', '3', 1)");
+    	                    }
+    	                    if ($surplus1>0) {
+    	                        mysql_query("INSERT INTO `money_transactions_detail`
+                        	                            (`datetime`, `user_id`, `transaction_id`, `parent_tr_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
+                        	                      VALUES
+                        	                            (NOW(), '$user_id', '$tr1_id', '$hidde_transaction_id', '$transaction_date', '$surplus1', '$course', '$currency_id', '$received_currency_id', '', '', '2', '9', 1)");
+    	                    }
+    	                }
+    	            }else{
+        	            if ($surplus>0) {
+        	                mysql_query("INSERT INTO `money_transactions_detail`
+                            	                    (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
+                            	              VALUES
+                            	                    (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '$surplus', '$course', '$currency_id', '$received_currency_id', '', '', '$type_id', '3', 1)");
+        	            }
+        	             
+        	            if ($surplus1>0) {
+        	                mysql_query("INSERT INTO `money_transactions_detail`
+                            	                    (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
+                            	              VALUES
+                            	                    (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '$surplus1', '$course', '$currency_id', '$received_currency_id', '', '', '2', '9', 1)");
+        	            }
+    	            }
+    	            if ($surplus1 <= 0 && $surplus1 <= 0) {
+    	                global  $error;
+    	                $error = 'გადანწილებული თანხა არა საკმარისი';
+    	            }
+    	        }
+    	        
+    	    }else{
+    	        
+    	       mysql_query(" UPDATE  money_transactions_detail
+            	             JOIN    money_transactions ON money_transactions.id = money_transactions_detail.transaction_id
+            	             JOIN    client_loan_agreement ON client_loan_agreement.id = money_transactions.agreement_id
+            	             SET  money_transactions_detail.actived = 0,
+            	             money_transactions_detail.balance_transaction_id = '$hidde_transaction_id'
+            	             WHERE   client_loan_agreement.client_id = '$client_id'
+            	             AND     money_transactions_detail.`status` = 3
+            	             AND     money_transactions_detail.actived = 1");
+    	       
+    	       
+    	       if ($attachment_client_id>0) {
+    	           //მეტობა
+    	           if ($surplus>0 || $surplus1>0) {
+    	               mysql_query("INSERT INTO `money_transactions`
+    	                   (`datetime`, `user_id`, `client_loan_schedule_id`, `agreement_id`, `client_id`, `pay_datetime`, `pay_amount`, `extra_fee`, `course`, `currency_id`, `received_currency_id`, `month_fee_trasaction`, `type_id`, `status`, `actived`)
+    	                   VALUES
+    	                   (NOW(), '$user_id', '', '$attachment_agreement_id', '$attachment_client_id', '$transaction_date', '$surplus', '', '$course', '$currency_id', '$received_currency_id', '$month_fee_trasaction', '1', '1', '1')");
+    	       
+    	               $tr1_id = mysql_insert_id();
+    	               if ($surplus>0) {
+    	                   mysql_query("INSERT INTO `money_transactions_detail`
+    	                       (`datetime`, `user_id`, `transaction_id`, `parent_tr_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
+    	                       VALUES
+    	                       (NOW(), '$user_id', '$tr1_id', '$hidde_transaction_id', '$transaction_date', '$surplus', '$course', '$currency_id', '$received_currency_id', '', '', '1', '3', 1)");
+    	               }
+    	               if ($surplus1>0) {
+    	                   mysql_query("INSERT INTO `money_transactions_detail`
+    	                       (`datetime`, `user_id`, `transaction_id`, `parent_tr_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
+    	                       VALUES
+    	                       (NOW(), '$user_id', '$tr1_id', '$hidde_transaction_id', '$transaction_date', '$surplus1', '$course', '$currency_id', '$received_currency_id', '', '', '2', '9', 1)");
+    	               }
+    	           }
+    	       }else{
+    	           //მეტობა
+        	        if ($surplus>0) {
+        	            mysql_query("INSERT INTO `money_transactions_detail`
+                                        	       (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
+                                        	 VALUES
+                                        	       (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '$surplus', '$course', '$currency_id', '$received_currency_id', '', '', '$type_id', '3', 1)");
+        	        }
+        	    
+        	        if ($surplus1>0) {
+        	            mysql_query("INSERT INTO `money_transactions_detail`
+                            	                (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
+                            	          VALUES
+                            	                (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '$surplus1', '$course', '$currency_id', '$received_currency_id', '', '', '2', '9', 1)");
+        	        }
+    	       }
+    	    }
+    	}
+    }
 }
 
 function Add1($tr_id, $hidde_id, $transaction_date, $pledge_or_other_payed, $pledge_or_other_surplus, $course, $currency_id, $received_currency_id, $type_id, $surplus_type){
@@ -1447,12 +1558,12 @@ function GetPage($res = ''){
     				</tr>
     			    <tr>
     	                <td style="width: 200px;"></td>
-    					<td style="width: 280px;"></td>
+    					<td style="width: 280px;"><label calss="label" style="padding-top: 5px;" for="name">შეთანხმება</label></td>
     					<td style="width: 120px;"><label calss="label" style="padding-top: 5px;" for="date">დანართი</label></td>
     				</tr>
     				<tr>
     	                <td style="width: 200px;"></td>
-    					<td style="width: 280px;"></td>
+    					<td style="width: 280px;"><input class="idle" style="width: 15px;" id="exception_agr" value="1" disabled type="checkbox"></td>
     					<td style="width: 120px;"><select id="attachment_client_id"  calss="label" style="width: 180px;"></select></td>
     				</tr>
     			</table>
