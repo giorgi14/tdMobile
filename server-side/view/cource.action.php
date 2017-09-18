@@ -120,6 +120,14 @@ function Savecource($id, $cource_date, $cource){
 	                    `datetime` = '$cource_date',
                         `cource`   = '$cource'
                  WHERE  `id`       = '$id'");
+	
+	mysql_query("UPDATE `money_transactions`
+        	        SET `course`           = '$cource'
+        	     WHERE  DATE(pay_datetime) = '$cource_date'");
+	
+	mysql_query("UPDATE `money_transactions_detail`
+        	        SET `course`           = '$cource'
+        	     WHERE  DATE(pay_datetime) = '$cource_date'");
 }
 
 function DisableHolidays($id){
