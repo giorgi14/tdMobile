@@ -66,9 +66,10 @@ switch ($action) {
                                                                client_loan_schedule.id AS sh_id 
                                                      FROM      client_loan_agreement 
                                                      JOIN      client_loan_schedule ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
-                                                     WHERE     client_loan_agreement.client_id = '$local_id' AND client_loan_schedule.`status` = 0 
+                                                     WHERE     client_loan_agreement.client_id = '$local_id' 
                                                      AND       client_loan_schedule.schedule_date <= '$reregistering_date'
-                                                     ORDER BY  pay_date DESC"));
+                                                     ORDER BY  pay_date DESC
+                                                     LIMIT 1"));
         if ($reregistering_fee>0) {
             mysql_query("INSERT INTO `money_transactions`
                                     (`datetime`, `user_id`, `client_loan_schedule_id`, `agreement_id`, `client_id`, `pay_datetime`, `pay_amount`, `extra_fee`, `course`, `currency_id`, `received_currency_id`, `month_fee_trasaction`, `type_id`, `status`, `reg_ltd`, `actived`)
