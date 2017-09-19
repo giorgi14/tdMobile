@@ -598,6 +598,7 @@ switch ($action) {
                                             				 client_loan_schedule.percent,
                                             				 client_loan_schedule.penalty,
     		                                                 client_loan_agreement.pledge_fee,
+    		                                                 client_loan_agreement.agreement_id AS agree_id,
                                             			     client_loan_agreement.loan_currency_id,
     		                                                 client_loan_agreement.id AS agrement_id,
     		                                                 client_loan_agreement.loan_amount,
@@ -641,7 +642,7 @@ switch ($action) {
     		$penalty = $res[penalty];
     
     		if ($type_id == 1 || $type_id == 0) {	
-        		$data = array('status' => 1, 'schedule_date'=>$res[schedule_date], 'id' => $res[id],'pay_amount' => $res[root] + $res[percent] + $penalty, 'root' => $res[root], 'percent' => $res[percent], 'penalty' => $penalty, 'client_data' => client($res[client_id]), 'client_attachment_data' => client_attachment($res[client_id]), 'agrement_data' => client_loan_number($res[agrement_id]), 'currenc' => currency($res[loan_currency_id]),'pay_amount1' => $res1[pay_amount], 'root1' => $res1[pay_root], 'percent1' => $res1[pay_percent], 'penalty1' => $res1[pay_penalty], 'loan_pay_amount' => $loan_pay_amount);
+        		$data = array('status' => 1, 'schedule_date'=>$res[schedule_date], 'id' => $res[id],'pay_amount' => $res[root] + $res[percent] + $penalty, 'root' => $res[root], 'percent' => $res[percent], 'penalty' => $penalty, 'client_data' => client($res[client_id]), 'client_attachment_data' => client_attachment($res[agree_id], $res['client_id']), 'agrement_data' => client_loan_number($res[agrement_id]), 'currenc' => currency($res[loan_currency_id]),'pay_amount1' => $res1[pay_amount], 'root1' => $res1[pay_root], 'percent1' => $res1[pay_percent], 'penalty1' => $res1[pay_penalty], 'loan_pay_amount' => $loan_pay_amount);
     		}
     	}elseif ($type_id == 2){
 		    $receivedd_currency_id = $_REQUEST['received_currency_id'];
@@ -681,11 +682,12 @@ switch ($action) {
                                     		       AND     money_transactions_detail.actived = 1"));
 		    
 		    $check_client = mysql_fetch_array(mysql_query("SELECT id, 
-                                                                  client_id 
+                                                                  client_id, 
+		                                                          agreement_id
                                                            FROM   client_loan_agreement 
                                                            WHERE  client_id = '$id' OR id = '$agr_id'"));
 		    
-		    $data = array('status' => 2, 'fee_lari' => $res_pledge[fee_lari], 'fee_dolari' => $res_pledge[fee_dolari], 'trasnsaction_detail_id' => $res_pledge[id], 'client_data' => client($check_client[client_id]), 'agrement_data' => client_loan_number($check_client[id]), 'client_attachment_data' => client_attachment($check_client[client_id]), 'currency_data' => currency($receivedd_currency_id), 'pay_amount1' => $res1[pay_amount_gel], 'pay_amount2' => $res1[pay_amount_usd]);
+		    $data = array('status' => 2, 'fee_lari' => $res_pledge[fee_lari], 'fee_dolari' => $res_pledge[fee_dolari], 'trasnsaction_detail_id' => $res_pledge[id], 'client_data' => client($check_client[client_id]), 'agrement_data' => client_loan_number($check_client[id]), 'client_attachment_data' => client_attachment($check_client[agreement_id], $check_client[client_id]), 'currency_data' => currency($receivedd_currency_id), 'pay_amount1' => $res1[pay_amount_gel], 'pay_amount2' => $res1[pay_amount_usd]);
 		}elseif ($type_id == 3){
 		    
 		    $res_other = mysql_fetch_assoc(mysql_query("SELECT ROUND(SUM(money_transactions_detail.pay_amount),2) AS pay_amount
@@ -712,11 +714,12 @@ switch ($action) {
 		    }
 		    
 		    $check_client = mysql_fetch_array(mysql_query("SELECT id,
-                                            		              client_id
+                                            		              client_id,
+		                                                          agreement_id
                                             		       FROM   client_loan_agreement
                                             		       WHERE  client_id = '$id' OR id = '$agr_id'"));
 		    
-		    $data = array('status'=>3, 'client_data' => client($check_client[client_id]), 'client_attachment_data' => client_attachment($check_client[client_id]), 'agrement_data' => client_loan_number($check_client[id]), 'other_pay' => $other_pay);
+		    $data = array('status'=>3, 'client_data' => client($check_client[client_id]), 'client_attachment_data' => client_attachment($check_client[agreement_id], $check_client[client_id]), 'agrement_data' => client_loan_number($check_client[id]), 'other_pay' => $other_pay);
 		}
 		
 		break;
@@ -810,12 +813,13 @@ function client($id){
     return $data;
 }
 
-function client_attachment($id){
+function client_attachment($id, $cl_id){
     $req = mysql_query("SELECT client.id,
-                               CONCAT(client_loan_agreement.agreement_id, ' დანართი ', client_loan_agreement.attachment_number) AS `name`  
+                               CONCAT('ს/ხ ', client_loan_agreement.agreement_id, IF(client_loan_agreement.attachment_number != '', CONCAT(' დანართი ', client_loan_agreement.attachment_number), '')) AS `name`  
                         FROM   client_loan_agreement
                         JOIN   client ON client.id = client_loan_agreement.client_id
-                        WHERE  client.attachment_id = '$id' 
+                        WHERE  client_loan_agreement.agreement_id = '$id'
+                        AND    client_loan_agreement.client_id != '$cl_id'
                         AND    client_loan_agreement.actived = 1 
                         AND    client.actived = 1 
                         AND    client_loan_agreement.canceled_status = 0");
