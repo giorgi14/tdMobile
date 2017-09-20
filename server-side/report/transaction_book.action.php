@@ -555,7 +555,7 @@ function GetPage($id){
                 										WHEN money_transactions_detail.currency_id = client_loan_agreement.loan_currency_id THEN money_transactions_detail.pay_amount
                 										WHEN money_transactions_detail.currency_id !=client_loan_agreement.loan_currency_id AND money_transactions_detail.currency_id = 1 THEN money_transactions_detail.pay_amount/money_transactions_detail.course
                 										WHEN money_transactions_detail.currency_id !=client_loan_agreement.loan_currency_id AND money_transactions_detail.currency_id = 2 THEN money_transactions_detail.pay_amount*money_transactions_detail.course
-                									END),2),0)+0.01 AS pay_amount
+                									END),2),0) AS pay_amount
                                             FROM    money_transactions_detail
                                             JOIN    money_transactions ON money_transactions.id = money_transactions_detail.transaction_id
                                             JOIN    client_loan_schedule ON client_loan_schedule.id = money_transactions.client_loan_schedule_id
