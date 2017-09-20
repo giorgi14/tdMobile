@@ -226,114 +226,114 @@
 			}
 		});
 		
-		$(document).on("change", "#car_out", function () {
-	    	car_out = $("input[id='car_out']:checked").val();
+// 		$(document).on("change", "#car_out", function () {
+// 	    	car_out = $("input[id='car_out']:checked").val();
 	    	
-	    	if(car_out == 1){
-	    		$(".car_out_class").css('display', '');
-	    		param = new Object();
+// 	    	if(car_out == 1){
+// 	    		$(".car_out_class").css('display', '');
+// 	    		param = new Object();
 		    	
-	    		param.act              = "get_canceled-loan";
-	    		param.client_id        = $("#client_id").val();
-	    		param.transaction_date = $("#transaction_date").val();
+// 	    		param.act              = "get_canceled-loan";
+// 	    		param.client_id        = $("#client_id").val();
+// 	    		param.transaction_date = $("#transaction_date").val();
 	    		
-		    	$.ajax({
-	    	        url: aJaxURL,
-	    		    data: param,
-	    	        success: function(data) {       
-	    				if(typeof(data.error) != "undefined"){
-	    					if(data.error != ""){
-	    						alert(data.error);
-	    					}else{
-	        					$("#month_fee1").val(data.all_fee);
-	        					$("#root1").val(data.remaining_root);
-	        					$("#percent1").val(data.percent);
-	        					$("#penalti_fee1").val(data.penalty);
-	        					$("#payable_Fee1").val(data.sakomisio);
-	        					$("#yield1").val(data.nasargeblebebi);
-	    					}
-	    				}
-	    	    	}
-	    	    });
-		    }else{
-		    	$(".car_out_class").css('display', 'none');
-		    	param         =  new Object();
-			    param.act     = "get_shedule";
-			    param.status  = 1;
-			    param.id                   = $("#client_id").val();
-			    param.type_id              = $('#type_id').val();
-			    param.transaction_date     = $("#transaction_date").val();
-			    param.month_fee_trasaction = $("#month_fee_trasaction").val();
-			    param.received_currency_id = $("#received_currency_id").val();
-			    param.course               = $("#course").val();
+// 		    	$.ajax({
+// 	    	        url: aJaxURL,
+// 	    		    data: param,
+// 	    	        success: function(data) {       
+// 	    				if(typeof(data.error) != "undefined"){
+// 	    					if(data.error != ""){
+// 	    						alert(data.error);
+// 	    					}else{
+// 	        					$("#month_fee1").val(data.all_fee);
+// 	        					$("#root1").val(data.remaining_root);
+// 	        					$("#percent1").val(data.percent);
+// 	        					$("#penalti_fee1").val(data.penalty);
+// 	        					$("#payable_Fee1").val(data.sakomisio);
+// 	        					$("#yield1").val(data.nasargeblebebi);
+// 	    					}
+// 	    				}
+// 	    	    	}
+// 	    	    });
+// 		    }else{
+// 		    	$(".car_out_class").css('display', 'none');
+// 		    	param         =  new Object();
+// 			    param.act     = "get_shedule";
+// 			    param.status  = 1;
+// 			    param.id                   = $("#client_id").val();
+// 			    param.type_id              = $('#type_id').val();
+// 			    param.transaction_date     = $("#transaction_date").val();
+// 			    param.month_fee_trasaction = $("#month_fee_trasaction").val();
+// 			    param.received_currency_id = $("#received_currency_id").val();
+// 			    param.course               = $("#course").val();
 			    
-			    $.ajax({
-			        url: aJaxURL,
-				    data: param,
-			        success: function(data) {			        
-						if(typeof(data.error) != 'undefined'){
-							if(data.error != ''){
-								alert(data.error);
-							}else{
-								if(data.status==1){
-	    							$("#month_fee1").val(data.pay_amount);
-	    							$("#root1").val(data.root);
-	    							$("#percent1").val(data.percent);
-	    							$("#penalti_fee1").val(data.penalty);
+// 			    $.ajax({
+// 			        url: aJaxURL,
+// 				    data: param,
+// 			        success: function(data) {			        
+// 						if(typeof(data.error) != 'undefined'){
+// 							if(data.error != ''){
+// 								alert(data.error);
+// 							}else{
+// 								if(data.status==1){
+// 	    							$("#month_fee1").val(data.pay_amount);
+// 	    							$("#root1").val(data.root);
+// 	    							$("#percent1").val(data.percent);
+// 	    							$("#penalti_fee1").val(data.penalty);
 
-	    							$("#month_fee2").val(data.pay_amount1);
-	    							$("#root2").val(data.root1);
-	    							$("#percent2").val(data.percent1);
-	    							$("#penalti_fee2").val(data.penalty1);
-	    							$("#month_fee").val(data.loan_pay_amount);
-	    							$("#extra_fee").val((parseFloat(data.loan_pay_amount)+parseFloat(data.pay_amount1)).toFixed(2));
+// 	    							$("#month_fee2").val(data.pay_amount1);
+// 	    							$("#root2").val(data.root1);
+// 	    							$("#percent2").val(data.percent1);
+// 	    							$("#penalti_fee2").val(data.penalty1);
+// 	    							$("#month_fee").val(data.loan_pay_amount);
+// 	    							$("#extra_fee").val((parseFloat(data.loan_pay_amount)+parseFloat(data.pay_amount1)).toFixed(2));
 	    							
-	    							$("#hidde_id").val(data.id);
-	    							$("#currency_id").html(data.currenc).trigger("chosen:updated");
-	    							$('#currency_id').prop('disabled', true).trigger("chosen:updated");
-	    							$('#client_loan_number').html(data.agrement_data).trigger("chosen:updated");
-		    					}else if(data.status==2){
-		    						$("#month_fee1").val(data.insurance_fee);
-		    						$("#month_fee").val(data.loan_pay_amount);
-		    						$("#extra_fee").val((parseFloat(data.loan_pay_amount)+parseFloat(data.pay_amount1)).toFixed(2));
+// 	    							$("#hidde_id").val(data.id);
+// 	    							$("#currency_id").html(data.currenc).trigger("chosen:updated");
+// 	    							$('#currency_id').prop('disabled', true).trigger("chosen:updated");
+// 	    							$('#client_loan_number').html(data.agrement_data).trigger("chosen:updated");
+// 		    					}else if(data.status==2){
+// 		    						$("#month_fee1").val(data.insurance_fee);
+// 		    						$("#month_fee").val(data.loan_pay_amount);
+// 		    						$("#extra_fee").val((parseFloat(data.loan_pay_amount)+parseFloat(data.pay_amount1)).toFixed(2));
 		    						
-		    						$("#root1").val('');
-	    							$("#percent1").val('');
-	    							$("#penalti_fee1").val('');
+// 		    						$("#root1").val('');
+// 	    							$("#percent1").val('');
+// 	    							$("#penalti_fee1").val('');
 
-	    							$("#month_fee2").val('');
-	    							$("#root2").val('');
-	    							$("#percent2").val('');
-	    							$("#penalti_fee2").val('');
+// 	    							$("#month_fee2").val('');
+// 	    							$("#root2").val('');
+// 	    							$("#percent2").val('');
+// 	    							$("#penalti_fee2").val('');
 
-	    							$("#hidde_id").val(data.id);
-	    							$('#currency_id').prop('disabled', false).trigger("chosen:updated");
-	    							$('#client_loan_number').html(data.agrement_data).trigger("chosen:updated");
-	    						}else if(data.status==3){
-			    					$("#month_fee1").val(data.pledge_fee);
-			    					$("#month_fee").val(data.loan_pay_amount);
-			    					$("#extra_fee").val((parseFloat(data.loan_pay_amount)+parseFloat(data.pay_amount1)).toFixed(2));
+// 	    							$("#hidde_id").val(data.id);
+// 	    							$('#currency_id').prop('disabled', false).trigger("chosen:updated");
+// 	    							$('#client_loan_number').html(data.agrement_data).trigger("chosen:updated");
+// 	    						}else if(data.status==3){
+// 			    					$("#month_fee1").val(data.pledge_fee);
+// 			    					$("#month_fee").val(data.loan_pay_amount);
+// 			    					$("#extra_fee").val((parseFloat(data.loan_pay_amount)+parseFloat(data.pay_amount1)).toFixed(2));
 			    					
-			    					$("#root1").val('');
-	    							$("#percent1").val('');
-	    							$("#penalti_fee1").val('');
+// 			    					$("#root1").val('');
+// 	    							$("#percent1").val('');
+// 	    							$("#penalti_fee1").val('');
 
-	    							$("#month_fee2").val('');
-	    							$("#root2").val('');
-	    							$("#percent2").val('');
-	    							$("#penalti_fee2").val('');
+// 	    							$("#month_fee2").val('');
+// 	    							$("#root2").val('');
+// 	    							$("#percent2").val('');
+// 	    							$("#penalti_fee2").val('');
 
-	    							$("#hidde_id").val(data.id);
-	    							$('#currency_id').prop('disabled', false).trigger("chosen:updated");
-	    						}
-							}
-						}
-				    }
-			    });
-		    }
+// 	    							$("#hidde_id").val(data.id);
+// 	    							$('#currency_id').prop('disabled', false).trigger("chosen:updated");
+// 	    						}
+// 							}
+// 						}
+// 				    }
+// 			    });
+// 		    }
 
 	    	
-		});
+// 		});
 
 		$(document).on("keydown", "#month_fee_trasaction", function (event) {
 			
