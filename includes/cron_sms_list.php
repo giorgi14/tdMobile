@@ -10,7 +10,12 @@ $result = mysql_query("SELECT  DATE_FORMAT(client_loan_schedule.pay_date, '%d.%m
                         	   client.`name` AS cl_name,
                     		   client.id AS cl_id,
                                client.phone,
-                    		   IF(client.id>=(SELECT old_client_id.number FROM `old_client_id` LIMIT 1), client_loan_agreement.id, client.exel_agreement_id) AS agr_id,
+                    		   CASE
+        						   WHEN NOT ISNULL(client.sub_client) AND client_loan_agreement.agreement_id>0 THEN CONCAT('ს/ხ ', client_loan_agreement.agreement_id, IF(client_loan_agreement.attachment_number='' OR ISNULL(client_loan_agreement.attachment_number),'',' დ.'), IF(client_loan_agreement.attachment_number='' OR ISNULL(client_loan_agreement.attachment_number), '', client_loan_agreement.attachment_number))
+        						   WHEN client.attachment_id > 0 AND client_loan_agreement.agreement_id>0 THEN CONCAT('ს/ხ ', client_loan_agreement.agreement_id, ' დ.', client_loan_agreement.attachment_number)
+                                   WHEN ISNULL(client.sub_client) AND client.attachment_id = 0 AND client_loan_agreement.agreement_id > 0 THEN CONCAT('ს/ხ ', client_loan_agreement.agreement_id)
+                                   WHEN ISNULL(client.sub_client) AND client.attachment_id = 0 AND client_loan_agreement.agreement_id = 0 THEN CONCAT('ს/ხ ', client_loan_agreement.oris_code)
+            			       END AS agr_id,
                     		   CONCAT(client_car.car_marc,' ',client_car.registration_number) AS cl_car_info,
                                client.sms_sent,
                                client_loan_schedule.penalty AS penalty
