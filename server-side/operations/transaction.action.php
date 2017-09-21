@@ -281,6 +281,7 @@ switch ($action) {
 	    $local_id      = $_REQUEST['client_id'];
         $pay_datee     = $_REQUEST['transaction_date'];
         $exception_agr = $_REQUEST['exception_agr'];
+        $other_penalty = $_REQUEST['other_penalty'];
         
         $check_count = mysql_query("SELECT client_loan_schedule.id,
                                            DATEDIFF('$pay_datee', client_loan_schedule.pay_date) AS gadacilebuli,
@@ -313,14 +314,18 @@ switch ($action) {
                                                                  AND    DATE(date)<= '$pay_datee'"));
             
             $gadacilebuli_day_count = $gadacilebuli_day_count - $check_holliday_day[count];
-            if ($i == 0) {
-                if ($gadacilebuli_day_count>0 && $gadacilebuli_day_count<=$row_all[penalty_days]) {
-                    $penalty1 = round(($remainig_root * ($row_all[penalty_percent]/100))*$gadacilebuli_day_count,2);
-                }elseif ($gadacilebuli_day_count>0 && $gadacilebuli_day_count>$row_all[penalty_days]){
-                    $penalty1 = round(round(($remainig_root * ($row_all[penalty_percent]/100))*$row_all[penalty_days],2)+round(($remainig_root * ($row_all[penalty_additional_percent]/100))*($gadacilebuli_day_count-$row_all[penalty_days]),2),2);
-                }
-            }else{
+            if ($other_penalty == 1) {
                 $penalty1 = round(($remainig_root * ($row_all[penalty_additional_percent]/100))*$gadacilebuli_day_count,2);
+            }else{
+                if ($i == 0) {
+                    if ($gadacilebuli_day_count>0 && $gadacilebuli_day_count<=$row_all[penalty_days]) {
+                        $penalty1 = round(($remainig_root * ($row_all[penalty_percent]/100))*$gadacilebuli_day_count,2);
+                    }elseif ($gadacilebuli_day_count>0 && $gadacilebuli_day_count>$row_all[penalty_days]){
+                        $penalty1 = round(round(($remainig_root * ($row_all[penalty_percent]/100))*$row_all[penalty_days],2)+round(($remainig_root * ($row_all[penalty_additional_percent]/100))*($gadacilebuli_day_count-$row_all[penalty_days]),2),2);
+                    }
+                }else{
+                    $penalty1 = round(($remainig_root * ($row_all[penalty_additional_percent]/100))*$gadacilebuli_day_count,2);
+                }
             }
             $i++;
             
@@ -459,12 +464,15 @@ switch ($action) {
             $gadacilebuli_day_count = $gadacilebuli_day_count-$check_holliday_day[count];
             
             $penalty = 0;
-            if ($gadacilebuli_day_count>0 && $gadacilebuli_day_count<=$result[penalty_days] && $result[status] == 0) {
-                $penalty = round(($remainig_root * ($result[penalty_percent]/100))*$gadacilebuli_day_count,2);
-            }elseif ($gadacilebuli_day_count>0 && $gadacilebuli_day_count>$result[penalty_days] && $result[status] == 0){
-                $penalty = round(round(($remainig_root * ($result[penalty_percent]/100))*$result[penalty_days],2)+round(($remainig_root * ($result[penalty_additional_percent]/100))*($gadacilebuli_day_count-$result[penalty_days]),2),2);
+            if ($other_penalty == 1) {
+                $penalty1 = round(($remainig_root * ($result[penalty_additional_percent]/100))*$gadacilebuli_day_count,2);
+            }else{
+                if ($gadacilebuli_day_count>0 && $gadacilebuli_day_count<=$result[penalty_days] && $result[status] == 0) {
+                    $penalty = round(($remainig_root * ($result[penalty_percent]/100))*$gadacilebuli_day_count,2);
+                }elseif ($gadacilebuli_day_count>0 && $gadacilebuli_day_count>$result[penalty_days] && $result[status] == 0){
+                    $penalty = round(round(($remainig_root * ($result[penalty_percent]/100))*$result[penalty_days],2)+round(($remainig_root * ($result[penalty_additional_percent]/100))*($gadacilebuli_day_count-$result[penalty_days]),2),2);
+                }
             }
-            
             $sakomisio      = '0.00';
             $nasargeblebi   = $result[nasargeblebi_dgeebi];
             

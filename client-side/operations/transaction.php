@@ -809,12 +809,12 @@
 	    	if(car_out == 1){
 	    		$(".car_out_class").css('display', '');
 	    		document.getElementById("exception_agr").disabled = true;
-	    		document.getElementById("other_penalty").disabled = true;
 	    		param = new Object();
 		    	
 	    		param.act              = "get_canceled-loan";
 	    		param.client_id        = $("#client_id").val();
 	    		param.transaction_date = $("#transaction_date").val();
+	    		param.other_penalty    = $("input[id='other_penalty']:checked").val();
 	    		
 		    	$.ajax({
 	    	        url: aJaxURL,
@@ -839,7 +839,6 @@
 		    }else{
 		    	$(".car_out_class").css('display', 'none');
 		    	document.getElementById("exception_agr").disabled = false;
-		    	document.getElementById("other_penalty").disabled = false;
 		    	param         =  new Object();
 			    param.act     = "get_shedule";
 			    param.status  = 1;
@@ -849,6 +848,7 @@
 			    param.month_fee_trasaction = $("#month_fee_trasaction").val();
 			    param.received_currency_id = $("#received_currency_id").val();
 			    param.course               = $("#course").val();
+			    param.other_penalty        = $("input[id='other_penalty']:checked").val();
 			    
 			    $.ajax({
 			        url: aJaxURL,
@@ -1072,7 +1072,7 @@
 
 		$(document).on("change", "#client_id", function () {
 			
-			if($(this).val()>0 && $('#type_id').val() == 1 && $("input[id='other_penalty']:checked").val()!=1){
+			if($(this).val()>0 && $('#type_id').val() == 1){
             	document.getElementById("car_out").disabled = false;
             	document.getElementById("exception_agr").disabled = false;
             }else{
@@ -1164,7 +1164,7 @@
 
 		$(document).on("change", "#client_loan_number", function () {
 			
-            if($(this).val()>0 && $('#type_id').val() == 1 && $("input[id='other_penalty']:checked").val()!=1){
+            if($(this).val()>0 && $('#type_id').val() == 1){
             	document.getElementById("exception_agr").disabled = false;
             	document.getElementById("car_out").disabled = false;
             }else{
@@ -1260,11 +1260,9 @@
 		$(document).on("change", "#other_penalty", function () {
 			if($("input[id='other_penalty']:checked").val() == 1){
     			document.getElementById("exception_agr").disabled = true;
-            	document.getElementById("car_out").disabled = true;
-			}else{
+            }else{
 				document.getElementById("exception_agr").disabled = false;
-	        	document.getElementById("car_out").disabled = false;
-			}
+	        }
 			param         =  new Object();
 		    param.act     = "get_shedule";
 		    param.id      = $("#client_id").val();
