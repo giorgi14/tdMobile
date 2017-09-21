@@ -24,6 +24,9 @@
 				<ss:Border ss:Position="Right" ss:Color="#000000" ss:Weight="1" ss:LineStyle="Continuous" />
 			</ss:Borders>
 		</ss:Style>
+		<ss:Style ss:ID="m113863508">
+           <ss:Interior ss:Color="#00B050" ss:Pattern="Solid"/>
+        </ss:Style>
 		<ss:Style ss:ID="title">
 			<ss:Borders />
 			<ss:NumberFormat ss:Format="@" />
@@ -45,7 +48,7 @@
 			<ss:NamedRange ss:Name="Print_Titles" ss:RefersTo="=' 100 '!R1:R2" />
 		</ss:Names>
     
-		<ss:Table x:FullRows="1" x:FullColumns="1" ss:ExpandedColumnCount="16" ss:ExpandedRowCount="100">
+		<ss:Table x:FullRows="1" x:FullColumns="1" ss:ExpandedColumnCount="8" ss:ExpandedRowCount="100">
     
 			<ss:Column ss:AutoFitWidth="1" ss:Width="100" />
 			<ss:Column ss:AutoFitWidth="1" ss:Width="100" />
@@ -55,14 +58,14 @@
 			<ss:Column ss:AutoFitWidth="1" ss:Width="100" />
 		    <ss:Column ss:AutoFitWidth="1" ss:Width="100" />
 		    
-			<ss:Row ss:AutoFitHeight="1" ss:Height="25">
-				<ss:Cell ss:MergeAcross="7" ss:StyleID="headercell">
-					<ss:Data ss:Type="String">ავტოტრანსპორტის დაზღვევის განაცხადი</ss:Data>
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
+				<ss:Cell ss:MergeAcross="7" ss:StyleID="headercell" >
+					<ss:Data ss:Type="String"></ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 			</ss:Row>
-		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
-				<ss:Cell ss:MergeAcross="7" ss:StyleID="headercell">
+			<ss:Row ss:AutoFitHeight="1" ss:Height="25">
+				<ss:Cell ss:MergeAcross="7" ss:StyleID="m113863508">
 					<ss:Data ss:Type="String">ავტოტრანსპორტის დაზღვევის განაცხადი</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
@@ -143,7 +146,7 @@
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		        <ss:Cell ss:MergeAcross="3" ss:StyleID="headercell">
-					<ss:Data ss:Type="String">ხათუნა აა მამრიკიშვილი (პირადი # 53001048586)</ss:Data>
+					<ss:Data ss:Type="String">ზურიკო ორაგველიძე (პირადი # 33801082574)</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 			</ss:Row>
@@ -153,12 +156,12 @@
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		        <ss:Cell ss:MergeAcross="3" ss:StyleID="headercell">
-					<ss:Data ss:Type="String"> თბილისი, გუდარეხის N18 995577004815</ss:Data>
+					<ss:Data ss:Type="String"> ოზურგეთი ს. შემოქმედი 995598173732</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 			</ss:Row>
 		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
-				<ss:Cell ss:MergeAcross="7" ss:StyleID="headercell">
+				<ss:Cell ss:MergeAcross="7" ss:StyleID="m113863508">
 					<ss:Data ss:Type="String">პიროვნებათა მონაცემები, რომლებიც მართავენ ავტოტრანსპორტს</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
@@ -168,27 +171,27 @@
     					<ss:Data ss:Type="String">1</ss:Data>
     				</ss:Cell>
     				<ss:Cell>
-    					<ss:Data ss:Type="String">ჯუბა ლომიძე</ss:Data>
+    					<ss:Data ss:Type="String">ზურიკო ორაგველიძე</ss:Data>
     				</ss:Cell>
     				<ss:Cell>
     					<ss:Data ss:Type="String"></ss:Data>
     				</ss:Cell>
     				<ss:Cell>
-    					<ss:Data ss:Type="String">32</ss:Data>
+    					<ss:Data ss:Type="String">26</ss:Data>
     				</ss:Cell>
     				<ss:Cell>
-    					<ss:Data ss:Type="String">1985-01-07 00:00:00</ss:Data>
+    					<ss:Data ss:Type="String">02.07.1991</ss:Data>
     				</ss:Cell>
     				<ss:Cell>
     					<ss:Data ss:Type="String">B</ss:Data>
     				</ss:Cell>
                     <ss:Cell ss:MergeAcross="1">
-    					<ss:Data ss:Type="String">2006-02-01 00:00:00</ss:Data>
+    					<ss:Data ss:Type="String">08.11.2014</ss:Data>
     				</ss:Cell>
     			</ss:Row>
     			
 		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
-				<ss:Cell ss:MergeAcross="7" ss:StyleID="headercell">
+				<ss:Cell ss:MergeAcross="7" ss:StyleID="m113863508">
 					<ss:Data ss:Type="String">ინფორმაცია ავტოტრანსპორტის შესახებ</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
@@ -226,23 +229,23 @@
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		        <ss:Cell ss:MergeAcross="1" ss:StyleID="headercell">
-					<ss:Data ss:Type="String">HONDA ELYSION</ss:Data>
+					<ss:Data ss:Type="String">RN614NR</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		        <ss:Cell ss:StyleID="headercell">
-					<ss:Data ss:Type="String">მარჯვენა</ss:Data>
+					<ss:Data ss:Type="String">მარჯვნივ</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		        <ss:Cell ss:StyleID="headercell">
-					<ss:Data ss:Type="String">სედანი</ss:Data>
+					<ss:Data ss:Type="String">ჰეტჩბეკი</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		        <ss:Cell ss:StyleID="headercell">
-					<ss:Data ss:Type="String">6</ss:Data>
+					<ss:Data ss:Type="String">5</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		        <ss:Cell ss:MergeAcross="1" ss:StyleID="headercell">
-					<ss:Data ss:Type="String">2354</ss:Data>
+					<ss:Data ss:Type="String">1339</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		    </ss:Row>
@@ -278,23 +281,23 @@
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		        <ss:Cell ss:StyleID="headercell">
-					<ss:Data ss:Type="String">2005</ss:Data>
+					<ss:Data ss:Type="String"></ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		        <ss:Cell ss:StyleID="headercell">
-					<ss:Data ss:Type="String">5300.00</ss:Data>
+					<ss:Data ss:Type="String">3520.00 აშშ დოლარი</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		        <ss:Cell ss:MergeAcross="1" ss:StyleID="headercell">
-					<ss:Data ss:Type="String">JS247SJ</ss:Data>
+					<ss:Data ss:Type="String">RN614NR</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		        <ss:Cell ss:StyleID="headercell">
-					<ss:Data ss:Type="String">2017-03-07</ss:Data>
+					<ss:Data ss:Type="String">01.09.2017</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		        <ss:Cell ss:MergeAcross="1" ss:StyleID="headercell">
-					<ss:Data ss:Type="String">10080.00</ss:Data>
+					<ss:Data ss:Type="String">7635.00 ლარი</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		    </ss:Row>
@@ -305,7 +308,7 @@
 				</ss:Cell>
 		    </ss:Row>
 		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
-				<ss:Cell ss:MergeAcross="7" ss:StyleID="headercell">
+				<ss:Cell ss:MergeAcross="7" ss:StyleID="m113863508">
 					<ss:Data ss:Type="String">დაზღვეული ავტომობილის აღწერა</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
@@ -373,7 +376,7 @@
 				</ss:Cell>
 			</ss:Row>
 		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
-				<ss:Cell ss:MergeAcross="7" ss:StyleID="headercell">
+				<ss:Cell ss:MergeAcross="7" ss:StyleID="m113863508">
 					<ss:Data ss:Type="String">მონაცემები მართვის შესახებ და სარჩელები</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
@@ -419,7 +422,7 @@
 				</ss:Cell>
 			</ss:Row>
 		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
-				<ss:Cell ss:MergeAcross="7" ss:StyleID="headercell">
+				<ss:Cell ss:MergeAcross="7" ss:StyleID="m113863508">
 					<ss:Data ss:Type="String">დაზღვევის სახეობა</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
@@ -465,7 +468,7 @@
 				</ss:Cell>
 			</ss:Row>
 		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
-				<ss:Cell ss:MergeAcross="7" ss:StyleID="headercell">
+				<ss:Cell ss:MergeAcross="7" ss:StyleID="m113863508">
 					<ss:Data ss:Type="String">რა მიზნებისთვის გამოიყენება ავტოტრანსპორტი?</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
@@ -541,7 +544,7 @@
 				</ss:Cell>
 			</ss:Row>
 		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
-				<ss:Cell ss:MergeAcross="7" ss:StyleID="headercell">
+				<ss:Cell ss:MergeAcross="7" ss:StyleID="m113863508">
 					<ss:Data ss:Type="String">მიმდინარე მდგომარეობა</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
@@ -576,11 +579,11 @@
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		        <ss:Cell ss:StyleID="headercell">
-					<ss:Data ss:Type="String">ლარი</ss:Data>
+					<ss:Data ss:Type="String"></ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		        <ss:Cell ss:StyleID="headercell">
-					<ss:Data ss:Type="String">5300.00</ss:Data>
+					<ss:Data ss:Type="String">3520.00</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		        <ss:Cell ss:StyleID="headercell">
@@ -594,7 +597,7 @@
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		        <ss:Cell ss:StyleID="headercell">
-					<ss:Data ss:Type="String">2017-03-07 00:00:00</ss:Data>
+					<ss:Data ss:Type="String">01.09.2017</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		        <ss:Cell ss:StyleID="headercell">
@@ -602,7 +605,7 @@
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		        <ss:Cell ss:StyleID="headercell">
-					<ss:Data ss:Type="String">2017-06-07 00:00:00</ss:Data>
+					<ss:Data ss:Type="String">01.12.2017</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		        <ss:Cell ss:StyleID="headercell">
@@ -622,7 +625,7 @@
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		        <ss:Cell ss:MergeAcross="1" ss:StyleID="headercell">
-					<ss:Data ss:Type="String">2017-05-22 09:20:04</ss:Data>
+					<ss:Data ss:Type="String">21.09.2017</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		        <ss:Cell ss:MergeAcross="1" ss:StyleID="headercell">
@@ -630,7 +633,7 @@
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		        <ss:Cell ss:MergeAcross="1" ss:StyleID="headercell">
-					<ss:Data ss:Type="String">?</ss:Data>
+					<ss:Data ss:Type="String"></ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 			</ss:Row>
