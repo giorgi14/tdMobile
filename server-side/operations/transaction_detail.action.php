@@ -1574,8 +1574,8 @@ function GetPage($res = ''){
                 	    <td style="width: 100px;">
     						<input style="width: 80px;" id="month_fee_trasaction" class="label" type="text" value="'.$res['month_fee_trasaction'].'" disabled="disabled">
     					</td>
-    					<td style="width: 100px;"></td>
-    					<td style="width: 80px;">
+    					<td colspan="2" style="width: 100px;"><label id="info_mesage" style="padding-top: 5px; margin-left: 10px; color: red; font-size: 15px;" for="date"></label></td>
+    					
     					</td>
     				    <td style="width: 135px;"></td>
     					<td style="width: 100px;">
