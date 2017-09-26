@@ -1079,6 +1079,7 @@
 		param.loan_beforehand_percent     = $('#sub_loan_beforehand_percent').val();
 		param.responsible_user_id         = $('#sub_responsible_user_id').val();
 		param.agreement_no_standart       = $("input[id='agreement_no_standart']:checked").val();
+		param.client_sms                  = $("input[id='client_sms']:checked").val();
 		
 		if(param.loan_amount == ''){
 			alert('შეავსეთ "სესხის მოცულობა"');
@@ -1199,6 +1200,7 @@
 		param.responsible_user_id         = $('#new_responsible_user_id').val();
 		param.new_attachment_number       = $('#new_attachment_number').val();
 		param.agreement_no_standart       = $("input[id='agreement_no_standart']:checked").val();
+		param.client_sms                  = $("input[id='client_sms']:checked").val();
 		
 		if(param.loan_amount == ''){
 			alert('შეავსეთ "სესხის მოცულობა"');
