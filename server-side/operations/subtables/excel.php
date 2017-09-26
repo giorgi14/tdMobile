@@ -1,6 +1,7 @@
 <?php
 require_once('../../../includes/classes/core.php');
 
+
 $local_id	= $_REQUEST['local_id'];
 $file_type	= $_REQUEST['file_type'];
 
