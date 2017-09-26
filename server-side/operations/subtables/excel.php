@@ -413,7 +413,7 @@ $data .='</ss:Table>
                                     			 car_type.`name` AS car_type_name,
                                                  client_car.car_seats,
                                     			 client_car.engine_size,
-                                    			 DATE_FORMAT(client_car.manufacturing_date, '%d.%m.%Y') AS manufacturing_date,
+                                    			 client_car.manufacturing_date AS manufacturing_date,
                                     			 client_car.registration_number,
                                     			 DATE_FORMAT(client_car.car_sale_date, '%d.%m.%Y') AS car_sale_date,
                                     			 car_insurance_info.car_real_price AS car_price,
