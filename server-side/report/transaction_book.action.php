@@ -223,7 +223,7 @@ switch ($action) {
                         				END AS `name`,
                         				client_loan_agreement.oris_code,
                         				CASE
-    										 WHEN NOT ISNULL(client.sub_client) AND client_loan_agreement.agreement_id>0 THEN CONCAT('ს/ხ ', client_loan_agreement.agreement_id, IF(client_loan_agreement.attachment_number='','',' დ.'), IF(client_loan_agreement.attachment_number='', '', client_loan_agreement.attachment_number))
+    										 WHEN NOT ISNULL(client.sub_client) AND client_loan_agreement.agreement_id>0 THEN CONCAT('ს/ხ ', client_loan_agreement.agreement_id, IF(client_loan_agreement.attachment_number=''  OR ISNULL(client_loan_agreement.attachment_number),'',' დ.'), IF(client_loan_agreement.attachment_number=''  OR ISNULL(client_loan_agreement.attachment_number), '', client_loan_agreement.attachment_number))
     										 WHEN client.attachment_id > 0 AND client_loan_agreement.agreement_id>0 THEN CONCAT('ს/ხ ', client_loan_agreement.agreement_id, ' დ.', client_loan_agreement.attachment_number)
     										 WHEN ISNULL(client.sub_client) AND client.attachment_id = 0 AND client_loan_agreement.agreement_id > 0 THEN CONCAT('ს/ხ ', client_loan_agreement.agreement_id)
     										 WHEN ISNULL(client.sub_client) AND client.attachment_id = 0 AND client_loan_agreement.agreement_id = 0 THEN CONCAT('ს/ხ ', client_loan_agreement.oris_code)
@@ -504,11 +504,11 @@ function client($id){
 function client_loan_number($id){
     $req = mysql_query("SELECT  client_loan_agreement.id,
                                 CASE
-                        		   WHEN client.attachment_id = 0 AND client.id<(SELECT old_client_id.number FROM `old_client_id` LIMIT 1) THEN CONCAT('ს/ხ ',client.exel_agreement_id)
-                                   WHEN client.attachment_id = 0 AND client.id>=(SELECT old_client_id.number FROM `old_client_id` LIMIT 1) THEN CONCAT('ს/ხ ',client_loan_agreement.id)
-            					   WHEN client.attachment_id > 0 AND client.id<(SELECT old_client_id.number FROM `old_client_id` LIMIT 1) THEN concat('ს/ხ ',(SELECT cl.exel_agreement_id FROM client AS cl WHERE cl.id = client.attachment_id), '/დანართი N', client_loan_agreement.attachment_number)
-            					   WHEN client.attachment_id != 0 AND client.id>=(SELECT old_client_id.number FROM `old_client_id` LIMIT 1) THEN concat('ს/ხ ',(SELECT client_loan_agreement.id FROM client_loan_agreement WHERE client_loan_agreement.client_id = client.attachment_id), '/დანართი N', client_loan_agreement.attachment_number)
-                        	    END AS `name`
+									 WHEN NOT ISNULL(client.sub_client) AND client_loan_agreement.agreement_id>0 THEN CONCAT('ს/ხ ', client_loan_agreement.agreement_id, IF(client_loan_agreement.attachment_number=''  OR ISNULL(client_loan_agreement.attachment_number),'',' დ.'), IF(client_loan_agreement.attachment_number='' OR ISNULL(client_loan_agreement.attachment_number), '', client_loan_agreement.attachment_number))
+									 WHEN client.attachment_id > 0 AND client_loan_agreement.agreement_id>0 THEN CONCAT('ს/ხ ', client_loan_agreement.agreement_id, ' დ.', client_loan_agreement.attachment_number)
+									 WHEN ISNULL(client.sub_client) AND client.attachment_id = 0 AND client_loan_agreement.agreement_id > 0 THEN CONCAT('ს/ხ ', client_loan_agreement.agreement_id)
+									 WHEN ISNULL(client.sub_client) AND client.attachment_id = 0 AND client_loan_agreement.agreement_id = 0 THEN CONCAT('ს/ხ ', client_loan_agreement.oris_code)
+                			    END AS `name`
 
                          FROM   client_loan_agreement
                          JOIN   client ON client.id = client_loan_agreement.client_id
