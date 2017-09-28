@@ -141,7 +141,7 @@
 		     if(check){
 		    	 var string = $('#sms_text').val();
 		    	 var replaced = string.replace(/[^\x00-\x7F]/g, "");
-		    	 $('#sms_text').val(replaced);
+		    	 //$('#sms_text').val(replaced);
 		    	 //alert('არასწორი სიმბოლო');
 			 }   
 		 }
