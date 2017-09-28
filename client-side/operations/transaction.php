@@ -114,58 +114,59 @@
     		        		    						if(data.error != ''){
     		        		    							alert(data.error);
     		        		    						}else{
-    		        		    							gacema_lari      = $("#gacema_lari").html();
-    		        	        							gacema_lari1     = $("#gacema_lari1").html();
-
-    		        	        							darchenili_vali  = $("#darchenili_vali").html();
-    		        	        							darchenili_vali1 = $("#darchenili_vali1").html();
-
-    		        	        							daricxva_lari    = $("#daricxva_lari").html();
-    		        	        							daricxva_lari1   = $("#daricxva_lari1").html();
-    		        	        							
-    		        	        							procenti_lari    = $("#procenti_lari").html();
-    		        	        							procenti_lari1   = $("#procenti_lari1").html();
-    		        	        							
-    		        	        							dziri_lari       = $("#dziri_lari").html();
-    		        	        							dziri_lari1      = $("#dziri_lari1").html();
-
-    		        	        							if(darchenili_vali > 0){
-    		        	        								var delta  = ((parseFloat(darchenili_vali) + parseFloat(daricxva_lari)) - (parseFloat(procenti_lari)+parseFloat(dziri_lari))).toFixed(2);
-    		        	        								var delta1 = ((parseFloat(darchenili_vali1) + parseFloat(daricxva_lari1)) - (parseFloat(procenti_lari1)+parseFloat(dziri_lari1))).toFixed(2);	
-    		        	        							}else{
-        		        	        							var delta  = ((parseFloat(gacema_lari) + parseFloat(daricxva_lari)) - (parseFloat(procenti_lari)+parseFloat(dziri_lari))).toFixed(2);
-    		        	        								var delta1 = ((parseFloat(gacema_lari1) + parseFloat(daricxva_lari1)) - (parseFloat(procenti_lari1)+parseFloat(dziri_lari1))).toFixed(2);	
-																
-        		        	                			    }
-
-    		        	        							insurance_fee  = $("#insurance_fee").html();
-    		        	        							insurance_fee1 = $("#insurance_fee1").html();
-    		        	        							
-    		        	        							insurance_payed  = $("#insurance_payed").html();
-    		        	        							insurance_payed1 = $("#insurance_payed1").html();
-
-    		        	        						    ins_delta = (parseFloat(insurance_fee) - parseFloat(insurance_payed)).toFixed(2);
-    		        	        						    ins_delta1 = (parseFloat(insurance_fee1) - parseFloat(insurance_payed1)).toFixed(2);
-
-    		        	        						    
-    		        	        						    other  = $("#other").html();
-    		        	        						    other1 = $("#other1").html();
-
-    		        	        						    if(delta<=0.05 && delta>=-0.05){delta='0.00';}
-    		        	        						    if(delta1<=0.05 && delta1>=-0.05 ){delta1='0.00';}
-    		        	        						    
-    		        	        						    other_delta = (parseFloat(other) - parseFloat(other1)).toFixed(2);
-    		        	        						    if(ins_delta == '0.00' || ins_delta1=='0.00'){
-    		        	        						    	ins_delta  = '0.00';
-    		        	        						    	ins_delta1 = '0.00';
-        		        	        						}
-    		        	        						    $("#insurance_delta").html(ins_delta);
-    		        	        						    $("#insurance_delta1").html(ins_delta1);
-    		        	        						    $("#other_delta").html(other_delta);
-    		        	        						    
-    		        	        							$("#remaining_root").html(delta);
-    		        	        							$("#remaining_root_gel").html(delta1);
-    		        	        							
+    		        		    							setTimeout(function(){
+        		        		    							gacema_lari      = $("#gacema_lari").html();
+        		        	        							gacema_lari1     = $("#gacema_lari1").html();
+    
+        		        	        							darchenili_vali  = $("#darchenili_vali").html();
+        		        	        							darchenili_vali1 = $("#darchenili_vali1").html();
+    
+        		        	        							daricxva_lari    = $("#daricxva_lari").html();
+        		        	        							daricxva_lari1   = $("#daricxva_lari1").html();
+        		        	        							
+        		        	        							procenti_lari    = $("#procenti_lari").html();
+        		        	        							procenti_lari1   = $("#procenti_lari1").html();
+        		        	        							
+        		        	        							dziri_lari       = $("#dziri_lari").html();
+        		        	        							dziri_lari1      = $("#dziri_lari1").html();
+    
+        		        	        							if(darchenili_vali > 0){
+        		        	        								var delta  = ((parseFloat(darchenili_vali) + parseFloat(daricxva_lari)) - (parseFloat(procenti_lari)+parseFloat(dziri_lari))).toFixed(2);
+        		        	        								var delta1 = ((parseFloat(darchenili_vali1) + parseFloat(daricxva_lari1)) - (parseFloat(procenti_lari1)+parseFloat(dziri_lari1))).toFixed(2);	
+        		        	        							}else{
+            		        	        							var delta  = ((parseFloat(gacema_lari) + parseFloat(daricxva_lari)) - (parseFloat(procenti_lari)+parseFloat(dziri_lari))).toFixed(2);
+        		        	        								var delta1 = ((parseFloat(gacema_lari1) + parseFloat(daricxva_lari1)) - (parseFloat(procenti_lari1)+parseFloat(dziri_lari1))).toFixed(2);	
+    																
+            		        	                			    }
+    
+        		        	        							insurance_fee  = $("#insurance_fee").html();
+        		        	        							insurance_fee1 = $("#insurance_fee1").html();
+        		        	        							
+        		        	        							insurance_payed  = $("#insurance_payed").html();
+        		        	        							insurance_payed1 = $("#insurance_payed1").html();
+    
+        		        	        						    ins_delta = (parseFloat(insurance_fee) - parseFloat(insurance_payed)).toFixed(2);
+        		        	        						    ins_delta1 = (parseFloat(insurance_fee1) - parseFloat(insurance_payed1)).toFixed(2);
+    
+        		        	        						    
+        		        	        						    other  = $("#other").html();
+        		        	        						    other1 = $("#other1").html();
+    
+        		        	        						    if(delta<=0.05 && delta>=-0.05){delta='0.00';}
+        		        	        						    if(delta1<=0.05 && delta1>=-0.05 ){delta1='0.00';}
+        		        	        						    
+        		        	        						    other_delta = (parseFloat(other) - parseFloat(other1)).toFixed(2);
+        		        	        						    if(ins_delta == '0.00' || ins_delta1=='0.00'){
+        		        	        						    	ins_delta  = '0.00';
+        		        	        						    	ins_delta1 = '0.00';
+            		        	        						}
+        		        	        						    $("#insurance_delta").html(ins_delta);
+        		        	        						    $("#insurance_delta1").html(ins_delta1);
+        		        	        						    $("#other_delta").html(other_delta);
+        		        	        						    
+        		        	        							$("#remaining_root").html(delta);
+        		        	        							$("#remaining_root_gel").html(delta1);
+    		        		    							}, 90);
     		        		    						}
     		        		    					}
     		        		    			    }
