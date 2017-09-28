@@ -2755,6 +2755,16 @@ switch ($action) {
                                        <td style="width: 120px;"><label>ჯარიმა</label></td>
                                        <td colspan="3"><input id="penalty_fee2" class="idle" style="width: 100px;" type="text" value="" disabled="disabled"></td>
                                    </tr>
+                                   <tr style="height:10px;"></tr>
+                                   <tr>
+                                       <td style="width: 120px;"><label>დაზღვევა</label></td>
+                                       <td colspan="3"><input id="pledge2" class="idle" style="width: 100px;" type="text" value="" disabled="disabled"></td>
+                                   </tr>
+                                   <tr style="height:10px;"></tr>
+                                   <tr>
+                                       <td style="width: 120px;"><label>სხვა ხარჯი</label></td>
+                                       <td colspan="3"><input id="other2" class="idle" style="width: 100px;" type="text" value="" disabled="disabled"></td>
+                                   </tr>
                                 </table>
                              </fieldset>
                         </div>
@@ -2801,6 +2811,16 @@ switch ($action) {
                                    <tr>
                                        <td style="width: 120px;"><label>ნასარგებლები<br>დღეები</label></td>
                                        <td colspan="3"><input id="nasargeblebi" class="idle" style="width: 100px;" type="text" value="" disabled="disabled"></td>
+                                   </tr>
+                                   <tr style="height:10px;"></tr>
+                                   <tr>
+                                       <td style="width: 120px;"><label>დაზღვევა</label></td>
+                                       <td colspan="3"><input id="dazgveva" class="idle" style="width: 100px;" type="text" value="" disabled="disabled"></td>
+                                   </tr>
+                                   <tr style="height:10px;"></tr>
+                                   <tr>
+                                       <td style="width: 120px;"><label>სხვა ხარჯი</label></td>
+                                       <td colspan="3"><input id="sxvaxarji" class="idle" style="width: 100px;" type="text" value="" disabled="disabled"></td>
                                    </tr>
                                </table>
                             </fieldset>
@@ -3028,7 +3048,42 @@ switch ($action) {
                                                    FROM   money_transactions
                                                    WHERE  money_transactions.client_loan_schedule_id = $res[id] AND money_transactions.status in(3) AND actived = 1"));
     
-            $data = array('pay_amount' => $res[pay_amount]+$penalty, 'root' => $res[root], 'percent' => $res[percent], 'penalty' => $penalty, 'pay_amount1' => $res1[pay_amount]);
+            $res_pledge = mysql_fetch_assoc(mysql_query("SELECT   IFNULL(CASE
+                                                                             WHEN client_loan_agreement.loan_currency_id = 2 THEN ROUND(SUM(money_transactions_detail.pay_amount/money_transactions.course),2)
+                                                                             WHEN client_loan_agreement.loan_currency_id = 1 THEN ROUND(SUM(money_transactions_detail.pay_amount),2)
+                                                                         END,0) AS peg_pledge
+                                                         FROM     money_transactions
+                                                         JOIN     money_transactions_detail ON money_transactions.id = money_transactions_detail.transaction_id
+                                                         JOIN     client_loan_agreement ON money_transactions.agreement_id = client_loan_agreement.id
+                                                         WHERE    money_transactions.client_id = '$local_id'
+                                                         AND      money_transactions_detail.`status` = 7 AND money_transactions.type_id = 2
+                                                         AND      money_transactions_detail.payed_status = 1 AND money_transactions.actived = 1
+                                                         ORDER BY money_transactions.pay_datetime ASC
+                                                         LIMIT 1"));
+            
+            $res_other = mysql_fetch_assoc(mysql_query("SELECT ROUND(SUM(money_transactions_detail.pay_amount),2) AS pay_amount
+                                                        FROM   money_transactions_detail
+                                                        JOIN   money_transactions ON money_transactions_detail.transaction_id = money_transactions.id
+                                                        WHERE  money_transactions.client_id = '$local_id'
+                                                        AND    money_transactions.actived = 1
+                                                        AND    money_transactions_detail.actived = 1
+                                                        AND    money_transactions_detail.`status` = 10"));
+            
+            $res_other1 = mysql_fetch_assoc(mysql_query("SELECT ROUND(SUM(money_transactions_detail.pay_amount),2) AS pay_amount
+                                                         FROM   money_transactions_detail
+                                                         JOIN   money_transactions ON money_transactions_detail.transaction_id = money_transactions.id
+                                                         WHERE  money_transactions.client_id = '$local_id'
+                                                         AND    money_transactions.actived = 1
+                                                         AND    money_transactions_detail.actived = 1
+                                                         AND    money_transactions_detail.`status` = 11"));
+            
+            $other_pay = round($res_other[pay_amount] - $res_other1[pay_amount],2);
+            
+            if ($other_pay<=1) {
+                $other_pay = 0;
+            }
+            
+            $data = array('pay_amount' => $res[pay_amount]+$penalty, 'root' => $res[root], 'percent' => $res[percent], 'penalty' => $penalty, 'pay_amount1' => $res1[pay_amount], 'other2' => $other_pay, 'pledge2' => $res_pledge[peg_pledge]);
         }else{
             global  $error;
             $error = 'ხელშეკრულება არ არის გააქტიურებული';

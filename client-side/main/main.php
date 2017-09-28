@@ -415,6 +415,8 @@
 				$("#penalty_fee2").val('0');
 				$("#full_pay2").val('0');
 				$("#full_fee4").val('0');
+				$("#pledge2").val('0');
+				$("#other2").val('0');
 			}else{
     			$.ajax({
     		        url: aJaxURL,
@@ -429,6 +431,8 @@
     							$("#percent_fee2").val(data.percent);
     							$("#penalty_fee2").val(data.penalty);
     							$("#full_pay2").val(data.pay_amount1);
+    							$("#pledge2").val(data.pledge2);
+    							$("#other2").val(data.other2);
     							$("#full_fee4").val(parseFloat(data.pay_amount)+parseFloat($("#full_fee4").val()));
     						}
     					}
@@ -495,6 +499,8 @@
     							$("#percent_fee3").val(data.percent);
     							$("#penalty_fee3").val(data.penalty);
     							$("#full_pay3").val(data.pay_amount1);
+    							$("#dazgveva").val(data.reg_pledge);
+    							$("#sxvaxarji").val(data.reg_other);
     							$("#nasargeblebi").val(data.nasargeblebebi);
     							$("#sakomiso").val(data.sakomisio);
     						}
