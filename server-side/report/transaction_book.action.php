@@ -480,10 +480,10 @@ function currency($id){
 function client($id){
     $req = mysql_query("SELECT    cl.id,
                                   CASE
-                        			  WHEN cl.attachment_id = 0 AND cl.`name` != '' THEN concat(cl.`name`, ' ', cl.lastname)
-                                      WHEN cl.attachment_id = 0 AND cl.`name` = '' THEN cl.ltd_name
-                                      WHEN cl.attachment_id != 0 AND cl.`name` = '' THEN cl.ltd_name
-                                      WHEN cl.attachment_id != 0 AND cl.`name` != '' THEN concat(cl.`name`, ' ', cl.lastname, '/დანართი N', client_loan_agreement.attachment_number)
+                        			  WHEN cl.attachment_id = 0 AND cl.`name` != '' THEN concat(client_loan_agreement.oris_code, '/', cl.`name`, ' ', cl.lastname)
+                                      WHEN cl.attachment_id = 0 AND cl.`name` = '' THEN concat(client_loan_agreement.oris_code, '/', cl.ltd_name)
+                                      WHEN cl.attachment_id != 0 AND cl.`name` = '' THEN concat(client_loan_agreement.oris_code, '/', cl.ltd_name)
+                                      WHEN cl.attachment_id != 0 AND cl.`name` != '' THEN concat(client_loan_agreement.oris_code, '/', cl.`name`, ' ', cl.lastname, '/დანართი N', client_loan_agreement.attachment_number)
                                   END AS `name`
                         FROM      client AS cl
                         JOIN      client_loan_agreement ON cl.id = client_loan_agreement.client_id
