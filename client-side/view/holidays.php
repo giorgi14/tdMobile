@@ -15,7 +15,7 @@
 		});
         
 		function LoadTable(tName,num,change_colum_main,aJaxURL){
-			GetDataTable(tName, aJaxURL, 'get_list', num, "", 0, "", 1, "desc", "", change_colum_main);
+			GetDataTable_loan(tName, aJaxURL, 'get_list', num, "", 0, "", "", "", "", change_colum_main);
 			setTimeout(function(){$('.ColVis, .dataTable_buttons').css('display','none');}, 90);
 		}
 		
@@ -130,7 +130,7 @@
                     <th>ID</th>
                     <th style="width: 50%;">თარიღი</th>
                     <th style="width: 48%;">დასახელება</th>
-                	<th class="check" style="width: 30px;">#</th>
+                    <th class="check" style="width: 30px;">#</th>
                 </tr>
             </thead>
             <thead>
@@ -144,6 +144,7 @@
                     <th>
                         <input type="text" name="search_category" value="ფილტრი" class="search_init" />
                     </th>
+                    
                     <th>
                     	<div class="callapp_checkbox">
                             <input type="checkbox" id="check-all" name="check-all" />
