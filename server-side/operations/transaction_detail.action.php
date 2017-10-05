@@ -1558,12 +1558,12 @@ function GetPage($res = ''){
     					<td style="width: 120px;"><select id="surplus_type"  calss="label" style="width: 180px;">'.surplus_type($res[currency_id]).'</select></td>
     				</tr>
     			    <tr>
-    	                <td style="width: 200px;"></td>
+    	                <td style="width: 200px;">კურსის გადაანგარიშება</td>
     					<td style="width: 280px;"><label calss="label" style="padding-top: 5px;" for="name">შეთანხმება</label></td>
     					<td style="width: 120px;"><label calss="label" style="padding-top: 5px;" for="date">დანართი</label></td>
     				</tr>
     				<tr>
-    	                <td style="width: 200px;"></td>
+    	                <td style="width: 200px;"><input style="width: 15px;" id="restr_cource" class="label" type="checkbox" value="1" disabled="disabled"></td>
     					<td style="width: 280px;"><input class="idle" style="width: 15px;" id="exception_agr" value="1" disabled type="checkbox"></td>
     					<td style="width: 120px;"><select id="attachment_client_id"  calss="label" style="width: 180px;"></select></td>
     				</tr>
@@ -1578,8 +1578,9 @@ function GetPage($res = ''){
     					<td colspan="2" style="width: 100px;"><label id="info_mesage" style="padding-top: 5px; margin-left: 10px; color: red; font-size: 15px;" for="date"></label></td>
     					
     					</td>
-    				    <td style="width: 135px;"></td>
+    				    <td style="width: 135px;">კურსის გადაანგარიშება</td>
     					<td style="width: 100px;">
+    						
     					</td>
     				</tr>
     				<tr style="height:10px;"></tr>
