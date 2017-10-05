@@ -518,7 +518,7 @@
 	    	param.month_fee_gel = $("#month_fee_gel").val();
 	    	param.month_fee_usd = $("#month_fee_usd").val();
 	    	param.restr_cource  = $("input[id='restr_cource']:checked").val();
-	    	if((param.type_id == 2 || param.type_id == 3) && param.restr_cource == 1){
+	    	if(param.type_id == 2 && param.restr_cource == 1){
 		    	course = (parseFloat(param.month_fee_gel)/parseFloat(param.month_fee_usd)).toFixed(4);
 		    	if(course > 0){
 		    		param.course = course;
