@@ -558,8 +558,7 @@
     							setTimeout(function(){$('.ColVis, .dataTable_buttons').css('display','none');}, 50);
     							$("#table_transaction_detail_length").css('top', '2px');
     			        		CloseDialog('add-edit-form-det');
-    			        		
-    						}
+    			        	}
     					}
     			    }
     		    });
