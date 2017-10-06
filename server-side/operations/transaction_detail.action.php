@@ -1027,7 +1027,7 @@ function Add1($tr_id, $hidde_id, $transaction_date, $pledge_or_other_payed, $ple
                     mysql_query("INSERT INTO `money_transactions`
                                             (`datetime`, `user_id`, `client_loan_schedule_id`, `agreement_id`, `client_id`, `pay_datetime`, `pay_amount`, `extra_fee`, `course`, `currency_id`, `received_currency_id`, `month_fee_trasaction`, `type_id`, `status`, `actived`)
                                        VALUES
-                                            (NOW(), '$user_id', '', '$tr_id', '$attachment_client_id', '$transaction_date', '$pledge_or_other_surplus', '', '$course', '$currency_id', '$received_currency_id', '$month_fee_trasaction', '1', '1', '1')");
+                                            (NOW(), '$user_id', '', '$attachment_agr_id[id]', '$attachment_client_id', '$transaction_date', '$pledge_or_other_surplus', '', '$course', '$currency_id', '$received_currency_id', '$month_fee_trasaction', '1', '1', '1')");
                      
                     $tr1_id = mysql_insert_id();
                      
@@ -1051,7 +1051,7 @@ function Add1($tr_id, $hidde_id, $transaction_date, $pledge_or_other_payed, $ple
                     mysql_query("INSERT INTO `money_transactions`
                                             (`datetime`, `user_id`, `client_loan_schedule_id`, `agreement_id`, `client_id`, `pay_datetime`, `pay_amount`, `extra_fee`, `course`, `currency_id`, `received_currency_id`, `month_fee_trasaction`, `type_id`, `status`, `actived`)
                                        VALUES
-                                            (NOW(), '$user_id', '', '$tr_id', '$attachment_client_id', '$transaction_date', '$pledge_or_other_surplus', '', '$course', '$currency_id', '$received_currency_id', '$month_fee_trasaction', '2', '1', '1')");
+                                            (NOW(), '$user_id', '', '$attachment_agr_id[id]', '$attachment_client_id', '$transaction_date', '$pledge_or_other_surplus', '', '$course', '$currency_id', '$received_currency_id', '$month_fee_trasaction', '2', '1', '1')");
                      
                     $tr1_id = mysql_insert_id();
                      
@@ -1076,7 +1076,7 @@ function Add1($tr_id, $hidde_id, $transaction_date, $pledge_or_other_payed, $ple
                     mysql_query("INSERT INTO `money_transactions`
                                             (`datetime`, `user_id`, `client_loan_schedule_id`, `agreement_id`, `client_id`, `pay_datetime`, `pay_amount`, `extra_fee`, `course`, `currency_id`, `received_currency_id`, `month_fee_trasaction`, `type_id`, `status`, `actived`)
                                       VALUES
-                                            (NOW(), '$user_id', '', '$tr_id', '$attachment_client_id', '$transaction_date', '$pledge_or_other_surplus', '', '$course', '$currency_id', '$received_currency_id', '$month_fee_trasaction', '1', '1', '1')");
+                                            (NOW(), '$user_id', '', '$attachment_agr_id[id]', '$attachment_client_id', '$transaction_date', '$pledge_or_other_surplus', '', '$course', '$currency_id', '$received_currency_id', '$month_fee_trasaction', '1', '1', '1')");
                      
                     $tr1_id = mysql_insert_id();
                 }
@@ -1125,7 +1125,7 @@ function Add1($tr_id, $hidde_id, $transaction_date, $pledge_or_other_payed, $ple
                     mysql_query("INSERT INTO `money_transactions`
                                             (`datetime`, `user_id`, `client_loan_schedule_id`, `agreement_id`, `client_id`, `pay_datetime`, `pay_amount`, `extra_fee`, `course`, `currency_id`, `received_currency_id`, `month_fee_trasaction`, `type_id`, `status`, `actived`)
                                       VALUES
-                                            (NOW(), '$user_id', '', '$tr_id', '$attachment_client_id', '$transaction_date', '$pledge_or_other_surplus', '', '$course', '$currency_id', '$received_currency_id', '$month_fee_trasaction', '1', '1', '1')");
+                                            (NOW(), '$user_id', '', '$attachment_agr_id[id]', '$attachment_client_id', '$transaction_date', '$pledge_or_other_surplus', '', '$course', '$currency_id', '$received_currency_id', '$month_fee_trasaction', '1', '1', '1')");
                      
                     $tr1_id = mysql_insert_id();
                      
@@ -1149,7 +1149,7 @@ function Add1($tr_id, $hidde_id, $transaction_date, $pledge_or_other_payed, $ple
                     mysql_query("INSERT INTO `money_transactions`
                                             (`datetime`, `user_id`, `client_loan_schedule_id`, `agreement_id`, `client_id`, `pay_datetime`, `pay_amount`, `extra_fee`, `course`, `currency_id`, `received_currency_id`, `month_fee_trasaction`, `type_id`, `status`, `actived`)
                                       VALUES
-                                            (NOW(), '$user_id', '', '$tr_id', '$attachment_client_id', '$transaction_date', '$pledge_or_other_surplus', '', '$course', '$currency_id', '$received_currency_id', '$month_fee_trasaction', '2', '1', '1')");
+                                            (NOW(), '$user_id', '', '$attachment_agr_id[id]', '$attachment_client_id', '$transaction_date', '$pledge_or_other_surplus', '', '$course', '$currency_id', '$received_currency_id', '$month_fee_trasaction', '2', '1', '1')");
                      
                     $tr1_id = mysql_insert_id();
                      
@@ -1173,7 +1173,7 @@ function Add1($tr_id, $hidde_id, $transaction_date, $pledge_or_other_payed, $ple
                     mysql_query("INSERT INTO `money_transactions`
                                             (`datetime`, `user_id`, `client_loan_schedule_id`, `agreement_id`, `client_id`, `pay_datetime`, `pay_amount`, `extra_fee`, `course`, `currency_id`, `received_currency_id`, `month_fee_trasaction`, `type_id`, `status`, `actived`)
                                       VALUES
-                                            (NOW(), '$user_id', '', '$tr_id', '$attachment_client_id', '$transaction_date', '$pledge_or_other_surplus', '', '$course', '$currency_id', '$received_currency_id', '$month_fee_trasaction', '1', '1', '1')");
+                                            (NOW(), '$user_id', '', '$attachment_agr_id[id]', '$attachment_client_id', '$transaction_date', '$pledge_or_other_surplus', '', '$course', '$currency_id', '$received_currency_id', '$month_fee_trasaction', '1', '1', '1')");
                      
                     $tr1_id = mysql_insert_id();
                     if ($pledge_or_other_surplus>0) {
@@ -1212,7 +1212,7 @@ function Add1($tr_id, $hidde_id, $transaction_date, $pledge_or_other_payed, $ple
                 mysql_query("INSERT INTO `money_transactions`
                                         (`datetime`, `user_id`, `client_loan_schedule_id`, `agreement_id`, `client_id`, `pay_datetime`, `pay_amount`, `extra_fee`, `course`, `currency_id`, `received_currency_id`, `month_fee_trasaction`, `type_id`, `status`, `actived`)
                                   VALUES
-                                        (NOW(), '$user_id', '', '$tr_id', '$attachment_client_id', '$transaction_date', '$pledge_or_other_surplus', '', '$course', '$currency_id', '$received_currency_id', '$month_fee_trasaction', '1', '1', '1')");
+                                        (NOW(), '$user_id', '', '$attachment_agr_id[id]', '$attachment_client_id', '$transaction_date', '$pledge_or_other_surplus', '', '$course', '$currency_id', '$received_currency_id', '$month_fee_trasaction', '1', '1', '1')");
                  
                 
                 
