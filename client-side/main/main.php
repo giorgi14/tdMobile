@@ -399,6 +399,7 @@
 		});
 		
 		$(document).on("click", "#check_calculation", function () {
+			$("#full_fee4").val(0.00);
 			param 	  = new Object();
 			param.act = "check_calculation";
 
