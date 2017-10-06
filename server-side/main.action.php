@@ -503,12 +503,12 @@ switch ($action) {
                             				 '' AS pledge_fee,
                                              '' AS pledge_fee1,
                                              CASE 
-                                    			WHEN money_transactions.currency_id = 2 THEN CONCAT(ROUND(SUM(money_transactions_detail.pay_amount*money_transactions_detail.course),2), ' GEL')
-                                                WHEN money_transactions.currency_id = 1 THEN CONCAT(ROUND(SUM(money_transactions_detail.pay_amount),2), ' GEL')
+                                    			WHEN money_transactions_detail.currency_id = 2 THEN CONCAT(ROUND(SUM(money_transactions_detail.pay_amount*money_transactions_detail.course),2), ' GEL')
+                                                WHEN money_transactions_detail.currency_id = 1 THEN CONCAT(ROUND(SUM(money_transactions_detail.pay_amount),2), ' GEL')
                                              END as  pledge_payed,
                                              CASE 
-                                    			WHEN money_transactions.currency_id = 2 THEN CONCAT(ROUND(SUM(money_transactions_detail.pay_amount),2), ' USD')
-                                                WHEN money_transactions.currency_id = 1 THEN CONCAT(ROUND(SUM(money_transactions_detail.pay_amount/money_transactions_detail.course),2), ' USD')
+                                    			WHEN money_transactions_detail.currency_id = 2 THEN CONCAT(ROUND(SUM(money_transactions_detail.pay_amount),2), ' USD')
+                                                WHEN money_transactions_detail.currency_id = 1 THEN CONCAT(ROUND(SUM(money_transactions_detail.pay_amount/money_transactions_detail.course),2), ' USD')
                                              END as  pledge_payed1,
                             				 '' AS  pledge_delta,
                                              '' as  other,
@@ -1013,13 +1013,13 @@ switch ($action) {
                     				 '' AS pledge_fee,
                                      '' AS pledge_fee1,
                                      CASE 
-                            			WHEN money_transactions.currency_id = 2 THEN CONCAT(ROUND(SUM(money_transactions_detail.pay_amount*money_transactions_detail.course),2), 'GEL')
-                                        WHEN money_transactions.currency_id = 1 THEN CONCAT(ROUND(SUM(money_transactions_detail.pay_amount),2), 'GEL')
-                                     END as pledge_payed,
+                            			WHEN money_transactions_detail.currency_id = 2 THEN CONCAT(ROUND(SUM(money_transactions_detail.pay_amount*money_transactions_detail.course),2), ' GEL')
+                                        WHEN money_transactions_detail.currency_id = 1 THEN CONCAT(ROUND(SUM(money_transactions_detail.pay_amount),2), ' GEL')
+                                     END as  pledge_payed,
                                      CASE 
-                            			WHEN money_transactions.currency_id = 2 THEN CONCAT(ROUND(SUM(money_transactions_detail.pay_amount),2),' USD')
-                                        WHEN money_transactions.currency_id = 1 THEN CONCAT(ROUND(SUM(money_transactions_detail.pay_amount/money_transactions_detail.course),2), ' USD')
-                                     END as pledge_payed1,
+                            			WHEN money_transactions_detail.currency_id = 2 THEN CONCAT(ROUND(SUM(money_transactions_detail.pay_amount),2), ' USD')
+                                        WHEN money_transactions_detail.currency_id = 1 THEN CONCAT(ROUND(SUM(money_transactions_detail.pay_amount/money_transactions_detail.course),2), ' USD')
+                                     END as  pledge_payed1,
                     				 '' AS  pledge_delta,
                                      '' as  other,
                     				 '' as  other1,
@@ -1632,13 +1632,13 @@ switch ($action) {
             				 '' AS difference,
             				 '' AS pledge_fee,
                              '' AS pledge_fee1,
+                             CASE
+                                WHEN money_transactions_detail.currency_id = 2 THEN CONCAT(ROUND(SUM(money_transactions_detail.pay_amount),2), ' USD')
+                                WHEN money_transactions_detail.currency_id = 1 THEN CONCAT(ROUND(SUM(money_transactions_detail.pay_amount/money_transactions_detail.course),2), ' USD')
+                    		 END as  pledge_payed,
                              CASE 
-                    			WHEN money_transactions.currency_id = 2 THEN CONCAT(ROUND(SUM(money_transactions_detail.pay_amount),2),' USD')
-                                WHEN money_transactions.currency_id = 1 THEN CONCAT(ROUND(SUM(money_transactions_detail.pay_amount/money_transactions_detail.course),2), ' USD')
-                             END as  pledge_payed,
-                             CASE 
-                    			WHEN money_transactions.currency_id = 2 THEN CONCAT(ROUND(SUM(money_transactions_detail.pay_amount*money_transactions_detail.course),2),' GEL')
-                                WHEN money_transactions.currency_id = 1 THEN CONCAT(ROUND(SUM(money_transactions_detail.pay_amount),2),' GEL')
+                    			WHEN money_transactions_detail.currency_id = 2 THEN CONCAT(ROUND(SUM(money_transactions_detail.pay_amount*money_transactions_detail.course),2), ' GEL')
+                                WHEN money_transactions_detail.currency_id = 1 THEN CONCAT(ROUND(SUM(money_transactions_detail.pay_amount),2), ' GEL')
                              END as  pledge_payed1,
             				 '' AS  pledge_delta,
                              '' as  other,
@@ -2212,13 +2212,13 @@ switch ($action) {
                     				 '' AS difference,
                     				 '' AS pledge_fee,
                                      '' AS pledge_fee1,
+                                     CASE
+                                        WHEN money_transactions_detail.currency_id = 2 THEN CONCAT(ROUND(SUM(money_transactions_detail.pay_amount),2), ' USD')
+                                        WHEN money_transactions_detail.currency_id = 1 THEN CONCAT(ROUND(SUM(money_transactions_detail.pay_amount/money_transactions_detail.course),2), ' USD')
+                            		 END as  pledge_payed,
                                      CASE 
-                            			WHEN money_transactions.currency_id = 2 THEN CONCAT(ROUND(SUM(money_transactions_detail.pay_amount),2),' USD')
-                                        WHEN money_transactions.currency_id = 1 THEN CONCAT(ROUND(SUM(money_transactions_detail.pay_amount/money_transactions_detail.course),2),' USD')
-                                     END as  pledge_payed,
-                                     CASE 
-                            			WHEN money_transactions.currency_id = 2 THEN CONCAT(ROUND(SUM(money_transactions_detail.pay_amount*money_transactions_detail.course),2),' GEL')
-                                        WHEN money_transactions.currency_id = 1 THEN CONCAT(ROUND(SUM(money_transactions_detail.pay_amount),2),' GEL')
+                            			WHEN money_transactions_detail.currency_id = 2 THEN CONCAT(ROUND(SUM(money_transactions_detail.pay_amount*money_transactions_detail.course),2), ' GEL')
+                                        WHEN money_transactions_detail.currency_id = 1 THEN CONCAT(ROUND(SUM(money_transactions_detail.pay_amount),2), ' GEL')
                                      END as  pledge_payed1,
                     				 '' AS  pledge_delta,
                                      '' as  other,
