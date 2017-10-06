@@ -486,7 +486,7 @@ switch ($action) {
                             				 '2' AS sort1,
                             				 '' AS number,
                             				 DATE_FORMAT(money_transactions.pay_datetime, '%d/%m/%Y') AS `date`,
-                            				(SELECT cur_cource.cource FROM cur_cource WHERE cur_cource.actived = 1 AND DATE(cur_cource.datetime) = DATE(money_transactions.pay_datetime) LIMIT 1) AS `exchange`,
+                            				 money_transactions_detail.course AS `exchange`,
                             				 '' AS `loan_amount`,
                             				 '' AS `loan_amount_gel`,
                             				 '' AS `delta`,
@@ -503,12 +503,12 @@ switch ($action) {
                             				 '' AS pledge_fee,
                                              '' AS pledge_fee1,
                                              CASE 
-                                    			WHEN money_transactions.currency_id = 2 THEN CONCAT(ROUND(SUM(money_transactions_detail.pay_amount*money_transactions.course),2), ' GEL')
+                                    			WHEN money_transactions.currency_id = 2 THEN CONCAT(ROUND(SUM(money_transactions_detail.pay_amount*money_transactions_detail.course),2), ' GEL')
                                                 WHEN money_transactions.currency_id = 1 THEN CONCAT(ROUND(SUM(money_transactions_detail.pay_amount),2), ' GEL')
                                              END as  pledge_payed,
                                              CASE 
                                     			WHEN money_transactions.currency_id = 2 THEN CONCAT(ROUND(SUM(money_transactions_detail.pay_amount),2), ' USD')
-                                                WHEN money_transactions.currency_id = 1 THEN CONCAT(ROUND(SUM(money_transactions_detail.pay_amount/money_transactions.course),2), ' USD')
+                                                WHEN money_transactions.currency_id = 1 THEN CONCAT(ROUND(SUM(money_transactions_detail.pay_amount/money_transactions_detail.course),2), ' USD')
                                              END as  pledge_payed1,
                             				 '' AS  pledge_delta,
                                              '' as  other,
@@ -996,7 +996,7 @@ switch ($action) {
                     				 '2' AS sort1,
                     				 '' AS number,
                     				 DATE_FORMAT(money_transactions.pay_datetime, '%d/%m/%Y') AS `date`,
-                    				(SELECT cur_cource.cource FROM cur_cource WHERE cur_cource.actived = 1 AND DATE(cur_cource.datetime) = DATE(money_transactions.pay_datetime) LIMIT 1) AS `exchange`,
+                    				 money_transactions_detail.course AS `exchange`,
                     				 '' AS `loan_amount`,
                     				 '' AS `loan_amount_gel`,
                     				 '' AS `delta`,
@@ -1013,12 +1013,12 @@ switch ($action) {
                     				 '' AS pledge_fee,
                                      '' AS pledge_fee1,
                                      CASE 
-                            			WHEN money_transactions.currency_id = 2 THEN CONCAT(ROUND(SUM(money_transactions_detail.pay_amount*money_transactions.course),2), 'GEL')
+                            			WHEN money_transactions.currency_id = 2 THEN CONCAT(ROUND(SUM(money_transactions_detail.pay_amount*money_transactions_detail.course),2), 'GEL')
                                         WHEN money_transactions.currency_id = 1 THEN CONCAT(ROUND(SUM(money_transactions_detail.pay_amount),2), 'GEL')
                                      END as pledge_payed,
                                      CASE 
                             			WHEN money_transactions.currency_id = 2 THEN CONCAT(ROUND(SUM(money_transactions_detail.pay_amount),2),' USD')
-                                        WHEN money_transactions.currency_id = 1 THEN CONCAT(ROUND(SUM(money_transactions_detail.pay_amount/money_transactions.course),2), ' USD')
+                                        WHEN money_transactions.currency_id = 1 THEN CONCAT(ROUND(SUM(money_transactions_detail.pay_amount/money_transactions_detail.course),2), ' USD')
                                      END as pledge_payed1,
                     				 '' AS  pledge_delta,
                                      '' as  other,
@@ -1616,7 +1616,7 @@ switch ($action) {
             				 '2' AS sort1,
             				 '' AS number,
             				 DATE_FORMAT(money_transactions.pay_datetime, '%d/%m/%Y') AS `date`,
-            				(SELECT cur_cource.cource FROM cur_cource WHERE cur_cource.actived = 1 AND DATE(cur_cource.datetime) = DATE(money_transactions.pay_datetime) LIMIT 1) AS `exchange`,
+            				 money_transactions_detail.course AS `exchange`,
             				 '' AS `loan_amount`,
             				 '' AS `loan_amount_gel`,
             				 '' AS `delta`,
@@ -1634,10 +1634,10 @@ switch ($action) {
                              '' AS pledge_fee1,
                              CASE 
                     			WHEN money_transactions.currency_id = 2 THEN CONCAT(ROUND(SUM(money_transactions_detail.pay_amount),2),' USD')
-                                WHEN money_transactions.currency_id = 1 THEN CONCAT(ROUND(SUM(money_transactions_detail.pay_amount/money_transactions.course),2), ' USD')
+                                WHEN money_transactions.currency_id = 1 THEN CONCAT(ROUND(SUM(money_transactions_detail.pay_amount/money_transactions_detail.course),2), ' USD')
                              END as  pledge_payed,
                              CASE 
-                    			WHEN money_transactions.currency_id = 2 THEN CONCAT(ROUND(SUM(money_transactions_detail.pay_amount*money_transactions.course),2),' GEL')
+                    			WHEN money_transactions.currency_id = 2 THEN CONCAT(ROUND(SUM(money_transactions_detail.pay_amount*money_transactions_detail.course),2),' GEL')
                                 WHEN money_transactions.currency_id = 1 THEN CONCAT(ROUND(SUM(money_transactions_detail.pay_amount),2),' GEL')
                              END as  pledge_payed1,
             				 '' AS  pledge_delta,
@@ -2196,7 +2196,7 @@ switch ($action) {
                     				 '2' AS sort1,
                     				 '' AS number,
                     				 DATE_FORMAT(money_transactions.pay_datetime, '%d/%m/%Y') AS `date`,
-                    				(SELECT cur_cource.cource FROM cur_cource WHERE cur_cource.actived = 1 AND DATE(cur_cource.datetime) = DATE(money_transactions.pay_datetime) LIMIT 1) AS `exchange`,
+                    				 money_transactions_detail.course AS `exchange`,
                     				 '' AS `loan_amount`,
                     				 '' AS `loan_amount_gel`,
                     				 '' AS `delta`,
@@ -2214,10 +2214,10 @@ switch ($action) {
                                      '' AS pledge_fee1,
                                      CASE 
                             			WHEN money_transactions.currency_id = 2 THEN CONCAT(ROUND(SUM(money_transactions_detail.pay_amount),2),' USD')
-                                        WHEN money_transactions.currency_id = 1 THEN CONCAT(ROUND(SUM(money_transactions_detail.pay_amount/money_transactions.course),2),' USD')
+                                        WHEN money_transactions.currency_id = 1 THEN CONCAT(ROUND(SUM(money_transactions_detail.pay_amount/money_transactions_detail.course),2),' USD')
                                      END as  pledge_payed,
                                      CASE 
-                            			WHEN money_transactions.currency_id = 2 THEN CONCAT(ROUND(SUM(money_transactions_detail.pay_amount*money_transactions.course),2),' GEL')
+                            			WHEN money_transactions.currency_id = 2 THEN CONCAT(ROUND(SUM(money_transactions_detail.pay_amount*money_transactions_detail.course),2),' GEL')
                                         WHEN money_transactions.currency_id = 1 THEN CONCAT(ROUND(SUM(money_transactions_detail.pay_amount),2),' GEL')
                                      END as  pledge_payed1,
                     				 '' AS  pledge_delta,
