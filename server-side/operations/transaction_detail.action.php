@@ -309,8 +309,8 @@ echo json_encode($data);
 
 function Add($hidde_transaction_id, $hidde_id, $transaction_date, $month_fee, $course, $currency_id, $received_currency_id, $root,  $percent, $penalti_fee, $surplus, $diff, $type_id, $surplus_type){
     
-	$user_id	 = $_SESSION['USERID'];
-	$client_id   = $_REQUEST['client_id'];
+	$user_id   = $_SESSION['USERID'];
+	$client_id = $_REQUEST['client_id'];
 	
 	$month_fee1    = $_REQUEST['month_fee1'];
 	$payable_Fee   = $_REQUEST['payable_Fee'];
@@ -978,6 +978,8 @@ function Add1($tr_id, $hidde_id, $transaction_date, $pledge_or_other_payed, $ple
     $pledge_or_other_surplus1 = $_REQUEST['pledge_or_other_surplus1'];
     $attachment_client_id = $_REQUEST['attachment_client_id'];
     
+    $course_pledge = $_REQUEST['course_pledge'];
+    
     $attachment_agr_id = mysql_fetch_array(mysql_query("SELECT id
                                                         FROM   client_loan_agreement
                                                         WHERE  client_id = '$attachment_client_id'
@@ -988,7 +990,7 @@ function Add1($tr_id, $hidde_id, $transaction_date, $pledge_or_other_payed, $ple
             mysql_query("INSERT INTO `money_transactions_detail`
                                 (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
                           VALUES
-                                (NOW(), '$user_id', '$tr_id', '$transaction_date', '$pledge_or_other_payed', '$course', '$currency_id', '$received_currency_id', '', '', '2', '8', 1)");
+                                (NOW(), '$user_id', '$tr_id', '$transaction_date', '$pledge_or_other_payed', '$course_pledge', '$currency_id', '$received_currency_id', '', '', '2', '8', 1)");
         }
         
         mysql_query(" UPDATE  money_transactions_detail

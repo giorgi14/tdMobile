@@ -501,6 +501,7 @@
 	    	param.currency_id	       = $("#currency_id").val();
 	    	param.received_currency_id = $('#received_currency_id').val();
 	    	param.course	           = $("#course").val();
+	    	param.course_pledge	       = $("#course").val();
 	    	param.transaction_date	   = $("#transaction_date").val();
 
 
@@ -521,7 +522,7 @@
 	    	if(param.type_id == 2 && param.restr_cource == 1){
 		    	course = (parseFloat(param.month_fee_gel)/parseFloat(param.month_fee_usd)).toFixed(4);
 		    	if(course > 0){
-		    		param.course = course;
+		    		param.course_pledge = course;
 		    	}
 			}
 	    	param.month_payed_gel = parseFloat($("#month_payed_gel").val())+parseFloat(param.pledge_or_other_balance_gel);
