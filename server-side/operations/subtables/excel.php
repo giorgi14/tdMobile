@@ -408,7 +408,8 @@ $data .='</ss:Table>
                                     			 client.pid,
                                     			 client.juridical_address,
                                     			 client.phone,
-                                    			 client_car.car_marc,
+                                                 SUBSTRING_INDEX(client_car.car_marc, ' ', 1) AS model,
+                                                 SUBSTRING_INDEX(client_car.car_marc, ' ', -1) AS car_marc,
                                     			 client_car.car_wheel,
                                     			 car_type.`name` AS car_type_name,
                                                  client_car.car_seats,
@@ -616,7 +617,7 @@ $data .='</ss:Table>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		        <ss:Cell ss:MergeAcross="3" ss:StyleID="headercell">
-					<ss:Data ss:Type="String">info@aldagi.ge</ss:Data>
+					<ss:Data ss:Type="String">tgmobail@mail.ru</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 			</ss:Row>
@@ -729,7 +730,7 @@ $data .='</ss:Table>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		        <ss:Cell ss:StyleID="headercell">
-					<ss:Data ss:Type="String">'.$row1['car_marc'].'</ss:Data>
+					<ss:Data ss:Type="String">'.$row1['model'].'</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 				<ss:Cell ss:StyleID="headercell">
