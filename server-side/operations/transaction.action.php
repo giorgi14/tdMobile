@@ -699,11 +699,13 @@ switch ($action) {
                                     		       AND     money_transactions_detail.`status` = 9
                                     		       AND     money_transactions_detail.actived = 1"));
 		    
-		    $check_client = mysql_fetch_array(mysql_query("SELECT id, 
-                                                                  client_id, 
-		                                                          agreement_id
-                                                           FROM   client_loan_agreement 
-                                                           WHERE  client_id = '$id' OR id = '$agr_id'"));
+		    
+		    $check_client = mysql_fetch_array(mysql_query(" SELECT client_loan_agreement.id, 
+                                                    			   client_loan_agreement.client_id, 
+                                                    			   client_loan_agreement.agreement_id
+                                                            FROM   client_loan_agreement 
+                                                            JOIN   client ON client.id = client_loan_agreement.client_id
+                                                            WHERE  client.id = '$id' OR client_loan_agreement.id = '$agr_id';"));
 		    
 		    $data = array('status' => 2, 'fee_lari' => $res_pledge[fee_lari], 'fee_dolari' => $res_pledge[fee_dolari], 'trasnsaction_detail_id' => $res_pledge[id], 'client_data' => client($check_client[client_id]), 'agrement_data' => client_loan_number($check_client[id]), 'client_attachment_data' => client_attachment($check_client[agreement_id], $check_client[client_id]), 'currency_data' => currency($receivedd_currency_id), 'pay_amount1' => $res1[pay_amount_gel], 'pay_amount2' => $res1[pay_amount_usd]);
 		}elseif ($type_id == 3){
@@ -731,11 +733,12 @@ switch ($action) {
 		        $other_pay = 0;
 		    }
 		    
-		    $check_client = mysql_fetch_array(mysql_query("SELECT id,
-                                            		              client_id,
-		                                                          agreement_id
-                                            		       FROM   client_loan_agreement
-                                            		       WHERE  client_id = '$id' OR id = '$agr_id'"));
+		    $check_client = mysql_fetch_array(mysql_query("SELECT client_loan_agreement.id, 
+                                                    			   client_loan_agreement.client_id, 
+                                                    			   client_loan_agreement.agreement_id
+                                                            FROM   client_loan_agreement 
+                                                            JOIN   client ON client.id = client_loan_agreement.client_id
+                                                            WHERE  client.id = '$id' OR client_loan_agreement.id = '$agr_id';"));
 		    
 		    $data = array('status'=>3, 'client_data' => client($check_client[client_id]), 'client_attachment_data' => client_attachment($check_client[agreement_id], $check_client[client_id]), 'agrement_data' => client_loan_number($check_client[id]), 'other_pay' => $other_pay);
 		}
