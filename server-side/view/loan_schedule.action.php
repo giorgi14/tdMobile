@@ -32,7 +32,7 @@ switch ($action) {
                                        ROUND(remaining_root+root,2)
                                 FROM   client_loan_schedule
                                 WHERE  actived = 1 AND client_loan_agreement_id = $agr_id 
-                                AND   `status` = 1 AND activ_status = 0");
+                                AND   `status` = 0 AND activ_status = 0");
 
 		$data = array("aaData"	=> array());
 
