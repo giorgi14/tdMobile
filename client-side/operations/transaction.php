@@ -483,6 +483,8 @@
 
 		    param.payable_Fee		   = $("#payable_Fee").val();
 		    param.yield		           = $("#yield").val();
+
+		    param.other_payed		   = $("#other_payed").val();
 		    
 	    	param.root		           = $("#root").val();
 	    	
@@ -837,6 +839,7 @@
 	        					$("#payable_Fee1").val(data.sakomisio);
 	        					$("#yield1").val(data.nasargeblebebi);
 	        					$("#month_fee2").val(data.pay_amount1);
+	        					$("#other_payed1").val(data.other_amount);
 	        					//$("#add-edit-form-canceled").html(data.page);
 	    					}
 	    				}
@@ -882,7 +885,7 @@
 	    							$('#currency_id').prop('disabled', true).trigger("chosen:updated");
 	    							$('#client_loan_number').html(data.agrement_data).trigger("chosen:updated");
 	    							$('#attachment_client_id').html(data.client_attachment_data).trigger("chosen:updated");
-	    							
+	    							$("#other_payed1").val(data.other_amount);
 		    					}else if(data.status==2){
 		    						$("#month_fee1").val(data.insurance_fee);
 		    						$("#month_fee").val(data.loan_pay_amount);
@@ -1047,6 +1050,7 @@
 	    							$("#info_mesage").html(data.info_message);
 	    							$("#extra_fee").val(parseFloat(data.loan_pay_amount)+parseFloat(data.pay_amount1));
 	    							$("#hidde_id").val(data.id);
+	    							$("#other_payed1").val(data.other_amount);
 	    							$('#currency_id').prop('disabled', true).trigger("chosen:updated");
 								}
 	    					}
@@ -1127,6 +1131,7 @@
     							$("#month_fee").val(data.loan_pay_amount);
     							$("#daricxvis_tarigi").html(data.schedule_date);
     							$("#info_mesage").html(data.info_message);
+    							$("#other_payed1").val(data.other_amount);
     							extra_fee = data.loan_pay_amount;
     							if(data.loan_pay_amount==''){
     								extra_fee = 0;
@@ -1219,6 +1224,7 @@
     							$("#penalti_fee2").val(data.penalty1);
     							$("#daricxvis_tarigi").html(data.schedule_date);
     							$("#info_mesage").html(data.info_message);
+    							$("#other_payed1").val(data.other_amount);
     							
     							$("#month_fee").val(data.loan_pay_amount);
     							extra_fee = data.loan_pay_amount;
@@ -1647,6 +1653,28 @@
     					$("#hidde_yield").val(1);
         				$("#extra_fee").val(delta);
         				$("#yield").css('background','rgb(255, 255, 255)');
+        				$("#other_payed").focus();
+        				$("#error_mesage").html('');
+    				}
+				}else{
+					$("#other_payed").focus();
+        		}
+            }
+		});
+
+		$(document).on("keydown", "#other_payed", function (event) {
+			if (event.keyCode == $.ui.keyCode.ENTER){
+				if($(this).val()==''){this_value = 0;}else{this_value = $(this).val();}
+				if($("#hidde_other_amount").val()==0){
+    				delta = (parseFloat($("#extra_fee").val())-parseFloat(this_value)).toFixed(2);
+    				if(delta<0){
+    					alert('მიუთითეთ კორექტული თანხა');
+    					$("#other_payed").css('background','#fb5959');
+    					$("#error_mesage").html('არასწორი განაწილება!');
+    				}else{
+    					$("#hidde_other_amount").val(1);
+        				$("#extra_fee").val(delta);
+        				$("#other_payed").css('background','rgb(255, 255, 255)');
         				$("#surplus").focus();
         				$("#error_mesage").html('');
     				}
@@ -1655,7 +1683,6 @@
         		}
             }
 		});
-
 		
 		$(document).on("keydown", "#surplus", function (event) {
 			if (event.keyCode == $.ui.keyCode.ENTER){
@@ -1847,6 +1874,22 @@
 	        	$("#extra_fee").val(parseFloat($("#extra_fee").val()));
 	        	$("#yield").val('');
 	        	$("#yield").focus();
+		    }
+	    });
+
+		$(document).on("click", "#delete_other_payed", function () {
+			other_payed = $("#other_payed").val();
+	        if(other_payed == ''){other_payed = 0;}
+
+	        if($("#hidde_other_amount").val() == 1){
+	        	$("#extra_fee").val(parseFloat($("#extra_fee").val()) + parseFloat(other_payed));
+	        	$("#other_payed").val('');
+	        	$("#hidde_other_amount").val(0);
+	        	$("#other_payed").focus();
+	        }else{
+	        	$("#extra_fee").val(parseFloat($("#extra_fee").val()));
+	        	$("#other_payed").val('');
+	        	$("#other_payed").focus();
 		    }
 	    });
 	    

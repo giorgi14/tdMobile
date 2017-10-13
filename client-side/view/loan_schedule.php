@@ -7,7 +7,7 @@
 		var change_colum_main = "<'dataTable_buttons'T><'F'Cfipl>";
 		    	
 		$(document).ready(function () {        	
-			LoadTable(tName,9,change_colum_main,aJaxURL);	
+			LoadTable(tName,10,change_colum_main,aJaxURL);	
  						
 			/* Add Button ID, Delete Button ID */
 			GetButtons("add_button", "delete_button");
@@ -32,7 +32,7 @@
 		}
 
 		$(document).on("change", "#filt_agr_id", function () {
-			LoadTable(tName,9,change_colum_main,aJaxURL);
+			LoadTable(tName,10,change_colum_main,aJaxURL);
 		});
 		
 		// Add - Save
@@ -57,7 +57,7 @@
 						if(data.error != ''){
 							alert(data.error);
 						}else{
-							LoadTable(tName,9,change_colum_main,aJaxURL);
+							LoadTable(tName,10,change_colum_main,aJaxURL);
 			        		CloseDialog(fName);
 						}
 					}
@@ -182,14 +182,15 @@
         <thead>
             <tr id="datatable_header">
                 <th>ID</th>
-                <th style="width: 10%;">#</th>
-                <th style="width: 13%;">თარიღი</th>
-                <th style="width: 13%;">ანუიტეტი</th>
-                <th style="width: 13%;">ძირი</th>
-                <th style="width: 13%;">პროცენტი</th>
-                <th style="width: 13%;">ჯარიმა</th>
-                <th style="width: 13%;">დამატებითი<br>თანხა</th>
-                <th style="width: 12%;">ნაშთი</th>
+                <th style="width: 9%;">#</th>
+                <th style="width: 12%;">თარიღი</th>
+                <th style="width: 12%;">ანუიტეტი</th>
+                <th style="width: 12%;">ძირი</th>
+                <th style="width: 11%;">პროცენტი</th>
+                <th style="width: 11%;">ჯარიმა</th>
+                <th style="width: 11%;">დამატებითი<br>თანხა</th>
+                <th style="width: 10%;">ნაშთი</th>
+                <th style="width: 12%;">სტატუსი</th>
             </tr>
         </thead>
         <thead>
@@ -207,6 +208,9 @@
                     <input type="text" name="search_category" value="ფილტრი" class="search_init" />
                 </th>
                	<th>
+                    <input type="text" name="search_category" value="ფილტრი" class="search_init" />
+                </th>
+                <th>
                     <input type="text" name="search_category" value="ფილტრი" class="search_init" />
                 </th>
                 <th>

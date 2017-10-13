@@ -29,7 +29,8 @@ switch ($action) {
                                        percent,
 		                               penalty,
                                        other_amount,
-                                       ROUND(remaining_root+root,2)
+                                       ROUND(remaining_root+root,2),
+		                               IF(penalty_stoped=1, 'ჯარიმა შეჩერებული', 'ჩვეულებრივი')
                                 FROM   client_loan_schedule
                                 WHERE  actived = 1 AND client_loan_agreement_id = $agr_id 
                                 AND   `status` = 0 AND activ_status = 0");

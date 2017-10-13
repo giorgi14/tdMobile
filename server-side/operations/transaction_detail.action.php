@@ -315,6 +315,7 @@ function Add($hidde_transaction_id, $hidde_id, $transaction_date, $month_fee, $c
 	$month_fee1    = $_REQUEST['month_fee1'];
 	$payable_Fee   = $_REQUEST['payable_Fee'];
 	$yield         = $_REQUEST['yield'];
+	$other_payed   = $_REQUEST['other_payed'];
 	$other_penalty = $_REQUEST['other_penalty'];
 	$exception_agr = $_REQUEST['exception_agr'];
 	$surplus1      = $_REQUEST['surplus1'];
@@ -1580,10 +1581,8 @@ function GetPage($res = ''){
     					<td colspan="2" style="width: 100px;"><label id="info_mesage" style="padding-top: 5px; margin-left: 10px; color: red; font-size: 15px;" for="date"></label></td>
     					
     					</td>
-    				    <td style="width: 135px;">კურსის გადაანგარიშება</td>
-    					<td style="width: 100px;">
-    						
-    					</td>
+    				    <td style="width: 135px;"></td>
+    					<td style="width: 100px;"></td>
     				</tr>
     				<tr style="height:10px;"></tr>
     				<tr>
@@ -1654,6 +1653,15 @@ function GetPage($res = ''){
     					<td style="width: 100px;"><input class="label_label" style="width: 70px; float:left;" id="yield" type="text"  onkeydown="if(event.which == 8 || event.keyCode == 46) return false;" value="'.$res['pay_amount'].'"><span style="float: right; display: inline; margin-top: 4px; "><button id="delete_yield" class="label_label" style="width:20px; padding: 0 0 2px 0; color: #fb0000; '.$display_none1.'">x</button></span></td>
     					<td style="width: 120px;"><label style="margin-left: 10px;" class="label_label" for="date">დღიური სარგებელი:</label></td>
     					<td style="width: 100px;"><input style="width: 80px;" id="yield1" class="label_label" type="text" value="'.$res1['penalty'].'" disabled="disabled"></td>
+    					<td style="width: 120px;"></td>
+    					<td style="width: 80px;"></td>
+    				</tr>
+    				<tr style="height:10px;"></tr>
+    			    <tr class="car_out_class">
+    					<td style="width: 120px;"><label class="label_label" for="date">დამატებითი<br>გადახახადი:</label></td>
+    					<td style="width: 100px;"><input class="label_label" style="width: 70px; float:left;" id="other_payed" type="text"  onkeydown="if(event.which == 8 || event.keyCode == 46) return false;" value="'.$res['pay_amount'].'"><span style="float: right; display: inline; margin-top: 4px; "><button id="delete_other_payed" class="label_label" style="width:20px; padding: 0 0 2px 0; color: #fb0000; '.$display_none1.'">x</button></span></td>
+    					<td style="width: 120px;"><label style="margin-left: 10px;" class="label_label" for="date">დამატებითი<br>გადახახადი</label></td>
+    					<td style="width: 100px;"><input style="width: 80px;" id="other_payed1" class="label_label" type="text" value="'.$res1['penalty'].'" disabled="disabled"></td>
     					<td style="width: 120px;"></td>
     					<td style="width: 80px;"></td>
     				</tr>
@@ -1787,6 +1795,7 @@ function GetPage($res = ''){
 		    <input type="hidden" id="hidde_payable_Fee" value="0" />
 		    <input type="hidden" id="hidde_payable_Fee" value="0" />
             <input type="hidden" id="hidde_yield" value="0" />
+			<input type="hidden" id="hidde_other_amount" value="0" />
 			<input type="hidden" id="hidde_surplus" value="0" />
 			<input type="hidden" id="hidde_surplus1" value="0" />
 			    
