@@ -14,6 +14,7 @@
 			GetButtons("add_cat", "");
 			SetEvents("add_button", "delete_button", "check-all", tName, fName, aJaxURL,'',tName,10,change_colum_main,aJaxURL,'','','');
 			$("#filt_agr_id").chosen();
+			$("#filt_agr_id_chosen").css('margin-top','-6px');
 		});
         
 		function LoadTable(tName,num,change_colum_main,aJaxURL){
@@ -40,6 +41,7 @@
 		    param 						= new Object();
 		    param.act		            = "save_schedule";
 		    param.id		            = $("#id").val();
+		    param.filt_agr_id           = $("#filt_agr_id").val();
 		    param.schedule_number		= $("#schedule_number").val();
 	    	param.schedule_date		    = $("#schedule_date").val();
 	    	param.schedule_amount		= $("#schedule_amount").val();
@@ -131,8 +133,8 @@
 <div id="tabs" style="width: 100%">
 <div class="callapp_head">გადახდის გრაფიკი<hr class="callapp_head_hr"></div>
 <div id="button_area">
-	<button style="display:none;" id="add_button">დამატება</button>
-	<button style="display:none;" id="delete_button">წაშლა</button>
+	<button id="add_button">დამატება</button>
+	<button id="delete_button">წაშლა</button>
 	<select id="filt_agr_id" style="width:  200px;">
 		<?php 
 		
@@ -191,6 +193,7 @@
                 <th style="width: 11%;">დამატებითი<br>თანხა</th>
                 <th style="width: 10%;">ნაშთი</th>
                 <th style="width: 12%;">სტატუსი</th>
+                <th class="check" style="width: 30px;">#</th>
             </tr>
         </thead>
         <thead>
@@ -224,6 +227,12 @@
                 </th>
                 <th>
                     <input type="text" name="search_category" value="ფილტრი" class="search_init" />
+                </th>
+                <th>
+                	<div class="callapp_checkbox">
+                        <input type="checkbox" id="check-all" name="check-all" />
+                        <label for="check-all"></label>
+                    </div>
                 </th>
            </tr>
         </thead>
