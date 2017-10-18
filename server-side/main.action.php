@@ -3170,7 +3170,7 @@ switch ($action) {
                                            ROUND(client_loan_schedule.root + client_loan_schedule.remaining_root,2) AS remaining_root
                                     FROM   client_loan_schedule 
                                     JOIN   client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
-                                    WHERE  client_loan_agreement_id = '$local_id'
+                                    WHERE  client_loan_agreement.client_id = '$local_id'
                                     AND    DATE(client_loan_schedule.schedule_date)<='$pay_datee'
                                     AND    client_loan_schedule.`status` = 0
                                     AND    client_loan_schedule.actived = 1");
@@ -3196,7 +3196,7 @@ switch ($action) {
                                                         
                                                   FROM   client_loan_schedule
                                                   JOIN   client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
-                                                  WHERE  client_loan_agreement_id = $local_id
+                                                  WHERE  client_loan_agreement.client_id = $local_id
                                                   AND    DATE(client_loan_schedule.schedule_date)<='$pay_datee'
                                                   AND    client_loan_schedule.`status` = 0
                                                   AND    client_loan_schedule.actived = 1"));

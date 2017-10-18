@@ -30,10 +30,14 @@ switch ($action) {
 		                               penalty,
                                        other_amount,
                                        ROUND(remaining_root+root,2),
-		                               IF(penalty_stoped=1, 'ჯარიმა შეჩერებული', 'ჩვეულებრივი')
+		                               CASE
+		                                   WHEN penalty_stoped=1 THEN 'ჯარიმა შეჩერებული'
+		                                   WHEN status = 0 THEN 'ჩვეულებრივი'
+		                                   WHEN status = 2 THEN 'შეთანხმება'
+		                               END AS `status`
                                 FROM   client_loan_schedule
                                 WHERE  actived = 1 AND client_loan_agreement_id = $agr_id 
-                                AND   `status` = 0 AND activ_status = 0");
+                                AND   `status` IN(0,2) AND activ_status IN(0,2)");
 
 		$data = array("aaData"	=> array());
 
@@ -77,7 +81,7 @@ switch ($action) {
 		break;
 	case 'disable':
 		$id	= $_REQUEST['id'];
-		DisableHolidays($id);
+		Disable($id);
 
 		break;
 	default:
@@ -119,6 +123,14 @@ function Save($id, $schedule_number, $schedule_date, $schedule_amount, $schedule
                   WHERE  `id`               = '$id'");
 }
 
+function Disable($id){
+
+    mysql_query("UPDATE client_loan_schedule
+                    SET actived = 0
+                 WHERE  id IN($id)
+                ");
+    return $res;
+}
 
 function GetSchedule($id){
     
@@ -130,7 +142,8 @@ function GetSchedule($id){
                                                    percent,
             		                               penalty,
                                                    other_amount,
-	                                               penalty_stoped
+	                                               penalty_stoped,
+	                                               status
                                             FROM   client_loan_schedule
                                             WHERE  id = $id"));
     return $res;
@@ -146,6 +159,10 @@ function GetPage($res = ''){
     
     if ($res[id] == '') {
         $display = 'display:none';
+    }else{
+        if ($res[status] == 2) {
+            $display = 'display:none';
+        }
     }
     
 	$data = '
