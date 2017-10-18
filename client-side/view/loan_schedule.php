@@ -190,7 +190,7 @@
                 <th style="width: 12%;">ძირი</th>
                 <th style="width: 11%;">პროცენტი</th>
                 <th style="width: 11%;">ჯარიმა</th>
-                <th style="width: 11%;">დამატებითი<br>თანხა</th>
+                <th style="width: 11%;">შეთანხმების<br>თანხა</th>
                 <th style="width: 10%;">ნაშთი</th>
                 <th style="width: 12%;">სტატუსი</th>
                 <th class="check" style="width: 30px;">#</th>
