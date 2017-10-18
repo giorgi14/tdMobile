@@ -250,8 +250,8 @@ switch ($action) {
                                 JOIN   	 client ON client.id = client_loan_agreement.client_id
                                 JOIN   	 client_car ON client_car.client_id = client.id
                                 JOIN     loan_currency ON loan_currency.id = client_loan_agreement.loan_currency_id
-                                WHERE  	 client_loan_schedule.actived = 1 AND client_loan_schedule.pay_date <= CURDATE()
-		                        AND      client.actived = 1  AND client_loan_agreement.actived=1 AND client_loan_agreement.canceled_status=0
+                                WHERE  	 client_loan_schedule.actived = 1
+		                        AND      client.actived = 1  AND client_loan_agreement.actived=1
 		                        AND      MONTH(client_loan_schedule.schedule_date) = '$filt_month'
 		                        AND      YEAR(client_loan_schedule.schedule_date) = YEAR(CURDATE()) $AND
                                 GROUP BY client_loan_schedule.client_loan_agreement_id
