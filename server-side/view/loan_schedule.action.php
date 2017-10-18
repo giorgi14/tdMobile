@@ -34,7 +34,8 @@ switch ($action) {
 		                                   WHEN penalty_stoped=1 THEN 'ჯარიმა შეჩერებული'
 		                                   WHEN status = 0 THEN 'ჩვეულებრივი'
 		                                   WHEN status = 2 THEN 'შეთანხმება'
-		                               END AS `status`
+		                               END AS `status`,
+		                               concat('<div><button style=\"width: 100%; padding: 0px;\" class=\"show_letter\" agr_id=\"',client_loan_agreement_id,'\">ბარათი</button>', '</div>')
                                 FROM   client_loan_schedule
                                 WHERE  actived = 1 AND client_loan_agreement_id = $agr_id 
                                 AND   `status` IN(0,2) AND activ_status IN(0,2)");
