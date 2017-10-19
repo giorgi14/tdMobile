@@ -617,7 +617,7 @@ $data .='</ss:Table>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		        <ss:Cell ss:MergeAcross="3" ss:StyleID="headercell">
-					<ss:Data ss:Type="String">tgmobail@mail.ru</ss:Data>
+					<ss:Data ss:Type="String">tgmobile.georgia@gmail.com</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 			</ss:Row>
