@@ -295,7 +295,7 @@
                 <th style="width: 10%;">შეთანხმების<br>თანხა</th>
                 <th style="width: 10%;">ნაშთი</th>
                 <th style="width: 11%;">სტატუსი</th>
-                <th style="width: 8%;">სტატუსი</th>
+                <th style="width: 8%;">ქმედება</th>
                 <th class="check" style="width: 30px;">#</th>
             </tr>
         </thead>
