@@ -448,7 +448,7 @@ $data .='</ss:Table>
     $i = 1;
     while ($row = mysql_fetch_assoc($req)){
         
-        $dat .= '<ss:Row ss:AutoFitHeight="1" ss:Height="18">
+        $dat .= '<ss:Row ss:AutoFitHeight="1" ss:Height="22">
     				<ss:Cell ss:StyleID="headercell">
     					<ss:Data ss:Type="String">'.$i.'</ss:Data>
     				</ss:Cell>
