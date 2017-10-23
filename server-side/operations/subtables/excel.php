@@ -1173,17 +1173,17 @@ $data .='</ss:Table>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 			</ss:Row>
-		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
-				<ss:Cell ss:MergeAcross="3" ss:StyleID="headercell2">
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="18">
+				<ss:Cell ss:MergeAcross="4" ss:StyleID="headercell2">
 					<ss:Data ss:Type="String">წინა კითხვაზე დადებითი პასუხის შემთხვევაში გთხოვთ მიუთითოთ დეტალები</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
-		        <ss:Cell ss:MergeAcross="3" ss:StyleID="headercell">
+		        <ss:Cell ss:MergeAcross="2" ss:StyleID="headercell">
 					<ss:Data ss:Type="String">სადაზღვეო კომპანია "ალდაგი"</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 			</ss:Row>
-		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="18">
 				<ss:Cell ss:MergeAcross="2" ss:StyleID="headercell2">
 					<ss:Data ss:Type="String">სადაზღვევო თანხა</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
@@ -1200,7 +1200,7 @@ $data .='</ss:Table>
 					<ss:Data ss:Type="String">'.$row1['insurance_price_usd'].'</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
-		        <ss:Cell ss:StyleID="headercell">
+		        <ss:Cell ss:MergeAcross="1" ss:StyleID="headercell">
 					<ss:Data ss:Type="String">აშშ დოლარი</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
@@ -1214,7 +1214,7 @@ $data .='</ss:Table>
 					<ss:Data ss:Type="String">'.$row1['insurance_start_date'].'</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
-		        <ss:Cell ss:StyleID="headercell">
+		        <ss:Cell ss:StyleID="headercell2">
 					<ss:Data ss:Type="String">- დან</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
@@ -1222,7 +1222,7 @@ $data .='</ss:Table>
 					<ss:Data ss:Type="String">'.$row1['insurance_end_date'].'</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
-		        <ss:Cell ss:StyleID="headercell">
+		        <ss:Cell ss:MergeAcross="1" ss:StyleID="headercell2">
 					<ss:Data ss:Type="String">- მდე</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
@@ -1242,12 +1242,12 @@ $data .='</ss:Table>
 					<ss:Data ss:Type="String">'.$row1[car_insurance_info_datetime].'</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
-		        <ss:Cell ss:MergeAcross="1" ss:StyleID="headercell">
+		        <ss:Cell ss:StyleID="headercell">
 					<ss:Data ss:Type="String">თანამდებობა</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
-		        <ss:Cell ss:MergeAcross="1" ss:StyleID="headercell">
-					<ss:Data ss:Type="String"></ss:Data>
+		        <ss:Cell ss:MergeAcross="2" ss:StyleID="headercell">
+					<ss:Data ss:Type="String">გენერალური დირექტორი</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 			</ss:Row>
@@ -1256,11 +1256,11 @@ $data .='</ss:Table>
 					<ss:Data ss:Type="String"></ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
-		        <ss:Cell ss:MergeAcross="1" ss:StyleID="headercell">
+		        <ss:Cell ss:StyleID="headercell">
 					<ss:Data ss:Type="String">ხელმოწერა</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
-		        <ss:Cell ss:MergeAcross="1" ss:StyleID="headercell">
+		        <ss:Cell ss:MergeAcross="2" ss:StyleID="headercell">
 					<ss:Data ss:Type="String"></ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
