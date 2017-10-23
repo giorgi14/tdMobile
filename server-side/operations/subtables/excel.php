@@ -448,31 +448,124 @@ $data .='</ss:Table>
     $i = 1;
     while ($row = mysql_fetch_assoc($req)){
         
-        $dat .= '<ss:Row>
-    				<ss:Cell>
+        $dat .= '<ss:Row ss:AutoFitHeight="1" ss:Height="18">
+    				<ss:Cell ss:StyleID="headercell">
     					<ss:Data ss:Type="String">'.$i.'</ss:Data>
     				</ss:Cell>
-    				<ss:Cell>
+    				<ss:Cell ss:StyleID="headercell">
     					<ss:Data ss:Type="String">'.$row[name].'</ss:Data>
     				</ss:Cell>
-    				<ss:Cell>
+    				<ss:Cell ss:StyleID="headercell">
     					<ss:Data ss:Type="String"></ss:Data>
     				</ss:Cell>
-    				<ss:Cell>
+    				<ss:Cell ss:StyleID="headercell">
     					<ss:Data ss:Type="String">'.$row[age].'</ss:Data>
     				</ss:Cell>
-    				<ss:Cell>
+    				<ss:Cell ss:StyleID="headercell">
     					<ss:Data ss:Type="String">'.$row[born_date].'</ss:Data>
     				</ss:Cell>
-    				<ss:Cell>
+    				<ss:Cell ss:StyleID="headercell">
     					<ss:Data ss:Type="String">'.$row[driving_license_type].'</ss:Data>
     				</ss:Cell>
-                    <ss:Cell ss:MergeAcross="1">
+                    <ss:Cell ss:MergeAcross="1" ss:StyleID="headercell">
     					<ss:Data  ss:Type="String">'.$row[driving_license_date].'</ss:Data>
     				</ss:Cell>
     			</ss:Row>
     			';
         $i+=1;
+    }
+    
+    for ($j = $i; $j < 6; $j++) {
+        $dat .= '<ss:Row ss:AutoFitHeight="1" ss:Height="18">
+    				<ss:Cell ss:StyleID="headercell">
+    					<ss:Data ss:Type="String">'.$j.'</ss:Data>
+    				</ss:Cell>
+    				<ss:Cell ss:StyleID="headercell">
+    					<ss:Data ss:Type="String"></ss:Data>
+    				</ss:Cell>
+    				<ss:Cell ss:StyleID="headercell">
+    					<ss:Data ss:Type="String"></ss:Data>
+    				</ss:Cell>
+    				<ss:Cell ss:StyleID="headercell">
+    					<ss:Data ss:Type="String"></ss:Data>
+    				</ss:Cell>
+    				<ss:Cell ss:StyleID="headercell">
+    					<ss:Data ss:Type="String"></ss:Data>
+    				</ss:Cell>
+    				<ss:Cell ss:StyleID="headercell">
+    					<ss:Data ss:Type="String"></ss:Data>
+    				</ss:Cell>
+                    <ss:Cell ss:MergeAcross="1" ss:StyleID="headercell">
+    					<ss:Data  ss:Type="String"></ss:Data>
+    				</ss:Cell>
+    			</ss:Row>
+    			';
+    }
+    
+    for ($k = 1; $k < 11; $k++) {
+        $dat_1 .= '<ss:Row ss:AutoFitHeight="1" ss:Height="18">
+        				<ss:Cell ss:StyleID="headercell">
+        					<ss:Data ss:Type="String">'.$k.'</ss:Data>
+        					<ss:NamedCell ss:Name="Print_Titles"/>
+        				</ss:Cell>
+        		        <ss:Cell ss:StyleID="headercell">
+        					<ss:Data ss:Type="String"></ss:Data>
+        					<ss:NamedCell ss:Name="Print_Titles"/>
+        				</ss:Cell>
+        				<ss:Cell ss:StyleID="headercell">
+        					<ss:Data ss:Type="String"></ss:Data>
+        					<ss:NamedCell ss:Name="Print_Titles"/>
+        				</ss:Cell>
+        		        <ss:Cell ss:StyleID="headercell">
+        					<ss:Data ss:Type="String"></ss:Data>
+        					<ss:NamedCell ss:Name="Print_Titles"/>
+        				</ss:Cell>
+        		        <ss:Cell ss:StyleID="headercell">
+        					<ss:Data ss:Type="String"></ss:Data>
+        					<ss:NamedCell ss:Name="Print_Titles"/>
+        				</ss:Cell>
+        		        <ss:Cell ss:StyleID="headercell">
+        					<ss:Data ss:Type="String"></ss:Data>
+        					<ss:NamedCell ss:Name="Print_Titles"/>
+        				</ss:Cell>
+        		        <ss:Cell ss:MergeAcross="1" ss:StyleID="headercell">
+        					<ss:Data ss:Type="String"></ss:Data>
+        					<ss:NamedCell ss:Name="Print_Titles"/>
+        				</ss:Cell>
+        		    </ss:Row>';
+    }
+    
+    for ($t = 1; $t < 11; $t++) {
+        $dat_2 .= ' <ss:Row ss:AutoFitHeight="1" ss:Height="18">
+        				<ss:Cell ss:StyleID="headercell">
+        					<ss:Data ss:Type="String">'.$t.'</ss:Data>
+        					<ss:NamedCell ss:Name="Print_Titles"/>
+        				</ss:Cell>
+        		        <ss:Cell ss:StyleID="headercell">
+        					<ss:Data ss:Type="String"></ss:Data>
+        					<ss:NamedCell ss:Name="Print_Titles"/>
+        				</ss:Cell>
+        		        <ss:Cell ss:StyleID="headercell">
+        					<ss:Data ss:Type="String"></ss:Data>
+        					<ss:NamedCell ss:Name="Print_Titles"/>
+        				</ss:Cell>
+        		        <ss:Cell ss:StyleID="headercell">
+        					<ss:Data ss:Type="String"></ss:Data>
+        					<ss:NamedCell ss:Name="Print_Titles"/>
+        				</ss:Cell>
+        				<ss:Cell ss:StyleID="headercell">
+        					<ss:Data ss:Type="String"></ss:Data>
+        					<ss:NamedCell ss:Name="Print_Titles"/>
+        				</ss:Cell>
+        		        <ss:Cell ss:StyleID="headercell">
+        					<ss:Data ss:Type="String"></ss:Data>
+        					<ss:NamedCell ss:Name="Print_Titles"/>
+        				</ss:Cell>
+        		        <ss:Cell ss:MergeAcross="1" ss:StyleID="headercell">
+        					<ss:Data ss:Type="String"></ss:Data>
+        					<ss:NamedCell ss:Name="Print_Titles"/>
+        				</ss:Cell>
+        		    </ss:Row>';
     }
     
     $name = "დაზღვევა ალდაგი";
@@ -494,7 +587,7 @@ $data .='</ss:Table>
 	<ss:Styles>
 		<ss:Style ss:ID="Default">
 			<ss:Alignment ss:Vertical="Center" ss:Horizontal="Center" ss:WrapText="1" />
-			<ss:Font ss:FontName="Sylfaen" ss:Size="12" />
+			<ss:Font ss:FontName="Sylfaen" ss:Size="10" />
 			<ss:Interior />
 			<ss:NumberFormat />
 			<ss:Protection />
@@ -510,16 +603,22 @@ $data .='</ss:Table>
         </ss:Style>
 		<ss:Style ss:ID="title">
 			<ss:Borders />
+		    <ss:Font ss:FontName="Sylfaen" ss:Size="8" ss:Bold="1"/>
 			<ss:NumberFormat ss:Format="@" />
 			<ss:Alignment ss:WrapText="1" ss:Horizontal="Center" ss:Vertical="Center" />
 		</ss:Style>
 		<ss:Style ss:ID="headercell">
-			<ss:Font ss:Bold="1" />
+			<ss:Font ss:FontName="Sylfaen" ss:Size="8" ss:Bold="1"/>
 			<ss:Interior ss:Pattern="Solid" />
 			<ss:Alignment ss:WrapText="1" ss:Horizontal="Center" ss:Vertical="Center" />
 		</ss:Style>
+		<ss:Style ss:ID="headercell2">
+			<ss:Font ss:FontName="Sylfaen" ss:Size="8" ss:Bold="1"/>
+			<ss:Interior ss:Pattern="Solid" />
+			<ss:Alignment ss:WrapText="1" ss:Horizontal="Left" ss:Vertical="Center" />
+		</ss:Style>
 		<ss:Style ss:ID="headercell1">
-			<ss:Font ss:Bold="1" />
+			<ss:Font ss:FontName="Sylfaen" ss:Size="8" ss:Bold="1"/>
 			<ss:Interior ss:Pattern="Solid" />
 			<ss:Alignment ss:WrapText="1" ss:Horizontal="Center" ss:Vertical="Center" />
 		</ss:Style>
@@ -531,28 +630,28 @@ $data .='</ss:Table>
     
 		<ss:Table x:FullRows="1" x:FullColumns="1" ss:ExpandedColumnCount="8" ss:ExpandedRowCount="'.$number.'">
     
+			<ss:Column ss:AutoFitWidth="1" ss:Width="50" />
 			<ss:Column ss:AutoFitWidth="1" ss:Width="100" />
 			<ss:Column ss:AutoFitWidth="1" ss:Width="100" />
 			<ss:Column ss:AutoFitWidth="1" ss:Width="100" />
 			<ss:Column ss:AutoFitWidth="1" ss:Width="100" />
-			<ss:Column ss:AutoFitWidth="1" ss:Width="100" />
-			<ss:Column ss:AutoFitWidth="1" ss:Width="100" />
-		    <ss:Column ss:AutoFitWidth="1" ss:Width="100" />
+			<ss:Column ss:AutoFitWidth="1" ss:Width="130" />
+		    <ss:Column ss:AutoFitWidth="1" ss:Width="60" />
 		    
-		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="18">
 				<ss:Cell ss:MergeAcross="7" ss:StyleID="headercell" >
 					<ss:Data ss:Type="String"></ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 			</ss:Row>
-			<ss:Row ss:AutoFitHeight="1" ss:Height="25">
+			<ss:Row ss:AutoFitHeight="1" ss:Height="18">
 				<ss:Cell ss:MergeAcross="7" ss:StyleID="m113863508">
 					<ss:Data ss:Type="String">ავტოტრანსპორტის დაზღვევის განაცხადი</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 			</ss:Row>
-		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
-				<ss:Cell ss:MergeAcross="3" ss:StyleID="headercell">
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="18">
+				<ss:Cell ss:MergeAcross="3" ss:StyleID="headercell2">
 					<ss:Data ss:Type="String">დამზღვევის რეკვიზიტები</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
@@ -561,8 +660,8 @@ $data .='</ss:Table>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 			</ss:Row>
-		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
-				<ss:Cell ss:MergeAcross="3" ss:StyleID="headercell">
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="18">
+				<ss:Cell ss:MergeAcross="3" ss:StyleID="headercell2">
 					<ss:Data ss:Type="String">მოსარგებლე (საზღაურის მიმღები)</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
@@ -571,8 +670,8 @@ $data .='</ss:Table>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 			</ss:Row>
-		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
-				<ss:Cell ss:MergeAcross="3" ss:StyleID="headercell">
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="18">
+				<ss:Cell ss:MergeAcross="3" ss:StyleID="headercell2">
 					<ss:Data ss:Type="String">დამზღვევის იურიდიული მისამართი</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
@@ -581,8 +680,8 @@ $data .='</ss:Table>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 			</ss:Row>
-		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
-				<ss:Cell ss:MergeAcross="3" ss:StyleID="headercell">
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="18">
+				<ss:Cell ss:MergeAcross="3" ss:StyleID="headercell2">
 					<ss:Data ss:Type="String">დამზღვევის ფაქტობრივი მისამართი</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
@@ -591,8 +690,8 @@ $data .='</ss:Table>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 			</ss:Row>
-		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
-				<ss:Cell ss:MergeAcross="3" ss:StyleID="headercell">
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="18">
+				<ss:Cell ss:MergeAcross="3" ss:StyleID="headercell2">
 					<ss:Data ss:Type="String">საიდენტიფიკაციო კოდი</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
@@ -601,8 +700,8 @@ $data .='</ss:Table>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 			</ss:Row>
-		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
-				<ss:Cell ss:MergeAcross="3" ss:StyleID="headercell">
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="18">
+				<ss:Cell ss:MergeAcross="3" ss:StyleID="headercell2">
 					<ss:Data ss:Type="String">საქმიანობის ტიპი</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
@@ -611,8 +710,8 @@ $data .='</ss:Table>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 			</ss:Row>
-		         <ss:Row ss:AutoFitHeight="1" ss:Height="25">
-				<ss:Cell ss:MergeAcross="3" ss:StyleID="headercell">
+		         <ss:Row ss:AutoFitHeight="1" ss:Height="18">
+				<ss:Cell ss:MergeAcross="3" ss:StyleID="headercell2">
 					<ss:Data ss:Type="String">დამზღვევის ელ. ფოსტა</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
@@ -621,8 +720,8 @@ $data .='</ss:Table>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 			</ss:Row>
-		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
-				<ss:Cell ss:MergeAcross="3" ss:StyleID="headercell">
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="18">
+				<ss:Cell ss:MergeAcross="3" ss:StyleID="headercell2">
 					<ss:Data ss:Type="String">ხელმძღვანელის თანამდებობა, სახელი გვარი</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
@@ -631,8 +730,8 @@ $data .='</ss:Table>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 			</ss:Row>
-		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
-				<ss:Cell ss:MergeAcross="3" ss:StyleID="headercell">
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="18">
+				<ss:Cell ss:MergeAcross="3" ss:StyleID="headercell2">
 					<ss:Data ss:Type="String">ავტოტრანსპორტის მფლობელი (მიუთითეთ პირადი ნომერი)</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
@@ -641,8 +740,8 @@ $data .='</ss:Table>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 			</ss:Row>
-		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
-				<ss:Cell ss:MergeAcross="3" ss:StyleID="headercell">
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="18">
+				<ss:Cell ss:MergeAcross="3" ss:StyleID="headercell2">
 					<ss:Data ss:Type="String">ავტოტრანსპორტის მფლობელის მისამართი (მობილური)</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
@@ -651,7 +750,7 @@ $data .='</ss:Table>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 			</ss:Row>
-		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="18">
 				<ss:Cell ss:MergeAcross="7" ss:StyleID="m113863508">
 					<ss:Data ss:Type="String">პიროვნებათა მონაცემები, რომლებიც მართავენ ავტოტრანსპორტს</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
@@ -688,7 +787,7 @@ $data .='</ss:Table>
 				</ss:Cell>
 		    </ss:Row>
 		    '.$dat.'
-		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="18">
 				<ss:Cell ss:MergeAcross="7" ss:StyleID="m113863508">
 					<ss:Data ss:Type="String">ინფორმაცია ავტოტრანსპორტის შესახებ</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
@@ -724,7 +823,7 @@ $data .='</ss:Table>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		    </ss:Row>
-		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="18">
 				<ss:Cell ss:StyleID="headercell">
 					<ss:Data ss:Type="String">1</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
@@ -754,7 +853,8 @@ $data .='</ss:Table>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		    </ss:Row>
-		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
+			'.$dat_1.'
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="50">
 				<ss:Cell ss:StyleID="headercell">
 					<ss:Data ss:Type="String">№</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
@@ -784,7 +884,7 @@ $data .='</ss:Table>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		    </ss:Row>
-		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="18">
 				<ss:Cell ss:StyleID="headercell">
 					<ss:Data ss:Type="String">1</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
@@ -814,20 +914,21 @@ $data .='</ss:Table>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		    </ss:Row>
-		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
+			'.$dat_2.'
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="18">
 				<ss:Cell ss:MergeAcross="7" ss:StyleID="headercell">
 					<ss:Data ss:Type="String">თუ აღნიშნული ცხრილი არ არის საკმარისი, გთხოვთ დაურთოთ განაცხადს დანართი შესაბამისი ორგანიზაციის ბეჭდითა და ხელმოწერით</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		    </ss:Row>
-		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="18">
 				<ss:Cell ss:MergeAcross="7" ss:StyleID="m113863508">
 					<ss:Data ss:Type="String">დაზღვეული ავტომობილის აღწერა</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		    </ss:Row>
-		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
-				<ss:Cell ss:MergeAcross="5" ss:StyleID="headercell">
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="18">
+				<ss:Cell ss:MergeAcross="5" ss:StyleID="headercell2">
 					<ss:Data ss:Type="String">გაფორმებულია თუ არა ავტოტრანსპორტი ორგანიზაციის სახელზე </ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
@@ -837,8 +938,8 @@ $data .='</ss:Table>
 				</ss:Cell>
 			</ss:Row>
 		    
-		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
-				<ss:Cell ss:MergeAcross="5" ss:StyleID="headercell">
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="18">
+				<ss:Cell ss:MergeAcross="5" ss:StyleID="headercell2">
 					<ss:Data ss:Type="String">მართვას თუ არა ავტოტრანსპორტს ნებისმიერი პიროვნება 25 წლამდე</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
@@ -848,8 +949,8 @@ $data .='</ss:Table>
 				</ss:Cell>
 			</ss:Row>
 		    
-		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
-				<ss:Cell ss:MergeAcross="5" ss:StyleID="headercell">
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="18">
+				<ss:Cell ss:MergeAcross="5" ss:StyleID="headercell2">
 					<ss:Data ss:Type="String">მოთავსებულია თუ არა ავტოტრანსპორტი დაკეტილ ავტოფარეხში ან დაცულ ავტოსადგომზე</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
@@ -858,8 +959,8 @@ $data .='</ss:Table>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 			</ss:Row>
-		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
-				<ss:Cell ss:MergeAcross="5" ss:StyleID="headercell">
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="18">
+				<ss:Cell ss:MergeAcross="5" ss:StyleID="headercell2">
 					<ss:Data ss:Type="String">გააჩნია თუ არა ავტოტრანსპორტს სიგნალიზაცია</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
@@ -868,8 +969,8 @@ $data .='</ss:Table>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 			</ss:Row>
-		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
-				<ss:Cell ss:MergeAcross="5" ss:StyleID="headercell">
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="18">
+				<ss:Cell ss:MergeAcross="5" ss:StyleID="headercell2">
 					<ss:Data ss:Type="String">გააჩნია თუ არა ავტოტრანსპორტს სხვა დამცავი საშუალება</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
@@ -878,8 +979,8 @@ $data .='</ss:Table>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 			</ss:Row>
-		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
-				<ss:Cell ss:MergeAcross="5" ss:StyleID="headercell">
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="18">
+				<ss:Cell ss:MergeAcross="5" ss:StyleID="headercell2">
 					<ss:Data ss:Type="String">გთხოვთ მიუთითოთ სიგნალიზაციის ტიპი</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
@@ -888,14 +989,14 @@ $data .='</ss:Table>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 			</ss:Row>
-		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="18">
 				<ss:Cell ss:MergeAcross="7" ss:StyleID="m113863508">
 					<ss:Data ss:Type="String">მონაცემები მართვის შესახებ და სარჩელები</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		    </ss:Row>
-		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
-				<ss:Cell ss:MergeAcross="5" ss:StyleID="headercell">
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="30">
+				<ss:Cell ss:MergeAcross="5" ss:StyleID="headercell2">
 					<ss:Data ss:Type="String">არის თუ არა ზემოაღნიშნული რომელიმე მძღოლი ინვალიდი, უჩივის თუ არა მხედველობას, სმენას, ეპილეფსიას, დიაბეტს და/ან გულის დაავადებას</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
@@ -904,8 +1005,8 @@ $data .='</ss:Table>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 			</ss:Row>
-		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
-				<ss:Cell ss:MergeAcross="5" ss:StyleID="headercell">
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="35">
+				<ss:Cell ss:MergeAcross="5" ss:StyleID="headercell2">
 					<ss:Data ss:Type="String">აქვს თუ არა ზემოაღნიშნულ რომელიმე მძღოლს მიღებული უარი ნებისმიერი ავტომანქანის დაზღვევაზე, ან სადაზღვევო პერიოდის გაგრძელებაზე, ან საჭირო იყო თუ არა გაზრდილი სადაზღვევო გადასახადის გადახდა, ან მზღვეველის მიერ წაყენებული იყო თუ არა განსაკუთრებული პირობები</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
@@ -914,8 +1015,8 @@ $data .='</ss:Table>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 			</ss:Row>
-		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
-				<ss:Cell ss:MergeAcross="5" ss:StyleID="headercell">
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="18">
+				<ss:Cell ss:MergeAcross="5" ss:StyleID="headercell2">
 					<ss:Data ss:Type="String">არის თუ არა ზემოაღნიშნული რომელიმე მძღოლი ნასამართლევი ავტოსაგზაო შემთხვევით ჩადენილ დანაშაულზე</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
@@ -924,8 +1025,8 @@ $data .='</ss:Table>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 			</ss:Row>
-			<ss:Row ss:AutoFitHeight="1" ss:Height="25">
-				<ss:Cell ss:MergeAcross="5" ss:StyleID="headercell">
+			<ss:Row ss:AutoFitHeight="1" ss:Height="18">
+				<ss:Cell ss:MergeAcross="5" ss:StyleID="headercell2">
 					<ss:Data ss:Type="String">აქვს თუ არა ზემოაღნიშნულ რომელიმე მძღოლს ჩადენილი რაიმე დანაშაული ბოლო 3 წლის განმავლობაში</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
@@ -934,14 +1035,14 @@ $data .='</ss:Table>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 			</ss:Row>
-		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="18">
 				<ss:Cell ss:MergeAcross="7" ss:StyleID="m113863508">
 					<ss:Data ss:Type="String">დაზღვევის სახეობა</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		    </ss:Row>
-		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
-				<ss:Cell ss:MergeAcross="5" ss:StyleID="headercell">
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="18">
+				<ss:Cell ss:MergeAcross="5" ss:StyleID="headercell2">
 					<ss:Data ss:Type="String">ამოირჩიეთ თქვენთვის სასურველი დაზღვევის სახეობა:</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
@@ -950,8 +1051,8 @@ $data .='</ss:Table>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 			</ss:Row>
-		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
-				<ss:Cell ss:MergeAcross="5" ss:StyleID="headercell">
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="18">
+				<ss:Cell ss:MergeAcross="5" ss:StyleID="headercell2">
 					<ss:Data ss:Type="String">დაზიანება, გატაცებ (ქურდობა,ძარცვა-ყაჩაღობა)</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
@@ -960,8 +1061,8 @@ $data .='</ss:Table>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 			</ss:Row>
-		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
-				<ss:Cell ss:MergeAcross="5" ss:StyleID="headercell">
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="18">
+				<ss:Cell ss:MergeAcross="5" ss:StyleID="headercell2">
 					<ss:Data ss:Type="String">თუ გსურთ მესამე მხარისადმი პასუხისმგებლობის დაზღვევა აირჩიეთ ლიმიტი</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
@@ -970,8 +1071,8 @@ $data .='</ss:Table>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 			</ss:Row>
-		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
-				<ss:Cell ss:MergeAcross="5" ss:StyleID="headercell">
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="18">
+				<ss:Cell ss:MergeAcross="5" ss:StyleID="headercell2">
 					<ss:Data ss:Type="String">თუ გსურთ უბედური შემთხვევით გამოწვეული მძღოლის და/ან მგზავრის დაზღვევა აირჩიეთ ლიმიტი მანქანაზე</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
@@ -980,14 +1081,14 @@ $data .='</ss:Table>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 			</ss:Row>
-		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="18">
 				<ss:Cell ss:MergeAcross="7" ss:StyleID="m113863508">
 					<ss:Data ss:Type="String">რა მიზნებისთვის გამოიყენება ავტოტრანსპორტი?</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		    </ss:Row>
-		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
-				<ss:Cell ss:MergeAcross="5" ss:StyleID="headercell">
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="18">
+				<ss:Cell ss:MergeAcross="5" ss:StyleID="headercell2">
 					<ss:Data ss:Type="String">საზოგადოებრივი, პირადი და გასართობი</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
@@ -996,8 +1097,8 @@ $data .='</ss:Table>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 			</ss:Row>
-		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
-				<ss:Cell ss:MergeAcross="5" ss:StyleID="headercell">
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="18">
+				<ss:Cell ss:MergeAcross="5" ss:StyleID="headercell2">
 					<ss:Data ss:Type="String">მხოლოდ სამუშაო ადგილამდე მისვლა და უკან დაბრუნება</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
@@ -1006,8 +1107,8 @@ $data .='</ss:Table>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 			</ss:Row>
-		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
-				<ss:Cell ss:MergeAcross="5" ss:StyleID="headercell">
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="18">
+				<ss:Cell ss:MergeAcross="5" ss:StyleID="headercell2">
 					<ss:Data ss:Type="String">ორგანიზაციის საქმიანობასთან დაკავშირებით</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
@@ -1016,8 +1117,8 @@ $data .='</ss:Table>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 			</ss:Row>
-		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
-				<ss:Cell ss:MergeAcross="5" ss:StyleID="headercell">
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="18">
+				<ss:Cell ss:MergeAcross="5" ss:StyleID="headercell2">
 					<ss:Data ss:Type="String">სხვადასხვა სამუშაო ადგილებზე გადასაადგილებლად</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
@@ -1026,8 +1127,8 @@ $data .='</ss:Table>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 			</ss:Row>
-		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
-				<ss:Cell ss:MergeAcross="5" ss:StyleID="headercell">
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="18">
+				<ss:Cell ss:MergeAcross="5" ss:StyleID="headercell2">
 					<ss:Data ss:Type="String">სხვა პიროვნების მიერ ნებისმიერ საქმიანობასთან დაკავშირებით</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
@@ -1036,8 +1137,8 @@ $data .='</ss:Table>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 			</ss:Row>
-		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
-				<ss:Cell ss:MergeAcross="5" ss:StyleID="headercell">
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="18">
+				<ss:Cell ss:MergeAcross="5" ss:StyleID="headercell2">
 					<ss:Data ss:Type="String">ვაჭრობასთან ან ნებისმიერ სხვა საქმიანობასთან დაკავშირებით</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
@@ -1046,8 +1147,8 @@ $data .='</ss:Table>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 			</ss:Row>
-		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
-				<ss:Cell ss:MergeAcross="5" ss:StyleID="headercell">
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="18">
+				<ss:Cell ss:MergeAcross="5" ss:StyleID="headercell2">
 					<ss:Data ss:Type="String">საქონლის ან აპარატურის გადასაადგილებლად</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
@@ -1056,14 +1157,14 @@ $data .='</ss:Table>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 			</ss:Row>
-		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="18">
 				<ss:Cell ss:MergeAcross="7" ss:StyleID="m113863508">
 					<ss:Data ss:Type="String">მიმდინარე მდგომარეობა</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		    </ss:Row>
-		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
-				<ss:Cell ss:MergeAcross="5" ss:StyleID="headercell">
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="18">
+				<ss:Cell ss:MergeAcross="5" ss:StyleID="headercell2">
 					<ss:Data ss:Type="String">არის/ყოფილა თუ არა ორგანიზაციის ავტოტრანსპორტი დაზღვეული</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
@@ -1073,7 +1174,7 @@ $data .='</ss:Table>
 				</ss:Cell>
 			</ss:Row>
 		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
-				<ss:Cell ss:MergeAcross="3" ss:StyleID="headercell">
+				<ss:Cell ss:MergeAcross="3" ss:StyleID="headercell2">
 					<ss:Data ss:Type="String">წინა კითხვაზე დადებითი პასუხის შემთხვევაში გთხოვთ მიუთითოთ დეტალები</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
@@ -1083,7 +1184,7 @@ $data .='</ss:Table>
 				</ss:Cell>
 			</ss:Row>
 		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
-				<ss:Cell ss:MergeAcross="2" ss:StyleID="headercell">
+				<ss:Cell ss:MergeAcross="2" ss:StyleID="headercell2">
 					<ss:Data ss:Type="String">სადაზღვევო თანხა</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
@@ -1092,7 +1193,7 @@ $data .='</ss:Table>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		        <ss:Cell ss:StyleID="headercell">
-					<ss:Data ss:Type="String"></ss:Data>
+					<ss:Data ss:Type="String">ლარი</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		        <ss:Cell ss:StyleID="headercell">
@@ -1104,8 +1205,8 @@ $data .='</ss:Table>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 			</ss:Row>
-		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
-				<ss:Cell ss:MergeAcross="2" ss:StyleID="headercell">
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="18">
+				<ss:Cell ss:MergeAcross="2" ss:StyleID="headercell2">
 					<ss:Data ss:Type="String">დაზღვევის პერიოდი</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
@@ -1132,7 +1233,7 @@ $data .='</ss:Table>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 		    </ss:Row>
-		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="18">
 				<ss:Cell ss:MergeAcross="1" ss:StyleID="headercell">
 					<ss:Data ss:Type="String">შევსების თარიღი</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
@@ -1150,7 +1251,7 @@ $data .='</ss:Table>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 			</ss:Row>
-		    <ss:Row ss:AutoFitHeight="1" ss:Height="25">
+		    <ss:Row ss:AutoFitHeight="1" ss:Height="18">
 				<ss:Cell ss:MergeAcross="3" ss:StyleID="headercell">
 					<ss:Data ss:Type="String"></ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
