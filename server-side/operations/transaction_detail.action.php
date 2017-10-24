@@ -1659,9 +1659,9 @@ function GetPage($res = ''){
     				<tr style="height:10px;"></tr>
     			    <tr class="car_out_class">
     					<td style="width: 120px;"><label class="label_label" for="date">შეთანხმების<br>თანხა:</label></td>
-    					<td style="width: 100px;"><input class="label_label" style="width: 70px; float:left;" id="other_payed" type="text"  onkeydown="if(event.which == 8 || event.keyCode == 46) return false;" value="'.$res['pay_amount'].'"><span style="float: right; display: inline; margin-top: 4px; "><button id="delete_other_payed" class="label_label" style="width:20px; padding: 0 0 2px 0; color: #fb0000; '.$display_none1.'">x</button></span></td>
+    					<td style="width: 100px;"><input class="label_label" style="width: 70px; float:left;" id="other_payed" type="text"  onkeydown="if(event.which == 8 || event.keyCode == 46) return false;" value=""><span style="float: right; display: inline; margin-top: 4px; "><button id="delete_other_payed" class="label_label" style="width:20px; padding: 0 0 2px 0; color: #fb0000; '.$display_none1.'">x</button></span></td>
     					<td style="width: 120px;"><label style="margin-left: 10px;" class="label_label" for="date">შეთანხმების<br>თანხა</label></td>
-    					<td style="width: 100px;"><input style="width: 80px;" id="other_payed1" class="label_label" type="text" value="'.$res1['penalty'].'" disabled="disabled"></td>
+    					<td style="width: 100px;"><input style="width: 80px;" id="other_payed1" class="label_label" type="text" value="" disabled="disabled"></td>
     					<td style="width: 120px;"></td>
     					<td style="width: 80px;"></td>
     				</tr>
