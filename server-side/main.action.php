@@ -3136,9 +3136,8 @@ switch ($action) {
                                                     JOIN     client_loan_agreement ON money_transactions.agreement_id = client_loan_agreement.id
                                                     WHERE    money_transactions.client_id = '$local_id'
                                                     AND      money_transactions_detail.`status` = 7 AND money_transactions.type_id = 2
-                                                    AND      money_transactions_detail.payed_status = 1 AND money_transactions.actived = 1
-                                                    ORDER BY money_transactions.pay_datetime ASC
-                                                    LIMIT 1"));
+                                                    AND      money_transactions.actived = 1 AND money_transactions_detail.actived = 1
+                                                    "));
         
         $res_pledge1 = mysql_fetch_assoc(mysql_query("SELECT   IFNULL(CASE
                                                                           WHEN client_loan_agreement.loan_currency_id = 2 THEN ROUND(SUM(money_transactions_detail.pay_amount/money_transactions.course),2)
@@ -3294,9 +3293,8 @@ switch ($action) {
                                                          JOIN     client_loan_agreement ON money_transactions.agreement_id = client_loan_agreement.id
                                                          WHERE    money_transactions.client_id = '$local_id'
                                                          AND      money_transactions_detail.`status` = 7 AND money_transactions.type_id = 2
-                                                         AND      money_transactions_detail.payed_status = 1 AND money_transactions.actived = 1
-                                                         ORDER BY money_transactions.pay_datetime ASC
-                                                         LIMIT 1"));
+                                                         AND      money_transactions_detail.actived = 1 AND money_transactions.actived = 1
+                                                         "));
             
             $res_pledge1= mysql_fetch_assoc(mysql_query("SELECT IFNULL(CASE
                                                                             WHEN client_loan_agreement.loan_currency_id = 2 THEN ROUND(SUM(money_transactions_detail.pay_amount/money_transactions.course),2)
