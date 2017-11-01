@@ -2234,7 +2234,7 @@ switch ($action) {
                             UNION ALL
                             SELECT   client.id,
                     				 '' AS `id`,
-                    				 '5' AS number1,
+                    				 '3' AS number1,
                     				 '8' AS sort3,
                     				 DATE(money_transactions.pay_datetime) AS sort,
                     				 '2' AS sort1,
@@ -3078,19 +3078,30 @@ switch ($action) {
                                                    AND     money_transactions_detail.`status` = 3
                                                    AND     money_transactions_detail.actived = 1"));
     
-            $res_pledge = mysql_fetch_assoc(mysql_query("SELECT   IFNULL(CASE
-                                                                             WHEN client_loan_agreement.loan_currency_id = 2 THEN ROUND(SUM(money_transactions_detail.pay_amount/money_transactions.course),2)
-                                                                             WHEN client_loan_agreement.loan_currency_id = 1 THEN ROUND(SUM(money_transactions_detail.pay_amount),2)
-                                                                         END,0) AS peg_pledge
-                                                         FROM     money_transactions
-                                                         JOIN     money_transactions_detail ON money_transactions.id = money_transactions_detail.transaction_id
-                                                         JOIN     client_loan_agreement ON money_transactions.agreement_id = client_loan_agreement.id
-                                                         WHERE    money_transactions.client_id = '$local_id'
-                                                         AND      money_transactions_detail.`status` = 7 AND money_transactions.type_id = 2
-                                                         AND      money_transactions_detail.payed_status = 1 AND money_transactions.actived = 1
-                                                         ORDER BY money_transactions.pay_datetime ASC
-                                                         LIMIT 1"));
+            $res_pledge = mysql_fetch_assoc(mysql_query("SELECT   SUM(IFNULL(CASE
+                                                                            WHEN money_transactions_detail.currency_id = 2 THEN ROUND(money_transactions_detail.pay_amount/money_transactions_detail.course,2)
+                                                                            WHEN money_transactions_detail.currency_id = 1 THEN ROUND(money_transactions_detail.pay_amount,2)
+                                                                         END,0)) AS peg_pledge
+                                                        FROM     money_transactions
+                                                        JOIN     money_transactions_detail ON money_transactions.id = money_transactions_detail.transaction_id
+                                                        JOIN     client_loan_agreement ON money_transactions.agreement_id = client_loan_agreement.id
+                                                        WHERE    money_transactions.client_id = '$local_id'
+                                                        AND      money_transactions_detail.`status` = 8 AND money_transactions_detail.type_id = 2
+                                                        AND      money_transactions_detail.actived = 1 AND money_transactions.actived = 1"));
             
+            $res_pledge1 = mysql_fetch_assoc(mysql_query("SELECT   SUM(IFNULL(CASE
+                                                                            WHEN money_transactions_detail.currency_id = 2 THEN ROUND(money_transactions_detail.pay_amount/money_transactions_detail.course,2)
+                                                                            WHEN money_transactions_detail.currency_id = 1 THEN ROUND(money_transactions_detail.pay_amount,2)
+                                                                         END,0)) AS peg_pledge
+                                                        FROM     money_transactions
+                                                        JOIN     money_transactions_detail ON money_transactions.id = money_transactions_detail.transaction_id
+                                                        JOIN     client_loan_agreement ON money_transactions.agreement_id = client_loan_agreement.id
+                                                        WHERE    money_transactions.client_id = '$local_id'
+                                                        AND      money_transactions_detail.`status` = 8 AND money_transactions_detail.type_id = 2
+                                                        AND      money_transactions_detail.actived = 1 AND money_transactions.actived = 1
+                                                        "));
+            
+            $pledge_calk = $res_pledge[peg_pledge] - $res_pledge1[peg_pledge];
             $res_other = mysql_fetch_assoc(mysql_query("SELECT ROUND(SUM(money_transactions_detail.pay_amount),2) AS pay_amount
                                                         FROM   money_transactions_detail
                                                         JOIN   money_transactions ON money_transactions_detail.transaction_id = money_transactions.id
@@ -3113,7 +3124,7 @@ switch ($action) {
                 $other_pay = 0;
             }
             
-            $data = array('pay_amount' => $res[pay_amount]+$penalty, 'root' => $res[root], 'percent' => $res[percent], 'penalty' => $penalty, 'pay_amount1' => $res1[pay_amount], 'other2' => $other_pay, 'pledge2' => $res_pledge[peg_pledge]);
+            $data = array('pay_amount' => $res[pay_amount]+$penalty, 'root' => $res[root], 'percent' => $res[percent], 'penalty' => $penalty, 'pay_amount1' => $res1[pay_amount], 'other2' => $other_pay, 'pledge2' => $pledge_calk);
         }else{
             global  $error;
             $error = 'ხელშეკრულება არ არის გააქტიურებული';
@@ -3126,10 +3137,10 @@ switch ($action) {
     
         $local_id  = $_REQUEST['local_id'];
         $pay_datee = $_REQUEST['pay_datee1'];
-        $res_pledge = mysql_fetch_assoc(mysql_query("SELECT  IFNULL(CASE
-                                                						WHEN client_loan_agreement.loan_currency_id = 2 THEN ROUND(SUM(money_transactions_detail.pay_amount/money_transactions.course),2)
-                                                						WHEN client_loan_agreement.loan_currency_id = 1 THEN ROUND(SUM(money_transactions_detail.pay_amount),2)
-                                                    				 END,0) AS peg_pledge,
+        $res_pledge = mysql_fetch_assoc(mysql_query("SELECT  SUM(IFNULL(CASE
+                                                						WHEN money_transactions_detail.currency_id = 2 THEN ROUND(money_transactions_detail.pay_amount/money_transactions_detail.course,2)
+                                                						WHEN money_transactions_detail.currency_id = 1 THEN ROUND(money_transactions_detail.pay_amount,2)
+                                                    				 END,0)) AS peg_pledge,
                                                              money_transactions.pay_datetime
                                                     FROM     money_transactions
                                                     JOIN     money_transactions_detail ON money_transactions.id = money_transactions_detail.transaction_id
@@ -3139,19 +3150,18 @@ switch ($action) {
                                                     AND      money_transactions.actived = 1 AND money_transactions_detail.actived = 1
                                                     "));
         
-        $res_pledge1 = mysql_fetch_assoc(mysql_query("SELECT   IFNULL(CASE
-                                                                          WHEN client_loan_agreement.loan_currency_id = 2 THEN ROUND(SUM(money_transactions_detail.pay_amount/money_transactions.course),2)
-                                                                          WHEN client_loan_agreement.loan_currency_id = 1 THEN ROUND(SUM(money_transactions_detail.pay_amount),2)
-                                                                      END,0) AS peg_pledge,
+        $res_pledge1 = mysql_fetch_assoc(mysql_query("SELECT   SUM(IFNULL(CASE
+                                                                          WHEN money_transactions_detail.currency_id = 2 THEN ROUND(money_transactions_detail.pay_amount/money_transactions_detail.course,2)
+                                                                          WHEN money_transactions_detail.currency_id = 1 THEN ROUND(money_transactions_detail.pay_amount,2)
+                                                                      END,0)) AS peg_pledge,
                                                                money_transactions.pay_datetime
                                                       FROM     money_transactions
                                                       JOIN     money_transactions_detail ON money_transactions.id = money_transactions_detail.transaction_id
                                                       JOIN     client_loan_agreement ON money_transactions.agreement_id = client_loan_agreement.id
                                                       WHERE    money_transactions.client_id = '$local_id'
                                                       AND      money_transactions_detail.`status` = 8 AND money_transactions.type_id = 2
-                                                      AND      money_transactions_detail.actived = 1 AND money_transactions.actived = 1 AND money_transactions.pay_datetime >= '$res_pledge[pay_datetime]'
-                                                      ORDER BY money_transactions.pay_datetime ASC
-                                                      LIMIT 1"));
+                                                      AND      money_transactions_detail.actived = 1 AND money_transactions.actived = 1 AND money_transactions.pay_datetime <= '$res_pledge[pay_datetime]'
+                                                      "));
         
         $pledge = $res_pledge[peg_pledge] - $res_pledge1[peg_pledge];
         
@@ -3283,31 +3293,30 @@ switch ($action) {
             $data = array('pay_amount' => $pay_amount, 'root' => $remaining_root, 'percent' => $rercent, 'penalty' => $penalty, 'pay_amount1' => $res_avans[pay_amount], 'nasargeblebebi' => $nasargeblebi, 'sakomisio' => $sakomisio, 'reg_pledge' => $pledge, 'reg_other' => $other_pay);
         }else{
             
-            $res_pledge = mysql_fetch_assoc(mysql_query("SELECT   IFNULL(CASE
-                                                                            WHEN client_loan_agreement.loan_currency_id = 2 THEN ROUND(SUM(money_transactions_detail.pay_amount/money_transactions.course),2)
-                                                                            WHEN client_loan_agreement.loan_currency_id = 1 THEN ROUND(SUM(money_transactions_detail.pay_amount),2)
-                                                                        END,0) AS peg_pledge,
-                                                                  money_transactions.pay_datetime
-                                                         FROM     money_transactions
-                                                         JOIN     money_transactions_detail ON money_transactions.id = money_transactions_detail.transaction_id
-                                                         JOIN     client_loan_agreement ON money_transactions.agreement_id = client_loan_agreement.id
-                                                         WHERE    money_transactions.client_id = '$local_id'
-                                                         AND      money_transactions_detail.`status` = 7 AND money_transactions.type_id = 2
-                                                         AND      money_transactions_detail.actived = 1 AND money_transactions.actived = 1
+            $res_pledge = mysql_fetch_assoc(mysql_query("SELECT  SUM(IFNULL(CASE
+                                                						WHEN money_transactions_detail.currency_id = 2 THEN ROUND(money_transactions_detail.pay_amount/money_transactions_detail.course,2)
+                                                						WHEN money_transactions_detail.currency_id = 1 THEN ROUND(money_transactions_detail.pay_amount,2)
+                                                    				 END,0)) AS peg_pledge,
+                                                                 money_transactions.pay_datetime
+                                                        FROM     money_transactions
+                                                        JOIN     money_transactions_detail ON money_transactions.id = money_transactions_detail.transaction_id
+                                                        JOIN     client_loan_agreement ON money_transactions.agreement_id = client_loan_agreement.id
+                                                        WHERE    money_transactions.client_id = '$local_id'
+                                                        AND      money_transactions_detail.`status` = 7 AND money_transactions.type_id = 2
+                                                        AND      money_transactions.actived = 1 AND money_transactions_detail.actived = 1
                                                          "));
             
-            $res_pledge1= mysql_fetch_assoc(mysql_query("SELECT IFNULL(CASE
-                                                                            WHEN client_loan_agreement.loan_currency_id = 2 THEN ROUND(SUM(money_transactions_detail.pay_amount/money_transactions.course),2)
-                                                                            WHEN client_loan_agreement.loan_currency_id = 1 THEN ROUND(SUM(money_transactions_detail.pay_amount),2)
-                                                                       END,0) AS peg_pledge
-                                                            FROM     money_transactions
-                                                            JOIN     money_transactions_detail ON money_transactions.id = money_transactions_detail.transaction_id
-                                                            JOIN     client_loan_agreement ON money_transactions.agreement_id = client_loan_agreement.id
-                                                            WHERE    money_transactions.client_id = '$local_id'
-                                                            AND      money_transactions_detail.`status` = 8 AND money_transactions.type_id = 2
-                                                            AND      money_transactions_detail.actived = 1 AND money_transactions.actived = 1 AND money_transactions.pay_datetime >= '$res_pledge[pay_datetime]'
-                                                            ORDER BY money_transactions.pay_datetime ASC
-                                                            LIMIT 1"));
+            $res_pledge1= mysql_fetch_assoc(mysql_query("SELECT  SUM(IFNULL(CASE
+                                                						WHEN money_transactions_detail.currency_id = 2 THEN ROUND(money_transactions_detail.pay_amount/money_transactions_detail.course,2)
+                                                						WHEN money_transactions_detail.currency_id = 1 THEN ROUND(money_transactions_detail.pay_amount,2)
+                                                    				 END,0)) AS peg_pledge,
+                                                                 money_transactions.pay_datetime
+                                                        FROM     money_transactions
+                                                        JOIN     money_transactions_detail ON money_transactions.id = money_transactions_detail.transaction_id
+                                                        JOIN     client_loan_agreement ON money_transactions.agreement_id = client_loan_agreement.id
+                                                        WHERE    money_transactions.client_id = '$local_id'
+                                                        AND      money_transactions_detail.`status` = 8 AND money_transactions.type_id = 2
+                                                        AND      money_transactions.actived = 1 AND money_transactions_detail.actived = 1"));
             
             $pledge = $res_pledge[peg_pledge] - $res_pledge1[peg_pledge];
             

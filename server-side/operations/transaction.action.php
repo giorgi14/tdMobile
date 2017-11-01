@@ -731,7 +731,8 @@ switch ($action) {
                                         		        LIMIT 1"));
 		    $pledge_lari = $res_pledge[fee_lari] - $res_pledge1[fee_lari];
 		    $pledge_gel = $res_pledge[fee_dolari] - $res_pledge1[fee_dolari];
-		    $res1 = mysql_fetch_assoc(mysql_query("SELECT  CASE
+		    //$res1 = mysql_fetch_assoc(mysql_query 
+		    echo("SELECT  CASE
                                             					WHEN money_transactions.currency_id = 2 THEN ROUND(IFNULL(SUM(money_transactions_detail.pay_amount),0),2)
                                             					WHEN money_transactions.currency_id = 1 THEN ROUND(IFNULL(SUM(money_transactions_detail.pay_amount/money_transactions_detail.course),0),2)
                                             				END  AS pay_amount_usd,
@@ -745,7 +746,7 @@ switch ($action) {
                                     		       JOIN    client_loan_agreement ON client_loan_agreement.id = money_transactions.agreement_id
                                     		       WHERE  (client_loan_agreement.client_id = '$id' OR money_transactions.agreement_id = '$agr_id')
                                     		       AND     money_transactions_detail.`status` = 9
-                                    		       AND     money_transactions_detail.actived = 1"));
+                                    		       AND     money_transactions_detail.actived = 1");
 		    
 		    
 		    $check_client = mysql_fetch_array(mysql_query(" SELECT client_loan_agreement.id, 
