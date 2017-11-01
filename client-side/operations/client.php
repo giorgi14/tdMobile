@@ -97,7 +97,7 @@
     function LoadTable(tbl,col_num,act,change_colum,URL,leng,dataparam,total){
 
     	if(dataparam == undefined){dataparam = leng;}
-    	if(tbl == 'person' || tbl == 'cardrivers' || tbl == 'guarantors' || tbl == 'sms_histori'){dataparam = 'local_id='+$("#local_id").val();}
+    	if(tbl == 'person' || tbl == 'cardrivers' || tbl == 'guarantors' || tbl == 'sms_histori' || tbl == 'car_insurance'){dataparam = 'local_id='+$("#local_id").val();}
     	GetDataTable_loan(tName+tbl,URL,act,col_num,dataparam,0,"","","desc",total,change_colum);
     	$("#table_person_length").css('top', '2px');
     	$("#table_cardrivers_length").css('top', '2px');
