@@ -692,14 +692,14 @@ switch ($action) {
     		}
     	}elseif ($type_id == 2){
 		    $receivedd_currency_id = $_REQUEST['received_currency_id'];
-		    $res_pledge = mysql_fetch_assoc(mysql_query("SELECT CASE
-                                                                   WHEN money_transactions.received_currency_id = 2 THEN ROUND(SUM(money_transactions_detail.pay_amount*money_transactions.course),2)
-                                                                   WHEN money_transactions.received_currency_id = 1 THEN SUM(money_transactions_detail.pay_amount)
-                                                                END AS fee_lari,
-                                                                CASE
-                                                                   WHEN money_transactions.received_currency_id = 2 THEN SUM(money_transactions_detail.pay_amount)
-                                                                   WHEN money_transactions.received_currency_id = 1 THEN ROUND(SUM(money_transactions_detail.pay_amount/money_transactions.course),2)
-                                                                END AS fee_dolari,
+		    $res_pledge = mysql_fetch_assoc(mysql_query("SELECT SUM(CASE
+                                                                   WHEN money_transactions_detail.received_currency_id = 2 THEN ROUND(money_transactions_detail.pay_amount*money_transactions_detail.course,2)
+                                                                   WHEN money_transactions_detail.received_currency_id = 1 THEN money_transactions_detail.pay_amount
+                                                                END) AS fee_lari,
+                                                                SUM(CASE
+                                                                   WHEN money_transactions_detail.received_currency_id = 2 THEN money_transactions_detail.pay_amount
+                                                                   WHEN money_transactions_detail.received_currency_id = 1 THEN ROUND(money_transactions_detail.pay_amount/money_transactions_detail.course,2)
+                                                                END) AS fee_dolari,
 		                                                        money_transactions_detail.id,
 		                                                        money_transactions.client_id,
 		                                                        money_transactions.agreement_id
@@ -707,10 +707,30 @@ switch ($action) {
                                                          JOIN   money_transactions_detail ON money_transactions.id = money_transactions_detail.transaction_id
                                                          WHERE  (money_transactions.client_id = '$id' OR money_transactions.agreement_id = '$agr_id') 
                                                          AND    money_transactions_detail.`status` = 7 AND money_transactions.type_id = 2
-                                                         AND    money_transactions_detail.payed_status = 1 AND money_transactions.actived = 1
+                                                         AND    money_transactions_detail.actived = 1 AND money_transactions.actived = 1
 		                                                 ORDER BY money_transactions.pay_datetime ASC
                                                          LIMIT 1"));
 		    
+		    $res_pledge1 = mysql_fetch_assoc(mysql_query("SELECT SUM(CASE
+                                                    		        WHEN money_transactions_detail.received_currency_id = 2 THEN ROUND(money_transactions_detail.pay_amount*money_transactions_detail.course,2)
+                                                    		        WHEN money_transactions_detail.received_currency_id = 1 THEN money_transactions_detail.pay_amount
+                                                    		     END) AS fee_lari,
+                                                		        SUM(CASE
+                                                    		        WHEN money_transactions_detail.received_currency_id = 2 THEN money_transactions_detail.pay_amount
+                                                    		        WHEN money_transactions_detail.received_currency_id = 1 THEN ROUND(money_transactions_detail.pay_amount/money_transactions_detail.course,2)
+                                                		        END) AS fee_dolari,
+                                                		        money_transactions_detail.id,
+                                                		        money_transactions.client_id,
+                                                		        money_transactions.agreement_id
+                                        		        FROM   money_transactions
+                                        		        JOIN   money_transactions_detail ON money_transactions.id = money_transactions_detail.transaction_id
+                                        		        WHERE  (money_transactions.client_id = '$id' OR money_transactions.agreement_id = '$agr_id')
+                                        		        AND    money_transactions_detail.`status` = 8 AND money_transactions.type_id = 2
+                                        		        AND    money_transactions_detail.actived = 1 AND money_transactions.actived = 1
+                                        		        ORDER BY money_transactions.pay_datetime ASC
+                                        		        LIMIT 1"));
+		    $pledge_lari = $res_pledge[fee_lari] - $res_pledge1[fee_lari];
+		    $pledge_gel = $res_pledge[fee_dolari] - $res_pledge1[fee_dolari];
 		    $res1 = mysql_fetch_assoc(mysql_query("SELECT  CASE
                                             					WHEN money_transactions.currency_id = 2 THEN ROUND(IFNULL(SUM(money_transactions_detail.pay_amount),0),2)
                                             					WHEN money_transactions.currency_id = 1 THEN ROUND(IFNULL(SUM(money_transactions_detail.pay_amount/money_transactions_detail.course),0),2)
@@ -735,7 +755,7 @@ switch ($action) {
                                                             JOIN   client ON client.id = client_loan_agreement.client_id
                                                             WHERE  client.id = '$id' OR client_loan_agreement.id = '$agr_id';"));
 		    
-		    $data = array('status' => 2, 'fee_lari' => $res_pledge[fee_lari], 'fee_dolari' => $res_pledge[fee_dolari], 'trasnsaction_detail_id' => $res_pledge[id], 'client_data' => client($check_client[client_id]), 'agrement_data' => client_loan_number($check_client[id]), 'client_attachment_data' => client_attachment($check_client[agreement_id], $check_client[client_id]), 'currency_data' => currency($receivedd_currency_id), 'pay_amount1' => $res1[pay_amount_gel], 'pay_amount2' => $res1[pay_amount_usd]);
+		    $data = array('status' => 2, 'fee_lari' => $pledge_lari, 'fee_dolari' => $pledge_gel, 'trasnsaction_detail_id' => $res_pledge[id], 'client_data' => client($check_client[client_id]), 'agrement_data' => client_loan_number($check_client[id]), 'client_attachment_data' => client_attachment($check_client[agreement_id], $check_client[client_id]), 'currency_data' => currency($receivedd_currency_id), 'pay_amount1' => $res1[pay_amount_gel], 'pay_amount2' => $res1[pay_amount_usd]);
 		}elseif ($type_id == 3){
 		    
 		    $res_other = mysql_fetch_assoc(mysql_query("SELECT ROUND(SUM(money_transactions_detail.pay_amount),2) AS pay_amount
