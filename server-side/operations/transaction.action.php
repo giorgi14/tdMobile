@@ -299,14 +299,39 @@ switch ($action) {
                                     AND    DATE(client_loan_schedule.schedule_date)<='$pay_datee'
                                     AND    client_loan_schedule.`status` = 0
                                     AND    client_loan_schedule.actived = 1");
+        
+        $resultt = mysql_fetch_array(mysql_query("SELECT MAX(client_loan_schedule.id) AS max_sch_id,
+                                                        (SELECT ROUND(clsh.remaining_root+clsh.root,2) FROM client_loan_schedule AS clsh WHERE clsh.id = MIN(client_loan_schedule.id)) AS `remaining_root`,
+                                                        (SELECT DATEDIFF('$pay_datee', clsh.pay_date) FROM client_loan_schedule AS clsh WHERE clsh.id = MAX(client_loan_schedule.id)) AS `gadacilebuli`,
+                                                        (SELECT ROUND(clsh.percent/30,2) FROM client_loan_schedule AS clsh WHERE clsh.id = MAX(client_loan_schedule.id)) AS `erti_dgis_procenti`,
+                                                        SUM(client_loan_schedule.percent) AS percent,
+                                                        SUM(client_loan_schedule.root) AS schedule_root,
+                                                        client_loan_agreement.loan_beforehand_percent,
+                                                        (SELECT clsh.remaining_root FROM client_loan_schedule AS clsh WHERE clsh.id = MAX(client_loan_schedule.id)) AS `check_remaining_root`,
+                                                        MIN(client_loan_schedule.id) AS min_sch_id
+                                                FROM   client_loan_schedule
+                                                JOIN   client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
+                                                WHERE  client_loan_agreement.client_id = $local_id
+                                                AND    DATE(client_loan_schedule.schedule_date)<='$pay_datee'
+                                                AND    client_loan_schedule.`status` = 0
+                                                AND    client_loan_schedule.actived = 1"));
+        
+        $res1 = mysql_query("SELECT   client_loan_schedule.percent/30 AS `percent`
+                             FROM     client_loan_schedule
+                             JOIN     client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
+                             WHERE    client_loan_agreement.client_id = '$local_id' AND client_loan_schedule.schedule_date >= '$pay_datee'
+                             ORDER BY client_loan_schedule.id ASC
+                             LIMIT 1");
+        
+        $result1 = mysql_fetch_assoc($res1);
         $penalty = 0;
         $i       = 0;
         $other_amount = 0;
         
-        
+        $remainig_root = $resultt[remaining_root];
         $gadacilebuli_day_count = $gadacilebuli_day_count;
         while ($row_all = mysql_fetch_array($check_count)) {
-            $remainig_root = $row_all[remaining_root];
+            
             
             $gadacilebuli_day_count = $row_all[gadacilebuli];
             
@@ -340,21 +365,7 @@ switch ($action) {
             $penalty = $penalty+$penalty1;
         }
         
-        $resultt = mysql_fetch_array(mysql_query("SELECT MAX(client_loan_schedule.id) AS max_sch_id,
-                                                        (SELECT ROUND(clsh.remaining_root+clsh.root,2) FROM client_loan_schedule AS clsh WHERE clsh.id = MIN(client_loan_schedule.id)) AS `remaining_root`,
-                                                        (SELECT DATEDIFF('$pay_datee', clsh.pay_date) FROM client_loan_schedule AS clsh WHERE clsh.id = MAX(client_loan_schedule.id)) AS `gadacilebuli`,
-                                                        (SELECT ROUND(clsh.percent/30,2) FROM client_loan_schedule AS clsh WHERE clsh.id = MAX(client_loan_schedule.id)) AS `erti_dgis_procenti`,
-                                                         SUM(client_loan_schedule.percent) AS percent,
-                                                         SUM(client_loan_schedule.root) AS schedule_root,
-                                                         client_loan_agreement.loan_beforehand_percent,
-                                                        (SELECT clsh.remaining_root FROM client_loan_schedule AS clsh WHERE clsh.id = MAX(client_loan_schedule.id)) AS `check_remaining_root`,
-                                                         MIN(client_loan_schedule.id) AS min_sch_id
-                                                  FROM   client_loan_schedule 
-                                                  JOIN   client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
-                                                  WHERE  client_loan_agreement.client_id = $local_id
-                                                  AND    DATE(client_loan_schedule.schedule_date)<='$pay_datee'
-                                                  AND    client_loan_schedule.`status` = 0
-                                                  AND    client_loan_schedule.actived = 1"));
+        
         
         $rercent        = $resultt[percent];
         
@@ -366,7 +377,7 @@ switch ($action) {
         if ($resultt[check_remaining_root] > 0){
             $sakomisio    = round($remaining_root * ($resultt[loan_beforehand_percent]/100),2);
             if ($resultt[gadacilebuli]>=0) {
-                $nasargeblebi = round($resultt[erti_dgis_procenti]*$resultt[gadacilebuli],2);
+                $nasargeblebi = round($result1[percent]*$resultt[gadacilebuli],2);
             }
             
         }
