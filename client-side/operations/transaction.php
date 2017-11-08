@@ -226,6 +226,12 @@
         			$("#restore-transaction").hide();
         			$("#move-transaction").show();
             	}
+
+            	if($("#hidde_statusss").val()==1){
+            		$('#save-dialog1').button("disable");
+            	}else{
+            		$('#save-dialog1').button("enable");
+                }
     	        
 			}else if(fname=='add-edit-form-det'){
 				var buttons = {

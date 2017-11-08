@@ -169,7 +169,7 @@ switch ($action) {
 		$hidde_status         = $_REQUEST['hidde_status'];
 		$user_id	          = $_SESSION['USERID'];
 		
-		if ($id == '') {
+        if ($id == '') {
 	        if ($tr_id == '') {
 	            mysql_query("INSERT INTO `money_transactions` 
                                         (`datetime`, `user_id`, `client_loan_schedule_id`, `agreement_id`, `client_id`, `pay_datetime`, `pay_amount`, `extra_fee`, `course`, `currency_id`, `received_currency_id`, `month_fee_trasaction`, `type_id`, `status`, `actived`) 
@@ -179,20 +179,19 @@ switch ($action) {
 	            $tr_id = mysql_insert_id();
 	        }else{
 	            mysql_query("UPDATE `money_transactions`
-            	                SET `datetime`                = NOW(),
-                	                `user_id`                 = '$user_id',
-                	                `client_loan_schedule_id` = '$hidde_id',
-	                                `agreement_id`            = '$client_loan_number',
-	                                `client_id`               = '$client_id',
-                	                `pay_datetime`            = '$transaction_date',
-                	                `extra_fee`               = '$extra_fee',
-                	                `course`                  = '$course',
-                	                `currency_id`             = '$currency_id',
-                	                `month_fee_trasaction`    = '$month_fee_trasaction',
-                	                `type_id`                 = '$type_id'
-            	              WHERE `id`                      = '$hidde_transaction_id'");
-	            $tr_id = $hidde_transaction_id;
-	            
+                	                 SET `datetime`                = NOW(),
+                    	                 `user_id`                 = '$user_id',
+                    	                 `client_loan_schedule_id` = '$hidde_id',
+    	                                 `agreement_id`            = '$client_loan_number',
+    	                                 `client_id`               = '$client_id',
+                    	                 `pay_datetime`            = '$transaction_date',
+                    	                 `extra_fee`               = '$extra_fee',
+                    	                 `course`                  = '$course',
+                    	                 `currency_id`             = '$currency_id',
+                    	                 `month_fee_trasaction`    = '$month_fee_trasaction',
+                    	                 `type_id`                 = '$type_id'
+                	               WHERE `id`                      = '$hidde_transaction_id'");
+	                   $tr_id = $hidde_transaction_id;
 	        }
 	        if ($type_id == 2 || $type_id == 3) {
 	            Add1($tr_id, $hidde_id, $transaction_date, $pledge_or_other_payed, $pledge_or_other_surplus, $course, $currency_id, $received_currency_id, $type_id, $surplus_type);

@@ -253,7 +253,18 @@ switch ($action) {
 		$received_currency_id = $_REQUEST['received_currency_id'];
 		$transaction_date     = $_REQUEST['transaction_date'];
 		
-		save($tr_id, $client_amount, $transaction_date, $received_currency_id);
+		
+		$check_gansawileba = mysql_fetch_array(mysql_query("SELECT COUNT(*) AS count
+                                                		    FROM  `money_transactions_detail`
+                                                		    WHERE  transaction_id = '$tr_id'
+                                                		    AND    money_transactions_detail.actived = 1"));
+		if ($check_gansawileba[count]>0) {
+		    save($tr_id, $client_amount, $transaction_date, $received_currency_id);
+		}else{
+		    global $error;
+		    $error = 'ჩარიცხული თანხა არაა გადანაწილებული!';
+		}
+		
         
 		break;
 		
@@ -1084,6 +1095,7 @@ function GetPage($res = ''){
 			<input type="hidden" id="hidde_cl_id1" value="'.$res[client_id].'" />
 			<input type="hidden" id="hidde_transaction_id" value="'.$hidde_id.'" />
 			<input type="hidden" id="hidde_actived" value="'.$res[actived].'" />
+			<input type="hidden" id="hidde_statusss" value="'.$res[status].'" />
         </fieldset>
     </div>
     ';
