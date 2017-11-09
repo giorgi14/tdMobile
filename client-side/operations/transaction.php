@@ -643,6 +643,7 @@
 							alert(data.error);
 						}else{
 							GetDataTable("table_transaction_detail", aJaxURL_det, 'get_list', 9, "&transaction_id="+$("#tr_id").val(), 0, "", 0, "desc", "", "<'F'Cpl>");
+							$('#save-dialog1').button("enable");
 						}
 					}
 			    }

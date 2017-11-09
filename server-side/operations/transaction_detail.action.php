@@ -267,7 +267,7 @@ switch ($action) {
             mysql_query("INSERT INTO `money_transactions` 
                                     (`datetime`, `user_id`, `agreement_id`, `client_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `type_id`, `comment`, `status`, `actived`) 
                               VALUES 
-                                    (NOW(), '$user_id', '$pledge_client_loan_number', '$pledge_client_id', '$transaction_date', '$client_pledge_amount', '$course', '$received_currency_id', '$received_currency_id', '3', '$other_comment', '1', '1')");
+                                    (NOW(), '$user_id', '$pledge_client_loan_number', '$pledge_client_id', '$transaction_date', '$client_pledge_amount', '$course', '$received_currency_id', '$received_currency_id', '3', '$other_comment', '0', '1')");
             
             $tr_id = mysql_insert_id();
 		}else {
@@ -278,7 +278,7 @@ switch ($action) {
                 		        `course`       = '$course',
                 		        `currency_id`  = '$received_currency_id',
                 		        `type_id`      = '3',
-                		        `status`       = '1',
+                		        `status`       = '0',
                 		        `actived`      = '1'
             		      WHERE `id`           = '$tr_id'");
 		}
