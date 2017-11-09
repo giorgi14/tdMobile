@@ -1755,7 +1755,7 @@ function GetPage($res = ''){
     				<tr>
     					<td style="width: 105px; padding-top: 5px;"><label id="pledge_or_other_surplus1_label" for="date">მეტობა</label></td>
     					<td style="width: 100px;">
-    						<input style="width: 70px; float:left;" id="pledge_or_other_surplus" type="text"  onkeydown="if(event.which == 8 || event.keyCode == 46) return false;" value="'.$res['pay_amount'].'"><span style="float: right; display: inline; margin-top: 4px; "><button id="delete_pledge_surplus" style="width:20px; padding: 0 0 2px 0; color: #fb0000;">x</button></span>
+    						<input style="width: 70px; float:left;" id="pledge_or_other_surplus" type="text"  onkeydown="if(event.which == 8 || event.keyCode == 46) return false;" value="'.$res[''].'"><span style="float: right; display: inline; margin-top: 4px; "><button id="delete_pledge_surplus" style="width:20px; padding: 0 0 2px 0; color: #fb0000;">x</button></span>
     					</td>
     					<td style="width: 120px;"></td>
     					<td style="width: 100px;"></td>
