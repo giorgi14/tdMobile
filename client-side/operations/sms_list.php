@@ -128,7 +128,7 @@
 	    $(document).on("keyup  paste", "#sms_text", function () {
 	      	 var sms_text = $('#sms_text').val(); 
 	      	  isValid(sms_text);
-	      	$('#simbol_caunt').html((sms_text.length)+'/150');
+	      	$('#simbol_caunt').html((sms_text.length)+'/300');
 	    });
 
 	    function isValid(str){
