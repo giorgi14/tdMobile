@@ -254,11 +254,17 @@ switch ($action) {
 		$transaction_date     = $_REQUEST['transaction_date'];
 		
 		
-		$check_gansawileba = mysql_fetch_array(mysql_query("SELECT COUNT(*) AS count
-                                                		    FROM  `money_transactions_detail`
-                                                		    WHERE  transaction_id = '$tr_id'
-                                                		    AND    money_transactions_detail.actived = 1"));
-		if ($check_gansawileba[count]>0) {
+		$check_gansawileba = mysql_query("  SELECT COUNT(*) AS count
+                                		    FROM  `money_transactions_detail`
+                                		    WHERE  transaction_id = '$tr_id'
+                                		    AND    money_transactions_detail.actived = 1
+                                            UNION ALL
+                                            SELECT COUNT(*) AS count
+                                		    FROM  `money_transactions_detail`
+                                		    WHERE  parent_tr_id = '$tr_id'
+                                		    AND    money_transactions_detail.actived = 1");
+		
+		if (mysql_num_rows($check_gansawileba)>0) {
 		    save($tr_id, $client_amount, $transaction_date, $received_currency_id);
 		}else{
 		    global $error;

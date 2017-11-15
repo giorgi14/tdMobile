@@ -551,6 +551,8 @@
 		    	alert('შეავსე კლიენტი');
 			}else if(param.surplus_type == 0 && param.id == '' && (param.pledge_or_other_surplus != '' || param.surplus != '')){
 		    	alert('შეავსე მეტობის ტიპი');
+			}else if(param.surplus_type == 4 && param.id == '' && param.attachment_client_id == 0 && (param.pledge_or_other_surplus1 != '' || param.surplus1 != '')){
+		    	alert('შეავსე დანართი');
 			}else{
 				$.ajax({
     		        url: aJaxURL_det,
@@ -580,6 +582,7 @@
 	    	if(surplus_type == 3 && $("#type_id").val()<=1){
 	    		$(".surplus").css('display','');
 		    	$("#surplus_label").html('მეტობა(სესხი)');
+		    	$("#surplus1_labell").html('მეტობა(ალდაგი)');
 		    	$('#attachment_client_id').attr('disabled', false).trigger("chosen:updated");
 		    	if(surplus_type==0){
 		    		$('#attachment_client_id').attr('disabled', true).trigger("chosen:updated");
@@ -587,6 +590,23 @@
 		    }else if(surplus_type == 3 && $("#type_id").val()>1){
 		    	$(".pledge_or_other_surplus1").css('display','');
 		    	$("#pledge_or_other_surplus1_label").html('მეტობა(სესხი)');
+		    	$("#pledge_or_other_surplus1_labell").html('მეტობა(ალდაგი)');
+		    	$('#attachment_client_id').attr('disabled', false).trigger("chosen:updated");
+		    	if(surplus_type==0){
+		    		$('#attachment_client_id').attr('disabled', true).trigger("chosen:updated");
+		    	}
+	    	}else if(surplus_type == 4 && $("#type_id").val()<=1){
+	    		$("#surplus_label").html('მეტობა(სესხი)');
+	    		$(".surplus").css('display','');
+		    	$("#surplus1_labell").html('მეტობა(დანართი)');
+		    	$('#attachment_client_id').attr('disabled', false).trigger("chosen:updated");
+		    	if(surplus_type==0){
+		    		$('#attachment_client_id').attr('disabled', true).trigger("chosen:updated");
+		    	}
+	    	}else if(surplus_type == 4 && $("#type_id").val()>1){
+	    		$("#pledge_or_other_surplus1_label").html('მეტობა(სესხი)');
+		    	$(".pledge_or_other_surplus1").css('display','');
+		    	$("#pledge_or_other_surplus1_labell").html('მეტობა(დანართი)');
 		    	$('#attachment_client_id').attr('disabled', false).trigger("chosen:updated");
 		    	if(surplus_type==0){
 		    		$('#attachment_client_id').attr('disabled', true).trigger("chosen:updated");
@@ -681,6 +701,7 @@
 		    param.client_amount		   = $("#client_amount").val();
 	    	param.received_currency_id = $("#received_currency_id").val();
 	    	param.transaction_date     = $("#transaction_date").val();
+
 	    	
 	    	if(param.tr_id == ''){
 		    	alert('ჩარიცხული თანხა არაა გადანაწილებული!');
@@ -1008,17 +1029,50 @@
     		    });
 
     			surplus_type = $("#surplus_type").val();
-
-		    	if(surplus_type == 3 && $("#type_id").val()>1){
+    			
+				if(surplus_type == 3 && $("#type_id").val()<=1){
+		    		$(".surplus").css('display','');
+			    	$("#surplus_label").html('მეტობა(სესხი)');
+			    	$("#surplus1_labell").html('მეტობა(ალდაგი)');
+			    	$('#attachment_client_id').attr('disabled', false).trigger("chosen:updated");
+			    	if(surplus_type==0){
+			    		$('#attachment_client_id').attr('disabled', true).trigger("chosen:updated");
+			    	}
+			    }else if(surplus_type == 3 && $("#type_id").val()>1){
 			    	$(".pledge_or_other_surplus1").css('display','');
 			    	$("#pledge_or_other_surplus1_label").html('მეტობა(სესხი)');
+			    	$("#pledge_or_other_surplus1_labell").html('მეტობა(ალდაგი)');
+			    	$('#attachment_client_id').attr('disabled', false).trigger("chosen:updated");
+			    	if(surplus_type==0){
+			    		$('#attachment_client_id').attr('disabled', true).trigger("chosen:updated");
+			    	}
+		    	}else if(surplus_type == 4 && $("#type_id").val()<=1){
+		    		$("#surplus_label").html('მეტობა(სესხი)');
+		    		$(".surplus").css('display','');
+			    	$("#surplus1_labell").html('მეტობა(დანართი)');
+			    	$('#attachment_client_id').attr('disabled', false).trigger("chosen:updated");
+			    	if(surplus_type==0){
+			    		$('#attachment_client_id').attr('disabled', true).trigger("chosen:updated");
+			    	}
+		    	}else if(surplus_type == 4 && $("#type_id").val()>1){
+		    		$("#pledge_or_other_surplus1_label").html('მეტობა(სესხი)');
+			    	$(".pledge_or_other_surplus1").css('display','');
+			    	$("#pledge_or_other_surplus1_labell").html('მეტობა(დანართი)');
+			    	$('#attachment_client_id').attr('disabled', false).trigger("chosen:updated");
+			    	if(surplus_type==0){
+			    		$('#attachment_client_id').attr('disabled', true).trigger("chosen:updated");
+			    	}
 		    	}else{
 		    		$(".pledge_or_other_surplus1").css('display','none');
 		    		$(".surplus").css('display','none');
 		    		$("#surplus_label").html('მეტობა');
 		    		$("#pledge_or_other_surplus1_label").html('მეტობა');
+		    		
+		    		$('#attachment_client_id').attr('disabled', false).trigger("chosen:updated");
+		    		if(surplus_type==0){
+			    		$('#attachment_client_id').attr('disabled', true).trigger("chosen:updated");
+			    	}
 			    }
-			    
 	        }else{
 	        	if($(this).val() == 1 && $("#client_id").val()>0){
 		        	
@@ -1071,14 +1125,48 @@
 
 	       		var surplus_type = $("#surplus_type").val();
 
-		    	if(surplus_type == 3 && $("#type_id").val()<=1){
+	       		if(surplus_type == 3 && $("#type_id").val()<=1){
 		    		$(".surplus").css('display','');
 			    	$("#surplus_label").html('მეტობა(სესხი)');
-			    }else{
+			    	$("#surplus1_labell").html('მეტობა(ალდაგი)');
+			    	$('#attachment_client_id').attr('disabled', false).trigger("chosen:updated");
+			    	if(surplus_type==0){
+			    		$('#attachment_client_id').attr('disabled', true).trigger("chosen:updated");
+			    	}
+			    }else if(surplus_type == 3 && $("#type_id").val()>1){
+			    	$(".pledge_or_other_surplus1").css('display','');
+			    	$("#pledge_or_other_surplus1_label").html('მეტობა(სესხი)');
+			    	$("#pledge_or_other_surplus1_labell").html('მეტობა(ალდაგი)');
+			    	$('#attachment_client_id').attr('disabled', false).trigger("chosen:updated");
+			    	if(surplus_type==0){
+			    		$('#attachment_client_id').attr('disabled', true).trigger("chosen:updated");
+			    	}
+		    	}else if(surplus_type == 4 && $("#type_id").val()<=1){
+		    		$("#surplus_label").html('მეტობა(სესხი)');
+		    		$(".surplus").css('display','');
+			    	$("#surplus1_labell").html('მეტობა(დანართი)');
+			    	$('#attachment_client_id').attr('disabled', false).trigger("chosen:updated");
+			    	if(surplus_type==0){
+			    		$('#attachment_client_id').attr('disabled', true).trigger("chosen:updated");
+			    	}
+		    	}else if(surplus_type == 4 && $("#type_id").val()>1){
+		    		$("#pledge_or_other_surplus1_label").html('მეტობა(სესხი)');
+			    	$(".pledge_or_other_surplus1").css('display','');
+			    	$("#pledge_or_other_surplus1_labell").html('მეტობა(დანართი)');
+			    	$('#attachment_client_id').attr('disabled', false).trigger("chosen:updated");
+			    	if(surplus_type==0){
+			    		$('#attachment_client_id').attr('disabled', true).trigger("chosen:updated");
+			    	}
+		    	}else{
 		    		$(".pledge_or_other_surplus1").css('display','none');
 		    		$(".surplus").css('display','none');
 		    		$("#surplus_label").html('მეტობა');
 		    		$("#pledge_or_other_surplus1_label").html('მეტობა');
+		    		
+		    		$('#attachment_client_id').attr('disabled', false).trigger("chosen:updated");
+		    		if(surplus_type==0){
+			    		$('#attachment_client_id').attr('disabled', true).trigger("chosen:updated");
+			    	}
 			    }
 	        }
 
