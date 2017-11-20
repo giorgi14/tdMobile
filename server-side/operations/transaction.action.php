@@ -356,7 +356,7 @@ switch ($action) {
                                                                  FROM   holidays
                                                                  WHERE  actived = 1
                                                                  AND    DATE(date)>='$row_all[pay_date]'
-                                                                 AND    DATE(date)<= '$pay_datee'"));
+                                                                 AND    DATE(date)< '$pay_datee'"));
             
             $gadacilebuli_day_count = $gadacilebuli_day_count - $check_holliday_day[count];
             
@@ -501,7 +501,7 @@ switch ($action) {
             $check_holliday_day = mysql_fetch_array(mysql_query("SELECT COUNT(*) AS count 
                                                                  FROM   holidays
                                                                  WHERE  actived = 1 
-                                                                 AND    DATE(date)>='$result[pay_date]' AND DATE(date) <= '$pay_datee'"));
+                                                                 AND    DATE(date)>='$result[pay_date]' AND DATE(date) < '$pay_datee'"));
             
             $gadacilebuli_day_count = $gadacilebuli_day_count-$check_holliday_day[count];
             $other_amount = $result[other_amount];
@@ -611,7 +611,7 @@ switch ($action) {
                                                     		     FROM   holidays
                                                     		     WHERE  actived = 1
                                                     		     AND    DATE(date)>='$check_penalty[schedule_date]'
-                                                    		     AND    DATE(date)<= '$transaction_date'"));
+                                                    		     AND    DATE(date)< '$transaction_date'"));
     		
     		$gadacilebuli_day_count = $gadacilebuli_day_count - $check_holliday_day[count];
     		
@@ -820,6 +820,70 @@ switch ($action) {
 		}
 		
 		break;
+	case 'nawilobrivi_chamokleba':
+	    $id	              = $_REQUEST['id'];
+	    $agr_id           = $_REQUEST['agr_id'];
+	    $transaction_date = $_REQUEST['transaction_date'];
+	    
+	    $check_loan_type = mysql_fetch_array(mysql_query("SELECT client_loan_agreement.loan_type_id 
+                                                          FROM 	 client_loan_agreement 
+                                                          JOIN   client ON client.id = client_loan_agreement.client_id
+                                                          WHERE  client_loan_agreement.client_id = '$id'
+                                                          AND    client_loan_agreement.id = '$agr_id'
+                                                          AND    client_loan_agreement.canceled_status = 0
+                                                          AND    client_loan_agreement.actived = 1
+                                                          AND    client.actived = 1"));
+	    
+	    if($check_loan_type[loan_type_id]==2){
+	        global $error;
+	        $error = 'არჩეული ხელშეკრულება არის გრაფიკი';
+	    }else{
+	        $result = mysql_query(" SELECT 	 client_loan_schedule.remaining_root,
+	                                         DAY(client_loan_schedule.schedule_date)-DAY('$transaction_date')-1 AS darchenili_nasargeblebi,
+                                             ROUND((DAY(client_loan_schedule.schedule_date)-DAY('$transaction_date')-1)*(client_loan_schedule.percent/30),2) AS darchenili_nasargeblebi_procenti,
+                                    		 DATEDIFF('$transaction_date', DATE(schedule_date)) AS nasargeblebi_dge,
+                                             ROUND((client_loan_schedule.percent/30)* DATEDIFF('$transaction_date', DATE(schedule_date)),2) AS nasargeblebi_procenti
+                                    FROM   	 client_loan_schedule
+                                    JOIN   	 client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
+                                    JOIN   	 client ON client.id = client_loan_agreement.client_id
+                                    WHERE  	 client_loan_schedule.actived = 1
+                                    AND    	 client_loan_schedule.activ_status = 0
+                                    AND    	 client_loan_schedule.`status` = 1
+                                    AND    	 client_loan_agreement.canceled_status = 0
+                                    AND    	 client_loan_agreement.actived = 1
+                                    AND    	 client.actived = 1
+                                    AND    	 client_loan_agreement.client_id = '$id'
+                                    AND    	 client_loan_agreement.id = '$agr_id'
+                                    ORDER BY client_loan_schedule.schedule_date DESC
+                                    LIMIT 1");
+	        
+	        if (mysql_num_rows($result)==0) {
+	            $result = mysql_query("SELECT 	 client_loan_schedule.remaining_root,
+	                                             DAY(client_loan_schedule.schedule_date)-DAY('$transaction_date')-1 AS darchenili_nasargeblebi,
+                                                 ROUND((DAY(client_loan_schedule.schedule_date)-DAY('$transaction_date')-1)*(client_loan_schedule.percent/30),2) AS darchenili_nasargeblebi_procenti,
+                                        		 DATEDIFF('$transaction_date', DATE(client_loan_agreement.datetime)) AS nasargeblebi_dge,
+                                                 ROUND((client_loan_schedule.percent/30)* DATEDIFF('$transaction_date', DATE(client_loan_agreement.datetime)),2) AS nasargeblebi_procenti
+                                        FROM   	 client_loan_schedule
+                                        JOIN   	 client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
+                                        JOIN   	 client ON client.id = client_loan_agreement.client_id
+                                        WHERE  	 client_loan_schedule.actived = 1
+                                        AND    	 client_loan_schedule.activ_status = 0
+                                        AND    	 client_loan_schedule.`status` = 0
+                                        AND    	 client_loan_agreement.canceled_status = 0
+                                        AND    	 client_loan_agreement.actived = 1
+                                        AND    	 client.actived = 1
+                                        AND    	 client_loan_agreement.client_id = '$id'
+                                        AND    	 client_loan_agreement.id = '$agr_id'
+                                        ORDER BY client_loan_schedule.schedule_date ASC");
+	        }
+	        
+	        $res = mysql_fetch_array($result);
+	        
+	        $data = array('remaining_root' => $res[remaining_root], 'darchenili_nasargeblebi'=>$res[darchenili_nasargeblebi], 'darchenili_nasargeblebi_procenti' => $res[darchenili_nasargeblebi_procenti],'nasargeblebi_dge' => $res[nasargeblebi_dge], 'nasargeblebi_procenti' => $res[nasargeblebi_procenti]);
+	        
+	    }
+	
+	    break;
 	default:
 		$error = 'Action is Null';
 }
@@ -1102,6 +1166,8 @@ function GetPage($res = ''){
 			<input type="hidden" id="hidde_transaction_id" value="'.$hidde_id.'" />
 			<input type="hidden" id="hidde_actived" value="'.$res[actived].'" />
 			<input type="hidden" id="hidde_statusss" value="'.$res[status].'" />
+			    
+			<input type="hidden" id="dziris_chamokleba_darchenili_dziri" value="'.$res[client_id].'" />
         </fieldset>
     </div>
     ';

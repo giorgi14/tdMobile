@@ -1059,6 +1059,11 @@
 		param.loan_agreement_type	      = $('#sub_loan_agreement_type').val();
 		param.agreement_number	          = $('#agreement_number').val();
 		param.agreement_date	          = $('#sub_loan_date').val();
+		if($("#check_restructurisation").val() == 1 && $("#next_percent_pay_date").val() != '' && $("#next_mont_percent").val() != ''){
+			param.agreement_date          = $("#next_percent_pay_date").val();
+			param.check_restructurisation = $("#check_restructurisation").val();
+			param.next_mont_percent       = $("#next_mont_percent").val();
+		}
 		param.loan_amount	              = $('#sub_loan_amount').val();
 		param.loan_months                 = $('#sub_loan_month').val();
 		param.insurance_fee               = $('#sub_insurance_fee').val();

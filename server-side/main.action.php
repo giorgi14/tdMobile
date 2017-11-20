@@ -3048,7 +3048,7 @@ switch ($action) {
                                                              FROM   holidays
                                                              WHERE  actived = 1
                                                              AND    DATE(date)>='$res[pay_date]'
-                                                             AND    DATE(date)<= '$pay_datee'"));
+                                                             AND    DATE(date)< '$pay_datee'"));
         
         $gadacilebuli_day_count = $gadacilebuli_day_count - $check_holliday_day[count];
         
@@ -3251,7 +3251,7 @@ switch ($action) {
                                                                 FROM   holidays
                                                                 WHERE  actived = 1
                                                                 AND    DATE(date)>='$row_all[pay_date]'
-                                                                AND    DATE(date)<= '$pay_datee'"));
+                                                                AND    DATE(date)< '$pay_datee'"));
         
             $gadacilebuli_day_count = $gadacilebuli_day_count - $check_holliday_day[count];
         
@@ -3391,7 +3391,7 @@ switch ($action) {
                                                                  FROM   holidays
                                                                  WHERE  actived = 1
                                                                  AND    DATE(date)>='$result[pay_date]'
-                                                                 AND    DATE(date)<= '$pay_datee'"));
+                                                                 AND    DATE(date)< '$pay_datee'"));
             
             $gadacilebuli_day_count = $gadacilebuli_day_count - $check_holliday_day[count];
             

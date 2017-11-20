@@ -180,7 +180,30 @@ switch ($action) {
 		$hidde_id             = $_REQUEST['hidde_id'];
 		$hidde_transaction_id = $_REQUEST['hidde_transaction_id'];
 		$hidde_status         = $_REQUEST['hidde_status'];
-		$user_id	          = $_SESSION['USERID'];
+		
+		$nawilobrivi_chamokleba           = $_REQUEST['nawilobrivi_chamokleba'];
+		$darchenili_nasargeblebi_procenti = $_REQUEST['darchenili_nasargeblebi_procenti'];
+		$darchenili_ziri                  = $_REQUEST['darchenili_ziri'];
+		
+		
+		if ($nawilobrivi_chamokleba == 1) {
+		    
+		    $next_loan_date = mysql_fetch_array(mysql_query("SELECT DATE(client_loan_schedule.schedule_date) AS `date` 
+                                                             FROM client_loan_schedule 
+                                                             WHERE actived = 1 
+                                                             AND client_loan_agreement_id = '$client_loan_number' AND `status` = 1
+                                                             ORDER BY number DESC
+                                                             LIMIT 1"));
+		    
+		    mysql_query("UPDATE client_loan_agreement
+                            SET netx_mont_percent       = '$darchenili_nasargeblebi_procenti', 
+                                check_restructurisation = '1',
+		                        next_percent_pay_date   = '$next_loan_date[date]',
+		                        next_root               = '$darchenili_ziri'
+                         WHERE  id                      = '$client_loan_number'");
+		}
+		
+		$user_id = $_SESSION['USERID'];
 		
         if ($id == '') {
 	        if ($tr_id == '') {
@@ -704,20 +727,47 @@ function Add($hidde_transaction_id, $hidde_id, $transaction_date, $month_fee, $c
     	    }
     	    
     	    if($root>0 || $percent>0){
-        	    mysql_query("INSERT INTO `money_transactions_detail`
-                            	        (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
-                            	  VALUES
-                            	        (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '', '$course', '$currency_id', '$received_currency_id', '$root', '$percent', '$type_id', 1, 1)");
-        	    
-    	        if ($other_penalty == 1) {
-    	            mysql_query("UPDATE  `client_loan_schedule`
-                	                SET  `status`        = '1',
-    	                                 `penalty_check` = 1
-                	              WHERE  `id`     = '$res1[id]'");
+    	        $nawilobrivi_chamokleba = $_REQUEST['nawilobrivi_chamokleba'];
+    	        
+    	        if ($nawilobrivi_chamokleba == 1) {
+    	            mysql_query("INSERT INTO `money_transactions_detail`
+                                	        (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
+                                	  VALUES
+                                	        (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '', '$course', '$currency_id', '$received_currency_id', '$root', '', '$type_id', 1, 1)");
+    	            
+    	            mysql_query("INSERT INTO `money_transactions_detail`
+                        	                (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
+                        	          VALUES
+                        	                (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '$percent', '$course', '$currency_id', '$received_currency_id', '', '', '$type_id', 6, 1)");
+            	    
+        	        if ($other_penalty == 1) {
+        	            mysql_query("UPDATE  `client_loan_schedule`
+                    	                SET  `status`        = '1',
+        	                                 `penalty_check` = 1,
+        	                                 `activ_status` = 1
+                    	              WHERE  `id`     = '$res1[id]'");
+        	        }else{
+            	        mysql_query("UPDATE  `client_loan_schedule`
+            	                        SET  `status` = '1',
+            	                             `activ_status` = 1
+            	                      WHERE  `id`     = '$res1[id]'");
+        	        }
     	        }else{
-        	        mysql_query("UPDATE  `client_loan_schedule`
-        	                        SET  `status` = '1'
-        	                      WHERE  `id`     = '$res1[id]'");
+            	    mysql_query("INSERT INTO `money_transactions_detail`
+                                	        (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
+                                	  VALUES
+                                	        (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '', '$course', '$currency_id', '$received_currency_id', '$root', '$percent', '$type_id', 1, 1)");
+            	    
+        	        if ($other_penalty == 1) {
+        	            mysql_query("UPDATE  `client_loan_schedule`
+                    	                SET  `status`        = '1',
+        	                                 `penalty_check` = 1
+                    	              WHERE  `id`     = '$res1[id]'");
+        	        }else{
+            	        mysql_query("UPDATE  `client_loan_schedule`
+            	                        SET  `status` = '1'
+            	                      WHERE  `id`     = '$res1[id]'");
+        	        }
     	        }
     	    
     	    }
@@ -913,15 +963,35 @@ function Add($hidde_transaction_id, $hidde_id, $transaction_date, $month_fee, $c
             	                  AND     money_transactions_detail.actived = 1");
     	             
     	            if ($percent>=$percent1) {
+    	                $nawilobrivi_chamokleba = $_REQUEST['nawilobrivi_chamokleba'];
     	                 
-    	                mysql_query("INSERT INTO `money_transactions_detail`
-                        	                    (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
-                        	              VALUES
-                        	                    (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '', '$course', '$currency_id', '$received_currency_id', '$root', '$percent', '$type_id', 1, 1)");
-    	                 
-    	                mysql_query("UPDATE  `client_loan_schedule`
-                	                    SET  `status` = '1'
-                	                  WHERE  `id`     = '$res1[id]'");
+    	                if ($nawilobrivi_chamokleba == 1) {
+    	                    mysql_query("INSERT INTO `money_transactions_detail`
+                        	                        (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
+                        	                   VALUES
+                        	                        (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '', '$course', '$currency_id', '$received_currency_id', '$root', '', '$type_id', 1, 1)");
+    	                     
+    	                    mysql_query("INSERT INTO `money_transactions_detail`
+                        	                        (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
+                        	                  VALUES
+                        	                        (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '$percent', '$course', '$currency_id', '$received_currency_id', '', '', '$type_id', 6, 1)");
+    	                     
+    	                    
+	                        mysql_query("UPDATE  `client_loan_schedule`
+                    	                    SET  `status`       = '1',
+        	                                      activ_status` = 1
+                    	                  WHERE  `id`           = '$res1[id]'");
+    	                    
+    	                }else{
+        	                mysql_query("INSERT INTO `money_transactions_detail`
+                            	                    (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
+                            	              VALUES
+                            	                    (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '', '$course', '$currency_id', '$received_currency_id', '$root', '$percent', '$type_id', 1, 1)");
+        	                 
+        	                mysql_query("UPDATE  `client_loan_schedule`
+                    	                    SET  `status` = '1'
+                    	                  WHERE  `id`     = '$res1[id]'");
+    	                }
     	            }
     	            if ($attachment_client_id>0) {
     	                //მეტობა
@@ -1054,7 +1124,7 @@ function Add($hidde_transaction_id, $hidde_id, $transaction_date, $month_fee, $c
                             	                    (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '$surplus1', '$course', '$currency_id', '$received_currency_id', '', '', '2', '9', 1)");
         	            }
     	            }
-    	            if ($surplus1 <= 0 && $surplus1 <= 0) {
+    	            if ($surplus <= 0 && $surplus1 <= 0) {
     	                global  $error;
     	                $error = 'გადანწილებული თანხა არა საკმარისი';
     	            }
@@ -1803,6 +1873,16 @@ function GetPage($res = ''){
     					<td style="width: 280px;"><input class="idle" style="width: 15px;" id="exception_agr" value="1" disabled type="checkbox"></td>
     					<td style="width: 120px;"><select id="attachment_client_id"  calss="label" style="width: 180px;"></select></td>
     				</tr>
+    				<tr>
+    	                <td style="width: 200px;">ნაწილობრივი ძირის მოკლება</td>
+    					<td style="width: 280px;"></td>
+    					<td style="width: 120px;"></td>
+    				</tr>
+    				<tr>
+    	                <td style="width: 200px;"><input style="width: 15px;" id="nawilobrivi_chamokleba" class="label" type="checkbox" value="1" disabled="disabled"></td>
+    					<td style="width: 280px;"></td>
+    					<td style="width: 120px;"></td>
+    				</tr>
     			</table>
     			<table id="loan_table" style="'.$loan_table_hidde.'">
     				<tr style="height:40px;"></tr>
@@ -1857,6 +1937,8 @@ function GetPage($res = ''){
     					<td style="width: 80px;">
     						<input style="width: 80px;"  class="label_label" id="percent1" type="text" value="'.$res1['percent'].'" disabled="disabled">
     					</td>
+    					<td style="width: 120px;"><label class="dziris_chamokleba" style="padding-top: 5px; display:none"  for="date">ნასარგ. დღე:</label></td>
+    					<td style="width: 80px;"><input class="dziris_chamokleba" style="width: 80px; display:none" id="nasargeblebi_dge" type="text" value="'.$res1[''].'" disabled="disabled"></td>
     				</tr>
     				<tr style="height:10px;"></tr>
     				<tr>
@@ -1868,6 +1950,8 @@ function GetPage($res = ''){
     					<td style="width: 80px;">
     						<input style="width: 80px;" id="penalti_fee1" class="label_label" type="text" value="'.$res1['penalty'].'" disabled="disabled">
     					</td>
+    					<td style="width: 120px;"><label class="dziris_chamokleba" style="padding-top: 5px; display:none"  for="date">ნასარგ. %:</label></td>
+    					<td style="width: 80px;"><input class="dziris_chamokleba" style="width: 80px; display:none" id="nasargeblebi_procenti" type="text" value="'.$res1[''].'" disabled="disabled"></td>
     				</tr>
     				<tr class="car_out_class" style="height:10px; '.$hidde_out_car.'"></tr>
     				<tr class="car_out_class" style="'.$hidde_out_car.'">
@@ -1890,15 +1974,6 @@ function GetPage($res = ''){
     					<td style="width: 80px;"></td>
     				</tr>
     				<tr style="height:10px;"></tr>
-    			    <tr class="car_out_class">
-    					<td style="width: 120px;"><label class="label_label" for="date">შეთანხმების<br>თანხა:</label></td>
-    					<td style="width: 100px;"><input class="label_label" style="width: 70px; float:left;" id="other_payed" type="text"  onkeydown="if(event.which == 8 || event.keyCode == 46) return false;" value=""><span style="float: right; display: inline; margin-top: 4px; "><button id="delete_other_payed" class="label_label" style="width:20px; padding: 0 0 2px 0; color: #fb0000; '.$display_none1.'">x</button></span></td>
-    					<td style="width: 120px;"><label style="margin-left: 10px;" class="label_label" for="date">შეთანხმების<br>თანხა</label></td>
-    					<td style="width: 100px;"><input style="width: 80px;" id="other_payed1" class="label_label" type="text" value="" disabled="disabled"></td>
-    					<td style="width: 120px;"></td>
-    					<td style="width: 80px;"></td>
-    				</tr>
-    				<tr style="height:10px;"></tr>
     				<tr>
     					<td style="width: 105px; padding-top: 5px;"><label id="surplus_label" for="date">მეტობა</label></td>
     					<td style="width: 100px;">
@@ -1906,8 +1981,8 @@ function GetPage($res = ''){
     					</td>
     					<td style="width: 120px;"></td>
     					<td style="width: 100px;"></td>
-    					<td style="width: 120px;"></td>
-    					<td style="width: 80px;"></td>
+    					<td style="width: 120px;"><label class="dziris_chamokleba" style="padding-top: 5px; display:none"  for="date">დარჩ. ნასარგ. დღე:</label></td>
+    					<td style="width: 80px;"><input class="dziris_chamokleba" style="width: 80px; display:none" id="darchenili_nasargeblebi_dge" type="text" value="'.$res1[''].'" disabled="disabled"></td>
     				</tr>
     			    <tr class="surplus" style="height:10px; display:none;"></tr>
     				<tr class="surplus" style="display:none;">
@@ -1926,8 +2001,17 @@ function GetPage($res = ''){
     					<td style="width: 100px;"><input style="width: 80px; " id="extra_fee" type="text" value="'.$res['extra_fee'].'" disabled="disabled"></td>
     					<td style="width: 120px;"></td>
     					<td style="width: 100px;"></td>
+    					<td style="width: 120px;"><label class="dziris_chamokleba" style="padding-top: 5px; display:none"  for="date">დარჩ. ნასარგ. %:</label></td>
+    					<td style="width: 80px;"><input class="dziris_chamokleba" style="width: 80px; display:none" id="darchenili_nasargeblebi_procenti" type="text" value="'.$res1[''].'" disabled="disabled"></td>
+    				</tr>
+    				<tr style="height:10px;"></tr>
+    				<tr>
     					<td style="width: 120px;"></td>
-    					<td style="width: 80px;"></td>
+    					<td style="width: 100px;"></td>
+    					<td style="width: 120px;"></td>
+    					<td style="width: 100px;"></td>
+    					<td style="width: 120px;"><label class="dziris_chamokleba" style="padding-top: 5px; display:none"  for="date">დარჩენილი ძირი:</label></td>
+    					<td style="width: 80px;"><input class="dziris_chamokleba" style="width: 80px; display:none" id="darchenili_ziri" type="text" value="'.$res1[''].'" disabled="disabled"></td>
     				</tr>
 				</table>
     			<table id="pledge_table" style="'.$pledge_table_hidde.'">

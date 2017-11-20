@@ -483,6 +483,10 @@
 		    param.car_out              = $("input[id='car_out']:checked").val();
 		    param.other_penalty        = $("input[id='other_penalty']:checked").val();
 		    param.exception_agr        = $("input[id='exception_agr']:checked").val();
+
+		    param.nawilobrivi_chamokleba           = $("input[id='nawilobrivi_chamokleba']:checked").val();
+		    param.darchenili_nasargeblebi_procenti = $("#darchenili_nasargeblebi_procenti").val();
+		    param.darchenili_ziri                  = $("#darchenili_ziri").val();
 		    
 		    param.month_fee		       = $("#month_fee").val();
 		    param.month_fee1		   = $("#month_fee1").val();
@@ -727,6 +731,7 @@
 	    	exception_agr = $("input[id='exception_agr']:checked").val();
 	    	
 	    	if(exception_agr == 1){
+	    		$('#nawilobrivi_chamokleba').attr('disabled', true);
 	    		document.getElementById("car_out").disabled = true;
 	    		document.getElementById("other_penalty").disabled = true;
 	    		param = new Object();
@@ -756,6 +761,9 @@
 	    	    	}
 	    	    });
 		    }else{
+		    	if($("input[id='other_penalty']:checked").val() != 1 && $("input[id='car_out']:checked").val() != 1 && $("input[id='car_out']:checked").val() != 1 && $("input[id='restr_cource']:checked").val() != 1){
+					$('#nawilobrivi_chamokleba').attr('disabled', false);
+				}
 		    	document.getElementById("car_out").disabled = false;
 		    	document.getElementById("other_penalty").disabled = false;
 		    	param         =  new Object();
@@ -843,6 +851,7 @@
 	    	car_out = $("input[id='car_out']:checked").val();
 	    	
 	    	if(car_out == 1){
+	    		$('#nawilobrivi_chamokleba').attr('disabled', true);
 	    		$(".car_out_class").css('display', '');
 	    		document.getElementById("exception_agr").disabled = true;
 	    		param = new Object();
@@ -874,6 +883,9 @@
 	    	    	}
 	    	    });
 		    }else{
+		    	if($("input[id='other_penalty']:checked").val() != 1 && $("input[id='car_out']:checked").val() != 1 && $("input[id='exception_agr']:checked").val() != 1 && $("input[id='restr_cource']:checked").val() != 1){
+					$('#nawilobrivi_chamokleba').attr('disabled', false);
+				}
 		    	$(".car_out_class").css('display', 'none');
 		    	document.getElementById("exception_agr").disabled = false;
 		    	param         =  new Object();
@@ -961,6 +973,7 @@
 	    $(document).on("change", "#type_id", function () {
 	    	
 	        if($(this).val() > 1 ){
+	        	$('#nawilobrivi_chamokleba').attr('disabled', true);
 	        	$("#restr_cource").attr('disabled', false);
 		        $("#loan_table").css('display','none');
 	            $("#loan_table1").css('display','none');
@@ -1075,6 +1088,8 @@
 			    }
 	        }else{
 	        	if($(this).val() == 1 && $("#client_id").val()>0){
+
+	        		$('#nawilobrivi_chamokleba').attr('disabled', false);
 		        	
 	        		
 	        		document.getElementById("car_out").disabled = false;
@@ -1188,9 +1203,11 @@
 			if($(this).val()>0 && $('#type_id').val() == 1){
             	document.getElementById("car_out").disabled = false;
             	document.getElementById("exception_agr").disabled = false;
+            	$('#nawilobrivi_chamokleba').attr('disabled', false);
             }else{
             	document.getElementById("car_out").disabled = true;
             	document.getElementById("exception_agr").disabled = true;
+            	$('#nawilobrivi_chamokleba').attr('disabled', true);
             }
             
 			param         =  new Object();
@@ -1282,9 +1299,11 @@
             if($(this).val()>0 && $('#type_id').val() == 1){
             	document.getElementById("exception_agr").disabled = false;
             	document.getElementById("car_out").disabled = false;
+            	$('#nawilobrivi_chamokleba').attr('disabled', false);
             }else{
             	document.getElementById("exception_agr").disabled = true;
             	document.getElementById("car_out").disabled = true;
+            	$('#nawilobrivi_chamokleba').attr('disabled', true);
             }
 			
 			param         =  new Object();
@@ -1377,8 +1396,12 @@
 		$(document).on("change", "#other_penalty", function () {
 			if($("input[id='other_penalty']:checked").val() == 1){
     			document.getElementById("exception_agr").disabled = true;
+    			$('#nawilobrivi_chamokleba').attr('disabled', true);
             }else{
 				document.getElementById("exception_agr").disabled = false;
+				if($("input[id='car_out']:checked").val() != 1 && $("input[id='car_out']:checked").val() != 1 && $("input[id='exception_agr']:checked").val() != 1 && $("input[id='restr_cource']:checked").val() != 1){
+					$('#nawilobrivi_chamokleba').attr('disabled', false);
+				}
 	        }
 			param         =  new Object();
 		    param.act     = "get_shedule";
@@ -1653,6 +1676,9 @@
         				$("#extra_fee").val(delta);
         				$("#root").css('background','rgb(255, 255, 255)');
         				$("#percent").focus();
+
+        				darchenili_ziri = parseFloat($("#dziris_chamokleba_darchenili_dziri").val())-parseFloat(this_value);
+        				$("#darchenili_ziri").val(darchenili_ziri);
         				$("#error_mesage").html('');
     				}
     			}else{
@@ -1792,14 +1818,14 @@
     					$("#hidde_surplus").val(1);
     					$("#extra_fee").val(delta);
     					$("#surplus").css('background','rgb(255, 255, 255)');
-    					if($("#surplus_type").val() != 3){
+    					if($("#surplus_type").val() != 3 && $("#surplus_type").val() != 4){
         					$("#surplus").focus();
     					}else{
     						$("#surplus1").focus();
     					}
     				}
 				}
-				if($("#surplus_type").val() != 3){
+				if($("#surplus_type").val() != 3 && $("#surplus_type").val() != 4){
 					$("#surplus").focus();
 				}else{
 					$("#surplus1").focus();
@@ -1898,6 +1924,7 @@
 
 	        if($("#hidde_root").val() == 1){
 	        	$("#extra_fee").val(parseFloat($("#extra_fee").val()) + parseFloat(root));
+	        	$("#darchenili_ziri").val($("#dziris_chamokleba_darchenili_dziri").val());
 	        	$("#root").val('');
 	        	$("#hidde_root").val(0);
 	        	$("#root").focus();
@@ -2067,6 +2094,63 @@
 	        	$("#pledge_or_other_payed").focus();
 		    }
 	    });
+
+		$(document).on("click", "#nawilobrivi_chamokleba", function () {
+			if($("input[id='nawilobrivi_chamokleba']:checked").val() != 1){
+				
+				$(".dziris_chamokleba").css('display', 'none');
+				$('#other_penalty').attr('disabled', false);
+				$('#exception_agr').attr('disabled', false);
+				$('#car_out').attr('disabled', false);
+				$('#other_penalty').attr('disabled', false);
+				
+			}else{
+				
+				param                  =  new Object();
+			    param.act              = "nawilobrivi_chamokleba";
+			    
+			    param.id               = $("#client_id").val();
+			    param.agr_id           = $("#client_loan_number").val();
+			    param.transaction_date = $("#transaction_date").val();
+
+			    if(param.id == 0){
+				    alert('შეავსე ხელშეკრულების ნომერი');
+				}else if(param.agr_id == 0){
+					alert('შეავსე კლიენტი');
+				}else{
+	    		    $.ajax({
+	    		        url: aJaxURL,
+	    			    data: param,
+	    		        success: function(data) {			        
+	    					if(typeof(data.error) != 'undefined'){
+	    						if(data.error != ''){
+	    							alert(data.error);
+	    							$('#nawilobrivi_chamokleba').prop('checked', false);
+	    						}else{
+		    						$("#nasargeblebi_dge").val(data.nasargeblebi_dge);
+		    						$("#nasargeblebi_procenti").val(data.nasargeblebi_procenti);
+		    						$("#darchenili_nasargeblebi_dge").val(data.darchenili_nasargeblebi);
+		    						$("#darchenili_nasargeblebi_procenti").val(data.darchenili_nasargeblebi_procenti);
+		    						$("#percent1").val(data.nasargeblebi_procenti);
+		    						$("#dziris_chamokleba_darchenili_dziri").val(data.remaining_root);
+		    						
+		    						
+									sul_shesatani=parseFloat($("#root1").val())+parseFloat(data.nasargeblebi_procenti)+parseFloat($("#penalti_fee1").val());
+		    						$("#month_fee1").val(sul_shesatani);
+		    						
+		    						$(".dziris_chamokleba").css('display', '');
+	    							$('#other_penalty').attr('disabled', true);
+	    							$('#exception_agr').attr('disabled', true);
+	    							$('#car_out').attr('disabled', true);
+	    							$('#other_penalty').attr('disabled', true);
+	    						}
+	    					}
+	    			    }
+	    		    });
+				}
+				
+			}
+		});
 	    
 	    $(document).on("click", "#show_copy_prit_exel", function () {
 	        if($(this).attr('myvar') == 0){
