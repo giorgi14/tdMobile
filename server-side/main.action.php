@@ -2145,8 +2145,8 @@ switch ($action) {
                         			'' as  other1,
                         			'' as  other_delta
                 			FROM     client_loan_schedule
-                			LEFT JOIN  client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
-                			JOIN     money_transactions ON money_transactions.client_loan_schedule_id = client_loan_schedule.id
+                			JOIN     client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
+                			LEFT JOIN     money_transactions ON money_transactions.client_loan_schedule_id = client_loan_schedule.id
                 			WHERE    client_loan_agreement.client_id = '$sub' AND client_loan_schedule.activ_status = 0 AND client_loan_schedule.actived=1 AND client_loan_schedule.pay_date <= CURDATE()
                 			GROUP BY client_loan_schedule.id
                 			UNION ALL 
