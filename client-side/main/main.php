@@ -280,7 +280,7 @@
 	    		        			            $("#check_calculation").button();
 	    		        			            GetDate('pay_datee');
 	    		        			            $("#pay_datee").blur();
-	    		        			            get_loan_schedule($("#pay_datee").val(), $("#id").val());
+	    		        			            get_loan_schedule($("#pay_datee").val(), $("#hidde_cl_id").val());
 	    		        			            $("#cal_loan_schedule_id").chosen();
 	    		        			        }
 	    		        				}
@@ -338,7 +338,7 @@
 	    }
 
 		$(document).on("change", "#pay_datee", function () {
-			get_loan_schedule($(this).val(), $("#id").val());
+			get_loan_schedule($(this).val(), $("#hidde_cl_id").val());
 		});
 		
 		function get_loan_schedule(date, local_id){
@@ -403,9 +403,10 @@
 			param 	  = new Object();
 			param.act = "check_calculation";
 
-			param.local_id	           = $("#id").val();
+			param.local_id	           = $("#hidde_cl_id").val();
 			param.pay_datee	           = $('#pay_datee').val();
 			param.cal_loan_schedule_id = $('#cal_loan_schedule_id').val();
+			param.other_penalty        = $("input[id='otherrr_penalty']:checked").val();
 			
 			if(param.pay_datee == ''){
 				alert('შეავსე თარიღი');
