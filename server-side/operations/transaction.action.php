@@ -839,10 +839,10 @@ switch ($action) {
 	        $error = 'არჩეული ხელშეკრულება არის გრაფიკი';
 	    }else{
 	        $result = mysql_query(" SELECT 	 client_loan_schedule.remaining_root,
-	                                         DAY(client_loan_schedule.schedule_date)-DAY('$transaction_date')-1 AS darchenili_nasargeblebi,
-                                             ROUND((DAY(client_loan_schedule.schedule_date)-DAY('$transaction_date')-1)*(client_loan_schedule.percent/30),2) AS darchenili_nasargeblebi_procenti,
+	                                         DAY(LAST_DAY(client_loan_schedule.schedule_date))-DATEDIFF('$transaction_date', DATE(schedule_date)) AS darchenili_nasargeblebi,
                                     		 DATEDIFF('$transaction_date', DATE(schedule_date)) AS nasargeblebi_dge,
-                                             ROUND((client_loan_schedule.percent/30)* DATEDIFF('$transaction_date', DATE(schedule_date)),2) AS nasargeblebi_procenti
+                                             ROUND((client_loan_schedule.percent/30)* DATEDIFF('$transaction_date', DATE(schedule_date)),2) AS nasargeblebi_procenti,
+	                                         client_loan_agreement.percent/100 AS `percent`
                                     FROM   	 client_loan_schedule
                                     JOIN   	 client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
                                     JOIN   	 client ON client.id = client_loan_agreement.client_id
@@ -859,10 +859,10 @@ switch ($action) {
 	        
 	        if (mysql_num_rows($result)==0) {
 	            $result = mysql_query("SELECT 	 client_loan_schedule.remaining_root,
-	                                             DAY(client_loan_schedule.schedule_date)-DAY('$transaction_date')-1 AS darchenili_nasargeblebi,
-                                                 ROUND((DAY(client_loan_schedule.schedule_date)-DAY('$transaction_date')-1)*(client_loan_schedule.percent/30),2) AS darchenili_nasargeblebi_procenti,
+	                                             DAY(LAST_DAY(client_loan_schedule.schedule_date))-DATEDIFF('$transaction_date', DATE(schedule_date)) AS darchenili_nasargeblebi,
                                         		 DATEDIFF('$transaction_date', DATE(client_loan_agreement.datetime)) AS nasargeblebi_dge,
-                                                 ROUND((client_loan_schedule.percent/30)* DATEDIFF('$transaction_date', DATE(client_loan_agreement.datetime)),2) AS nasargeblebi_procenti
+                                                 ROUND((client_loan_schedule.percent/30)* DATEDIFF('$transaction_date', DATE(client_loan_agreement.datetime)),2) AS nasargeblebi_procenti,
+	                                             client_loan_agreement.percent/100 AS `percent`
                                         FROM   	 client_loan_schedule
                                         JOIN   	 client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
                                         JOIN   	 client ON client.id = client_loan_agreement.client_id
@@ -879,7 +879,7 @@ switch ($action) {
 	        
 	        $res = mysql_fetch_array($result);
 	        
-	        $data = array('remaining_root' => $res[remaining_root], 'darchenili_nasargeblebi'=>$res[darchenili_nasargeblebi], 'darchenili_nasargeblebi_procenti' => $res[darchenili_nasargeblebi_procenti],'nasargeblebi_dge' => $res[nasargeblebi_dge], 'nasargeblebi_procenti' => $res[nasargeblebi_procenti]);
+	        $data = array('remaining_root' => $res[remaining_root], 'darchenili_nasargeblebi'=>$res[darchenili_nasargeblebi], 'percent' => $res[percent],'nasargeblebi_dge' => $res[nasargeblebi_dge], 'nasargeblebi_procenti' => $res[nasargeblebi_procenti]);
 	        
 	    }
 	

@@ -1678,7 +1678,10 @@
         				$("#percent").focus();
 
         				darchenili_ziri = parseFloat($("#dziris_chamokleba_darchenili_dziri").val())-parseFloat(this_value);
-        				$("#darchenili_ziri").val(darchenili_ziri);
+        				$("#darchenili_ziri").val(darchenili_ziri.toFixed(2));
+
+        				darchenili_nasargeblebi_procenti = darchenili_ziri*$("#hidde_new_percent").val()/30*$("#darchenili_nasargeblebi_dge").val();
+        				$("#darchenili_nasargeblebi_procenti").val(darchenili_nasargeblebi_procenti.toFixed(2));
         				$("#error_mesage").html('');
     				}
     			}else{
@@ -2127,10 +2130,11 @@
 	    							alert(data.error);
 	    							$('#nawilobrivi_chamokleba').prop('checked', false);
 	    						}else{
+		    						
 		    						$("#nasargeblebi_dge").val(data.nasargeblebi_dge);
 		    						$("#nasargeblebi_procenti").val(data.nasargeblebi_procenti);
 		    						$("#darchenili_nasargeblebi_dge").val(data.darchenili_nasargeblebi);
-		    						$("#darchenili_nasargeblebi_procenti").val(data.darchenili_nasargeblebi_procenti);
+		    						$("#hidde_new_percent").val(data.percent);
 		    						$("#percent1").val(data.nasargeblebi_procenti);
 		    						$("#dziris_chamokleba_darchenili_dziri").val(data.remaining_root);
 		    						

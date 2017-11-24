@@ -2105,6 +2105,7 @@ function GetPage($res = ''){
 			<!-- ID -->
 			<input type="hidden" id="idd" value="' . $res['id'] . '" />
 			<input type="hidden" id="hidde_status" value="' . $res['status'] . '" />
+			<input type="hidden" id="hidde_new_percent" value="' . $res['status'] . '" />
 			    
 			<input type="hidden" id="hidde_root" value="0" />
 	        <input type="hidden" id="hidde_percent" value="0" />
