@@ -753,7 +753,7 @@ switch ($action) {
                                         		        FROM   money_transactions
                                         		        JOIN   money_transactions_detail ON money_transactions.id = money_transactions_detail.transaction_id
                                         		        WHERE  (money_transactions.client_id = '$id' OR money_transactions.agreement_id = '$agr_id')
-                                        		        AND    money_transactions_detail.`status` = 8 AND money_transactions.type_id = 2
+                                        		        AND    money_transactions_detail.`status` = 8
                                         		        AND    money_transactions_detail.actived = 1 AND money_transactions.actived = 1
                                         		        ORDER BY money_transactions.pay_datetime ASC
                                         		        LIMIT 1"));

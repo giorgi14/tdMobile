@@ -68,6 +68,8 @@ switch ($action) {
                                                      JOIN      client_loan_schedule ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
                                                      WHERE     client_loan_agreement.client_id = '$local_id' 
                                                      AND       client_loan_schedule.schedule_date >= '$reregistering_date'
+                                                     AND       client_loan_schedule.actived = 1
+                                                     AND       client_loan_schedule.activ_status = 0
                                                      ORDER BY  pay_date ASC
                                                      LIMIT 1"));
         if ($reregistering_fee>0) {
