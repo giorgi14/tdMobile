@@ -304,11 +304,11 @@ switch ($action) {
                                            client_loan_schedule.penalty,
                                            client_loan_schedule.penalty_stoped,
                                            client_loan_schedule.other_amount,
-                                           DATEDIFF('$pay_datee', client_loan_schedule.pay_date) AS gadacilebuli,
+                                           DATEDIFF('$pay_datee', client_loan_schedule.schedule_date) AS gadacilebuli,
                                            client_loan_agreement.penalty_days,
                             			   client_loan_agreement.penalty_percent,
                             			   client_loan_agreement.penalty_additional_percent,
-                                           client_loan_schedule.pay_date,
+                                           client_loan_schedule.schedule_date,
                                            ROUND(client_loan_schedule.root + client_loan_schedule.remaining_root,2) AS remaining_root
                                     FROM   client_loan_schedule 
                                     JOIN   client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
@@ -319,7 +319,7 @@ switch ($action) {
         
         $resultt = mysql_fetch_array(mysql_query("SELECT MAX(client_loan_schedule.id) AS max_sch_id,
                                                         (SELECT ROUND(clsh.remaining_root+clsh.root,2) FROM client_loan_schedule AS clsh WHERE clsh.id = MIN(client_loan_schedule.id)) AS `remaining_root`,
-                                                        (SELECT DATEDIFF('$pay_datee', clsh.pay_date) FROM client_loan_schedule AS clsh WHERE clsh.id = MAX(client_loan_schedule.id)) AS `gadacilebuli`,
+                                                        (SELECT DATEDIFF('$pay_datee', clsh.schedule_date) FROM client_loan_schedule AS clsh WHERE clsh.id = MAX(client_loan_schedule.id)) AS `gadacilebuli`,
                                                         (SELECT ROUND(clsh.percent/30,2) FROM client_loan_schedule AS clsh WHERE clsh.id = MAX(client_loan_schedule.id)) AS `erti_dgis_procenti`,
                                                         SUM(client_loan_schedule.percent) AS percent,
                                                         SUM(client_loan_schedule.root) AS schedule_root,
@@ -420,7 +420,7 @@ switch ($action) {
         }else{
             $res = mysql_query("SELECT   client_loan_schedule.id,
                         				 client_loan_agreement.status AS st,
-                        				 client_loan_schedule.pay_date,
+                        				 client_loan_schedule.schedule_date,
                                          client_loan_schedule.penalty,
                                          client_loan_schedule.penalty_stoped,
                                          client_loan_schedule.other_amount,
@@ -438,7 +438,7 @@ switch ($action) {
                         					 WHEN client_loan_schedule.`status` = 0 THEN ROUND(client_loan_schedule.root + client_loan_schedule.remaining_root,2)
                                          END AS remaining_root,
                                          0 AS nasargeblebi_dgeebi,
-                        				 DATEDIFF('$pay_datee', client_loan_schedule.pay_date) AS gadacilebuli,
+                        				 DATEDIFF('$pay_datee', client_loan_schedule.schedule_date) AS gadacilebuli,
                                          client_loan_schedule.remaining_root as check_remaining_root,
                                          client_loan_agreement.loan_beforehand_percent,
                         				 client_loan_agreement.penalty_days,
@@ -454,7 +454,7 @@ switch ($action) {
             if (mysql_num_rows($res)==0) {
                 $res = mysql_query("SELECT   client_loan_schedule.id,
                             				 client_loan_agreement.status AS st,
-                            				 client_loan_schedule.pay_date,
+                            				 client_loan_schedule.schedule_date,
                                              client_loan_schedule.penalty,
                                              client_loan_schedule.penalty_stoped,
                                              client_loan_schedule.other_amount,
@@ -472,7 +472,7 @@ switch ($action) {
                                                  WHEN client_loan_schedule.`status` = 1 THEN 0
                             					 WHEN client_loan_schedule.`status` = 0 THEN ROUND(client_loan_schedule.root,2)
                                              END AS schedule_root,
-                            				 DATEDIFF('$pay_datee', client_loan_schedule.pay_date) AS gadacilebuli,
+                            				 DATEDIFF('$pay_datee', client_loan_schedule.schedule_date) AS gadacilebuli,
                                              client_loan_schedule.remaining_root as check_remaining_root,
                                              client_loan_agreement.loan_beforehand_percent,
                             				 client_loan_agreement.penalty_days,
@@ -586,7 +586,7 @@ switch ($action) {
     		                                                         client_loan_schedule.other_amount,
                                                     				 client_loan_schedule.schedule_date,
                                                     				 client.id AS client_id,
-                                                    				 DATEDIFF('$transaction_date',client_loan_schedule.pay_date) AS datediff,
+                                                    				 DATEDIFF('$transaction_date',client_loan_schedule.schedule_date) AS datediff,
                                                     				 client_loan_agreement.penalty_days,
                                                     				 client_loan_agreement.penalty_percent,
                                                     				 client_loan_agreement.penalty_additional_percent,
