@@ -308,7 +308,7 @@ switch ($action) {
                                            client_loan_agreement.penalty_days,
                             			   client_loan_agreement.penalty_percent,
                             			   client_loan_agreement.penalty_additional_percent,
-                                           client_loan_schedule.schedule_date,
+                                           client_loan_schedule.schedule_date AS pay_date,
                                            ROUND(client_loan_schedule.root + client_loan_schedule.remaining_root,2) AS remaining_root
                                     FROM   client_loan_schedule 
                                     JOIN   client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
@@ -420,7 +420,7 @@ switch ($action) {
         }else{
             $res = mysql_query("SELECT   client_loan_schedule.id,
                         				 client_loan_agreement.status AS st,
-                        				 client_loan_schedule.schedule_date,
+                        				 client_loan_schedule.schedule_date AS pay_date,
                                          client_loan_schedule.penalty,
                                          client_loan_schedule.penalty_stoped,
                                          client_loan_schedule.other_amount,
@@ -454,7 +454,7 @@ switch ($action) {
             if (mysql_num_rows($res)==0) {
                 $res = mysql_query("SELECT   client_loan_schedule.id,
                             				 client_loan_agreement.status AS st,
-                            				 client_loan_schedule.schedule_date,
+                            				 client_loan_schedule.schedule_date AS pay_date,
                                              client_loan_schedule.penalty,
                                              client_loan_schedule.penalty_stoped,
                                              client_loan_schedule.other_amount,
