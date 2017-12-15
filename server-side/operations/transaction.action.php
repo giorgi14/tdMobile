@@ -364,6 +364,7 @@ switch ($action) {
             if ($gadacilebuli_day_count<=$row_all[grace_period_caunt]) {
                 $penalty1 = 0;
             }else{
+                $gadacilebuli_day_count=$gadacilebuli_day_count - $row_all[grace_period_caunt];
                 if ($row_all[penalty_stoped] == 1) {
                     $penalty1 = $row_all[penalty];
                 }else{
@@ -517,6 +518,7 @@ switch ($action) {
             if ($gadacilebuli_day_count<=$res[grace_period_caunt]) {
                 $penalty = 0;
             }else{
+                $gadacilebuli_day_count=$gadacilebuli_day_count - $res[grace_period_caunt];
                 if ($result[penalty_stoped] == 1) {
                     $penalty = $result[penalty];
                 }else{
@@ -629,6 +631,7 @@ switch ($action) {
     		if ($gadacilebuli_day_count <= $check_penalty[grace_period_caunt]){
     		    $penalty = 0;
     		}else{
+    		    $gadacilebuli_day_count=$gadacilebuli_day_count - $check_penalty[grace_period_caunt];
         		if ($check_penalty[penalty_stoped]==1) {
         		    $penalty=$check_penalty[penalty];
         		}else{

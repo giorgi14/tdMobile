@@ -3362,6 +3362,7 @@ switch ($action) {
         if ($gadacilebuli_day_count<=$res[grace_period_caunt]) {
             $penalty = 0;
         }else{
+            $gadacilebuli_day_count=$gadacilebuli_day_count - $res[grace_period_caunt];
             if ($other_penalty == 1) {
                 $RemainigRoot = mysql_fetch_array(mysql_query("SELECT    client_loan_schedule.remaining_root+client_loan_schedule.root AS remaining_root
                                                                 FROM     client_loan_schedule
@@ -3602,6 +3603,7 @@ switch ($action) {
             if($gadacilebuli_day_count<=$row_all[grace_period_caunt]){
                 $penalty1 = 0;
             }else{
+                $gadacilebuli_day_count=$gadacilebuli_day_count - $row_all[grace_period_caunt];
                 if ($i == 0) {
                     if ($gadacilebuli_day_count>0 && $gadacilebuli_day_count<=$row_all[penalty_days]) {
                         $penalty1 = round(($remaining_root * ($row_all[penalty_percent]/100))*$gadacilebuli_day_count,2);
@@ -3749,6 +3751,7 @@ switch ($action) {
             if ($gadacilebuli_day_count<=$res[grace_period_caunt]) {
                 $penalty = 0;
             }else{
+                $gadacilebuli_day_count=$gadacilebuli_day_count - $res[grace_period_caunt];
                 if ($gadacilebuli_day_count>0 && $gadacilebuli_day_count<=$result[penalty_days] && $result[status] == 0) {
                     $penalty = round(($remainig_root * ($result[penalty_percent]/100))*$gadacilebuli_day_count,2);
                 }elseif ($gadacilebuli_day_count>0 && $gadacilebuli_day_count>$result[penalty_days] && $result[status] == 0){
