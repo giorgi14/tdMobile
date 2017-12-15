@@ -442,6 +442,83 @@ switch ($action) {
                             		WHERE    client_loan_agreement.client_id = '$sub' AND client_loan_schedule.activ_status = 0 AND client_loan_schedule.actived=1 AND client_loan_schedule.pay_date <= CURDATE()
                             		GROUP BY client_loan_schedule.id
                             		UNION ALL
+                            		SELECT   client_loan_agreement.client_id,
+                    						 client_loan_schedule.id AS `id`,
+                                             '' AS number1,
+                                             '1' AS sort3,
+                    						 client_loan_schedule.pay_date AS sort,
+                    						 '2' AS sort1,
+                    						 client_loan_schedule.number,
+                    						 CONCAT('<div title=\"შეთანხმება\" style=\"background: #ffec04; color: #121111;\">',DATE_FORMAT(client_loan_schedule_deal.pay_date, '%d/%m/%Y'),'</div>') AS `date`,
+                    						 (SELECT cur_cource.cource FROM cur_cource WHERE cur_cource.actived = 1 AND DATE(cur_cource.datetime) = DATE(client_loan_schedule_deal.pay_date) LIMIT 1) AS `exchange`,
+                    						 '' AS `loan_amount`,
+                    						 '' AS `loan_amount_gel`,
+                                             '' AS `delta`,
+                                             '' AS `delta1`,
+                    						 CONCAT('<div title=\"შეთანხმება\" style=\"background: #009688; color: #fff;\">',ROUND(client_loan_schedule_deal.unda_daericxos,2),if(client_loan_agreement.loan_currency_id = 1, ' GEL', ' USD'),'</div>') AS percent,
+                    						 CASE 
+                    								WHEN client_loan_agreement.loan_currency_id = 1 THEN CONCAT('<div title=\"შეთანხმება\" style=\"background: #009688; color: #fff;\">',ROUND(client_loan_schedule_deal.unda_daericxos/client_loan_schedule_deal.cource,2), ' USD','</div>')
+                    								WHEN client_loan_agreement.loan_currency_id = 2 THEN CONCAT('<div title=\"შეთანხმება\" style=\"background: #009688; color: #fff;\">',ROUND(client_loan_schedule_deal.unda_daericxos*client_loan_schedule_deal.cource,2), ' GEL', '</div>') 
+                    						 END AS percent_gel,
+                    						 '' AS percent1,
+                    						 '' AS percent_gel1,
+                    						 '' AS pay_root,
+                    						 '' AS pay_root_gel,
+                                             '' AS jh,
+                                             '' AS kj,
+                                             '' AS difference,
+                                             '' AS pledge_fee,
+                                            '' AS pledge_fee1,
+                                            '' as  pledge_payed,
+                                            '' as  pledge_payed1,
+                                			'' AS  pledge_delta,
+                                            '' as  other,
+                                			'' as  other1,
+                                			'' as  other_delta
+                            		FROM     client_loan_schedule
+                            		JOIN     client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
+                                    JOIN client_loan_schedule_deal ON client_loan_schedule_deal.schedule_id = client_loan_schedule.id
+                            		WHERE    client_loan_agreement.client_id = '$sub' AND client_loan_schedule_deal.actived = 1 AND client_loan_schedule.activ_status = 0 AND client_loan_schedule.actived=1 AND client_loan_schedule.pay_date <= CURDATE()
+                            		GROUP BY client_loan_schedule.id
+                            		UNION ALL
+                            		SELECT  client_loan_agreement.client_id,
+                            				'' AS `id`,
+                            				'' AS number1,
+                            				'5' AS sort3,
+                            				DATE(money_transactions_detail.pay_datetime) AS sort,
+                            				'2' AS sort1,
+                            				'' AS number,
+                            				CONCAT('<div title=\"შეთანხმების გადახდა\" style=\"background: #9C27B0; color: #fff;\">',DATE_FORMAT(money_transactions_detail.pay_datetime, '%d/%m/%Y'),'</div>') AS `date`,
+                            				money_transactions_detail.course AS `exchange`,
+                            				'' AS `loan_amount`,
+                            				'' AS `loan_amount_gel`,
+                            				'' AS `delta`,
+                            				'' AS `delta1`,
+                            				'' AS  percent,
+                            				'' AS  percent_gel,
+                            				CONCAT(money_transactions_detail.pay_amount, ' GEL') AS percent1,
+                            				CASE 
+                            					WHEN client_loan_agreement.loan_currency_id = 1 THEN CONCAT(ROUND(money_transactions_detail.pay_amount/money_transactions_detail.course,2), ' USD') 
+                            					WHEN client_loan_agreement.loan_currency_id = 2 THEN CONCAT(ROUND(money_transactions_detail.pay_amount*money_transactions_detail.course,2), ' GEL') 
+                            				END AS percent_gel1,
+                            				'' AS pay_root,
+                            				'' AS pay_root_gel,
+                            				'' AS jh,
+                            				'' AS kj,
+                            				'' AS difference,
+                            				'' AS pledge_fee,
+                            				'' AS pledge_fee1,
+                            				'' as pledge_payed,
+                            				'' as pledge_payed1,
+                            				'' AS pledge_delta,
+                            				'' as other,
+                            				'' as other1,
+                            				'' as other_delta
+                                    FROM   money_transactions
+                                    JOIN   		money_transactions_detail ON money_transactions_detail.transaction_id = money_transactions.id
+                                    LEFT JOIN client_loan_agreement ON client_loan_agreement.id = money_transactions.agreement_id
+                                    WHERE  client_loan_agreement.client_id = '$sub' AND money_transactions_detail.`status` = 13 AND money_transactions_detail.actived = 1 AND money_transactions_detail.pay_amount > 0
+                            		UNION ALL
                                     SELECT   client.id,
                             				 '' AS `id`,
                             				 '' AS number1,
@@ -951,7 +1028,84 @@ switch ($action) {
                 			LEFT JOIN     money_transactions ON money_transactions.client_loan_schedule_id = client_loan_schedule.id
                 			WHERE    client_loan_agreement.client_id = '$sub' AND client_loan_schedule.activ_status = 0 AND client_loan_schedule.actived=1 AND client_loan_schedule.pay_date <= CURDATE()
                 			GROUP BY client_loan_schedule.id
-                			UNION ALL 
+                			UNION ALL
+                			SELECT   client_loan_agreement.client_id,
+                    						 client_loan_schedule.id AS `id`,
+                                             '' AS number1,
+                                             '1' AS sort3,
+                    						 client_loan_schedule.pay_date AS sort,
+                    						 '2' AS sort1,
+                    						 client_loan_schedule.number,
+                    						 CONCAT('<div title=\"შეთანხმება\" style=\"background: #ffec04; color: #121111;\">',DATE_FORMAT(client_loan_schedule_deal.pay_date, '%d/%m/%Y'),'</div>') AS `date`,
+                    						 (SELECT cur_cource.cource FROM cur_cource WHERE cur_cource.actived = 1 AND DATE(cur_cource.datetime) = DATE(client_loan_schedule_deal.pay_date) LIMIT 1) AS `exchange`,
+                    						 '' AS `loan_amount`,
+                    						 '' AS `loan_amount_gel`,
+                                             '' AS `delta`,
+                                             '' AS `delta1`,
+                    						 CONCAT('<div title=\"შეთანხმება\" style=\"background: #009688; color: #fff;\">',ROUND(client_loan_schedule_deal.unda_daericxos,2),if(client_loan_agreement.loan_currency_id = 1, ' GEL', ' USD'),'</div>') AS percent,
+                    						 CASE 
+                    								WHEN client_loan_agreement.loan_currency_id = 1 THEN CONCAT('<div title=\"შეთანხმება\" style=\"background: #009688; color: #fff;\">',ROUND(client_loan_schedule_deal.unda_daericxos/client_loan_schedule_deal.cource,2), ' USD','</div>')
+                    								WHEN client_loan_agreement.loan_currency_id = 2 THEN CONCAT('<div title=\"შეთანხმება\" style=\"background: #009688; color: #fff;\">',ROUND(client_loan_schedule_deal.unda_daericxos*client_loan_schedule_deal.cource,2), ' GEL', '</div>')
+                    						 END AS percent_gel,
+                    						 '' AS percent1,
+                    						 '' AS percent_gel1,
+                    						 '' AS pay_root,
+                    						 '' AS pay_root_gel,
+                                             '' AS jh,
+                                             '' AS kj,
+                                             '' AS difference,
+                                             '' AS pledge_fee,
+                                            '' AS pledge_fee1,
+                                            '' as  pledge_payed,
+                                            '' as  pledge_payed1,
+                                			'' AS  pledge_delta,
+                                            '' as  other,
+                                			'' as  other1,
+                                			'' as  other_delta
+                            		FROM     client_loan_schedule
+                            		JOIN     client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
+                                    JOIN client_loan_schedule_deal ON client_loan_schedule_deal.schedule_id = client_loan_schedule.id
+                            		WHERE    client_loan_agreement.client_id = '$sub' AND client_loan_schedule_deal.actived = 1 AND client_loan_schedule.activ_status = 0 AND client_loan_schedule.actived=1 AND client_loan_schedule.pay_date <= CURDATE()
+                            		GROUP BY client_loan_schedule.id
+                            		UNION ALL
+                            		SELECT  client_loan_agreement.client_id,
+                            				'' AS `id`,
+                            				'' AS number1,
+                            				'5' AS sort3,
+                            				DATE(money_transactions_detail.pay_datetime) AS sort,
+                            				'2' AS sort1,
+                            				'' AS number,
+                            				CONCAT('<div title=\"შეთანხმების გადახდა\" style=\"background: #9C27B0; color: #fff;\">',DATE_FORMAT(money_transactions_detail.pay_datetime, '%d/%m/%Y'),'</div>') AS `date`,
+                            				money_transactions_detail.course AS `exchange`,
+                            				'' AS `loan_amount`,
+                            				'' AS `loan_amount_gel`,
+                            				'' AS `delta`,
+                            				'' AS `delta1`,
+                            				'' AS  percent,
+                            				'' AS  percent_gel,
+                            				CONCAT(money_transactions_detail.pay_amount, ' GEL') AS percent1,
+                            				CASE 
+                            					WHEN client_loan_agreement.loan_currency_id = 1 THEN CONCAT(ROUND(money_transactions_detail.pay_amount/money_transactions_detail.course,2), ' USD') 
+                            					WHEN client_loan_agreement.loan_currency_id = 2 THEN CONCAT(ROUND(money_transactions_detail.pay_amount*money_transactions_detail.course,2), ' GEL') 
+                            				END AS percent_gel1,
+                            				'' AS pay_root,
+                            				'' AS pay_root_gel,
+                            				'' AS jh,
+                            				'' AS kj,
+                            				'' AS difference,
+                            				'' AS pledge_fee,
+                            				'' AS pledge_fee1,
+                            				'' as pledge_payed,
+                            				'' as pledge_payed1,
+                            				'' AS pledge_delta,
+                            				'' as other,
+                            				'' as other1,
+                            				'' as other_delta
+                                    FROM   money_transactions
+                                    JOIN   		money_transactions_detail ON money_transactions_detail.transaction_id = money_transactions.id
+                                    LEFT JOIN client_loan_agreement ON client_loan_agreement.id = money_transactions.agreement_id
+                                    WHERE  client_loan_agreement.client_id = '$sub' AND money_transactions_detail.`status` = 13 AND money_transactions_detail.actived = 1 AND money_transactions_detail.pay_amount > 0
+                            		UNION ALL
                             SELECT   client.id,
                     				 '' AS `id`,
                     				 '' AS number1,
@@ -1571,7 +1725,84 @@ switch ($action) {
             		LEFT JOIN money_transactions ON money_transactions.client_loan_schedule_id = client_loan_schedule.id
             		WHERE    client_loan_agreement.client_id = '$sub' AND client_loan_schedule.activ_status = 0 AND client_loan_schedule.actived=1 AND client_loan_schedule.pay_date <= CURDATE()
             		GROUP BY client_loan_schedule.id
-            		UNION ALL 
+            		UNION ALL
+            		SELECT   client_loan_agreement.client_id,
+                    						 client_loan_schedule.id AS `id`,
+                                             '' AS number1,
+                                             '1' AS sort3,
+                    						 client_loan_schedule.pay_date AS sort,
+                    						 '2' AS sort1,
+                    						 client_loan_schedule.number,
+                    						 CONCAT('<div title=\"შეთანხმება\" style=\"background: #ffec04; color: #121111;\">',DATE_FORMAT(client_loan_schedule_deal.pay_date, '%d/%m/%Y'),'</div>') AS `date`,
+                    						 (SELECT cur_cource.cource FROM cur_cource WHERE cur_cource.actived = 1 AND DATE(cur_cource.datetime) = DATE(client_loan_schedule_deal.pay_date) LIMIT 1) AS `exchange`,
+                    						 '' AS `loan_amount`,
+                    						 '' AS `loan_amount_gel`,
+                                             '' AS `delta`,
+                                             '' AS `delta1`,
+                    						 CONCAT('<div title=\"შეთანხმება\" style=\"background: #009688; color: #fff;\">',ROUND(client_loan_schedule_deal.unda_daericxos,2),if(client_loan_agreement.loan_currency_id = 1, ' GEL', ' USD'),'</div>') AS percent,
+                    						 CASE 
+                    								WHEN client_loan_agreement.loan_currency_id = 1 THEN CONCAT('<div title=\"შეთანხმება\" style=\"background: #009688; color: #fff;\">',ROUND(client_loan_schedule_deal.unda_daericxos/client_loan_schedule_deal.cource,2), ' USD','</div>')
+                    								WHEN client_loan_agreement.loan_currency_id = 2 THEN CONCAT('<div title=\"შეთანხმება\" style=\"background: #009688; color: #fff;\">',ROUND(client_loan_schedule_deal.unda_daericxos*client_loan_schedule_deal.cource,2), ' GEL', '</div>')
+                    						 END AS percent_gel,
+                    						 '' AS percent1,
+                    						 '' AS percent_gel1,
+                    						 '' AS pay_root,
+                    						 '' AS pay_root_gel,
+                                             '' AS jh,
+                                             '' AS kj,
+                                             '' AS difference,
+                                             '' AS pledge_fee,
+                                            '' AS pledge_fee1,
+                                            '' as  pledge_payed,
+                                            '' as  pledge_payed1,
+                                			'' AS  pledge_delta,
+                                            '' as  other,
+                                			'' as  other1,
+                                			'' as  other_delta
+                            		FROM     client_loan_schedule
+                            		JOIN     client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
+                                    JOIN client_loan_schedule_deal ON client_loan_schedule_deal.schedule_id = client_loan_schedule.id
+                            		WHERE    client_loan_agreement.client_id = '$sub' AND client_loan_schedule_deal.actived = 1 AND client_loan_schedule.activ_status = 0 AND client_loan_schedule.actived=1 AND client_loan_schedule.pay_date <= CURDATE()
+                            		GROUP BY client_loan_schedule.id
+                            		UNION ALL
+                            		SELECT  client_loan_agreement.client_id,
+                            				'' AS `id`,
+                            				'' AS number1,
+                            				'5' AS sort3,
+                            				DATE(money_transactions_detail.pay_datetime) AS sort,
+                            				'2' AS sort1,
+                            				'' AS number,
+                            				CONCAT('<div title=\"შეთანხმების გადახდა\" style=\"background: #9C27B0; color: #fff;\">',DATE_FORMAT(money_transactions_detail.pay_datetime, '%d/%m/%Y'),'</div>') AS `date`,
+                            				money_transactions_detail.course AS `exchange`,
+                            				'' AS `loan_amount`,
+                            				'' AS `loan_amount_gel`,
+                            				'' AS `delta`,
+                            				'' AS `delta1`,
+                            				'' AS  percent,
+                            				'' AS  percent_gel,
+                            				CONCAT(money_transactions_detail.pay_amount, ' GEL') AS percent1,
+                            				CASE 
+                            					WHEN client_loan_agreement.loan_currency_id = 1 THEN CONCAT(ROUND(money_transactions_detail.pay_amount/money_transactions_detail.course,2), ' USD') 
+                            					WHEN client_loan_agreement.loan_currency_id = 2 THEN CONCAT(ROUND(money_transactions_detail.pay_amount*money_transactions_detail.course,2), ' GEL') 
+                            				END AS percent_gel1,
+                            				'' AS pay_root,
+                            				'' AS pay_root_gel,
+                            				'' AS jh,
+                            				'' AS kj,
+                            				'' AS difference,
+                            				'' AS pledge_fee,
+                            				'' AS pledge_fee1,
+                            				'' as pledge_payed,
+                            				'' as pledge_payed1,
+                            				'' AS pledge_delta,
+                            				'' as other,
+                            				'' as other1,
+                            				'' as other_delta
+                                    FROM   money_transactions
+                                    JOIN   		money_transactions_detail ON money_transactions_detail.transaction_id = money_transactions.id
+                                    LEFT JOIN client_loan_agreement ON client_loan_agreement.id = money_transactions.agreement_id
+                                    WHERE  client_loan_agreement.client_id = '$sub' AND money_transactions_detail.`status` = 13 AND money_transactions_detail.actived = 1 AND money_transactions_detail.pay_amount > 0
+                            		UNION ALL
                     SELECT   client.id,
             				 '' AS `id`,
             				 '' AS number1,
@@ -2152,6 +2383,83 @@ switch ($action) {
                 			WHERE    client_loan_agreement.client_id = '$sub' AND client_loan_schedule.activ_status = 0 AND client_loan_schedule.actived=1 AND client_loan_schedule.pay_date <= CURDATE()
                 			GROUP BY client_loan_schedule.id
                 			UNION ALL 
+                			SELECT   client_loan_agreement.client_id,
+                    						 client_loan_schedule.id AS `id`,
+                                             '' AS number1,
+                                             '1' AS sort3,
+                    						 client_loan_schedule.pay_date AS sort,
+                    						 '2' AS sort1,
+                    						 client_loan_schedule.number,
+                    						 CONCAT('<div title=\"შეთანხმება\" style=\"background: #ffec04; color: #121111;\">',DATE_FORMAT(client_loan_schedule_deal.pay_date, '%d/%m/%Y'),'</div>') AS `date`,
+                    						 (SELECT cur_cource.cource FROM cur_cource WHERE cur_cource.actived = 1 AND DATE(cur_cource.datetime) = DATE(client_loan_schedule_deal.pay_date) LIMIT 1) AS `exchange`,
+                    						 '' AS `loan_amount`,
+                    						 '' AS `loan_amount_gel`,
+                                             '' AS `delta`,
+                                             '' AS `delta1`,
+                    						 CONCAT('<div title=\"შეთანხმება\" style=\"background: #009688; color: #fff;\">',ROUND(client_loan_schedule_deal.unda_daericxos,2),if(client_loan_agreement.loan_currency_id = 1, ' GEL', ' USD'),'</div>') AS percent,
+                    						 CASE 
+                    								WHEN client_loan_agreement.loan_currency_id = 1 THEN CONCAT('<div title=\"შეთანხმება\" style=\"background: #009688; color: #fff;\">',ROUND(client_loan_schedule_deal.unda_daericxos/client_loan_schedule_deal.cource,2), ' USD','</div>')
+                    								WHEN client_loan_agreement.loan_currency_id = 2 THEN CONCAT('<div title=\"შეთანხმება\" style=\"background: #009688; color: #fff;\">',ROUND(client_loan_schedule_deal.unda_daericxos*client_loan_schedule_deal.cource,2), ' GEL', '</div>')
+                    						 END AS percent_gel,
+                    						 '' AS percent1,
+                    						 '' AS percent_gel1,
+                    						 '' AS pay_root,
+                    						 '' AS pay_root_gel,
+                                             '' AS jh,
+                                             '' AS kj,
+                                             '' AS difference,
+                                             '' AS pledge_fee,
+                                            '' AS pledge_fee1,
+                                            '' as  pledge_payed,
+                                            '' as  pledge_payed1,
+                                			'' AS  pledge_delta,
+                                            '' as  other,
+                                			'' as  other1,
+                                			'' as  other_delta
+                            		FROM     client_loan_schedule
+                            		JOIN     client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
+                                    JOIN client_loan_schedule_deal ON client_loan_schedule_deal.schedule_id = client_loan_schedule.id
+                            		WHERE    client_loan_agreement.client_id = '$sub' AND client_loan_schedule_deal.actived = 1 AND client_loan_schedule.activ_status = 0 AND client_loan_schedule.actived=1 AND client_loan_schedule.pay_date <= CURDATE()
+                            		GROUP BY client_loan_schedule.id
+                            		UNION ALL
+                            		SELECT  client_loan_agreement.client_id,
+                            				'' AS `id`,
+                            				'' AS number1,
+                            				'5' AS sort3,
+                            				DATE(money_transactions_detail.pay_datetime) AS sort,
+                            				'2' AS sort1,
+                            				'' AS number,
+                            				CONCAT('<div title=\"შეთანხმების გადახდა\" style=\"background: #9C27B0; color: #fff;\">',DATE_FORMAT(money_transactions_detail.pay_datetime, '%d/%m/%Y'),'</div>') AS `date`,
+                            				money_transactions_detail.course AS `exchange`,
+                            				'' AS `loan_amount`,
+                            				'' AS `loan_amount_gel`,
+                            				'' AS `delta`,
+                            				'' AS `delta1`,
+                            				'' AS  percent,
+                            				'' AS  percent_gel,
+                            				CONCAT(money_transactions_detail.pay_amount, ' GEL') AS percent1,
+                            				CASE 
+                            					WHEN client_loan_agreement.loan_currency_id = 1 THEN CONCAT(ROUND(money_transactions_detail.pay_amount/money_transactions_detail.course,2), ' USD') 
+                            					WHEN client_loan_agreement.loan_currency_id = 2 THEN CONCAT(ROUND(money_transactions_detail.pay_amount*money_transactions_detail.course,2), ' GEL') 
+                            				END AS percent_gel1,
+                            				'' AS pay_root,
+                            				'' AS pay_root_gel,
+                            				'' AS jh,
+                            				'' AS kj,
+                            				'' AS difference,
+                            				'' AS pledge_fee,
+                            				'' AS pledge_fee1,
+                            				'' as pledge_payed,
+                            				'' as pledge_payed1,
+                            				'' AS pledge_delta,
+                            				'' as other,
+                            				'' as other1,
+                            				'' as other_delta
+                                    FROM   money_transactions
+                                    JOIN   		money_transactions_detail ON money_transactions_detail.transaction_id = money_transactions.id
+                                    LEFT JOIN client_loan_agreement ON client_loan_agreement.id = money_transactions.agreement_id
+                                    WHERE  client_loan_agreement.client_id = '$sub' AND money_transactions_detail.`status` = 13 AND money_transactions_detail.actived = 1 AND money_transactions_detail.pay_amount > 0
+                            		UNION ALL
                             SELECT   client.id,
                     				 '' AS `id`,
                     				 '' AS number1,
@@ -3031,7 +3339,8 @@ switch ($action) {
                                                             client_loan_agreement.penalty_days,
                                                             client_loan_agreement.penalty_percent,
                                                             client_loan_agreement.penalty_additional_percent,
-                                                            client_loan_schedule.schedule_date AS pay_date
+                                                            client_loan_schedule.schedule_date AS pay_date,
+                                                            client_loan_agreement.grace_period_caunt
                                                 FROM 	   `client_loan_schedule`
                                                 LEFT JOIN   client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
                                                 JOIN        client ON client.id = client_loan_agreement.client_id
@@ -3050,46 +3359,50 @@ switch ($action) {
     
         $gadacilebuli_day_count = $gadacilebuli_day_count - $check_holliday_day[count];
         
-        if ($other_penalty == 1) {
-            $RemainigRoot = mysql_fetch_array(mysql_query("SELECT    client_loan_schedule.remaining_root+client_loan_schedule.root AS remaining_root
-                                                            FROM     client_loan_schedule
-                                                            JOIN     client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
-                                                            WHERE    client_loan_agreement.client_id = '$local_id'
-                                                            AND 	 client_loan_schedule.schedule_date < '$pay_datee'
-                                                            AND      client_loan_schedule.`status` = 1
-                                                            AND      client_loan_schedule.penalty_check=0
-                                                            ORDER BY client_loan_schedule.id DESC
-                                                            LIMIT 1"));
-            $penalty = round(($RemainigRoot[remaining_root] * ($res[penalty_additional_percent]/100))*$gadacilebuli_day_count,2);
+        if ($gadacilebuli_day_count<=$res[grace_period_caunt]) {
+            $penalty = 0;
         }else{
-            $check_count_schedule = mysql_num_rows(mysql_query("SELECT 	    client_loan_schedule.id
-                                                                FROM 	   `client_loan_schedule`
-                                                                LEFT JOIN   client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
-                                                                JOIN        client ON client.id = client_loan_agreement.client_id
-                                                                WHERE       client_loan_schedule.actived = 1 AND client_id = '$local_id' AND client_loan_schedule.`status` =0 
-                                                                AND         client_loan_schedule.id < '$cal_loan_schedule_id'"));
-
-            
-        
-            if ($check_count_schedule > 0) {
-                
-                $Remainig_Root = mysql_fetch_array(mysql_query("SELECT 	   client_loan_schedule.remaining_root+client_loan_schedule.root AS remaining_root
-                                                               FROM 	  `client_loan_schedule`
-                                                               LEFT JOIN   client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
-                                                               JOIN        client ON client.id = client_loan_agreement.client_id
-                                                               WHERE       client_loan_schedule.actived = 1 AND client_id = '$local_id' AND client_loan_schedule.`status` =0 
-                                                               AND         client_loan_schedule.id < '$cal_loan_schedule_id'
-                                                               LIMIT 1     "));
-                $penalty = round(($Remainig_Root[remaining_root] * ($res[penalty_additional_percent]/100))*$gadacilebuli_day_count,2);
+            if ($other_penalty == 1) {
+                $RemainigRoot = mysql_fetch_array(mysql_query("SELECT    client_loan_schedule.remaining_root+client_loan_schedule.root AS remaining_root
+                                                                FROM     client_loan_schedule
+                                                                JOIN     client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
+                                                                WHERE    client_loan_agreement.client_id = '$local_id'
+                                                                AND 	 client_loan_schedule.schedule_date < '$pay_datee'
+                                                                AND      client_loan_schedule.`status` = 1
+                                                                AND      client_loan_schedule.penalty_check=0
+                                                                ORDER BY client_loan_schedule.id DESC
+                                                                LIMIT 1"));
+                $penalty = round(($RemainigRoot[remaining_root] * ($res[penalty_additional_percent]/100))*$gadacilebuli_day_count,2);
             }else{
-                if ($gadacilebuli_day_count>0 && $gadacilebuli_day_count<=$res[penalty_days]) {
-                    $penalty = round(($remainig_root * ($res[penalty_percent]/100))*$gadacilebuli_day_count,2);
-                }elseif ($gadacilebuli_day_count>0 && $gadacilebuli_day_count>$res[penalty_days] && $res[penalty_additional_percent]>0){
-                    $penalty = round((($remainig_root * ($res[penalty_percent]/100))*$res[penalty_days])+($remainig_root * ($res[penalty_additional_percent]/100))*($gadacilebuli_day_count-$res[penalty_days]),2);
+                $check_count_schedule = mysql_num_rows(mysql_query("SELECT 	    client_loan_schedule.id
+                                                                    FROM 	   `client_loan_schedule`
+                                                                    LEFT JOIN   client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
+                                                                    JOIN        client ON client.id = client_loan_agreement.client_id
+                                                                    WHERE       client_loan_schedule.actived = 1 AND client_id = '$local_id' AND client_loan_schedule.`status` =0 
+                                                                    AND         client_loan_schedule.id < '$cal_loan_schedule_id'"));
+    
+                
+            
+                if ($check_count_schedule > 0) {
                     
-                }elseif($gadacilebuli_day_count>0 && $res[penalty_additional_percent] <= 0){
-                    
-                    $penalty = round(($remainig_root * ($res[penalty_percent]/100))*$gadacilebuli_day_count,2);
+                    $Remainig_Root = mysql_fetch_array(mysql_query("SELECT 	   client_loan_schedule.remaining_root+client_loan_schedule.root AS remaining_root
+                                                                   FROM 	  `client_loan_schedule`
+                                                                   LEFT JOIN   client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
+                                                                   JOIN        client ON client.id = client_loan_agreement.client_id
+                                                                   WHERE       client_loan_schedule.actived = 1 AND client_id = '$local_id' AND client_loan_schedule.`status` =0 
+                                                                   AND         client_loan_schedule.id < '$cal_loan_schedule_id'
+                                                                   LIMIT 1     "));
+                    $penalty = round(($Remainig_Root[remaining_root] * ($res[penalty_additional_percent]/100))*$gadacilebuli_day_count,2);
+                }else{
+                    if ($gadacilebuli_day_count>0 && $gadacilebuli_day_count<=$res[penalty_days]) {
+                        $penalty = round(($remainig_root * ($res[penalty_percent]/100))*$gadacilebuli_day_count,2);
+                    }elseif ($gadacilebuli_day_count>0 && $gadacilebuli_day_count>$res[penalty_days] && $res[penalty_additional_percent]>0){
+                        $penalty = round((($remainig_root * ($res[penalty_percent]/100))*$res[penalty_days])+($remainig_root * ($res[penalty_additional_percent]/100))*($gadacilebuli_day_count-$res[penalty_days]),2);
+                        
+                    }elseif($gadacilebuli_day_count>0 && $res[penalty_additional_percent] <= 0){
+                        
+                        $penalty = round(($remainig_root * ($res[penalty_percent]/100))*$gadacilebuli_day_count,2);
+                    }
                 }
             }
         }
@@ -3222,7 +3535,8 @@ switch ($action) {
                             			   client_loan_agreement.penalty_percent,
                             			   client_loan_agreement.penalty_additional_percent,
                                            client_loan_schedule.schedule_date AS pay_date,
-                                           ROUND(client_loan_schedule.root + client_loan_schedule.remaining_root,2) AS remaining_root
+                                           ROUND(client_loan_schedule.root + client_loan_schedule.remaining_root,2) AS remaining_root,
+                                           client_loan_agreement.grace_period_caunt
                                     FROM   client_loan_schedule 
                                     JOIN   client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
                                     WHERE  client_loan_agreement.client_id = '$local_id'
@@ -3247,7 +3561,8 @@ switch ($action) {
                                                          (SELECT DATEDIFF('$pay_datee', clsh.schedule_date) FROM client_loan_schedule AS clsh WHERE clsh.id = MAX(client_loan_schedule.id)) AS `gadacilebuli`,
                                                           client_loan_agreement.loan_beforehand_percent,
                                                           SUM(client_loan_schedule.percent) AS percent,
-                                                         (SELECT clsh.remaining_root FROM client_loan_schedule AS clsh WHERE clsh.id = MAX(client_loan_schedule.id)) AS `check_remaining_root`
+                                                         (SELECT clsh.remaining_root FROM client_loan_schedule AS clsh WHERE clsh.id = MAX(client_loan_schedule.id)) AS `check_remaining_root`,
+                                                          client_loan_agreement.grace_period_caunt
                                                         
                                                   FROM   client_loan_schedule
                                                   JOIN   client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
@@ -3277,21 +3592,25 @@ switch ($action) {
             $gadacilebuli_day_count = $row_all[gadacilebuli];
         
             $check_holliday_day = mysql_fetch_array(mysql_query("SELECT COUNT(*) AS count
-                                                                FROM   holidays
-                                                                WHERE  actived = 1
-                                                                AND    DATE(date)>='$row_all[pay_date]'
-                                                                AND    DATE(date)< '$pay_datee'"));
+                                                                 FROM   holidays
+                                                                 WHERE  actived = 1
+                                                                 AND    DATE(date)>='$row_all[pay_date]'
+                                                                 AND    DATE(date)< '$pay_datee'"));
         
             $gadacilebuli_day_count = $gadacilebuli_day_count - $check_holliday_day[count];
         
-            if ($i == 0) {
-                if ($gadacilebuli_day_count>0 && $gadacilebuli_day_count<=$row_all[penalty_days]) {
-                    $penalty1 = round(($remaining_root * ($row_all[penalty_percent]/100))*$gadacilebuli_day_count,2);
-                }elseif ($gadacilebuli_day_count>0 && $gadacilebuli_day_count>$row_all[penalty_days]){
-                    $penalty1 = round(round(($remaining_root * ($row_all[penalty_percent]/100))*$row_all[penalty_days],2)+round(($remaining_root * ($row_all[penalty_additional_percent]/100))*($gadacilebuli_day_count-$row_all[penalty_days]),2),2);
-                }
+            if($gadacilebuli_day_count<=$row_all[grace_period_caunt]){
+                $penalty1 = 0;
             }else{
-                $penalty1 = round(($remaining_root * ($row_all[penalty_additional_percent]/100))*$gadacilebuli_day_count,2);
+                if ($i == 0) {
+                    if ($gadacilebuli_day_count>0 && $gadacilebuli_day_count<=$row_all[penalty_days]) {
+                        $penalty1 = round(($remaining_root * ($row_all[penalty_percent]/100))*$gadacilebuli_day_count,2);
+                    }elseif ($gadacilebuli_day_count>0 && $gadacilebuli_day_count>$row_all[penalty_days]){
+                        $penalty1 = round(round(($remaining_root * ($row_all[penalty_percent]/100))*$row_all[penalty_days],2)+round(($remaining_root * ($row_all[penalty_additional_percent]/100))*($gadacilebuli_day_count-$row_all[penalty_days]),2),2);
+                    }
+                }else{
+                    $penalty1 = round(($remaining_root * ($row_all[penalty_additional_percent]/100))*$gadacilebuli_day_count,2);
+                }
             }
             $i++;
             $penalty = $penalty+$penalty1;
@@ -3367,7 +3686,8 @@ switch ($action) {
                                          client_loan_agreement.loan_beforehand_percent,
                         				 client_loan_agreement.penalty_days,
                         				 client_loan_agreement.penalty_percent,
-                        				 client_loan_agreement.penalty_additional_percent
+                        				 client_loan_agreement.penalty_additional_percent,
+                                         client_loan_agreement.grace_period_caunt
                                 FROM     client_loan_schedule
                                 JOIN     client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
                                 WHERE    client_loan_agreement.client_id = '$local_id' AND client_loan_schedule.schedule_date <= '$pay_datee'
@@ -3394,7 +3714,8 @@ switch ($action) {
                                          client_loan_agreement.loan_beforehand_percent,
                         				 client_loan_agreement.penalty_days,
                         				 client_loan_agreement.penalty_percent,
-                        				 client_loan_agreement.penalty_additional_percent
+                        				 client_loan_agreement.penalty_additional_percent,
+                                         client_loan_agreement.grace_period_caunt
                                 FROM     client_loan_schedule
                                 JOIN     client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
                                 WHERE    client_loan_agreement.client_id = '$local_id' AND client_loan_schedule.schedule_date >= '$pay_datee'
@@ -3425,12 +3746,15 @@ switch ($action) {
             $gadacilebuli_day_count = $gadacilebuli_day_count - $check_holliday_day[count];
             
             $penalty = 0;
-            if ($gadacilebuli_day_count>0 && $gadacilebuli_day_count<=$result[penalty_days] && $result[status] == 0) {
-                $penalty = round(($remainig_root * ($result[penalty_percent]/100))*$gadacilebuli_day_count,2);
-            }elseif ($gadacilebuli_day_count>0 && $gadacilebuli_day_count>$result[penalty_days] && $result[status] == 0){
-                $penalty = round(round(($remainig_root * ($result[penalty_percent]/100))*$result[penalty_days],2)+round(($remainig_root * ($result[penalty_additional_percent]/100))*($gadacilebuli_day_count-$result[penalty_days]),2),2);
+            if ($gadacilebuli_day_count<=$res[grace_period_caunt]) {
+                $penalty = 0;
+            }else{
+                if ($gadacilebuli_day_count>0 && $gadacilebuli_day_count<=$result[penalty_days] && $result[status] == 0) {
+                    $penalty = round(($remainig_root * ($result[penalty_percent]/100))*$gadacilebuli_day_count,2);
+                }elseif ($gadacilebuli_day_count>0 && $gadacilebuli_day_count>$result[penalty_days] && $result[status] == 0){
+                    $penalty = round(round(($remainig_root * ($result[penalty_percent]/100))*$result[penalty_days],2)+round(($remainig_root * ($result[penalty_additional_percent]/100))*($gadacilebuli_day_count-$result[penalty_days]),2),2);
+                }
             }
-            
             $sakomisio      = '0.00';
             $nasargeblebi   = $result[nasargeblebi_dgeebi];
             

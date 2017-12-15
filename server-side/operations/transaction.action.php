@@ -309,7 +309,8 @@ switch ($action) {
                             			   client_loan_agreement.penalty_percent,
                             			   client_loan_agreement.penalty_additional_percent,
                                            client_loan_schedule.schedule_date AS pay_date,
-                                           ROUND(client_loan_schedule.root + client_loan_schedule.remaining_root,2) AS remaining_root
+                                           ROUND(client_loan_schedule.root + client_loan_schedule.remaining_root,2) AS remaining_root,
+                                           client_loan_agreement.grace_period_caunt
                                     FROM   client_loan_schedule 
                                     JOIN   client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
                                     WHERE  client_loan_agreement.client_id = '$local_id'
@@ -325,7 +326,8 @@ switch ($action) {
                                                         SUM(client_loan_schedule.root) AS schedule_root,
                                                         client_loan_agreement.loan_beforehand_percent,
                                                         (SELECT clsh.remaining_root FROM client_loan_schedule AS clsh WHERE clsh.id = MAX(client_loan_schedule.id)) AS `check_remaining_root`,
-                                                        MIN(client_loan_schedule.id) AS min_sch_id
+                                                        MIN(client_loan_schedule.id) AS min_sch_id,
+                                                        client_loan_agreement.grace_period_caunt
                                                 FROM   client_loan_schedule
                                                 JOIN   client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
                                                 WHERE  client_loan_agreement.client_id = $local_id
@@ -359,21 +361,24 @@ switch ($action) {
                                                                  AND    DATE(date)< '$pay_datee'"));
             
             $gadacilebuli_day_count = $gadacilebuli_day_count - $check_holliday_day[count];
-            
-            if ($row_all[penalty_stoped] == 1) {
-                $penalty1 = $row_all[penalty];
+            if ($gadacilebuli_day_count<=$row_all[grace_period_caunt]) {
+                $penalty1 = 0;
             }else{
-                if ($other_penalty == 1) {
-                    $penalty1 = round(($remainig_root * ($row_all[penalty_additional_percent]/100))*$gadacilebuli_day_count,2);
+                if ($row_all[penalty_stoped] == 1) {
+                    $penalty1 = $row_all[penalty];
                 }else{
-                    if ($i == 0) {
-                        if ($gadacilebuli_day_count>0 && $gadacilebuli_day_count<=$row_all[penalty_days]) {
-                            $penalty1 = round(($remainig_root * ($row_all[penalty_percent]/100))*$gadacilebuli_day_count,2);
-                        }elseif ($gadacilebuli_day_count>0 && $gadacilebuli_day_count>$row_all[penalty_days]){
-                            $penalty1 = round(round(($remainig_root * ($row_all[penalty_percent]/100))*$row_all[penalty_days],2)+round(($remainig_root * ($row_all[penalty_additional_percent]/100))*($gadacilebuli_day_count-$row_all[penalty_days]),2),2);
-                        }
-                    }else{
+                    if ($other_penalty == 1) {
                         $penalty1 = round(($remainig_root * ($row_all[penalty_additional_percent]/100))*$gadacilebuli_day_count,2);
+                    }else{
+                        if ($i == 0) {
+                            if ($gadacilebuli_day_count>0 && $gadacilebuli_day_count<=$row_all[penalty_days]) {
+                                $penalty1 = round(($remainig_root * ($row_all[penalty_percent]/100))*$gadacilebuli_day_count,2);
+                            }elseif ($gadacilebuli_day_count>0 && $gadacilebuli_day_count>$row_all[penalty_days]){
+                                $penalty1 = round(round(($remainig_root * ($row_all[penalty_percent]/100))*$row_all[penalty_days],2)+round(($remainig_root * ($row_all[penalty_additional_percent]/100))*($gadacilebuli_day_count-$row_all[penalty_days]),2),2);
+                            }
+                        }else{
+                            $penalty1 = round(($remainig_root * ($row_all[penalty_additional_percent]/100))*$gadacilebuli_day_count,2);
+                        }
                     }
                 }
             }
@@ -444,7 +449,8 @@ switch ($action) {
                         				 client_loan_agreement.penalty_days,
                         				 client_loan_agreement.penalty_percent,
                                          client_loan_agreement.loan_currency_id,
-                        				 client_loan_agreement.penalty_additional_percent
+                        				 client_loan_agreement.penalty_additional_percent,
+                                         client_loan_agreement.grace_period_caunt
                                 FROM     client_loan_schedule
                                 JOIN     client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
                                 WHERE    client_loan_agreement.client_id = '$local_id' AND client_loan_schedule.schedule_date <= '$pay_datee'
@@ -478,7 +484,8 @@ switch ($action) {
                             				 client_loan_agreement.penalty_days,
                             				 client_loan_agreement.penalty_percent,
                                              client_loan_agreement.loan_currency_id,
-                            				 client_loan_agreement.penalty_additional_percent
+                            				 client_loan_agreement.penalty_additional_percent,
+                                             client_loan_agreement.grace_period_caunt
                                     FROM     client_loan_schedule
                                     JOIN     client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
                                     WHERE    client_loan_agreement.client_id = '$local_id' AND client_loan_schedule.schedule_date > '$pay_datee'
@@ -507,16 +514,20 @@ switch ($action) {
             $other_amount = $result[other_amount];
             $penalty = 0;
             
-            if ($result[penalty_stoped] == 1) {
-                $penalty = $result[penalty];
+            if ($gadacilebuli_day_count<=$res[grace_period_caunt]) {
+                $penalty = 0;
             }else{
-                if ($other_penalty == 1) {
-                    $penalty = round(($remainig_root * ($result[penalty_additional_percent]/100))*$gadacilebuli_day_count,2);
+                if ($result[penalty_stoped] == 1) {
+                    $penalty = $result[penalty];
                 }else{
-                    if ($gadacilebuli_day_count>0 && $gadacilebuli_day_count<=$result[penalty_days] && $result[status] == 0) {
-                        $penalty = round(($remainig_root * ($result[penalty_percent]/100))*$gadacilebuli_day_count,2);
-                    }elseif ($gadacilebuli_day_count>0 && $gadacilebuli_day_count>$result[penalty_days] && $result[status] == 0){
-                        $penalty = round(round(($remainig_root * ($result[penalty_percent]/100))*$result[penalty_days],2)+round(($remainig_root * ($result[penalty_additional_percent]/100))*($gadacilebuli_day_count-$result[penalty_days]),2),2);
+                    if ($other_penalty == 1) {
+                        $penalty = round(($remainig_root * ($result[penalty_additional_percent]/100))*$gadacilebuli_day_count,2);
+                    }else{
+                        if ($gadacilebuli_day_count>0 && $gadacilebuli_day_count<=$result[penalty_days] && $result[status] == 0) {
+                            $penalty = round(($remainig_root * ($result[penalty_percent]/100))*$gadacilebuli_day_count,2);
+                        }elseif ($gadacilebuli_day_count>0 && $gadacilebuli_day_count>$result[penalty_days] && $result[status] == 0){
+                            $penalty = round(round(($remainig_root * ($result[penalty_percent]/100))*$result[penalty_days],2)+round(($remainig_root * ($result[penalty_additional_percent]/100))*($gadacilebuli_day_count-$result[penalty_days]),2),2);
+                        }
                     }
                 }
             }
@@ -590,8 +601,8 @@ switch ($action) {
                                                     				 client_loan_agreement.penalty_days,
                                                     				 client_loan_agreement.penalty_percent,
                                                     				 client_loan_agreement.penalty_additional_percent,
-                                                    				 client_loan_schedule.root + client_loan_schedule.remaining_root AS remaining_root
-                                                                				 
+                                                    				 client_loan_schedule.root + client_loan_schedule.remaining_root AS remaining_root,
+                                                                	 client_loan_agreement.grace_period_caunt			 
                                                             FROM     client_loan_schedule
                                                             JOIN     client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
                                                             JOIN     client ON client.id = client_loan_agreement.client_id
@@ -615,28 +626,32 @@ switch ($action) {
     		
     		$gadacilebuli_day_count = $gadacilebuli_day_count - $check_holliday_day[count];
     		
-    		if ($check_penalty[penalty_stoped]==1) {
-    		    $penalty=$check_penalty[penalty];
+    		if ($gadacilebuli_day_count <= $check_penalty[grace_period_caunt]){
+    		    $penalty = 0;
     		}else{
-        		if ($check_loan_penalty == 1) {
-        		    $RemainigRoot = mysql_fetch_array(mysql_query("SELECT   client_loan_schedule.remaining_root+client_loan_schedule.root AS remaining_root
-                                                                   FROM     client_loan_schedule
-                                                                   JOIN     client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
-                                                                   WHERE    client_loan_agreement.client_id = '$id' 
-                                                                   AND 		client_loan_schedule.schedule_date < '$transaction_date' 
-                                                                   AND      client_loan_schedule.`status` = 1 
-                                                                   AND      client_loan_schedule.penalty_check=0
-                                                                   ORDER BY client_loan_schedule.id DESC
-                                                                   LIMIT 1"));
-        		    $penalty = round(($RemainigRoot[remaining_root] * ($check_penalty[penalty_additional_percent]/100))*$gadacilebuli_day_count,2);
+        		if ($check_penalty[penalty_stoped]==1) {
+        		    $penalty=$check_penalty[penalty];
         		}else{
-        		    if ($gadacilebuli_day_count>0 && $gadacilebuli_day_count<=$check_penalty[penalty_days]) {
-        		        $penalty = round(($remaining_root * ($check_penalty[penalty_percent]/100))*$gadacilebuli_day_count,2);
-        		    }elseif ($gadacilebuli_day_count>0 && $gadacilebuli_day_count>$check_penalty[penalty_days] && $check_penalty[penalty_additional_percent] > 0){
-        		        $penalty = round((($remaining_root * ($check_penalty[penalty_percent]/100))*$check_penalty[penalty_days])+($remaining_root * ($check_penalty[penalty_additional_percent]/100))*($gadacilebuli_day_count-$check_penalty[penalty_days]),2);
-        		    }elseif($gadacilebuli_day_count>0 && $check_penalty[penalty_additional_percent] <= 0){
-        		        $penalty = round(($remaining_root * ($check_penalty[penalty_percent]/100))*$gadacilebuli_day_count,2);
-        		    }  
+            		if ($check_loan_penalty == 1) {
+            		    $RemainigRoot = mysql_fetch_array(mysql_query("SELECT   client_loan_schedule.remaining_root+client_loan_schedule.root AS remaining_root
+                                                                       FROM     client_loan_schedule
+                                                                       JOIN     client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
+                                                                       WHERE    client_loan_agreement.client_id = '$id' 
+                                                                       AND 		client_loan_schedule.schedule_date < '$transaction_date' 
+                                                                       AND      client_loan_schedule.`status` = 1 
+                                                                       AND      client_loan_schedule.penalty_check=0
+                                                                       ORDER BY client_loan_schedule.id DESC
+                                                                       LIMIT 1"));
+            		    $penalty = round(($RemainigRoot[remaining_root] * ($check_penalty[penalty_additional_percent]/100))*$gadacilebuli_day_count,2);
+            		}else{
+            		    if ($gadacilebuli_day_count>0 && $gadacilebuli_day_count<=$check_penalty[penalty_days]) {
+            		        $penalty = round(($remaining_root * ($check_penalty[penalty_percent]/100))*$gadacilebuli_day_count,2);
+            		    }elseif ($gadacilebuli_day_count>0 && $gadacilebuli_day_count>$check_penalty[penalty_days] && $check_penalty[penalty_additional_percent] > 0){
+            		        $penalty = round((($remaining_root * ($check_penalty[penalty_percent]/100))*$check_penalty[penalty_days])+($remaining_root * ($check_penalty[penalty_additional_percent]/100))*($gadacilebuli_day_count-$check_penalty[penalty_days]),2);
+            		    }elseif($gadacilebuli_day_count>0 && $check_penalty[penalty_additional_percent] <= 0){
+            		        $penalty = round(($remaining_root * ($check_penalty[penalty_percent]/100))*$gadacilebuli_day_count,2);
+            		    }  
+            		}
         		}
     		}
     		$res_sch_id = mysql_fetch_assoc(mysql_query("SELECT    client_loan_schedule.id
@@ -715,9 +730,41 @@ switch ($action) {
     		    $info_message = 'ბოლო გადახდა!';
     		}
     		
-    		if ($type_id == 1 || $type_id == 0) {	
-        		$data = array('status' => 1, 'schedule_date'=>$res[schedule_date], 'id' => $res[id],'pay_amount' => $res[root] + $res[percent] + $penalty+$other_amount, 'root' => $res[root], 'percent' => $res[percent], 'penalty' => $penalty, 'client_data' => client($res[client_id]), 'client_attachment_data' => client_attachment($res[agree_id], $res['client_id']), 'agrement_data' => client_loan_number($res[agrement_id]), 'currenc' => currency($res[loan_currency_id]),'pay_amount1' => $res1[pay_amount], 'root1' => $res1[pay_root], 'percent1' => $res1[pay_percent], 'penalty1' => $res1[pay_penalty], 'loan_pay_amount' => $loan_pay_amount, 'info_message' => $info_message, 'other_amount' => $other_amount);
+    		
+    		$check_deal = mysql_query(" SELECT client_loan_schedule_deal.cur_root + client_loan_schedule_deal.cur_percent + client_loan_schedule_deal.cur_penalty AS all_fe,
+                                               client_loan_schedule_deal.cur_root,
+                                               client_loan_schedule_deal.cur_percent,
+                                               client_loan_schedule_deal.cur_penalty,
+                                               client_loan_schedule_deal.schedule_id,
+    		                                   client_loan_schedule_deal.id AS deal_id,
+                                        FROM   client_loan_schedule
+                                        JOIN   client_loan_schedule_deal ON client_loan_schedule_deal.schedule_id = client_loan_schedule.id 
+                                        WHERE  client_loan_schedule.actived = 1 AND client_loan_schedule.`status` = 0
+                                        AND    client_loan_schedule.id = $res[id]
+    		                            LIMIT 1");
+    		
+    		if (mysql_num_rows($check_deal)==0) {
+        		if ($type_id == 1 || $type_id == 0) {
+        		    $check_deal = mysql_query(" SELECT client_loan_schedule_deal.deal_amount,
+        		                                       client_loan_schedule_deal.id AS deal_id
+                                		        FROM   client_loan_schedule
+        		                                JOIN client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
+                                		        JOIN   client_loan_schedule_deal ON client_loan_schedule_deal.schedule_id = client_loan_schedule.id
+                                		        WHERE  client_loan_schedule.actived = 1 AND client_loan_schedule.`status` = 1 AND client_loan_schedule.`actived` = 1
+                                		        AND    client_loan_schedule_deal.pay_date<='$transaction_date' AND client_loan_schedule_deal.deal_status=1
+        		                                $filt
+                                                ORDER BY client_loan_schedule_deal.pay_date ASC
+                                                LIMIT 1");
+        		    $res_deal = mysql_fetch_array($check_deal);
+            		$data = array('status' => 1, 'schedule_date'=>$res[schedule_date], 'id' => $res[id],'pay_amount' => $res[root] + $res[percent] + $penalty+$other_amount+$res_deal[deal_amount], 'root' => $res[root], 'percent' => $res[percent], 'penalty' => $penalty, 'client_data' => client($res[client_id]), 'client_attachment_data' => client_attachment($res[agree_id], $res['client_id']), 'agrement_data' => client_loan_number($res[agrement_id]), 'currenc' => currency($res[loan_currency_id]),'pay_amount1' => $res1[pay_amount], 'root1' => $res1[pay_root], 'percent1' => $res1[pay_percent], 'penalty1' => $res1[pay_penalty], 'loan_pay_amount' => $loan_pay_amount, 'info_message' => $info_message, 'other_amount' => $other_amount, 'deal_amount' => $res_deal[deal_amount], 'deal_id' => $res_deal[deal_id]);
+        		}
+    		}else{
+    		    $res_deal = mysql_fetch_array($check_deal);
+    		    if ($type_id == 1 || $type_id == 0) {
+    		        $data = array('status' => 1, 'schedule_date'=>$res[schedule_date], 'id' => $res[id],'pay_amount' => $res_deal[all_fe], 'root' => $res_deal[cur_root], 'percent' => $res_deal[cur_percent], 'penalty' => $res_deal[cur_penalty], 'client_data' => client($res[client_id]), 'client_attachment_data' => client_attachment($res[agree_id], $res['client_id']), 'agrement_data' => client_loan_number($res[agrement_id]), 'currenc' => currency($res[loan_currency_id]),'pay_amount1' => $res1[pay_amount], 'root1' => $res1[pay_root], 'percent1' => $res1[pay_percent], 'penalty1' => $res1[pay_penalty], 'loan_pay_amount' => $loan_pay_amount, 'info_message' => $info_message, 'other_amount' => $other_amount, 'deal_id' => $res_deal[deal_id]);
+    		    }
     		}
+    		
     	}elseif ($type_id == 2){
 		    $receivedd_currency_id = $_REQUEST['received_currency_id'];
 		    $res_pledge = mysql_fetch_assoc(mysql_query("SELECT SUM(CASE
@@ -817,6 +864,32 @@ switch ($action) {
                                                             WHERE  client.id = '$id' OR client_loan_agreement.id = '$agr_id';"));
 		    
 		    $data = array('status'=>3, 'client_data' => client($check_client[client_id]), 'client_attachment_data' => client_attachment($check_client[agreement_id], $check_client[client_id]), 'agrement_data' => client_loan_number($check_client[id]), 'other_pay' => $other_pay);
+		}elseif ($type_id == 4){
+		    
+		    $check_client = mysql_fetch_array(mysql_query("SELECT  client_loan_agreement.id, 
+                                                    			   client_loan_agreement.client_id, 
+                                                    			   client_loan_agreement.agreement_id
+                                                            FROM   client_loan_agreement 
+                                                            JOIN   client ON client.id = client_loan_agreement.client_id
+                                                            WHERE  client.id = '$id' OR client_loan_agreement.id = '$agr_id';"));
+		    
+		    
+		    
+		        
+            $check_deal = mysql_query(" SELECT client_loan_schedule_deal.deal_amount,
+                		                       client_loan_schedule_deal.id AS deal_id
+                		                FROM   client_loan_schedule
+                		                JOIN   client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
+                		                JOIN   client_loan_schedule_deal ON client_loan_schedule_deal.schedule_id = client_loan_schedule.id
+                		                WHERE  client_loan_schedule.actived = 1 AND client_loan_schedule.`status` = 1 AND client_loan_schedule.`actived` = 1
+                		                AND    client_loan_schedule_deal.pay_date<='$transaction_date' AND client_loan_schedule_deal.deal_status=1
+                		                $filt
+                		                ORDER BY client_loan_schedule_deal.pay_date ASC
+                		                LIMIT 1");
+            
+            $res_deal = mysql_fetch_array($check_deal);
+            
+            $data = array('status' => 3, 'client_data' => client($check_client[client_id]), 'client_attachment_data' => client_attachment($check_client[agreement_id], $check_client[client_id]), 'agrement_data' => client_loan_number($check_client[id]), 'deals_gel' => $check_deal[deal_amount], 'deals_usd' => $check_deal[deal_amount]);
 		}
 		
 		break;

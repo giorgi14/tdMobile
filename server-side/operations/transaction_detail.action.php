@@ -349,15 +349,18 @@ function Add($hidde_transaction_id, $hidde_id, $transaction_date, $month_fee, $c
 	
 	$month_fee1    = $_REQUEST['month_fee1'];
 	$payable_Fee   = $_REQUEST['payable_Fee'];
+	$deal_Fee      = $_REQUEST['deal_Fee'];
+	$hidde_deal_id = $_REQUEST['hidde_deal_id'];
 	$yield         = $_REQUEST['yield'];
 	$other_payed   = $_REQUEST['other_payed'];
 	$other_penalty = $_REQUEST['other_penalty'];
 	$exception_agr = $_REQUEST['exception_agr'];
 	$surplus1      = $_REQUEST['surplus1'];
 	
-	$client_loan_number = $_REQUEST['client_loan_number'];
-	$car_out            = $_REQUEST['car_out'];
+	$client_loan_number   = $_REQUEST['client_loan_number'];
+	$car_out              = $_REQUEST['car_out'];
 	$attachment_client_id = $_REQUEST['attachment_client_id'];
+	$hidde_deal_id        = $_REQUEST['hidde_deal_id'];
 	
 	$attachment_agr_id = mysql_fetch_array(mysql_query("SELECT id 
                                                         FROM   client_loan_agreement 
@@ -546,6 +549,26 @@ function Add($hidde_transaction_id, $hidde_id, $transaction_date, $month_fee, $c
                           WHERE   client_loan_agreement.client_id = '$client_id' 
                           AND     money_transactions_detail.`status` = 3
                           AND     money_transactions_detail.actived = 1");
+    	    
+    	    if ($hidde_deal_id > 0) {
+    	        mysql_query("UPDATE `client_loan_schedule_deal`
+                                SET `deal_status` = '1'
+                             WHERE  `id`          = '$hidde_deal_id'");
+    	    }
+    	    
+    	    if ($deal_Fee>0){
+    	        mysql_query("INSERT INTO `money_transactions_detail`
+                        	            (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
+                        	      VALUES
+                        	            (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '$deal_Fee', '$course', '$currency_id', '$received_currency_id', '', '', '$type_id', '13', 1)");
+    	    
+    	        if ($hidde_deal_id > 0) {
+    	            mysql_query("UPDATE `client_loan_schedule_deal`
+    	                            SET `deal_status` = '2'
+    	                         WHERE  `id`          = '$hidde_deal_id'");
+    	        }
+    	    }
+    	    
     	    
     	    if ($root>0 || $percent>0) {
     	        
@@ -781,6 +804,24 @@ function Add($hidde_transaction_id, $hidde_id, $transaction_date, $month_fee, $c
                          AND     money_transactions_detail.`status` = 3
                          AND     money_transactions_detail.actived = 1");
     	    
+    	    if ($hidde_deal_id > 0) {
+    	        mysql_query("UPDATE `client_loan_schedule_deal`
+                                SET `deal_status` = '1'
+                             WHERE  `id`          = '$hidde_deal_id'");
+    	    }
+    	    
+    	    if ($deal_Fee>0){
+    	        mysql_query("INSERT INTO `money_transactions_detail`
+                        	            (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
+                        	      VALUES
+                        	            (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '$deal_Fee', '$course', '$currency_id', '$received_currency_id', '', '', '$type_id', '13', 1)");
+    	    
+    	        if ($hidde_deal_id > 0) {
+    	            mysql_query("UPDATE `client_loan_schedule_deal`
+    	                            SET `deal_status` = '2'
+    	                         WHERE  `id`          = '$hidde_deal_id'");
+    	        }
+    	    }
     	    
     	    //მეტობა სესხი
     	    if ($surplus_type==1) {
@@ -961,6 +1002,25 @@ function Add($hidde_transaction_id, $hidde_id, $transaction_date, $month_fee, $c
             	                  WHERE   client_loan_agreement.client_id = '$client_id'
             	                  AND     money_transactions_detail.`status` = 3
             	                  AND     money_transactions_detail.actived = 1");
+    	            
+    	            if ($hidde_deal_id > 0) {
+            	        mysql_query("UPDATE `client_loan_schedule_deal`
+                                        SET `deal_status` = '1'
+                                     WHERE  `id`          = '$hidde_deal_id'");
+            	    }
+            	    
+            	    if ($deal_Fee>0){
+            	        mysql_query("INSERT INTO `money_transactions_detail`
+                                	            (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
+                                	      VALUES
+                                	            (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '$deal_Fee', '$course', '$currency_id', '$received_currency_id', '', '', '$type_id', '13', 1)");
+            	    
+            	        if ($hidde_deal_id > 0) {
+            	            mysql_query("UPDATE `client_loan_schedule_deal`
+            	                            SET `deal_status` = '2'
+            	                         WHERE  `id`          = '$hidde_deal_id'");
+            	        }
+            	    }
     	             
     	            if ($percent>=$percent1) {
     	                $nawilobrivi_chamokleba = $_REQUEST['nawilobrivi_chamokleba'];
@@ -1953,6 +2013,17 @@ function GetPage($res = ''){
     					<td style="width: 120px;"><label class="dziris_chamokleba" style="padding-top: 5px; display:none"  for="date">ნასარგ. %:</label></td>
     					<td style="width: 80px;"><input class="dziris_chamokleba" style="width: 80px; display:none" id="nasargeblebi_procenti" type="text" value="'.$res1[''].'" disabled="disabled"></td>
     				</tr>
+    			    <tr style="height:10px;"></tr>
+    				<tr>
+    					<td style="width: 105px; padding-top: 5px;"><label class="label_label" for="date">შეთანხმება:</label></td>
+    					<td style="width: 100px;">
+    						<input class="label_label" style="width: 70px; float:left;" id="deal_Fee" type="text"  onkeydown="if(event.which == 8 || event.keyCode == 46) return false;" value="'.$res[''].'" '.$disable.'><span style="float: right; display: inline; margin-top: 4px; "><button id="delete_deal_Fee" class="label_label" style="width:20px; padding: 0 0 2px 0; color: #fb0000; '.$display_none1.'">x</button></span>
+    					</td>
+    					<td style="width: 120px;"><label style="padding-top: 5px; margin-left: 10px;" class="label_label" for="date">შეთანხმება:</label></td>
+    					<td style="width: 100px;"><input style="width: 80px;" id="deal_Fee1" class="label_label" type="text" value="'.$res1[''].'" disabled="disabled"></td>
+    					<td style="width: 120px;"></td>
+    					<td style="width: 80px;"></td>
+    				</tr>
     				<tr class="car_out_class" style="height:10px; '.$hidde_out_car.'"></tr>
     				<tr class="car_out_class" style="'.$hidde_out_car.'">
     					<td style="width: 105px; padding-top: 5px;"><label class="label_label" for="date">საკომისიო:</label></td>
@@ -2106,6 +2177,7 @@ function GetPage($res = ''){
 			<input type="hidden" id="idd" value="' . $res['id'] . '" />
 			<input type="hidden" id="hidde_status" value="' . $res['status'] . '" />
 			<input type="hidden" id="hidde_new_percent" value="' . $res['status'] . '" />
+			<input type="hidden" id="hidde_deal_id" value="" />
 			    
 			<input type="hidden" id="hidde_root" value="0" />
 	        <input type="hidden" id="hidde_percent" value="0" />
@@ -2114,6 +2186,7 @@ function GetPage($res = ''){
 		    <input type="hidden" id="hidde_payable_Fee" value="0" />
             <input type="hidden" id="hidde_yield" value="0" />
 			<input type="hidden" id="hidde_other_amount" value="0" />
+			<input type="hidden" id="hidde_deal_amount" value="0" />
 			<input type="hidden" id="hidde_surplus" value="0" />
 			<input type="hidden" id="hidde_surplus1" value="0" />
 			    

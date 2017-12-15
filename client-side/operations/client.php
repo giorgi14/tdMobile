@@ -109,6 +109,84 @@
     function LoadDialog(fName){
         if(fName == 'add-edit-form'){
         	var buttons = {
+        			"grace_period": {
+    		            text: "საშეღავათო პერიოდი",
+    		            id: "grace_period",
+    		            click: function () {
+    		            	param 	  = new Object();
+    		        		param.act = "get_grace_dialog";
+    		        		param.id  = $("#id_hidden").val();
+    		        		$.ajax({
+    		        	        url: aJaxURL,
+    		        		    data: param,
+    		        	        success: function(data) {       
+    		        				if(typeof(data.error) != "undefined"){
+    		        					if(data.error != ""){
+    		        						alert(data.error);
+    		        					}else{
+    		        						$("#add-edit-show_grace").html(data.page);
+    		        						var buttons = {
+		        			    				"remove_grace": {
+		        			    		            text: "გაუქმება",
+		        			    		            id: "remove_grace",
+		        			    		            click: function () {
+		        			    		            	param 	  = new Object();
+		        			    		        		param.act = "remove_grace";
+		        			    		        		param.id  = $("#id_hidden").val();
+		        			    		        		
+		        			    		        		$.ajax({
+		        			    		        	        url: aJaxURL,
+		        			    		        		    data: param,
+		        			    		        	        success: function(data) {       
+		        			    		        				if(typeof(data.error) != "undefined"){
+		        			    		        					if(data.error != ""){
+		        			    		        						alert(data.error);
+		        			    		        					}else{
+		        			    		        						$("#add-edit-show_grace").dialog("close");
+		        			    		        					}
+		        			    		        				}
+		        			    		        	    	}
+		        			    		        	    });
+		        			    		            }
+		        			    		        },
+		        			    		        "save_grace": {
+		        			    		            text: "დამატება",
+		        			    		            id: "save_grace",
+		        			    		            click: function () {
+		        			    		            	param 	  = new Object();
+		        			    		        		param.act = "save_grace";
+		        			    		        		param.id  = $("#id_hidden").val();
+		        			    		        		param.grace_period_caunt  = $("#grace_period_caunt").val();
+		        			    		        		$.ajax({
+		        			    		        	        url: aJaxURL,
+		        			    		        		    data: param,
+		        			    		        	        success: function(data) {       
+		        			    		        				if(typeof(data.error) != "undefined"){
+		        			    		        					if(data.error != ""){
+		        			    		        						alert(data.error);
+		        			    		        					}else{
+		        			    		        						$("#add-edit-show_grace").dialog("close");
+		        			    		        					}
+		        			    		        				}
+		        			    		        	    	}
+		        			    		        	    });
+		        			    		            }
+		        			    		        },
+		        			    		        "cancel": {
+		        			    		            text: "დახურვა",
+		        			    		            id: "cancel-dialog",
+		        			    		            click: function () {
+		        			    		            	$(this).dialog("close");
+		        			    		            }
+		        			    		        }
+		        			    		    };
+    		        						GetDialog("add-edit-show_grace", 300, "auto", buttons, 'top');
+    		        					}
+    		        				}
+    		        	    	}
+    		        	    });
+    		            }
+    		        },
         			"show_letter": {
     		            text: "ბარათის ნახვა",
     		            id: "show_letter",
@@ -387,6 +465,8 @@
             	$("#cancel-loan").button("disable");
 				$("#update-loan").button("disable");
 				$("#client_new_loan").button("disable");
+				$("#grace_period").button("disable");
+				
             }else{
                 if($("#hidde_status").val()==1){
                 	$("#activate-dialog").button("disable");
@@ -398,10 +478,12 @@
     				$('#agreement_type_id').prop('disabled', true).trigger("chosen:updated");
     				$('#car_type').prop('disabled', true).trigger("chosen:updated");
     				$("#client_new_loan").button("enable");
+    				$("#grace_period").button("enable");
                 }else if($("#hidde_status").val()==0){
     				$("#update-loan").button("disable");
     				$("#client_new_loan").button("disable");
     				$("#show_letter").button("disable");
+    				$("#grace_period").button("disable");
                 }
             }
 
@@ -2622,5 +2704,6 @@
     <div id="add-edit-show_letter" class="form-dialog" title="ბარათი"></div>
     <div id="add-edit-form_sms_histori" class="form-dialog" title="SMS"></div>
     <div id="add-edit-form_car_insurance" class="form-dialog" title="დაზღვევა"></div>
+    <div id="add-edit-show_grace" class="form-dialog" title="საშეღავათო პერიოდი"></div>
 </body>
         
