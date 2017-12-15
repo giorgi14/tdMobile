@@ -736,7 +736,7 @@ switch ($action) {
                                                client_loan_schedule_deal.cur_percent,
                                                client_loan_schedule_deal.cur_penalty,
                                                client_loan_schedule_deal.schedule_id,
-    		                                   client_loan_schedule_deal.id AS deal_id,
+    		                                   client_loan_schedule_deal.id AS deal_id
                                         FROM   client_loan_schedule
                                         JOIN   client_loan_schedule_deal ON client_loan_schedule_deal.schedule_id = client_loan_schedule.id 
                                         WHERE  client_loan_schedule.actived = 1 AND client_loan_schedule.`status` = 0
