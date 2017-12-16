@@ -92,6 +92,7 @@
 	    	param.pescent1	           = $("#pescent1").val();
 	    	param.penalty1	           = $("#penalty1").val();
 	    	param.unda_daericxos	   = $("#unda_daericxos").val();
+	    	param.deals_penalty  	   = $("#deals_penalty").val();
 	    	//param.penalty_stoped        = $("input[id='penalty_stoped']:checked").val();
 
             if(param.deal_amount == ''){
@@ -431,6 +432,15 @@
     	    	}
     	    });
 	    });
+
+	    $(document).on("keydown", "#penalty1", function (event) {
+			if (event.keyCode == $.ui.keyCode.ENTER){
+				if($(this).val()==''){this_value = 0;}else{this_value = $(this).val();}
+				delta = (parseFloat($("#penalty_amount").val())-parseFloat(this_value)).toFixed(2);
+    			$("#unda_daericxos").val(delta);
+        	}
+		});
+		
     </script>
     <style type="text/css">
         #table_right_menu{

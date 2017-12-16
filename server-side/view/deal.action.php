@@ -277,7 +277,7 @@ switch ($action) {
 		$pescent1             = $_REQUEST['pescent1'];
 		$penalty1             = $_REQUEST['penalty1'];
 		$unda_daericxos       = $_REQUEST['unda_daericxos'];
-		
+		$deals_penalty        = $_REQUEST['deals_penalty'];
 		$user_id              = $_SESSION['USERID'];
 		
 		if($id==''){
@@ -286,8 +286,9 @@ switch ($action) {
                 			  VALUES 
                 					('$user_id', NOW(), '$hidde_schedule_id', '$payed_date', '$payed_amount', '$received_currency_id', '$cource', '$loan_payed_date', '$deal_penalty_start', '$deal_penalty_end', '$penalty_day_count', '$deal_amount', '$deal_end', '$pescent1', '$root1', '$penalty1', '$unda_daericxos', 0, 1)");
 		}else{
-		   // mysql_query
-		    echo ("");
+		   mysql_query("UPDATE client_loan_schedule_deal 
+		                   SET deals_penalty = $deals_penalty
+		                WHERE  id = $id");
 		}	    
 		
 		break;
@@ -429,7 +430,8 @@ function GetSchedule($id){
                                                    client_loan_schedule_deal.cur_root,
                                                    client_loan_schedule_deal.cur_percent,
                                                    client_loan_schedule_deal.cur_penalty,
-	                                               client_loan_schedule_deal.unda_daericxos
+	                                               client_loan_schedule_deal.unda_daericxos,
+	                                               client_loan_schedule_deal.deals_penalty
                                             FROM   client_loan_schedule_deal
                                             JOIN   client_loan_schedule ON client_loan_schedule.id = client_loan_schedule_deal.schedule_id
                                             JOIN   client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
@@ -440,7 +442,13 @@ function GetSchedule($id){
 
 function GetPage($res = ''){
     
-    
+    if ($res[id]=='') {
+        $dis='disabled="disabled"';
+        $dis1='';
+    }else{
+        $dis='';
+        $dis1='disabled="disabled"';
+    }
     
 	$data = '<div id="dialog-form">
         	    
@@ -457,13 +465,13 @@ function GetPage($res = ''){
 	                    </tr>
 	                    <tr>
 	                        <td style="width: 160px;">
-        						<input style="width: 140px;" id="payed_date" type="text" value="'.$res[pay_date].'">
+        						<input style="width: 140px;" id="payed_date" type="text" value="'.$res[pay_date].'" '.$dis1.'>
         					</td>
         	                <td style="width: 125px;">
-    						    <input style="width: 110px;" id="payed_amount" type="text" value="'.$res[deal_amount].'">
+    						    <input style="width: 110px;" id="payed_amount" type="text" value="'.$res[deal_amount].'" '.$dis1.'>
         					</td>
     						<td style="width: 130px;">
-        						<select id="received_currency_id" calss="label" style="width: 120px;">'.currency($res[curence_id]).'</select>
+        						<select id="received_currency_id" calss="label" style="width: 120px;" '.$dis1.'>'.currency($res[curence_id]).'</select>
         					</td>
         					<td style="width: 125px;">
         						 <input style="width: 110px;" id="cource" type="text" value="'.$res[cource].'" disabled="disabled">
@@ -486,10 +494,10 @@ function GetPage($res = ''){
 	                    </tr>
 	                    <tr>
 	                        <td style="width: 470px;">
-        						<select id="client_id" calss="label" style="width: 450px;">'.client($res[client_id], $res[id]).'</select>
+        						<select id="client_id" calss="label" style="width: 450px;" '.$dis1.'>'.client($res[client_id], $res[id]).'</select>
         					</td>
         					<td style="width: 250px;">
-        						<select id="client_loan_number" calss="label" style="width: 250px;">'.client_loan_number($res[agr_id], $res[id]).'</select>
+        						<select id="client_loan_number" calss="label" style="width: 250px;" '.$dis1.'>'.client_loan_number($res[agr_id], $res[id]).'</select>
         					</td>
         	            </tr>
         				<tr style="height:10px;"></tr>
@@ -522,7 +530,7 @@ function GetPage($res = ''){
         						<input style="width: 130px;" id="surplus" type="text" value="'.$res[''].'" disabled="disabled">
         					</td>
         					<td style="width: 130px;">
-        						<label style="width: 130px;" id="daricxvis_tarigi" type="text"></label>
+        						<label style="width: 130px;" id="daricxvis_tarigi" type="text" '.$dis1.'></label>
         					</td>
         	            </tr>
         				<tr style="height:10px;"></tr>
@@ -540,10 +548,10 @@ function GetPage($res = ''){
 	                    </tr>
 	                    <tr>
         	                <td style="width: 160px;">
-        						<input style="width: 140px;" id="deal_penalty_start" type="text" value="'.$res[penalty_start].'">
+        						<input style="width: 140px;" id="deal_penalty_start" type="text" value="'.$res[penalty_start].'" '.$dis1.'>
         					</td>
         					<td style="width: 160px;">
-        						<input style="width: 140px;" id="deal_penalty_end" type="text" value="'.$res[penalty_end].'">
+        						<input style="width: 140px;" id="deal_penalty_end" type="text" value="'.$res[penalty_end].'" '.$dis1.'>
         					</td>
         					<td style="width: 100px;">
         						<input style="width: 80px;" id="penalty_day_count" type="text" value="'.$res[penalty_day_count].'" disabled="disabled">
@@ -552,10 +560,10 @@ function GetPage($res = ''){
         						<input style="width: 80px;" id="penalty_amount" type="text" value="'.$res[penalty].'" disabled="disabled">
         					</td>
         					<td style="width: 100px;">
-        						<input style="width: 80px;" id="deal_amount" type="text" value="'.$res[deal_amount].'">
+        						<input style="width: 80px;" id="deal_amount" type="text" value="'.$res[deal_amount].'" '.$dis1.'>
         					</td>
         					<td style="width: 160px;">
-        						<input style="width: 140px;" id="deal_end" type="text" value="'.$res[deal_end_date].'">
+        						<input style="width: 140px;" id="deal_end" type="text" value="'.$res[deal_end_date].'" '.$dis1.'>
         					</td>
         	            </tr>
         				<tr style="height:20px;"></tr>
@@ -568,29 +576,32 @@ function GetPage($res = ''){
         					<td style="width: 150px;"><label for="date">ძირი</label></td>
 						    <td style="width: 150px;"><label for="date">პროცენტი</label></td>
 						    <td style="width: 150px;"><label for="date">ჯარიმა</label></td>
-        					<td style="width: 300px;"><label for="date">თანხა რომელიც უნდა დაერიცხოს ბარათზე</label></td>
+        					<td style="width: 300px;"><label for="date">ბარათზე დარიცხული ჯარიმა</label></td>
+        					<td style="width: 300px;"><label for="date">შეთანხმების დარღვევის თანხა</label></td>
 	                    </tr>
 	                    <tr>
 	                        <td style="width: 150px;">
-        						<input style="width: 130px;" id="root1" type="text" value="'.$res[cur_root].'">
+        						<input style="width: 130px;" id="root1" type="text" value="'.$res[cur_root].'" '.$dis1.'>
         					</td>
         					<td style="width: 150px;">
-        						<input style="width: 130px;" id="pescent1" type="text" value="'.$res[cur_percent].'">
+        						<input style="width: 130px;" id="pescent1" type="text" value="'.$res[cur_percent].'" '.$dis1.'>
         					</td>
         					<td style="width: 150px;">
-        						<input style="width: 130px;" id="penalty1" type="text" value="'.$res[cur_penalty].'">
+        						<input style="width: 130px;" id="penalty1" type="text" value="'.$res[cur_penalty].'" '.$dis1.'>
         					</td>
         					<td style="width: 150px;">
-        						<input style="width: 130px;" id="unda_daericxos" type="text" value="'.$res[unda_daericxos].'">
+        						<input style="width: 130px;" id="unda_daericxos" type="text" value="'.$res[unda_daericxos].'" disabled="disabled">
+        					</td>
+        					<td style="width: 150px;">
+        						<input style="width: 130px;" id="deals_penalty" type="text" value="'.$res[deals_penalty].'" '.$dis.'>
         					</td>
         	            </tr>
-        				
         			</table>
     			</fieldset>
     			<!-- ID -->
     			<input type="hidden" id="hidde_id" value="' . $res['id'] . '" />
     			<input type="hidden" id="hidde_schedule_id" value="' . $res['id'] . '" />
-            </div>';
+    		</div>';
 	return $data;
 }
 
