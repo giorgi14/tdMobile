@@ -974,7 +974,7 @@
 		
 	    $(document).on("change", "#type_id", function () {
 	    	
-	        if($(this).val() > 1 ){
+	        if($(this).val() > 1 && $(this).val() < 4){
 	        	$('#nawilobrivi_chamokleba').attr('disabled', true);
 	        	$("#restr_cource").attr('disabled', false);
 		        $("#loan_table").css('display','none');
@@ -1090,7 +1090,53 @@
 			    		$('#attachment_client_id').attr('disabled', true).trigger("chosen:updated");
 			    	}
 			    }
-	        }else{
+	        }else if($(this).val()==4){
+		        $(".deals_tr").css('display', 'none');
+
+		        if($("#client_id").val()>0){
+
+	        		$('#nawilobrivi_chamokleba').attr('disabled', true);
+		        	
+	        		
+	        		document.getElementById("car_out").disabled = true;
+	        		param         =  new Object();
+	    		    param.act     = "get_shedule";
+	    		    
+	    		    param.id                   = $("#client_id").val();
+	    		    param.agr_id               = $("#client_loan_number").val();
+	    		    param.transaction_date     = $("#transaction_date").val();
+	    		    param.month_fee_trasaction = $("#month_fee_trasaction").val();
+	    		    param.check_loan_penalty   = $("input[id='other_penalty']:checked").val();
+	    		    param.exception_agr        = $("input[id='exception_agr']:checked").val();
+	    		    param.received_currency_id = $("#received_currency_id").val();
+	    		    param.course               = $("#course").val();
+	    		    param.type_id              = $(this).val();
+	    			$.ajax({
+	    		        url: aJaxURL,
+	    			    data: param,
+	    		        success: function(data) {			        
+	    					if(typeof(data.error) != 'undefined'){
+	    						if(data.error != ''){
+	    							alert(data.error);
+	    						}else{
+	    							$("#month_fee1").val(data.deal_amount);
+	    							$("#month_fee").val(data.loan_pay_amount);
+	    							$("#month_fee2").val(data.pay_amount1);
+	    							$("#daricxvis_tarigi").html(data.deal_end_date);
+	    							$("#info_mesage").html(data.info_message);
+	    							$("#extra_fee").val(parseFloat(data.loan_pay_amount)+parseFloat(data.pay_amount1));
+	    							$("#hidde_id").val(data.id);
+	    							$("#other_payed1").val(data.other_amount);
+	    							$("#hidde_deal_id").val(data.deal_id);
+	    							$("#deal_Fee1").val(data.deal_amount);
+	    							$('#currency_id').prop('disabled', true).trigger("chosen:updated");
+								}
+	    					}
+	    			    }
+	    		    });
+	        	}
+		    }else{
+		    	$(".deals_tr").css('display', '');
 	        	if($(this).val() == 1 && $("#client_id").val()>0){
 
 	        		$('#nawilobrivi_chamokleba').attr('disabled', false);
@@ -1295,7 +1341,19 @@
     							$('#client_loan_number').html(data.agrement_data).trigger("chosen:updated");
     							$("#month_fee_gel").val(data.other_pay);
     							$('#attachment_client_id').html(data.client_attachment_data).trigger("chosen:updated");
-    						}
+    						}else if(data.status==4){
+    							$("#month_fee1").val(data.deal_amount);
+    							$("#month_fee").val(data.loan_pay_amount);
+    							$("#month_fee2").val(data.pay_amount1);
+    							$("#daricxvis_tarigi").html(data.deal_end_date);
+    							$("#info_mesage").html(data.info_message);
+    							$("#extra_fee").val(parseFloat(data.loan_pay_amount)+parseFloat(data.pay_amount1));
+    							$("#hidde_id").val(data.id);
+    							$("#other_payed1").val(data.other_amount);
+    							$("#hidde_deal_id").val(data.deal_id);
+    							$("#deal_Fee1").val(data.deal_amount);
+    							$('#currency_id').prop('disabled', true).trigger("chosen:updated");
+        					}
 						}
 					}
 			    }
@@ -1392,11 +1450,28 @@
     														
     							$('#client_id').html(data.client_data).trigger("chosen:updated");
     							$('#attachment_client_id').html(data.client_attachment_data).trigger("chosen:updated");
+    							$("#currency_id").html(data.currenc).trigger("chosen:updated");
+    							$('#currency_id').prop('disabled', true).trigger("chosen:updated");
     						}else if(data.status==3){
     							$('#client_id').html(data.client_data).trigger("chosen:updated");
     							$("#month_fee_gel").val(data.other_pay);
     							$('#attachment_client_id').html(data.client_attachment_data).trigger("chosen:updated");
-    						}
+    							$("#currency_id").html(data.currenc).trigger("chosen:updated");
+    							$('#currency_id').prop('disabled', true).trigger("chosen:updated");
+    						}else if(data.status==4){
+    							$("#month_fee1").val(data.deal_amount);
+    							$("#month_fee").val(data.loan_pay_amount);
+    							$("#month_fee2").val(data.pay_amount1);
+    							$("#daricxvis_tarigi").html(data.deal_end_date);
+    							$("#info_mesage").html(data.info_message);
+    							$("#extra_fee").val(parseFloat(data.loan_pay_amount)+parseFloat(data.pay_amount1));
+    							$("#hidde_id").val(data.id);
+    							$("#other_payed1").val(data.other_amount);
+    							$("#hidde_deal_id").val(data.deal_id);
+    							$("#deal_Fee1").val(data.deal_amount);
+    							$("#currency_id").html(data.currenc).trigger("chosen:updated");
+    							$('#currency_id').prop('disabled', true).trigger("chosen:updated");
+        					}
 						}
 					}
 			    }

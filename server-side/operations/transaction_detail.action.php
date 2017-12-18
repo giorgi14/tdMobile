@@ -1973,7 +1973,7 @@ function GetPage($res = ''){
     					</td>
     				</tr>
     				<tr style="height:10px;"></tr>
-    				<tr>
+    				<tr class="deals_tr">
     					<td style="width: 105px;"><label id="" style="padding-top: 5px;" class="label_label" for="date">ძირი თანხა:</label></td>
     					<td style="width: 100px;">
     						<input style="width: 70px; float:left;" id="root" onkeydown="if(event.which == 8 || event.keyCode == 46) return false;" class="label_label" type="text" value="'.$res['pay_root'].'"><span style="float: right; display: inline; margin-top: 4px;"><button id="delete_root" class="label_label" style="width:20px; padding: 0 0 2px 0; color: #fb0000; '.$display_none1.'">x</button></span>
@@ -1987,8 +1987,8 @@ function GetPage($res = ''){
     						<input style="width: 80px;" id="post_balance" class="label" type="text" value="'.$res3['pay_amount'].'" disabled="disabled">
     					</td>
     				</tr>
-    				<tr style="height:10px;"></tr>
-    				<tr>
+    				<tr class="deals_tr" style="height:10px;"></tr>
+    				<tr class="deals_tr">
     					<td style="width: 105px; "><label style="padding-top: 5px;" class="label_label" for="date">პროცენტი:</label></td>
     					<td style="width: 100px; ">
     						<input style="width: 70px; float:left;" id="percent" class="label_label"  onkeydown="if(event.which == 8 || event.keyCode == 46) return false;" type="text" value="'.$res['pay_percent'].'"><span style="float: right; display: inline; margin-top: 4px;"><button id="delete_percent" class="label_label" style="width:20px; padding: 0 0 2px 0; color: #fb0000; '.$display_none1.'">x</button></span>
@@ -2000,8 +2000,8 @@ function GetPage($res = ''){
     					<td style="width: 120px;"><label class="dziris_chamokleba" style="padding-top: 5px; display:none"  for="date">ნასარგ. დღე:</label></td>
     					<td style="width: 80px;"><input class="dziris_chamokleba" style="width: 80px; display:none" id="nasargeblebi_dge" type="text" value="'.$res1[''].'" disabled="disabled"></td>
     				</tr>
-    				<tr style="height:10px;"></tr>
-    				<tr>
+    				<tr class="deals_tr" style="height:10px;"></tr>
+    				<tr class="deals_tr">
     					<td style="width: 105px; "><label style="padding-top: 5px;" class="label_label" for="date">ჯარიმა:</label></td>
     					<td style="width: 100px; ">
     						<input class="label_label" style="width: 70px; float:left;" id="penalti_fee"  onkeydown="if(event.which == 8 || event.keyCode == 46) return false;" type="text" value="'.$res['pay_penalty'].'"><span style="float: right; display: inline; margin-top: 4px;"><button id="delete_penalty" class="label_label" style="width:20px; padding: 0 0 2px 0; color: #fb0000; '.$display_none1.'">x</button></span>
@@ -2013,7 +2013,7 @@ function GetPage($res = ''){
     					<td style="width: 120px;"><label class="dziris_chamokleba" style="padding-top: 5px; display:none"  for="date">ნასარგ. %:</label></td>
     					<td style="width: 80px;"><input class="dziris_chamokleba" style="width: 80px; display:none" id="nasargeblebi_procenti" type="text" value="'.$res1[''].'" disabled="disabled"></td>
     				</tr>
-    			    <tr style="height:10px;"></tr>
+    			    <tr class="deals_tr" style="height:10px;"></tr>
     				<tr>
     					<td style="width: 105px; padding-top: 5px;"><label class="label_label" for="date">შეთანხმება:</label></td>
     					<td style="width: 100px;">
