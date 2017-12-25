@@ -15,7 +15,7 @@ switch ($action) {
 		$id	  = $_REQUEST['id'];
 		
 	    $page = GetPage(GetHolidays($id));
-        $data = array('page'	=> $page);
+        $data = array('page' => $page);
 		
 		break;
 	case 'get_client_chosen':
@@ -832,7 +832,7 @@ function Add($hidde_transaction_id, $hidde_id, $transaction_date, $month_fee, $c
     	    
     	        if ($hidde_deal_id > 0) {
     	            mysql_query("UPDATE `deals_detail`
-    	                            SET `status` = '2'
+    	                            SET `status` = '1'
     	                         WHERE  `id`     = '$hidde_deal_id'");
     	        }
     	    }

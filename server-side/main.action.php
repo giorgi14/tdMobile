@@ -4286,7 +4286,28 @@ function GetPage($id){
                     </tr>
                 </tfoot>';
     }
-  
+    
+    $req_deal = mysql_query("SELECT DATE(deals_detail.pay_date) AS `date`,
+                                    deals_detail.amount,
+                                    deals_detail.penalty,
+                                    IF(deals_detail.status=1,'გადახდილი','გადასახდელი') AS `status`
+                             FROM  client_loan_schedule
+                             JOIN  client_loan_schedule_deal ON client_loan_schedule_deal.schedule_id = client_loan_schedule.id
+                             JOIN  deals_detail ON deals_detail.deals_id = client_loan_schedule_deal.id
+                             JOIN  client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
+                             AND   client_loan_agreement.client_id = '$id' AND client_loan_schedule_deal.actived = 1 AND deals_detail.actived = 1");
+    
+    while ($row_deal = mysql_fetch_assoc($req_deal)){
+        
+        $dat_deal.='<tr style="width:100%; border: 1px solid #000; background: #e0e0e0;">
+                       <td style="width:30%; border-right: 1px solid #000;"><label style="font-size: 12px; text-align:center;">'.$row_deal[date].'<label></td>
+                       <td style="width:20%; border-right: 1px solid #000;"><label style="font-size: 12px; text-align:center;">'.$row_deal[amount].'</label></td>
+                       <td style="width:20%; border-right: 1px solid #000;"><label style="font-size: 12px; text-align:center;">'.$row_deal[penalty].'</label></td>
+                       <td style="width:30%; border-right: 1px solid #000;"><label style="font-size: 12px; text-align:center;">'.$row_deal[status].'</label></td>
+                    </tr>';
+    }
+    
+    
     $req = mysql_query(" SELECT client_loan_schedule.number,
                                 DATE_FORMAT(client_loan_schedule.schedule_date, '%d/%m/%Y') AS schedule_date,
                                 client_loan_schedule.root,
@@ -4569,7 +4590,21 @@ function GetPage($id){
                            <textarea class="idle" id="letter_comment" style="resize: vertical;width: 100%;height: 40px;">'.$res['letter_comment'].'</textarea>
                        </td>
                   </tr>
+                  
                 </table>
+               </fieldset>
+               
+               <fieldset>
+                   <legend>შეთანხმება</legend>
+                   <table style="width:500px;">
+                         <tr style="width:100%; border: 1px solid #000; background: #e0e0e0;">
+                            <td style="width:30%; border-right: 1px solid #000;"><label style="font-size: 12px; text-align:center;">თარიღი<label></td>
+                            <td style="width:20%; border-right: 1px solid #000;"><label style="font-size: 12px; text-align:center;">თანხა</label></td>
+                            <td style="width:20%; border-right: 1px solid #000;"><label style="font-size: 12px; text-align:center;">ჯარიმა</label></td>
+                            <td style="width:30%; border-right: 1px solid #000;"><label style="font-size: 12px; text-align:center;">სტატუსი</label></td>
+                         </tr>
+                         '.$dat_deal.'
+                   </table>
                </fieldset>
         	   <fieldset>
                     <legend>ბარათი</legend>
