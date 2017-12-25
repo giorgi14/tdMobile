@@ -478,7 +478,7 @@ switch ($action) {
                             		FROM     client_loan_schedule
                             		JOIN     client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
                                     JOIN client_loan_schedule_deal ON client_loan_schedule_deal.schedule_id = client_loan_schedule.id
-                            		WHERE    client_loan_agreement.client_id = '$sub' AND client_loan_schedule_deal.actived = 1 AND client_loan_schedule.activ_status = 0 AND client_loan_schedule.actived=1 AND client_loan_schedule.pay_date <= CURDATE()
+                            		WHERE    client_loan_agreement.client_id = '$sub' AND client_loan_schedule_deal.unda_daericxos>0 AND client_loan_schedule_deal.actived = 1 AND client_loan_schedule.activ_status = 0 AND client_loan_schedule.actived=1 AND client_loan_schedule.pay_date <= CURDATE()
                             		GROUP BY client_loan_schedule.id
                             		UNION ALL
                             		SELECT  client_loan_agreement.client_id,
@@ -1065,7 +1065,7 @@ switch ($action) {
                             		FROM     client_loan_schedule
                             		JOIN     client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
                                     JOIN client_loan_schedule_deal ON client_loan_schedule_deal.schedule_id = client_loan_schedule.id
-                            		WHERE    client_loan_agreement.client_id = '$sub' AND client_loan_schedule_deal.actived = 1 AND client_loan_schedule.activ_status = 0 AND client_loan_schedule.actived=1 AND client_loan_schedule.pay_date <= CURDATE()
+                            		WHERE    client_loan_agreement.client_id = '$sub' AND client_loan_schedule_deal.unda_daericxos > 0 AND client_loan_schedule_deal.actived = 1 AND client_loan_schedule.activ_status = 0 AND client_loan_schedule.actived=1 AND client_loan_schedule.pay_date <= CURDATE()
                             		GROUP BY client_loan_schedule.id
                             		UNION ALL
                             		SELECT  client_loan_agreement.client_id,
@@ -1762,7 +1762,7 @@ switch ($action) {
                             		FROM     client_loan_schedule
                             		JOIN     client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
                                     JOIN client_loan_schedule_deal ON client_loan_schedule_deal.schedule_id = client_loan_schedule.id
-                            		WHERE    client_loan_agreement.client_id = '$sub' AND client_loan_schedule_deal.actived = 1 AND client_loan_schedule.activ_status = 0 AND client_loan_schedule.actived=1 AND client_loan_schedule.pay_date <= CURDATE()
+                            		WHERE    client_loan_agreement.client_id = '$sub' AND client_loan_schedule_deal.unda_daericxos>0 AND client_loan_schedule_deal.actived = 1 AND client_loan_schedule.activ_status = 0 AND client_loan_schedule.actived=1 AND client_loan_schedule.pay_date <= CURDATE()
                             		GROUP BY client_loan_schedule.id
                             		UNION ALL
                             		SELECT  client_loan_agreement.client_id,
@@ -2419,7 +2419,7 @@ switch ($action) {
                             		FROM     client_loan_schedule
                             		JOIN     client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
                                     JOIN client_loan_schedule_deal ON client_loan_schedule_deal.schedule_id = client_loan_schedule.id
-                            		WHERE    client_loan_agreement.client_id = '$sub' AND client_loan_schedule_deal.actived = 1 AND client_loan_schedule.activ_status = 0 AND client_loan_schedule.actived=1 AND client_loan_schedule.pay_date <= CURDATE()
+                            		WHERE    client_loan_agreement.client_id = '$sub' AND client_loan_schedule_deal.unda_daericxos>0 AND client_loan_schedule_deal.actived = 1 AND client_loan_schedule.activ_status = 0 AND client_loan_schedule.actived=1 AND client_loan_schedule.pay_date <= CURDATE()
                             		GROUP BY client_loan_schedule.id
                             		UNION ALL
                             		SELECT  client_loan_agreement.client_id,
