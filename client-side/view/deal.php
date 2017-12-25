@@ -1,15 +1,16 @@
 <html>
 <head>
 	<script type="text/javascript">
-		var aJaxURL	          = "server-side/view/deal.action.php";
+		var aJaxURL	            = "server-side/view/deal.action.php";
+		var aJaxURL_detail      = "server-side/view/deal_detail.action.php";
 		var aJaxURL_show_letter = "server-side/main.action.php";		//server side folder url
-		var tName	          = "example";													//table name
-		var fName	          = "add-edit-form";												//form name
-		var change_colum_main = "<'dataTable_buttons'T><'F'Cfipl>";
+		var tName	            = "example";													//table name
+		var fName	            = "add-edit-form";	
+		var change_colum_main   = "<'dataTable_buttons'T><'F'Cfipl>";
 		    	
 		$(document).ready(function () {        	
-			LoadTable(tName,11,change_colum_main,aJaxURL);	
- 						
+			LoadTable(tName,8,'get_list', change_colum_main,aJaxURL,"&agr_id="+$("#filt_agr_id").val(),'');	
+			
 			/* Add Button ID, Delete Button ID */
 			GetButtons("add_button", "delete_button");
 			GetButtons("add_cat", "");
@@ -18,12 +19,12 @@
 			$("#filt_agr_id_chosen").css('margin-top','-6px');
 		});
         
-		function LoadTable(tName,num,change_colum_main,aJaxURL){
-			/* Table ID, aJaxURL, Action, Colum Number, Custom Request, Hidden Colum, Menu Array */
-			GetDataTable(tName, aJaxURL, 'get_list', num, "&agr_id="+$("#filt_agr_id").val(), 0, "", 2, "asc", "", change_colum_main);
-			setTimeout(function(){$('.ColVis, .dataTable_buttons').css('display','none');}, 90);
-		}
-		
+		function LoadTable(tName,col_num,act,change_colum,URL,dataparam,total){
+			if(tName == 'table_deal_amount'){sort = "asc";}else{sort = "desc";}
+			GetDataTable(tName,URL,act,col_num,dataparam,0,"",1,sort,total,change_colum);
+	    	setTimeout(function(){$('.ColVis, .dataTable_buttons').css('display','none');}, 50);
+	    }
+	    
 		function LoadDialog(fname){
 			var id		= $("#id").val();
 			
@@ -45,7 +46,6 @@
 				            }
 				        }
 				    };
-// 				document.getElementById("#deal_amount").focus();
 				GetDialog(fName, 900, "auto", buttons,"top");
     			GetDate("deal_penalty_start");
     			GetDate("deal_penalty_end");
@@ -63,12 +63,45 @@
     			$("#received_currency_id").chosen();
     			$("#loan_currency_id").chosen();
     			$("#add-edit-form, .add-edit-form-class").css('overflow', 'visible');
-    			
-    		}
+
+    			LoadTable('table_deal_amount',5,'get_list',"<'F'Cpl>",aJaxURL_detail, '&hidde_inc_id='+$("#hidde_inc_id").val(), '');
+         		$("#table_deal_amount_length").css('top', '2px');
+         		SetEvents("add_deal_amount", "delete_deal_amount", "check-all_deals", 'table_deal_amount', 'add-edit-form-deals_det', aJaxURL_detail,'','table_deal_amount',5,'get_list',"<'F'Cpl>",aJaxURL_detail,'');
+            	GetButtons("add_deal_amount","delete_deal_amount");
+            	
+    		}else if(fname=='add-edit-form-deals_det'){
+    			var buttons = {
+						"save": {
+				            text: "შენახვა",
+				            id: "save-deals_amount"
+				        },
+			        	"cancel": {
+				            text: "დახურვა",
+				            id: "cancel-dialog",
+				            click: function () {
+				            	$(this).dialog("close");
+				            }
+				        }
+				    };
+				GetDialog('add-edit-form-deals_det', 400, "auto", buttons,"top");
+				GetDateTimes("deal_amount_payed_date");
+				$("#deal_amount").focus();
+        	}
 		}
 
 		$(document).on("change", "#filt_agr_id", function () {
 			LoadTable(tName,11,change_colum_main,aJaxURL);
+		});
+
+		$(document).on("click", "#penalty_del", function () {
+			if($("input[id='penalty_del']:checked").val() == 1){
+    			$("#hiddeeee_penalty").val($("#penalty_amount").val());
+    			$("#penalty_amount").val(0);
+			}else{
+				$("#penalty_amount").val($("#hiddeeee_penalty").val());
+				$("#hiddeeee_penalty").val(0);
+    			
+			}
 		});
 		
 		// Add - Save
@@ -78,6 +111,7 @@
 		    param.act		           = "save_deal";
 		    param.id		           = $("#hidde_id").val();
 		    param.hidde_schedule_id    = $("#hidde_schedule_id").val();
+		    param.hidde_inc_id         = $("#hidde_inc_id").val();
 		    param.payed_date		   = $("#payed_date").val();
 	    	param.payed_amount		   = $("#payed_amount").val();
 	    	param.received_currency_id = $("#received_currency_id").val();
@@ -108,8 +142,42 @@
     						if(data.error != ''){
     							alert(data.error);
     						}else{
-    							LoadTable(tName,8,change_colum_main,aJaxURL);
+    							LoadTable(tName,8,'get_list', change_colum_main,aJaxURL,"&agr_id="+$("#filt_agr_id").val(),'');	
     			        		CloseDialog(fName);
+    						}
+    					}
+    			    }
+    		    });
+            }
+		});
+
+		$(document).on("click", "#save-deals_amount", function () {
+		    
+		    param 					     = new Object();
+		    param.act		             = "save_deal_det";
+		    param.id		             = $("#deal_detail_id").val();
+		    param.hidde_inc_id           = $("#hidde_inc_id").val();
+		    param.deal_amount_payed_date = $("#deal_amount_payed_date").val();
+	    	param.deal_amount		     = $("#deal_amount").val();
+	    	param.deals_penalty		     = $("#deals_penalty").val();
+	    	
+
+            if(param.deal_amount_payed_date == ''){
+                alert('შეავსე თარიღი');
+            }else if(param.deal_amount== ''){
+            	alert('შეავსე თანხა');
+            }else{
+    	    	$.ajax({
+    		        url: aJaxURL_detail,
+    			    data: param,
+    		        success: function(data) {			        
+    					if(typeof(data.error) != 'undefined'){
+    						if(data.error != ''){
+    							alert(data.error);
+    						}else{
+    							LoadTable('table_deal_amount',5,'get_list',"<'F'Cpl>",aJaxURL_detail, '&hidde_inc_id='+$("#hidde_inc_id").val(), '');
+    			        		CloseDialog('add-edit-form-deals_det');
+    			        		$("#table_deal_amount_length").css('top', '2px');
     						}
     					}
     			    }
@@ -550,6 +618,7 @@
     	<!-- aJax -->
 	</div>
 	<div id="add-edit-show_letter" class="form-dialog" title="შეთანხმება"></div>
+	<div id="add-edit-form-deals_det" class="form-dialog" title="შეთანხმების თანხა"></div>
 </body>
 </html>
 

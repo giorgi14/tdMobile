@@ -749,15 +749,21 @@ switch ($action) {
     		
     		if (mysql_num_rows($check_deal)==0) {
         		if ($type_id == 1 || $type_id == 0) {
-        		    $check_deal = mysql_query(" SELECT client_loan_schedule_deal.deal_amount+client_loan_schedule_deal.deals_penalty AS deal_amount,
-        		                                       client_loan_schedule_deal.id AS deal_id,
+        		    $check_deal = mysql_query(" SELECT SUM(deals_detail.amount+deals_detail.penalty) AS deal_amount,
+        		                                       deals_detail.id AS deal_id,
         		                                       client_loan_schedule_deal.deals_penalty,
-        		                                       client_loan_schedule.remaining_root+client_loan_schedule.root - client_loan_schedule_deal.cur_root AS remaining_root
+        		                                       client_loan_schedule.remaining_root+client_loan_schedule.root - client_loan_schedule_deal.cur_root - (   SELECT IFNULL(SUM(money_transactions_detail.pay_root),0)
+                                                                                                                                                                FROM   money_transactions 
+                                                                                                                                                                JOIN   money_transactions_detail ON money_transactions_detail.transaction_id = money_transactions.id
+                                                                                                                                                                WHERE  money_transactions_detail.actived = 1 AND money_transactions.client_id = $res[client_id]
+                                                                                                                                                                AND    money_transactions_detail.`status` = 1
+                                                                                                                                                                AND    DATE(money_transactions_detail.pay_datetime) > client_loan_schedule_deal.pay_date) AS remaining_root
                                 		        FROM   client_loan_schedule
-        		                                JOIN client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
+        		                                JOIN   client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
                                 		        JOIN   client_loan_schedule_deal ON client_loan_schedule_deal.schedule_id = client_loan_schedule.id
+        		                                JOIN   deals_detail ON client_loan_schedule_deal.id = deals_detail.deals_id
                                 		        WHERE  client_loan_schedule.actived = 1 AND client_loan_schedule.`status` = 1 AND client_loan_schedule.`actived` = 1
-                                		        AND    client_loan_schedule_deal.pay_date<='$transaction_date' AND client_loan_schedule_deal.deal_status=1
+                                		        AND    deals_detail.pay_date<='$transaction_date' AND deals_detail.`status` = 0 AND deals_detail.`actived` = 1 AND client_loan_schedule_deal.deal_status=1
         		                                $filt
                                                 ORDER BY client_loan_schedule_deal.pay_date ASC
                                                 LIMIT 1");

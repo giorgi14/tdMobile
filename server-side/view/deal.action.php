@@ -83,23 +83,25 @@ switch ($action) {
 		$hidden	= $_REQUEST['hidden'];
 		$agr_id	= $_REQUEST['agr_id'];
 		 
-		$rResult = mysql_query("SELECT client_loan_schedule_deal.id,
-		                               client_loan_schedule_deal.datetime,
-                                       CONCAT(client.`name`,' ',client.`lastname`),
-                                       CONCAT('სხ ',IFNULL(client_loan_agreement.agreement_id,client_loan_agreement.oris_code)),
-                                       client_loan_agreement.oris_code,
-                                       client_loan_schedule_deal.deal_amount,
-                                       client_loan_schedule_deal.deal_end_date,
-                            		    CASE
+		$rResult = mysql_query("SELECT   client_loan_schedule_deal.id,
+		                                 client_loan_schedule_deal.datetime,
+                                         CONCAT(client.`name`,' ',client.`lastname`),
+                                         CONCAT('სხ ',IFNULL(client_loan_agreement.agreement_id,client_loan_agreement.oris_code)),
+                                         client_loan_agreement.oris_code,
+                                         SUM(deals_detail.amount),
+                                         client_loan_schedule_deal.deal_end_date,
+                            		     CASE
                             		        WHEN client_loan_schedule_deal.deal_status = 0 THEN 'პირველადი'
                                 		    WHEN client_loan_schedule_deal.deal_status = 1 THEN 'მიმდინარე'
                                 		    WHEN client_loan_schedule_deal.deal_status = 2 THEN 'დასრულებული'
-                            		    END AS `status`
-                                FROM   client_loan_schedule_deal
-                                JOIN   client_loan_schedule ON client_loan_schedule.id = client_loan_schedule_deal.schedule_id
-                                JOIN   client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
-                                JOIN   client ON client.id = client_loan_agreement.client_id
-                                WHERE  client_loan_schedule_deal.actived = 1");
+                            		     END AS `status`
+                                FROM     client_loan_schedule_deal
+		                        JOIN     deals_detail ON client_loan_schedule_deal.id = deals_detail.deals_id
+                                JOIN     client_loan_schedule ON client_loan_schedule.id = client_loan_schedule_deal.schedule_id
+                                JOIN     client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
+                                JOIN     client ON client.id = client_loan_agreement.client_id
+                                WHERE    client_loan_schedule_deal.actived = 1
+		                        GROUP BY deals_detail.deals_id");
 
 		$data = array("aaData"	=> array());
 
@@ -263,6 +265,7 @@ switch ($action) {
 	case 'save_deal':
 		$id 		          = $_REQUEST['id'];
 		$hidde_schedule_id    = $_REQUEST['hidde_schedule_id'];
+		$hidde_inc_id         = $_REQUEST['hidde_inc_id'];
 		$payed_date           = $_REQUEST['payed_date'];
 		$payed_amount         = $_REQUEST['payed_amount'];
 		$received_currency_id = $_REQUEST['received_currency_id'];
@@ -282,13 +285,9 @@ switch ($action) {
 		
 		if($id==''){
 		    mysql_query("INSERT INTO `client_loan_schedule_deal` 
-                					(`user_id`, `datetime`, `schedule_id`, `pay_date`, `pay_amount`, `curence_id`, `cource`, `loan_valute_amount`, `penalty_start`, `penalty_end`, `penalty_day_count`, `deal_amount`, `deal_end_date`, `cur_percent`, `cur_root`, `cur_penalty`, `unda_daericxos`, `deal_status`, `actived`) 
+                					(`id`, `user_id`, `datetime`, `schedule_id`, `pay_date`, `pay_amount`, `curence_id`, `cource`, `loan_valute_amount`, `penalty_start`, `penalty_end`, `penalty_day_count`, `deal_end_date`, `cur_percent`, `cur_root`, `cur_penalty`, `unda_daericxos`, `deal_status`, `actived`) 
                 			  VALUES 
-                					('$user_id', NOW(), '$hidde_schedule_id', '$payed_date', '$payed_amount', '$received_currency_id', '$cource', '$loan_payed_date', '$deal_penalty_start', '$deal_penalty_end', '$penalty_day_count', '$deal_amount', '$deal_end', '$pescent1', '$root1', '$penalty1', '$unda_daericxos', 0, 1)");
-		}else{
-		   mysql_query("UPDATE client_loan_schedule_deal 
-		                   SET deals_penalty = $deals_penalty
-		                WHERE  id = $id");
+                					('$hidde_inc_id', '$user_id', NOW(), '$hidde_schedule_id', '$payed_date', '$payed_amount', '$received_currency_id', '$cource', '$loan_payed_date', '$deal_penalty_start', '$deal_penalty_end', '$penalty_day_count', '$deal_end', '$pescent1', '$root1', '$penalty1', '$unda_daericxos', 0, 1)");
 		}	    
 		
 		break;
@@ -442,12 +441,24 @@ function GetSchedule($id){
 
 function GetPage($res = ''){
     
+    
     if ($res[id]=='') {
+        mysql_query("INSERT INTO `client_loan_schedule_deal` 
+            					(`user_id`) 
+            		      VALUES 
+            					('')");
+        
+        $hidde_id = mysql_insert_id();
+        
+        mysql_query("DELETE FROM client_loan_schedule_deal
+                     WHERE id = '$hidde_id'");
+        
         $dis='disabled="disabled"';
         $dis1='';
     }else{
         $dis='';
         $dis1='disabled="disabled"';
+        $hidde_id = $res[id];
     }
     
 	$data = '<div id="dialog-form">
@@ -542,8 +553,8 @@ function GetPage($res = ''){
 	                    <tr>
         					<td style="width: 160px;" colspan="2" style="width: 140px;"><label for="date">ჯარიმის პერიოდი</label></td>
 	                        <td style="width: 100px;" style="width: 140px;"><label for="date">დღეების რაოდ.</label></td>
-	                        <td style="width: 150px;" style="width: 140px;"><label for="date">ჯარიმის თანხა</label></td>
-	                        <td style="width: 100px;" style="width: 140px;"><label for="date">შეთანხმ. თანხა</label></td>
+	                        <td style="width: 100px;" style="width: 140px;"><label for="date">ჯარიმის თანხა</label></td>
+	                        <td style="width: 100px;" style="width: 140px;"><label for="date">ჯარიმის განულება</label></td>
 	                        <td style="width: 100px;" style="width: 140px;"><label for="date">შეთანხმ. დასრულება</label></td>
 	                    </tr>
 	                    <tr>
@@ -556,11 +567,11 @@ function GetPage($res = ''){
         					<td style="width: 100px;">
         						<input style="width: 80px;" id="penalty_day_count" type="text" value="'.$res[penalty_day_count].'" disabled="disabled">
         					</td>
-        				    <td style="width: 150px;">
+        				    <td style="width: 100px;">
         						<input style="width: 80px;" id="penalty_amount" type="text" value="'.$res[penalty].'" disabled="disabled">
         					</td>
-        					<td style="width: 100px;">
-        						<input style="width: 80px;" id="deal_amount" type="text" value="'.$res[deal_amount].'" '.$dis1.'>
+        					<td style="width: 20px;">
+        						<input style="width: 20px;" id="penalty_del" type="checkbox" value="1" '.$dis1.'>
         					</td>
         					<td style="width: 160px;">
         						<input style="width: 140px;" id="deal_end" type="text" value="'.$res[deal_end_date].'" '.$dis1.'>
@@ -569,38 +580,80 @@ function GetPage($res = ''){
         				<tr style="height:20px;"></tr>
         			</table>
     			</fieldset>
+        		<fieldset>
+                        <legend>შეთანხმების თანხა</legend>
+                        <div id="button_area">
+                        	<button id="add_deal_amount">დამატება</button>
+                        	<button id="delete_deal_amount">წაშლა</button>
+                        </div>
+                        <table class="display" id="table_deal_amount" style="width: 100%;">
+                            <thead>
+                                <tr id="datatable_header">
+                                    <th>ID</th>
+        						    <th style="width: 30%;">თარიღი</th>
+        						    <th style="width: 20%;">თანხა</th>
+            	                    <th style="width: 20%;">ჯარიმა</th>
+                                    <th style="width: 30%;">სტატუსი</th>
+                                    <th style="width: 25px;">#</th>
+                                </tr>
+                            </thead>
+                            <thead>
+                                <tr class="search_header">
+                                    <th class="colum_hidden">
+                                	   <input type="text" name="search_id" value="ფილტრი" class="search_init" />
+                                    </th>
+                                    <th>
+                                    	<input type="text" name="search_number" value="ფილტრი" class="search_init" />
+                                    </th>
+            	                    <th>
+                                    	<input type="text" name="search_number" value="ფილტრი" class="search_init" />
+                                    </th>
+        						    <th>
+                                    	<input type="text" name="search_number" value="ფილტრი" class="search_init" />
+                                    </th>
+            	                    <th>
+                                    	<input type="text" name="search_number" value="ფილტრი" class="search_init" />
+                                    </th>
+                                    <th style="border-right: 1px solid #A3D0E4;">
+                                        <div class="callapp_checkbox">
+                                            <input type="checkbox" id="check-all_deals" name="check-all_deals" />
+                                            <label for="check-all_deals"></label>
+                                        </div>
+                                    </th>            
+                                </tr>
+                            </thead>
+                       </table>
+                    </fieldset>
     			<fieldset>
     				<legend>შეთანხმების საფუძველზე მიმდინარე გადასახადი</legend>
         			<table class="dialog-form-table">
         				<tr>
-        					<td style="width: 150px;"><label for="date">ძირი</label></td>
-						    <td style="width: 150px;"><label for="date">პროცენტი</label></td>
-						    <td style="width: 150px;"><label for="date">ჯარიმა</label></td>
-        					<td style="width: 300px;"><label for="date">ბარათზე დარიცხული ჯარიმა</label></td>
-        					<td style="width: 300px;"><label for="date">შეთანხმების დარღვევის თანხა</label></td>
-	                    </tr>
+        					<td style="width: 180px;"><label for="date">ძირი</label></td>
+						    <td style="width: 180px;"><label for="date">პროცენტი</label></td>
+						    <td style="width: 180px;"><label for="date">ჯარიმა</label></td>
+        					<td style="width: 180px;"><label for="date">ბარათზე დარიცხული ჯარიმა</label></td>
+        				</tr>
 	                    <tr>
-	                        <td style="width: 150px;">
+	                        <td style="width: 180px;">
         						<input style="width: 130px;" id="root1" type="text" value="'.$res[cur_root].'" '.$dis1.'>
         					</td>
-        					<td style="width: 150px;">
+        					<td style="width: 180px;">
         						<input style="width: 130px;" id="pescent1" type="text" value="'.$res[cur_percent].'" '.$dis1.'>
         					</td>
-        					<td style="width: 150px;">
+        					<td style="width: 180px;">
         						<input style="width: 130px;" id="penalty1" type="text" value="'.$res[cur_penalty].'" '.$dis1.'>
         					</td>
-        					<td style="width: 150px;">
+        					<td style="width: 180px;">
         						<input style="width: 130px;" id="unda_daericxos" type="text" value="'.$res[unda_daericxos].'" disabled="disabled">
-        					</td>
-        					<td style="width: 150px;">
-        						<input style="width: 130px;" id="deals_penalty" type="text" value="'.$res[deals_penalty].'" '.$dis.'>
         					</td>
         	            </tr>
         			</table>
     			</fieldset>
     			<!-- ID -->
+        		<input type="hidden" id="hidde_inc_id" value="' . $hidde_id . '" />
     			<input type="hidden" id="hidde_id" value="' . $res['id'] . '" />
     			<input type="hidden" id="hidde_schedule_id" value="' . $res['id'] . '" />
+    			<input type="hidden" id="hiddeeee_penalty" value="0" />
     		</div>';
 	return $data;
 }

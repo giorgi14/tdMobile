@@ -1028,7 +1028,7 @@
                                 } 
 
                                 
-                                $check_deal 														
+                                //$check_deal 														
     							$("#root1").val('');
     							$("#percent1").val('');
     							$("#penalti_fee1").val('');
