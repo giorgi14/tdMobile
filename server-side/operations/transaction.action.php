@@ -868,7 +868,7 @@ switch ($action) {
 		    $res_other = mysql_fetch_assoc(mysql_query("SELECT ROUND(SUM(money_transactions_detail.pay_amount),2) AS pay_amount
                                         		        FROM   money_transactions_detail
                                         		        JOIN   money_transactions ON money_transactions_detail.transaction_id = money_transactions.id
-                                        		        WHERE  money_transactions.client_id = '$id'
+                                        		        WHERE  (money_transactions.client_id = '$id' OR money_transactions.agreement_id = $agr_id)
                                         		        AND    money_transactions.actived = 1
                                         		        AND    money_transactions_detail.actived = 1
                                         		        AND    money_transactions_detail.`status` = 10"));
@@ -876,7 +876,7 @@ switch ($action) {
 		    $res_other1 = mysql_fetch_assoc(mysql_query("SELECT ROUND(SUM(money_transactions_detail.pay_amount),2) AS pay_amount
                                         		         FROM   money_transactions_detail
                                         		         JOIN   money_transactions ON money_transactions_detail.transaction_id = money_transactions.id
-                                        		         WHERE  money_transactions.client_id = '$id'
+                                        		         WHERE  (money_transactions.client_id = '$id' OR money_transactions.agreement_id = $agr_id)
                                         		         AND    money_transactions.actived = 1
                                         		         AND    money_transactions_detail.actived = 1
                                         		         AND    money_transactions_detail.`status` = 11"));
