@@ -400,7 +400,7 @@ function Add($hidde_transaction_id, $hidde_id, $transaction_date, $month_fee, $c
                     	            (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '$penalti_fee', '$course', '$currency_id', '$received_currency_id', '', '', '$type_id', '2', 1)");
 	    }
 	    
-	    if ($root>0 || $percent>0) {
+	    if (($root>0 || $percent>0) && $type_id != 4) {
 	        mysql_query("INSERT INTO `money_transactions_detail`
                     	            (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
                     	      VALUES
@@ -562,11 +562,11 @@ function Add($hidde_transaction_id, $hidde_id, $transaction_date, $month_fee, $c
             	             WHERE   `client_loan_schedule`.schedule_date <= '$transaction_date' AND client_loan_agreement.client_id = '$client_id' AND client_loan_schedule.id >= '$res1[id]'");
     	    }
     	    
-    	    if ($deal_Fee>0){
+    	    if (($deal_Fee>0 || $root>0)  && $type_id == 4){
     	        mysql_query("INSERT INTO `money_transactions_detail`
                         	            (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
                         	      VALUES
-                        	            (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '$deal_Fee', '$course', '$currency_id', '$received_currency_id', '', '', '$type_id', '13', 1)");
+                        	            (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '$deal_Fee', '$course', '$currency_id', '$received_currency_id', '$root', '', '$type_id', '13', 1)");
     	    
     	        if ($hidde_deal_id > 0) {
     	            mysql_query("UPDATE `deals_detail`
@@ -576,7 +576,7 @@ function Add($hidde_transaction_id, $hidde_id, $transaction_date, $month_fee, $c
     	    }
     	    
     	    
-    	    if ($root>0 || $percent>0) {
+    	    if (($root>0 || $percent>0) && $type_id != 4) {
     	        
     	        mysql_query("INSERT INTO `money_transactions_detail` 
                                         (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
@@ -756,7 +756,7 @@ function Add($hidde_transaction_id, $hidde_id, $transaction_date, $month_fee, $c
                         	            (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '$penalti_fee', '$course', '$currency_id', '$received_currency_id', '', '', '$type_id', 2, 1)");
     	    }
     	    
-    	    if($root>0 || $percent>0){
+    	    if(($root>0 || $percent>0) && $type_id != 4){
     	        $nawilobrivi_chamokleba = $_REQUEST['nawilobrivi_chamokleba'];
     	        
     	        if ($nawilobrivi_chamokleba == 1) {
@@ -823,11 +823,11 @@ function Add($hidde_transaction_id, $hidde_id, $transaction_date, $month_fee, $c
     	        
     	    }
     	    
-    	    if ($deal_Fee>0){
+    	    if (($deal_Fee>0 || $root>0) && $type_id == 4){
     	        mysql_query("INSERT INTO `money_transactions_detail`
                         	            (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
                         	      VALUES
-                        	            (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '$deal_Fee', '$course', '$currency_id', '$received_currency_id', '', '', '$type_id', '13', 1)");
+                        	            (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '$deal_Fee', '$course', '$currency_id', '$received_currency_id', '$root', '', '$type_id', '13', 1)");
     	    
     	        if ($hidde_deal_id > 0) {
     	            mysql_query("UPDATE `deals_detail`
@@ -1991,7 +1991,7 @@ function GetPage($res = ''){
     					</td>
     				</tr>
     				<tr style="height:10px;"></tr>
-    				<tr class="deals_tr">
+    				<tr>
     					<td style="width: 105px;"><label id="" style="padding-top: 5px;" class="label_label" for="date">ძირი თანხა:</label></td>
     					<td style="width: 100px;">
     						<input style="width: 70px; float:left;" id="root" onkeydown="if(event.which == 8 || event.keyCode == 46) return false;" class="label_label" type="text" value="'.$res['pay_root'].'"><span style="float: right; display: inline; margin-top: 4px;"><button id="delete_root" class="label_label" style="width:20px; padding: 0 0 2px 0; color: #fb0000; '.$display_none1.'">x</button></span>

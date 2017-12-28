@@ -488,7 +488,7 @@ switch ($action) {
                             				DATE(money_transactions_detail.pay_datetime) AS sort,
                             				'2' AS sort1,
                             				'' AS number,
-                            				CONCAT('<div title=\"შეთანხმების გადახდა\" style=\"background: #9C27B0; color: #fff;\">',DATE_FORMAT(money_transactions_detail.pay_datetime, '%d/%m/%Y'),'</div>') AS `date`,
+                            				CONCAT('<div title=\"შეთანხმების გადახდა\" style=\"background: #ffec04; color: #121111;\">',DATE_FORMAT(money_transactions_detail.pay_datetime, '%d/%m/%Y'),'</div>') AS `date`,
                             				money_transactions_detail.course AS `exchange`,
                             				'' AS `loan_amount`,
                             				'' AS `loan_amount_gel`,
@@ -501,8 +501,11 @@ switch ($action) {
                             					WHEN client_loan_agreement.loan_currency_id = 1 THEN CONCAT(ROUND(money_transactions_detail.pay_amount/money_transactions_detail.course,2), ' USD') 
                             					WHEN client_loan_agreement.loan_currency_id = 2 THEN CONCAT(ROUND(money_transactions_detail.pay_amount*money_transactions_detail.course,2), ' GEL') 
                             				END AS percent_gel1,
-                            				'' AS pay_root,
-                            				'' AS pay_root_gel,
+                            				CONCAT(ROUND(SUM(money_transactions_detail.pay_root),2), if(client_loan_agreement.loan_currency_id = 1, ' GEL', ' USD')) AS pay_root,
+                            				CASE 
+                            					WHEN client_loan_agreement.loan_currency_id = 1 THEN CONCAT(ROUND(SUM(money_transactions_detail.pay_root)/money_transactions_detail.course,2), ' USD')
+                            					WHEN client_loan_agreement.loan_currency_id = 2 THEN CONCAT(ROUND(SUM(money_transactions_detail.pay_root)*money_transactions_detail.course,2), ' GEL')
+                            				END AS pay_root_gel,
                             				'' AS jh,
                             				'' AS kj,
                             				'' AS difference,
@@ -1075,7 +1078,7 @@ switch ($action) {
                             				DATE(money_transactions_detail.pay_datetime) AS sort,
                             				'2' AS sort1,
                             				'' AS number,
-                            				CONCAT('<div title=\"შეთანხმების გადახდა\" style=\"background: #9C27B0; color: #fff;\">',DATE_FORMAT(money_transactions_detail.pay_datetime, '%d/%m/%Y'),'</div>') AS `date`,
+                            				CONCAT('<div title=\"შეთანხმების გადახდა\" style=\"background: #ffec04; color: #121111;\">',DATE_FORMAT(money_transactions_detail.pay_datetime, '%d/%m/%Y'),'</div>') AS `date`,
                             				money_transactions_detail.course AS `exchange`,
                             				'' AS `loan_amount`,
                             				'' AS `loan_amount_gel`,
@@ -1088,8 +1091,11 @@ switch ($action) {
                             					WHEN client_loan_agreement.loan_currency_id = 1 THEN CONCAT(ROUND(money_transactions_detail.pay_amount/money_transactions_detail.course,2), ' USD') 
                             					WHEN client_loan_agreement.loan_currency_id = 2 THEN CONCAT(ROUND(money_transactions_detail.pay_amount*money_transactions_detail.course,2), ' GEL') 
                             				END AS percent_gel1,
-                            				'' AS pay_root,
-                            				'' AS pay_root_gel,
+                            				CONCAT(ROUND(SUM(money_transactions_detail.pay_root),2), if(client_loan_agreement.loan_currency_id = 1, ' GEL', ' USD')) AS pay_root,
+                        					CASE 
+                            					WHEN client_loan_agreement.loan_currency_id = 1 THEN CONCAT(ROUND(SUM(money_transactions_detail.pay_root)/money_transactions_detail.course,2), ' USD')
+                            					WHEN client_loan_agreement.loan_currency_id = 2 THEN CONCAT(ROUND(SUM(money_transactions_detail.pay_root)*money_transactions_detail.course,2), ' GEL')
+                        					END AS pay_root_gel,
                             				'' AS jh,
                             				'' AS kj,
                             				'' AS difference,
@@ -1772,7 +1778,7 @@ switch ($action) {
                             				DATE(money_transactions_detail.pay_datetime) AS sort,
                             				'2' AS sort1,
                             				'' AS number,
-                            				CONCAT('<div title=\"შეთანხმების გადახდა\" style=\"background: #9C27B0; color: #fff;\">',DATE_FORMAT(money_transactions_detail.pay_datetime, '%d/%m/%Y'),'</div>') AS `date`,
+                            				CONCAT('<div title=\"შეთანხმების გადახდა\" style=\"background: #ffec04; color: #121111;\">',DATE_FORMAT(money_transactions_detail.pay_datetime, '%d/%m/%Y'),'</div>') AS `date`,
                             				money_transactions_detail.course AS `exchange`,
                             				'' AS `loan_amount`,
                             				'' AS `loan_amount_gel`,
@@ -1785,8 +1791,11 @@ switch ($action) {
                             					WHEN client_loan_agreement.loan_currency_id = 1 THEN CONCAT(ROUND(money_transactions_detail.pay_amount/money_transactions_detail.course,2), ' USD') 
                             					WHEN client_loan_agreement.loan_currency_id = 2 THEN CONCAT(ROUND(money_transactions_detail.pay_amount*money_transactions_detail.course,2), ' GEL') 
                             				END AS percent_gel1,
-                            				'' AS pay_root,
-                            				'' AS pay_root_gel,
+                            				CONCAT(ROUND(SUM(money_transactions_detail.pay_root),2), if(client_loan_agreement.loan_currency_id = 1, ' GEL', ' USD')) AS pay_root,
+                    						CASE 
+                    							WHEN client_loan_agreement.loan_currency_id = 1 THEN CONCAT(ROUND(SUM(money_transactions_detail.pay_root)/money_transactions_detail.course,2), ' USD')
+                    							WHEN client_loan_agreement.loan_currency_id = 2 THEN CONCAT(ROUND(SUM(money_transactions_detail.pay_root)*money_transactions_detail.course,2), ' GEL')
+                    						END AS pay_root_gel,
                             				'' AS jh,
                             				'' AS kj,
                             				'' AS difference,
@@ -2429,7 +2438,7 @@ switch ($action) {
                             				DATE(money_transactions_detail.pay_datetime) AS sort,
                             				'2' AS sort1,
                             				'' AS number,
-                            				CONCAT('<div title=\"შეთანხმების გადახდა\" style=\"background: #9C27B0; color: #fff;\">',DATE_FORMAT(money_transactions_detail.pay_datetime, '%d/%m/%Y'),'</div>') AS `date`,
+                            				CONCAT('<div title=\"შეთანხმების გადახდა\" style=\"background: #ffec04; color: #121111;\">',DATE_FORMAT(money_transactions_detail.pay_datetime, '%d/%m/%Y'),'</div>') AS `date`,
                             				money_transactions_detail.course AS `exchange`,
                             				'' AS `loan_amount`,
                             				'' AS `loan_amount_gel`,
@@ -2442,8 +2451,11 @@ switch ($action) {
                             					WHEN client_loan_agreement.loan_currency_id = 1 THEN CONCAT(ROUND(money_transactions_detail.pay_amount/money_transactions_detail.course,2), ' USD') 
                             					WHEN client_loan_agreement.loan_currency_id = 2 THEN CONCAT(ROUND(money_transactions_detail.pay_amount*money_transactions_detail.course,2), ' GEL') 
                             				END AS percent_gel1,
-                            				'' AS pay_root,
-                            				'' AS pay_root_gel,
+                            				CONCAT(ROUND(SUM(money_transactions_detail.pay_root),2), if(client_loan_agreement.loan_currency_id = 1, ' GEL', ' USD')) AS pay_root,
+                							CASE 
+                								WHEN client_loan_agreement.loan_currency_id = 1 THEN CONCAT(ROUND(SUM(money_transactions_detail.pay_root)/money_transactions_detail.course,2), ' USD')
+                								WHEN client_loan_agreement.loan_currency_id = 2 THEN CONCAT(ROUND(SUM(money_transactions_detail.pay_root)*money_transactions_detail.course,2), ' GEL')
+                							END AS pay_root_gel,
                             				'' AS jh,
                             				'' AS kj,
                             				'' AS difference,

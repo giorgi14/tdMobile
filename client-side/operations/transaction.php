@@ -1767,8 +1767,11 @@
     					$("#hidde_root").val(1);
         				$("#extra_fee").val(delta);
         				$("#root").css('background','rgb(255, 255, 255)');
-        				$("#percent").focus();
-
+        				if($("#type_id").val() == 4){
+        					$("#deal_Fee").focus();
+    					}else{
+    						$("#percent").focus();
+        				}
         				darchenili_ziri = parseFloat($("#dziris_chamokleba_darchenili_dziri").val())-parseFloat(this_value);
         				$("#darchenili_ziri").val(darchenili_ziri.toFixed(2));
 
@@ -1777,8 +1780,12 @@
         				$("#error_mesage").html('');
     				}
     			}else{
-    				$("#percent").focus();
-        		}
+    				if($("#type_id").val() == 4){
+    					$("#deal_Fee").focus();
+					}else{
+						$("#percent").focus();
+    				}
+    			}
             }
 		});
 		
