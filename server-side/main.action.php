@@ -1786,7 +1786,7 @@ switch ($action) {
                             				'' AS `delta1`,
                             				'' AS  percent,
                             				'' AS  percent_gel,
-                            				CONCAT(money_transactions_detail.pay_amount, ' GEL') AS percent1,
+                            				CONCAT(money_transactions_detail.pay_amount, ' USD') AS percent1,
                             				CASE 
                             					WHEN client_loan_agreement.loan_currency_id = 1 THEN CONCAT(ROUND(money_transactions_detail.pay_amount/money_transactions_detail.course,2), ' USD') 
                             					WHEN client_loan_agreement.loan_currency_id = 2 THEN CONCAT(ROUND(money_transactions_detail.pay_amount*money_transactions_detail.course,2), ' GEL') 
@@ -2446,7 +2446,7 @@ switch ($action) {
                             				'' AS `delta1`,
                             				'' AS  percent,
                             				'' AS  percent_gel,
-                            				CONCAT(money_transactions_detail.pay_amount, ' GEL') AS percent1,
+                            				CONCAT(money_transactions_detail.pay_amount, ' USD') AS percent1,
                             				CASE 
                             					WHEN client_loan_agreement.loan_currency_id = 1 THEN CONCAT(ROUND(money_transactions_detail.pay_amount/money_transactions_detail.course,2), ' USD') 
                             					WHEN client_loan_agreement.loan_currency_id = 2 THEN CONCAT(ROUND(money_transactions_detail.pay_amount*money_transactions_detail.course,2), ' GEL') 
