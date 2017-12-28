@@ -750,7 +750,7 @@ switch ($action) {
     		if (mysql_num_rows($check_deal)==0) {
         		if ($type_id == 1 || $type_id == 0) {
         		    
-        		    $check_deal = mysql_query(" SELECT SUM(deals_detail.amount+deals_detail.penalty) AS deal_amount,
+        		    $check_deal = mysql_query(" SELECT deals_detail.amount+deals_detail.penalty AS deal_amount,
         		                                       deals_detail.id AS deal_id,
         		                                       client_loan_schedule_deal.deals_penalty,
         		                                       client_loan_schedule.remaining_root+client_loan_schedule.root - client_loan_schedule_deal.cur_root - (   SELECT IFNULL(SUM(money_transactions_detail.pay_root),0)
@@ -764,9 +764,9 @@ switch ($action) {
                                 		        JOIN   client_loan_schedule_deal ON client_loan_schedule_deal.schedule_id = client_loan_schedule.id
         		                                JOIN   deals_detail ON client_loan_schedule_deal.id = deals_detail.deals_id
                                 		        WHERE  client_loan_schedule.actived = 1 AND client_loan_schedule.`status` = 1 AND client_loan_schedule.`actived` = 1
-                                		        AND    deals_detail.pay_date<='$transaction_date' AND deals_detail.`status` = 0 AND deals_detail.`actived` = 1 AND client_loan_schedule_deal.deal_status=1
+                                		        AND deals_detail.`status` = 0 AND deals_detail.`actived` = 1 AND client_loan_schedule_deal.deal_status=1
         		                                $filt
-                                                ORDER BY client_loan_schedule_deal.pay_date ASC 
+                                                ORDER BY deals_detail.pay_date ASC 
                                                 LIMIT 1");
                     //$check_deal1 = mysql_num_rows($check_deal);
                     $res_deal = mysql_fetch_array($check_deal);
@@ -940,7 +940,7 @@ switch ($action) {
                                     		        AND     money_transactions_detail.actived = 1"));
 		    
 		    
-            $check_deal = mysql_query(" SELECT SUM(deals_detail.amount+deals_detail.penalty) AS deal_amount,
+            $check_deal = mysql_query(" SELECT deals_detail.amount+deals_detail.penalty AS deal_amount,
 		                                       deals_detail.id AS deal_id,
 		                                       client_loan_schedule_deal.deals_penalty,
 		                                       client_loan_schedule.remaining_root+client_loan_schedule.root - client_loan_schedule_deal.cur_root - (   SELECT IFNULL(SUM(money_transactions_detail.pay_root),0)
@@ -954,9 +954,9 @@ switch ($action) {
                         		        JOIN   client_loan_schedule_deal ON client_loan_schedule_deal.schedule_id = client_loan_schedule.id
 		                                JOIN   deals_detail ON client_loan_schedule_deal.id = deals_detail.deals_id
                         		        WHERE  client_loan_schedule.actived = 1 AND client_loan_schedule.`status` = 1 AND client_loan_schedule.`actived` = 1
-                        		        AND    deals_detail.pay_date<='$transaction_date' AND deals_detail.`status` = 0 AND deals_detail.`actived` = 1 AND client_loan_schedule_deal.deal_status=1
+                        		        AND deals_detail.`status` = 0 AND deals_detail.`actived` = 1 AND client_loan_schedule_deal.deal_status=1
 		                                AND    client_loan_agreement.client_id = $check_client[client_id]
-                                        ORDER BY client_loan_schedule_deal.pay_date ASC
+                                        ORDER BY deals_detail.pay_date ASC
                                         LIMIT 1");
             
             $res_deal = mysql_fetch_array($check_deal);
