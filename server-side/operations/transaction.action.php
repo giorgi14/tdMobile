@@ -946,7 +946,7 @@ switch ($action) {
 		                                       client_loan_schedule.remaining_root+client_loan_schedule.root - client_loan_schedule_deal.cur_root - (   SELECT IFNULL(SUM(money_transactions_detail.pay_root),0)
                                                                                                                                                         FROM   money_transactions 
                                                                                                                                                         JOIN   money_transactions_detail ON money_transactions_detail.transaction_id = money_transactions.id
-                                                                                                                                                        WHERE  money_transactions_detail.actived = 1 AND money_transactions.client_id = $res[client_id]
+                                                                                                                                                        WHERE  money_transactions_detail.actived = 1 AND money_transactions.client_id = $check_client[client_id]
                                                                                                                                                         AND    money_transactions_detail.`status` = 1
                                                                                                                                                         AND    DATE(money_transactions_detail.pay_datetime) > client_loan_schedule_deal.pay_date) AS remaining_root
                         		        FROM   client_loan_schedule
@@ -955,7 +955,7 @@ switch ($action) {
 		                                JOIN   deals_detail ON client_loan_schedule_deal.id = deals_detail.deals_id
                         		        WHERE  client_loan_schedule.actived = 1 AND client_loan_schedule.`status` = 1 AND client_loan_schedule.`actived` = 1
                         		        AND    deals_detail.pay_date<='$transaction_date' AND deals_detail.`status` = 0 AND deals_detail.`actived` = 1 AND client_loan_schedule_deal.deal_status=1
-		                                $filt
+		                                AND    client_loan_agreement.client_id = $check_client[client_id]
                                         ORDER BY client_loan_schedule_deal.pay_date ASC
                                         LIMIT 1");
             

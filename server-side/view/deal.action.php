@@ -84,17 +84,17 @@ switch ($action) {
 		$agr_id	= $_REQUEST['agr_id'];
 		 
 		$rResult = mysql_query("SELECT   client_loan_schedule_deal.id,
-		                                 client_loan_schedule_deal.datetime,
+		                                 DATE_FORMAT(client_loan_schedule_deal.pay_date, '%d/%m/%Y'),
                                          CONCAT(client.`name`,' ',client.`lastname`),
                                          CONCAT('სხ ',IFNULL(client_loan_agreement.agreement_id,client_loan_agreement.oris_code)),
                                          client_loan_agreement.oris_code,
                                          SUM(deals_detail.amount),
-                                         client_loan_schedule_deal.deal_end_date,
-                            		     CASE
+                                         CASE
                             		        WHEN client_loan_schedule_deal.deal_status = 0 THEN 'პირველადი'
                                 		    WHEN client_loan_schedule_deal.deal_status = 1 THEN 'მიმდინარე'
                                 		    WHEN client_loan_schedule_deal.deal_status = 2 THEN 'დასრულებული'
-                            		     END AS `status`
+                            		     END AS `status`,
+		                                 DATE_FORMAT(client_loan_schedule_deal.deal_end_date, '%d/%m/%Y')
                                 FROM     client_loan_schedule_deal
 		                        JOIN     deals_detail ON client_loan_schedule_deal.id = deals_detail.deals_id
                                 JOIN     client_loan_schedule ON client_loan_schedule.id = client_loan_schedule_deal.schedule_id

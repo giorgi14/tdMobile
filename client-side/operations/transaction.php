@@ -1356,6 +1356,8 @@
     							$("#hidde_deal_id").val(data.deal_id);
     							$("#deal_Fee1").val(data.deal_amount);
     							$('#currency_id').prop('disabled', true).trigger("chosen:updated");
+    							$('#attachment_client_id').html(data.client_attachment_data).trigger("chosen:updated");
+    							$('#client_loan_number').html(data.agrement_data).trigger("chosen:updated");
         					}
 						}
 					}
@@ -1474,6 +1476,8 @@
     							$("#deal_Fee1").val(data.deal_amount);
     							$("#currency_id").html(data.currenc).trigger("chosen:updated");
     							$('#currency_id').prop('disabled', true).trigger("chosen:updated");
+    							$('#client_id').html(data.client_data).trigger("chosen:updated");
+    							$('#attachment_client_id').html(data.client_attachment_data).trigger("chosen:updated");
         					}
 						}
 					}

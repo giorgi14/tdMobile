@@ -573,8 +573,8 @@
                 <th style="width: 15%;">ხელშეკრულების ნომერი</th>
                 <th style="width: 10%;">ორისის კოდი</th>
                 <th style="width: 15%;">შეთანხმების თანხა</th>
-                <th style="width: 15%;">შეთანხმების<br>დასრულების<br>ტარიღი</th>
                 <th style="width: 15%;">სტატუსი</th>
+                <th style="width: 15%;">შეთანხმების<br>დასრულების<br>ტარიღი</th>
                 <th class="check" style="width: 30px;">#</th>
             </tr>
         </thead>

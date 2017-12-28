@@ -24,7 +24,8 @@ switch ($action) {
 		                                DATE_FORMAT(date,'%d/%m/%Y') AS `date`,
                         				holidays.`name`
                                 FROM    holidays
-                                WHERE holidays.actived = 1");
+                                WHERE holidays.actived = 1
+		                        ORDER BY date DESC");
 
 		$data = array("aaData"	=> array());
 
