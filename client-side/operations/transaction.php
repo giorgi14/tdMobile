@@ -1350,7 +1350,13 @@
     							$("#month_fee2").val(data.pay_amount1);
     							$("#daricxvis_tarigi").html(data.deal_end_date);
     							$("#info_mesage").html(data.info_message);
-    							$("#extra_fee").val(parseFloat(data.loan_pay_amount)+parseFloat(data.pay_amount1));
+    							extra_fee = data.loan_pay_amount;
+    							if(data.loan_pay_amount==''){
+    								extra_fee = 0;
+        						}
+    							$("#extra_fee").val(parseFloat(extra_fee)+parseFloat(data.pay_amount1));
+    							
+    							
     							$("#hidde_id").val(data.id);
     							$("#other_payed1").val(data.other_amount);
     							$("#hidde_deal_id").val(data.deal_id);
@@ -1469,7 +1475,12 @@
     							$("#month_fee2").val(data.pay_amount1);
     							$("#daricxvis_tarigi").html(data.deal_end_date);
     							$("#info_mesage").html(data.info_message);
-    							$("#extra_fee").val(parseFloat(data.loan_pay_amount)+parseFloat(data.pay_amount1));
+    							extra_fee = data.loan_pay_amount;
+    							if(data.loan_pay_amount==''){
+    								extra_fee = 0;
+        						}
+    							$("#extra_fee").val(parseFloat(extra_fee)+parseFloat(data.pay_amount1));
+    							//alert(parseFloat(data.pay_amount1));
     							$("#hidde_id").val(data.id);
     							$("#other_payed1").val(data.other_amount);
     							$("#hidde_deal_id").val(data.deal_id);
