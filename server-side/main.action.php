@@ -520,7 +520,8 @@ switch ($action) {
                                     FROM   money_transactions
                                     JOIN   		money_transactions_detail ON money_transactions_detail.transaction_id = money_transactions.id
                                     LEFT JOIN client_loan_agreement ON client_loan_agreement.id = money_transactions.agreement_id
-                                    WHERE  client_loan_agreement.client_id = '$sub' AND money_transactions_detail.`status` = 13 AND money_transactions_detail.actived = 1 AND money_transactions_detail.pay_amount > 0
+                                    WHERE  client_loan_agreement.client_id = '$sub' AND money_transactions_detail.`status` = 13 AND money_transactions_detail.actived = 1 AND (money_transactions_detail.pay_amount > 0 || money_transactions_detail.pay_root>0)
+                                    GROUP BY money_transactions.id
                             		UNION ALL
                                     SELECT   client.id,
                             				 '' AS `id`,
@@ -1110,7 +1111,8 @@ switch ($action) {
                                     FROM   money_transactions
                                     JOIN   		money_transactions_detail ON money_transactions_detail.transaction_id = money_transactions.id
                                     LEFT JOIN client_loan_agreement ON client_loan_agreement.id = money_transactions.agreement_id
-                                    WHERE  client_loan_agreement.client_id = '$sub' AND money_transactions_detail.`status` = 13 AND money_transactions_detail.actived = 1 AND money_transactions_detail.pay_amount > 0
+                                    WHERE  client_loan_agreement.client_id = '$sub' AND money_transactions_detail.`status` = 13 AND money_transactions_detail.actived = 1 AND (money_transactions_detail.pay_amount > 0 || money_transactions_detail.pay_root>0)
+                                    GROUP BY money_transactions.id
                             		UNION ALL
                             SELECT   client.id,
                     				 '' AS `id`,
@@ -1810,7 +1812,8 @@ switch ($action) {
                                     FROM   money_transactions
                                     JOIN   		money_transactions_detail ON money_transactions_detail.transaction_id = money_transactions.id
                                     LEFT JOIN client_loan_agreement ON client_loan_agreement.id = money_transactions.agreement_id
-                                    WHERE  client_loan_agreement.client_id = '$sub' AND money_transactions_detail.`status` = 13 AND money_transactions_detail.actived = 1 AND money_transactions_detail.pay_amount > 0
+                                    WHERE  client_loan_agreement.client_id = '$sub' AND money_transactions_detail.`status` = 13 AND money_transactions_detail.actived = 1 AND (money_transactions_detail.pay_amount > 0 || money_transactions_detail.pay_root>0)
+                                    GROUP BY money_transactions.id
                             		UNION ALL
                     SELECT   client.id,
             				 '' AS `id`,
@@ -2470,7 +2473,8 @@ switch ($action) {
                                     FROM   money_transactions
                                     JOIN   		money_transactions_detail ON money_transactions_detail.transaction_id = money_transactions.id
                                     LEFT JOIN client_loan_agreement ON client_loan_agreement.id = money_transactions.agreement_id
-                                    WHERE  client_loan_agreement.client_id = '$sub' AND money_transactions_detail.`status` = 13 AND money_transactions_detail.actived = 1 AND money_transactions_detail.pay_amount > 0
+                                    WHERE  client_loan_agreement.client_id = '$sub' AND money_transactions_detail.`status` = 13 AND money_transactions_detail.actived = 1 AND (money_transactions_detail.pay_amount > 0 || money_transactions_detail.pay_root>0)
+                                    GROUP BY money_transactions.id
                             		UNION ALL
                             SELECT   client.id,
                     				 '' AS `id`,
