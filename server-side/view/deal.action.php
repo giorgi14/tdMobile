@@ -85,7 +85,7 @@ switch ($action) {
 		 
 		$rResult = mysql_query("SELECT   client_loan_schedule_deal.id,
 		                                 DATE_FORMAT(client_loan_schedule_deal.pay_date, '%d/%m/%Y'),
-                                         CONCAT(client.`name`,' ',client.`lastname`),
+                                         IF(client.`name`='',client.ltd_name,CONCAT(client.`name`,' ',client.`lastname`)),
                                          CONCAT('სხ ',IFNULL(client_loan_agreement.agreement_id,client_loan_agreement.oris_code)),
                                          client_loan_agreement.oris_code,
                                          SUM(deals_detail.amount),
