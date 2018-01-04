@@ -10,14 +10,15 @@
 		    	
 		$(document).ready(function () {
 			$("#filt_day").chosen(); 
-			$("#filt_month").chosen();       	
+			$("#filt_month").chosen();
+			$("#filt_year").chosen();       	
 			LoadTable(tName,11,change_colum_main,aJaxURL);
 			SetEvents("", "", "", tName, fName, aJaxURL,'',tName,11,change_colum_main,aJaxURL,'','','');
 		});
         
 		function LoadTable(tName,num,change_colum_main,aJaxURL){
 			var total =	[6,7,8];
-			GetDataTable(tName, aJaxURL, 'get_list', num, "&filt_day="+$("#filt_day").val()+"&filt_month="+$("#filt_month").val(), 0, "", 1, "desc", total, change_colum_main);
+			GetDataTable(tName, aJaxURL, 'get_list', num, "&filt_day="+$("#filt_day").val()+"&filt_month="+$("#filt_month").val()+"&filt_year="+$("#filt_year").val(), 0, "", 1, "desc", total, change_colum_main);
 			setTimeout(function(){$('.ColVis, .dataTable_buttons').css('display','none');}, 90);
 		}
 
@@ -62,6 +63,10 @@
 	    });
 
 		$(document).on("change", "#filt_month", function () {
+			LoadTable(tName,11,change_colum_main,aJaxURL);	 
+	    });
+
+		$(document).on("change", "#filt_year", function () {
 			LoadTable(tName,11,change_colum_main,aJaxURL);	 
 	    });
 
@@ -750,6 +755,28 @@
     		<option value="29">29</option>
     		<option value="30">30</option>
     		<option value="31">31</option>
+    	</select>
+    	<select id="filt_year" style="width:  100px;">
+    		<?php 
+    		
+        		mysql_connect('212.72.155.176','root','Gl-1114');
+        		mysql_select_db('tgmobile');
+        		mysql_set_charset ( 'utf8');
+        		
+                $req = mysql_fetch_assoc(mysql_query("SELECT YEAR(CURDATE())-2 AS `year`,
+                                                             YEAR(CURDATE()) AS `cur_year`"));
+                $year = $req['year'];
+                for ($i=0; $i<=10; $i++){
+                    $year ++; 
+                    if($req['cur_year'] == $year){
+                        $data1 .= '<option value="' . $year . '" selected="selected">' . $year . '</option>';
+                    } else {
+                        $data1 .= '<option value="' . $year . '">' . $year . '</option>';
+                    }
+                }
+                
+                echo $data1;
+    		 ?>
     	</select>
     </div>
     <table id="table_right_menu">

@@ -6,9 +6,9 @@ $data	= '';
  
 switch ($action) {
 	case 'get_edit_page':
-		$id		= $_REQUEST['id'];
-	    $page		= GetPage($id);
-        $data		= array('page'	=> $page);
+		$id	  = $_REQUEST['id'];
+	    $page = GetPage($id);
+        $data = array('page'	=> $page);
 
 		break;
 		
@@ -205,6 +205,7 @@ switch ($action) {
         $count	    = $_REQUEST['count'];
 		$hidden	    = $_REQUEST['hidden'];
 		$filt_month	= $_REQUEST['filt_month'];
+		$filt_year	= $_REQUEST['filt_year'];
 		
 		$filt_day	= $_REQUEST['filt_day'];
 		$today      = date("Y-m");
@@ -253,7 +254,7 @@ switch ($action) {
                                 WHERE  	 client_loan_schedule.actived = 1 AND client_loan_schedule.activ_status=0
 		                        AND      client.actived = 1  AND client_loan_agreement.actived=1
 		                        AND      MONTH(client_loan_schedule.schedule_date) = '$filt_month'
-		                        AND      YEAR(client_loan_schedule.schedule_date) = '2017' $AND
+		                        AND      YEAR(client_loan_schedule.schedule_date) = '$filt_year' $AND
                                 GROUP BY client_loan_schedule.client_loan_agreement_id, client_loan_schedule.schedule_date
 		                        ORDER BY client_loan_schedule.schedule_date DESC, client_loan_agreement.oris_code ASC");
 
