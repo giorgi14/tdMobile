@@ -13,15 +13,17 @@
 			/* Add Button ID, Delete Button ID */
 			GetButtons("add_button", "delete_button");
 			$("#sent_button").button();
+			$("#fillt").button();
 			SetEvents("add_button", "delete_button", "check-all", tName, fName, aJaxURL,'',tName,6,change_colum_main,aJaxURL,'','','');
 			$("#status").chosen();
-			$("#status_chosen").css('margin-top', '-7px'); 
+			GetDate('start_date');
+            GetDate('end_date');
 		});
         
 		function LoadTable(tName,num,change_colum_main,aJaxURL){
 			
 			/* Table ID, aJaxURL, Action, Colum Number, Custom Request, Hidden Colum, Menu Array */
-			GetDataTable(tName, aJaxURL, 'get_list', num, "status="+$("#status").val(), 0, "", 1, "desc", "", change_colum_main);
+			GetDataTable_sms(tName, aJaxURL, 'get_list', num, "status="+$("#status").val()+"&start_date="+$("#start_date").val()+"&end_date="+$("#end_date").val(), 0, "", 1, "desc", "", change_colum_main);
 			setTimeout(function(){$('.ColVis, .dataTable_buttons').css('display','none');}, 90);
 		}
 		
@@ -58,7 +60,7 @@
 			}
 		}
 
-		$(document).on("change", "#status", function () {
+		$(document).on("click", "#fillt", function () {
 		    LoadTable(tName,6,change_colum_main,aJaxURL);
 		});
 		
@@ -199,13 +201,34 @@
 <div id="tabs">
 <div class="callapp_head">გასაგზავნი SMS-ების სია<hr class="callapp_head_hr"></div>
     <div id="button_area">
-    	<button id="add_button">დამატება</button>
-    	<button id="delete_button">წაშლა</button>
-    	<button id="sent_button">გაგზავნა</button>
-    	<select id="status" style="width: 200px;">
-    		<option value="1">გასაგზავნი</option>
-    		<option value="2">გაგზავნილი</option>
-    	</select>
+    	<table>
+        	<tr>
+            	<td>
+            		<button id="add_button">დამატება</button>
+            	</td>
+            	<td>
+            		<button id="delete_button">წაშლა</button>
+            	</td>
+            	<td style="width: 115px;">
+            		<button style="height: 23px;" id="sent_button">გაგზავნა</button>
+            	</td>
+            	<td style="width: 208px;">
+                	<select id="status" style="width: 200px;">
+                		<option value="1">გასაგზავნი</option>
+                		<option value="2">გაგზავნილი</option>
+                	</select>
+            	</td>
+            	<td style="width: 110px;">
+                    <input class="callapp_filter_body_span_input" type="text" id="start_date" style="width: 100px; margin-top: 2px;" value="<?php echo date('Y-m-d', strtotime('-1 month'))?>">
+                </td>
+            	<td style="width: 110px;">
+                    <input class="callapp_filter_body_span_input" type="text" id="end_date" style="width: 100px; margin-top: 2px;" value="<?php echo date('Y-m-d')?>">
+                </td>
+                <td style="width: 110px;">
+                    <button id="fillt">ფილტრი</button>
+                </td>
+            </tr>
+        </table>
     </div>
     <table id="table_right_menu">
         <tr>

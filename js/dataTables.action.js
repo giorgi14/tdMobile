@@ -186,6 +186,171 @@ function GetDataTable(tname, aJaxURL, action, count, data, hidden, length, sorti
     );	
 }
 
+function GetDataTable_sms(tname, aJaxURL, action, count, data, hidden, length, sorting, sortMeth, total, colum_change) {
+    if (empty(data))
+        data = "";
+ 
+    if (empty(tname))
+        tname = "example";
+
+    var asInitVals = new Array();
+
+    if (empty(sorting)) {
+        sorting = hidden;
+    }
+
+    //"asc" or "desc"
+    if (empty(sortMeth))
+        sortMeth = "asc";
+
+    var oTable = "";
+
+    //Defoult Length
+    var dLength = [[10, 30, 50, -1], [10, 30, 50, "ყველა"]];
+
+    if (!empty(length))
+        dLength = length;
+
+    var imex = {
+		"sSwfPath": "media/swf/copy_csv_xls.swf",
+		"aButtons": [ "copy",
+		              {
+						"sExtends": "xls",
+						"sFileName": GetDateTime(1) + ".csv"
+		              },
+		              "print" ]
+	};
+
+    oTable = $("#" + tname).dataTable({
+        "bDestroy": true, 																				//Reinicialization table
+        "bJQueryUI": true, 																				//Add jQuery ThemeRoller
+        "bStateSave": false, 																			//state saving
+        "sDom": colum_change,  
+		"oTableTools": imex,
+        "sPaginationType": "full_numbers",
+        "bProcessing": true,
+        "aaSorting": [[sorting, sortMeth]],
+        "iDisplayLength": dLength[0][0],
+        "aLengthMenu": dLength,                                                                         //Custom Select Options
+        "sAjaxSource": aJaxURL,
+        "autoWidth": false,
+        "fnFooterCallback": function ( nRow, aaData, iStart, iEnd, aiDisplay ) {
+        	if(!empty(total)){
+	        	var iTotal = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+	            for ( var i = 0 ; i < aaData.length ; i++ )
+	            {
+	            	for ( var j = 0 ; j < total.length ; j++ )
+	                {
+		                iTotal[j] += aaData[i][total[j]]*1;
+	                }
+	            }
+	            var iPage = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+				for ( var i = iStart ; i < iEnd ; i++ )
+				{
+					for ( var j = 0 ; j < total.length ; j++ )
+	                {
+						iPage[j] += aaData[ aiDisplay[i] ][total[j]]*1;
+	                }
+				}
+	            var nCells = nRow.getElementsByTagName('th');
+	            for ( var k = 0 ; k < total.length ; k++ )
+	            {
+	            	nCells[total[k]].innerHTML = (parseInt(iPage[k] * 100) / 100).toFixed(2) + '<br />' + (parseInt(iTotal[k] * 100) / 100).toFixed(2) + ' ';
+	            }
+        	}
+		},
+        "fnServerData": function (sSource, aoData, fnCallback, oSettings) {
+            oSettings.jqXHR = $.ajax({
+                url: sSource,
+                data: "act=" + action + "&count=" + count + "&hidden=" + hidden + "&" + data,           //Server Side Requests
+                success: function (data) {
+                    fnCallback(data);
+                    //onhovercolor('#A3D0E4');
+                    $('#'+tname+' tbody td').each(function(index){
+                		$this = $(this);
+                		var titleVal = $this.text();
+                		if (titleVal != '') {
+                		  $this.attr('title', titleVal);
+                		}
+                	});
+                    if (typeof (data.error) != "undefined") {
+                        if (data.error != "") {
+                            alert(data.error);
+                        } else {
+                            if ($.isFunction(window.DatatableEnd)) {
+                                //execute it
+                                DatatableEnd(tname);                                
+                            }
+                        }
+                    }
+                }
+            });
+        },
+        "aoColumnDefs": [
+              { "sClass": "colum_hidden", "bSortable": false, "bSearchable": false, "aTargets": [hidden]}	//hidden collum
+            ],
+        "oLanguage": {																						//Localization
+            "sProcessing": "იტვირთება...",
+            "sLengthMenu": "_MENU_",
+            "sZeroRecords": "ჩანაწერი ვერ მოიძებნა",
+            "sInfo": "_START_-დან _END_-მდე სულ: _TOTAL_",
+            "sInfoEmpty": "0-დან 0-მდე სულ: 0",
+            "sInfoFiltered": "(გაიფილტრა _MAX_-დან _TOTAL_ ჩანაწერი)",
+            "sInfoPostFix": "",
+            "sSearch": "ძიება",
+            "sUrl": "",
+            "oPaginate": {
+                "sFirst": "პირველი",
+                "sPrevious": "წინა",
+                "sNext": "შემდეგი",
+                "sLast": "ბოლო"
+            }
+        }
+    });    
+
+    //new $.fn.dataTable.ColReorder(oTable);
+    $("#"+tname+" thead input, .dataTables_scrollFoot .dataTable tfoot input").keyup(function () {
+    	
+        /* Filter on the column (the index) of this element */
+        oTable.fnFilter(this.value, $("#"+tname+" thead input, .dataTables_scrollFoot .dataTable tfoot input").index(this));
+    });
+    
+    $("#"+tname+" tbody").on("click", "tr", function () {
+	    $(this).addClass("selected").siblings().removeClass("selected"); 
+	});
+
+    /*
+    * Support functions to provide a little bit of 'user friendlyness' to the textboxes in
+    * the footer
+    */
+    $("#"+tname+" thead input, .dataTables_scrollFoot .dataTable tfoot input").each(function (i) {
+        asInitVals[i] = this.value;
+    });
+
+    $("#"+tname+" thead input,  .dataTables_scrollFoot .dataTable tfoot input").focus(function () {
+        if (this.className == "search_init") {
+            this.className = "";
+            this.value = "";
+        }
+    });
+
+    $("#"+tname+" thead input, .dataTables_scrollFoot .dataTable tfoot input").blur(function (i) {
+        if (this.value == "") {
+            this.className = "search_init";
+            this.value = asInitVals[$("#"+tname+" thead input, .dataTables_scrollFoot .dataTable tfoot input").index(this)];
+        }
+    });
+
+    $(".DTTT_button").hover(
+		  function () {
+		    $(this).addClass("ui-state-hover");
+		  },
+		  function () {
+		    $(this).removeClass("ui-state-hover");
+		  }
+    );	
+}
+
 function GetDataTable1(tname, aJaxURL, action, count, data, hidden, length, sorting, sortMeth, total, colum_change) {
     if (empty(data))
         data = "";

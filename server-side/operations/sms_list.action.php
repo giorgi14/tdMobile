@@ -21,6 +21,9 @@ switch ($action) {
 		$hidden	= $_REQUEST['hidden'];
 		$status	= $_REQUEST['status'];
 		
+		$start_date	= $_REQUEST['start_date'];
+		$end_date	= $_REQUEST['end_date'];
+		
 		if ($status == 0) {
 		    $filt="";
 		}elseif ($status == 1){
@@ -47,7 +50,7 @@ switch ($action) {
                                   LEFT JOIN client_quarantors ON client_quarantors.id = sent_list.guarantor_id
                                   LEFT JOIN client_person ON client_person.id = sent_list.person_id
                                   LEFT JOIN client_trusted_person ON client_trusted_person.id = sent_list.trust_person_id
-                                  WHERE     sent_list.actived = 1 $filt");
+                                  WHERE     sent_list.actived = 1  AND DATE(sent_list.datetime) BETWEEN '$start_date' AND '$end_date' $filt");
 
 		$data = array("aaData" => array());
 
