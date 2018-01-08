@@ -765,7 +765,7 @@ switch ($action) {
         		                                JOIN   deals_detail ON client_loan_schedule_deal.id = deals_detail.deals_id
                                 		        WHERE  client_loan_schedule.actived = 1 AND client_loan_schedule.`status` = 1 AND client_loan_schedule.`actived` = 1
                                 		        AND deals_detail.`status` = 0 AND deals_detail.`actived` = 1 AND client_loan_schedule_deal.deal_status=1
-        		                                $filt
+        		                                $filt AND client_loan_schedule_deal.pay_date <= '$transaction_date'
                                                 ORDER BY deals_detail.pay_date ASC 
                                                 LIMIT 1");
                     //$check_deal1 = mysql_num_rows($check_deal);
