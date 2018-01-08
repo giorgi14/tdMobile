@@ -206,11 +206,16 @@ switch ($action) {
 		$user_id = $_SESSION['USERID'];
 		
         if ($id == '') {
+            if ($type_id == 4) {
+                 $tp = 1;
+            }else{
+                $tp = $type_id;
+            }
 	        if ($tr_id == '') {
 	            mysql_query("INSERT INTO `money_transactions` 
                                         (`datetime`, `user_id`, `client_loan_schedule_id`, `agreement_id`, `client_id`, `pay_datetime`, `pay_amount`, `extra_fee`, `course`, `currency_id`, `received_currency_id`, `month_fee_trasaction`, `type_id`, `status`, `actived`) 
                                   VALUES 
-                                        (NOW(), '$user_id', '$hidde_id', '$client_loan_number', '$client_id', '$transaction_date', '$month_fee', '$extra_fee', '$course', '$currency_id', '$received_currency_id', '$month_fee_trasaction', '$type_id', '0', '1')");
+                                        (NOW(), '$user_id', '$hidde_id', '$client_loan_number', '$client_id', '$transaction_date', '$month_fee', '$extra_fee', '$course', '$currency_id', '$received_currency_id', '$month_fee_trasaction', '$tp', '0', '1')");
 	            
 	            $tr_id = mysql_insert_id();
 	        }else{
@@ -225,7 +230,7 @@ switch ($action) {
                     	                 `course`                  = '$course',
                     	                 `currency_id`             = '$currency_id',
                     	                 `month_fee_trasaction`    = '$month_fee_trasaction',
-                    	                 `type_id`                 = '$type_id'
+                    	                 `type_id`                 = '$tp'
                 	               WHERE `id`                      = '$hidde_transaction_id'");
 	                   $tr_id = $hidde_transaction_id;
 	        }
@@ -234,6 +239,7 @@ switch ($action) {
 	        }elseif ($type_id == 1 || $type_id == 4){
 	            //$type_id = 1;
 	            //echo 123456;
+	            
 	           Add($tr_id, $hidde_id, $transaction_date, $month_fee, $course, $currency_id, $received_currency_id, $root,  $percent, $penalti_fee, $surplus, $diff, $type_id, $surplus_type);
 	           
 	        }
