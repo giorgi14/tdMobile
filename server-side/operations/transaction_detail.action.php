@@ -232,6 +232,7 @@ switch ($action) {
 	        if ($type_id == 2 || $type_id == 3) {
 	            Add1($tr_id, $hidde_id, $transaction_date, $pledge_or_other_payed, $pledge_or_other_surplus, $course, $currency_id, $received_currency_id, $type_id, $surplus_type);
 	        }elseif ($type_id == 1 || $type_id == 4){
+	            $type_id = 1;
 	            //echo 123456;
 	           Add($tr_id, $hidde_id, $transaction_date, $month_fee, $course, $currency_id, $received_currency_id, $root,  $percent, $penalti_fee, $surplus, $diff, $type_id, $surplus_type);
 	           
