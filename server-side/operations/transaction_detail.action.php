@@ -573,7 +573,7 @@ function Add($hidde_transaction_id, $hidde_id, $transaction_date, $month_fee, $c
     	        mysql_query("INSERT INTO `money_transactions_detail`
                         	            (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
                         	      VALUES
-                        	            (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '$deal_Fee', '$course', '$currency_id', '$received_currency_id', '$root', '', '$type_id', '13', 1)");
+                        	            (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '$deal_Fee', '$course', '$currency_id', '$received_currency_id', '$root', '', '1', '13', 1)");
     	    
     	        if ($hidde_deal_id > 0) {
     	            mysql_query("UPDATE `deals_detail`
@@ -834,7 +834,7 @@ function Add($hidde_transaction_id, $hidde_id, $transaction_date, $month_fee, $c
     	        mysql_query("INSERT INTO `money_transactions_detail`
                         	            (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
                         	      VALUES
-                        	            (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '$deal_Fee', '$course', '$currency_id', '$received_currency_id', '$root', '', '$type_id', '13', 1)");
+                        	            (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '$deal_Fee', '$course', '$currency_id', '$received_currency_id', '$root', '', '1', '13', 1)");
     	    
     	        if ($hidde_deal_id > 0) {
     	            mysql_query("UPDATE `deals_detail`
