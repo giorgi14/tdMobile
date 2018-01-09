@@ -481,6 +481,46 @@ switch ($action) {
                             		WHERE    client_loan_agreement.client_id = '$sub' AND client_loan_schedule_deal.unda_daericxos>0 AND client_loan_schedule_deal.actived = 1 AND client_loan_schedule.activ_status = 0 AND client_loan_schedule.actived=1 AND client_loan_schedule.pay_date <= CURDATE()
                             		GROUP BY client_loan_schedule.id
                             		UNION ALL
+                            		SELECT   client_loan_agreement.client_id,
+                    						 client_loan_schedule.id AS `id`,
+                                             '' AS number1,
+                                             '1' AS sort3,
+                    						 DATE(deals_detail.penalty_date) AS sort,
+                    						 '2' AS sort1,
+                    						 client_loan_schedule.number,
+                    						 CONCAT('<div title=\"ჯარიმა\" style=\"background: #ffec04; color: #000;\">',DATE_FORMAT(deals_detail.penalty_date, '%d/%m/%Y'),'</div>') AS `date`,
+                    						 (SELECT cur_cource.cource FROM cur_cource WHERE cur_cource.actived = 1 AND DATE(cur_cource.datetime) = DATE(deals_detail.penalty_date) LIMIT 1) AS `exchange`,
+                    						 '' AS `loan_amount`,
+                    						 '' AS `loan_amount_gel`,
+                                             '' AS `delta`,
+                                             '' AS `delta1`,
+                    						 CONCAT('<div  title=\"ჯარიმა\" style=\"background: #ffec04; color: #000;\">',deals_detail.penalty,if(client_loan_agreement.loan_currency_id = 1, ' GEL', ' USD'),'</div>') AS percent,
+                    						 CASE 
+                    								WHEN client_loan_agreement.loan_currency_id = 1 THEN CONCAT('<div title=\"ჯარიმა\" style=\"background: #ffec04; color: #000;\">',ROUND(deals_detail.penalty/(SELECT cur_cource.cource FROM cur_cource WHERE actived = 1 and DATE(cur_cource.datetime)=DATE(deals_detail.penalty_date)),2), ' USD','</div>')
+                    								WHEN client_loan_agreement.loan_currency_id = 2 THEN CONCAT('<div title=\"ჯარიმა\" style=\"background: #ffec04; color: #000;\">',ROUND(deals_detail.penalty*(SELECT cur_cource.cource FROM cur_cource WHERE actived = 1 and DATE(cur_cource.datetime)=DATE(deals_detail.penalty_date)),2), ' GEL', '</div>') 
+                    						 END AS percent_gel,
+                    						 '' AS percent1,
+                    						 '' AS percent_gel1,
+                    						 '' AS pay_root,
+                    						 '' AS pay_root_gel,
+                                             '' AS jh,
+                                             '' AS kj,
+                                             '' AS difference,
+                                             '' AS pledge_fee,
+                                            '' AS pledge_fee1,
+                                            '' as  pledge_payed,
+                                            '' as  pledge_payed1,
+                                			'' AS  pledge_delta,
+                                            '' as  other,
+                                			'' as  other1,
+                                			'' as  other_delta
+                            		FROM     client_loan_schedule
+                            		JOIN     client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
+                                    JOIN client_loan_schedule_deal ON client_loan_schedule_deal.schedule_id = client_loan_schedule.id
+                            		JOIN deals_detail ON deals_detail.deals_id = client_loan_schedule_deal.id
+                                    WHERE    client_loan_agreement.client_id = '$sub' AND deals_detail.penalty > 0  AND client_loan_schedule_deal.unda_daericxos>0 AND client_loan_schedule_deal.actived = 1 AND client_loan_schedule.activ_status = 0 AND client_loan_schedule.actived=1 AND client_loan_schedule.pay_date <= CURDATE() AND deals_detail.actived = 1
+                            		GROUP BY deals_detail.id
+                            		UNION ALL
                             		SELECT  client_loan_agreement.client_id,
                             				'' AS `id`,
                             				'' AS number1,
@@ -1113,6 +1153,46 @@ switch ($action) {
                                     LEFT JOIN client_loan_agreement ON client_loan_agreement.id = money_transactions.agreement_id
                                     WHERE  client_loan_agreement.client_id = '$sub' AND money_transactions_detail.`status` = 13 AND money_transactions_detail.actived = 1 AND (money_transactions_detail.pay_amount > 0 || money_transactions_detail.pay_root>0)
                                     GROUP BY money_transactions.id
+                            		UNION ALL
+                            		SELECT   client_loan_agreement.client_id,
+                    						 client_loan_schedule.id AS `id`,
+                                             '' AS number1,
+                                             '1' AS sort3,
+                    						 DATE(deals_detail.penalty_date) AS sort,
+                    						 '2' AS sort1,
+                    						 client_loan_schedule.number,
+                    						 CONCAT('<div title=\"ჯარიმა\" style=\"background: #ffec04; color: #000;\">',DATE_FORMAT(deals_detail.penalty_date, '%d/%m/%Y'),'</div>') AS `date`,
+                    						 (SELECT cur_cource.cource FROM cur_cource WHERE cur_cource.actived = 1 AND DATE(cur_cource.datetime) = DATE(deals_detail.penalty_date) LIMIT 1) AS `exchange`,
+                    						 '' AS `loan_amount`,
+                    						 '' AS `loan_amount_gel`,
+                                             '' AS `delta`,
+                                             '' AS `delta1`,
+                    						 CONCAT('<div  title=\"ჯარიმა\" style=\"background: #ffec04; color: #000;\">',deals_detail.penalty,if(client_loan_agreement.loan_currency_id = 1, ' GEL', ' USD'),'</div>') AS percent,
+                    						 CASE 
+                    								WHEN client_loan_agreement.loan_currency_id = 1 THEN CONCAT('<div title=\"ჯარიმა\" style=\"background: #ffec04; color: #000;\">',ROUND(deals_detail.penalty/(SELECT cur_cource.cource FROM cur_cource WHERE actived = 1 and DATE(cur_cource.datetime)=DATE(deals_detail.penalty_date)),2), ' USD','</div>')
+                    								WHEN client_loan_agreement.loan_currency_id = 2 THEN CONCAT('<div title=\"ჯარიმა\" style=\"background: #ffec04; color: #000;\">',ROUND(deals_detail.penalty*(SELECT cur_cource.cource FROM cur_cource WHERE actived = 1 and DATE(cur_cource.datetime)=DATE(deals_detail.penalty_date)),2), ' GEL', '</div>') 
+                    						 END AS percent_gel,
+                    						 '' AS percent1,
+                    						 '' AS percent_gel1,
+                    						 '' AS pay_root,
+                    						 '' AS pay_root_gel,
+                                             '' AS jh,
+                                             '' AS kj,
+                                             '' AS difference,
+                                             '' AS pledge_fee,
+                                            '' AS pledge_fee1,
+                                            '' as  pledge_payed,
+                                            '' as  pledge_payed1,
+                                			'' AS  pledge_delta,
+                                            '' as  other,
+                                			'' as  other1,
+                                			'' as  other_delta
+                            		FROM     client_loan_schedule
+                            		JOIN     client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
+                                    JOIN client_loan_schedule_deal ON client_loan_schedule_deal.schedule_id = client_loan_schedule.id
+                            		JOIN deals_detail ON deals_detail.deals_id = client_loan_schedule_deal.id
+                                    WHERE    client_loan_agreement.client_id = '$sub' AND deals_detail.penalty > 0  AND client_loan_schedule_deal.unda_daericxos>0 AND client_loan_schedule_deal.actived = 1 AND client_loan_schedule.activ_status = 0 AND client_loan_schedule.actived=1 AND client_loan_schedule.pay_date <= CURDATE() AND deals_detail.actived = 1
+                            		GROUP BY deals_detail.id
                             		UNION ALL
                             SELECT   client.id,
                     				 '' AS `id`,
@@ -1772,6 +1852,46 @@ switch ($action) {
                                     JOIN client_loan_schedule_deal ON client_loan_schedule_deal.schedule_id = client_loan_schedule.id
                             		WHERE    client_loan_agreement.client_id = '$sub' AND client_loan_schedule_deal.unda_daericxos>0 AND client_loan_schedule_deal.actived = 1 AND client_loan_schedule.activ_status = 0 AND client_loan_schedule.actived=1 AND client_loan_schedule.pay_date <= CURDATE()
                             		GROUP BY client_loan_schedule.id
+                            		UNION ALL
+                            		SELECT   client_loan_agreement.client_id,
+                    						 client_loan_schedule.id AS `id`,
+                                             '' AS number1,
+                                             '1' AS sort3,
+                    						 DATE(deals_detail.penalty_date) AS sort,
+                    						 '2' AS sort1,
+                    						 client_loan_schedule.number,
+                    						 CONCAT('<div title=\"ჯარიმა\" style=\"background: #ffec04; color: #000;\">',DATE_FORMAT(deals_detail.penalty_date, '%d/%m/%Y'),'</div>') AS `date`,
+                    						 (SELECT cur_cource.cource FROM cur_cource WHERE cur_cource.actived = 1 AND DATE(cur_cource.datetime) = DATE(deals_detail.penalty_date) LIMIT 1) AS `exchange`,
+                    						 '' AS `loan_amount`,
+                    						 '' AS `loan_amount_gel`,
+                                             '' AS `delta`,
+                                             '' AS `delta1`,
+                    						 CONCAT('<div  title=\"ჯარიმა\" style=\"background: #ffec04; color: #000;\">',deals_detail.penalty,if(client_loan_agreement.loan_currency_id = 1, ' GEL', ' USD'),'</div>') AS percent,
+                    						 CASE 
+                    								WHEN client_loan_agreement.loan_currency_id = 1 THEN CONCAT('<div title=\"ჯარიმა\" style=\"background: #ffec04; color: #000\">',ROUND(deals_detail.penalty/(SELECT cur_cource.cource FROM cur_cource WHERE actived = 1 and DATE(cur_cource.datetime)=DATE(deals_detail.penalty_date)),2), ' USD','</div>')
+                    								WHEN client_loan_agreement.loan_currency_id = 2 THEN CONCAT('<div title=\"ჯარიმა\" style=\"background: #ffec04; color: #000\">',ROUND(deals_detail.penalty*(SELECT cur_cource.cource FROM cur_cource WHERE actived = 1 and DATE(cur_cource.datetime)=DATE(deals_detail.penalty_date)),2), ' GEL', '</div>') 
+                    						 END AS percent_gel,
+                    						 '' AS percent1,
+                    						 '' AS percent_gel1,
+                    						 '' AS pay_root,
+                    						 '' AS pay_root_gel,
+                                             '' AS jh,
+                                             '' AS kj,
+                                             '' AS difference,
+                                             '' AS pledge_fee,
+                                            '' AS pledge_fee1,
+                                            '' as  pledge_payed,
+                                            '' as  pledge_payed1,
+                                			'' AS  pledge_delta,
+                                            '' as  other,
+                                			'' as  other1,
+                                			'' as  other_delta
+                            		FROM     client_loan_schedule
+                            		JOIN     client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
+                                    JOIN client_loan_schedule_deal ON client_loan_schedule_deal.schedule_id = client_loan_schedule.id
+                            		JOIN deals_detail ON deals_detail.deals_id = client_loan_schedule_deal.id
+                                    WHERE    client_loan_agreement.client_id = '$sub' AND deals_detail.penalty > 0 AND client_loan_schedule_deal.unda_daericxos>0 AND client_loan_schedule_deal.actived = 1 AND client_loan_schedule.activ_status = 0 AND client_loan_schedule.actived=1 AND client_loan_schedule.pay_date <= CURDATE() AND deals_detail.actived = 1
+                            		GROUP BY deals_detail.id
                             		UNION ALL
                             		SELECT  client_loan_agreement.client_id,
                             				'' AS `id`,
@@ -2433,6 +2553,46 @@ switch ($action) {
                                     JOIN client_loan_schedule_deal ON client_loan_schedule_deal.schedule_id = client_loan_schedule.id
                             		WHERE    client_loan_agreement.client_id = '$sub' AND client_loan_schedule_deal.unda_daericxos>0 AND client_loan_schedule_deal.actived = 1 AND client_loan_schedule.activ_status = 0 AND client_loan_schedule.actived=1 AND client_loan_schedule.pay_date <= CURDATE()
                             		GROUP BY client_loan_schedule.id
+                            		UNION ALL
+                            		SELECT   client_loan_agreement.client_id,
+                    						 client_loan_schedule.id AS `id`,
+                                             '' AS number1,
+                                             '1' AS sort3,
+                    						 DATE(deals_detail.penalty_date) AS sort,
+                    						 '2' AS sort1,
+                    						 client_loan_schedule.number,
+                    						 CONCAT('<div title=\"ჯარიმა\" style=\"background: #ffec04; color: #000;\">',DATE_FORMAT(deals_detail.penalty_date, '%d/%m/%Y'),'</div>') AS `date`,
+                    						 (SELECT cur_cource.cource FROM cur_cource WHERE cur_cource.actived = 1 AND DATE(cur_cource.datetime) = DATE(deals_detail.penalty_date) LIMIT 1) AS `exchange`,
+                    						 '' AS `loan_amount`,
+                    						 '' AS `loan_amount_gel`,
+                                             '' AS `delta`,
+                                             '' AS `delta1`,
+                    						 CONCAT('<div  title=\"ჯარიმა\" style=\"background: #ffec04; color: #000;\">',deals_detail.penalty,if(client_loan_agreement.loan_currency_id = 1, ' GEL', ' USD'),'</div>') AS percent,
+                    						 CASE 
+                    								WHEN client_loan_agreement.loan_currency_id = 1 THEN CONCAT('<div title=\"ჯარიმა\" style=\"background: #ffec04; color: #000;\">',ROUND(deals_detail.penalty/(SELECT cur_cource.cource FROM cur_cource WHERE actived = 1 and DATE(cur_cource.datetime)=DATE(deals_detail.penalty_date)),2), ' USD','</div>')
+                    								WHEN client_loan_agreement.loan_currency_id = 2 THEN CONCAT('<div title=\"ჯარიმა\" style=\"background: #ffec04; color: #000;\">',ROUND(deals_detail.penalty*(SELECT cur_cource.cource FROM cur_cource WHERE actived = 1 and DATE(cur_cource.datetime)=DATE(deals_detail.penalty_date)),2), ' GEL', '</div>') 
+                    						 END AS percent_gel,
+                    						 '' AS percent1,
+                    						 '' AS percent_gel1,
+                    						 '' AS pay_root,
+                    						 '' AS pay_root_gel,
+                                             '' AS jh,
+                                             '' AS kj,
+                                             '' AS difference,
+                                             '' AS pledge_fee,
+                                            '' AS pledge_fee1,
+                                            '' as  pledge_payed,
+                                            '' as  pledge_payed1,
+                                			'' AS  pledge_delta,
+                                            '' as  other,
+                                			'' as  other1,
+                                			'' as  other_delta
+                            		FROM     client_loan_schedule
+                            		JOIN     client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
+                                    JOIN client_loan_schedule_deal ON client_loan_schedule_deal.schedule_id = client_loan_schedule.id
+                            		JOIN deals_detail ON deals_detail.deals_id = client_loan_schedule_deal.id
+                                    WHERE    client_loan_agreement.client_id = '$sub' AND deals_detail.penalty > 0  AND client_loan_schedule_deal.unda_daericxos>0 AND client_loan_schedule_deal.actived = 1 AND client_loan_schedule.activ_status = 0 AND client_loan_schedule.actived=1 AND client_loan_schedule.pay_date <= CURDATE() AND deals_detail.actived = 1
+                            		GROUP BY deals_detail.id
                             		UNION ALL
                             		SELECT  client_loan_agreement.client_id,
                             				'' AS `id`,
