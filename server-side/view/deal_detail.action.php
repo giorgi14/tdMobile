@@ -55,6 +55,7 @@ switch ($action) {
 		$deal_amount_payed_date = $_REQUEST['deal_amount_payed_date'];
 		$deal_amount            = $_REQUEST['deal_amount'];
 		$deals_penalty          = $_REQUEST['deals_penalty'];
+		$deals_penalty_date     = $_REQUEST['deals_penalty_date'];
 		$user_id                = $_SESSION['USERID'];
 		
 		if($id==''){
@@ -64,12 +65,13 @@ switch ($action) {
                                     ('$user_id', NOW(), '$hidde_inc_id', '$deal_amount_payed_date', '$deal_amount', 0, 1)");
 		}else{
 		   mysql_query("UPDATE `deals_detail`
-                           SET `user_id`  = '$user_id',
-                               `datetime` =  NOW(),
-                               `pay_date` = '$deal_amount_payed_date',
-                               `amount`   = '$deal_amount',
-                               `penalty`  = '$deals_penalty'
-                        WHERE  `id`       = '$id'");
+                           SET `user_id`      = '$user_id',
+                               `datetime`     =  NOW(),
+                               `pay_date`     = '$deal_amount_payed_date',
+                               `amount`       = '$deal_amount',
+                               `penalty`      = '$deals_penalty',
+		                       `penalty_date` = '$deals_penalty_date'
+                        WHERE  `id`           = '$id'");
 		}	    
 		
 		break;
@@ -105,7 +107,8 @@ function GetSchedule($id){
 	$res = mysql_fetch_assoc(mysql_query("	SELECT id,
                                                    DATE(pay_date) AS `pay_date`,
                                                    amount,
-                                                   penalty
+                                                   penalty,
+	                                               penalty_date
                                             FROM   deals_detail
                                             WHERE  actived = 1 AND id = '$id'"));
     return $res;
@@ -143,6 +146,13 @@ function GetPage($res = ''){
 	                        <td style="width: 80px;"><label for="date">ჯარიმა</label></td>
         					<td style="width: 260px;">
         						<input style="width: 260px;" id="deals_penalty" type="text" value="'.$res[penalty].'">
+        					</td>
+	                    </tr>
+        				<tr style="height:5px;"></tr>
+                	    <tr>
+	                        <td style="width: 80px;"><label for="date">დარიცხვის თარიღი</label></td>
+        					<td style="width: 260px;">
+        						<input style="width: 260px;" id="deals_penalty_date" type="text" value="'.$res[penalty_date].'">
         					</td>
 	                    </tr>
 	                    <tr style="height:10px;"></tr>

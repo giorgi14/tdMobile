@@ -17,6 +17,7 @@
 			SetEvents("add_button", "delete_button", "check-all", tName, fName, aJaxURL,'',tName,8,change_colum_main,aJaxURL,'','','');
 			$("#filt_agr_id").chosen();
 			$("#filt_agr_id_chosen").css('margin-top','-6px');
+			
 		});
         
 		function LoadTable(tName,col_num,act,change_colum,URL,dataparam,total){
@@ -86,6 +87,7 @@
 				GetDialog('add-edit-form-deals_det', 400, "auto", buttons,"top");
 				GetDateTimes("deal_amount_payed_date");
 				$("#deal_amount").focus();
+				GetDateTimes('deals_penalty_date');
         	}
 		}
 
@@ -160,6 +162,7 @@
 		    param.deal_amount_payed_date = $("#deal_amount_payed_date").val();
 	    	param.deal_amount		     = $("#deal_amount").val();
 	    	param.deals_penalty		     = $("#deals_penalty").val();
+	    	param.deals_penalty_date	 = $("#deals_penalty_date").val();
 	    	
 
             if(param.deal_amount_payed_date == ''){
