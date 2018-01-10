@@ -46,6 +46,7 @@ switch ($action) {
         $reregistering_root_fee	    = $_REQUEST['reregistering_root_fee'];
         $reregistering_percent_fee	= $_REQUEST['reregistering_percent_fee'];
         $reregistering_penalty_fee	= $_REQUEST['reregistering_penalty_fee'];
+        $reregistering_deal_fee  	= $_REQUEST['reregistering_deal_fee'];
         $reregistering_sakomiso	    = $_REQUEST['reregistering_sakomiso'];
         $reregistering_nasargeblebi	= $_REQUEST['reregistering_nasargeblebi'];
         $reregistering_fee	        = $_REQUEST['reregistering_fee'];
@@ -132,6 +133,20 @@ switch ($action) {
                                         (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
                                   VALUES
                                         (NOW(), '$user_id', '$tr_id', '$reregistering_date', '$reregistering_penalty_fee', '$reg_cource[cource]', '$agr_info[loan_currency_id]', '$agr_info[loan_currency_id]', '', '', '1', '2', 1)");
+            }
+            
+            if ($reregistering_deal_fee>0){
+                mysql_query("INSERT INTO `money_transactions_detail`
+                                        (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
+                                  VALUES
+                                        (NOW(), '$user_id', '$tr_id', '$reregistering_date', '$reregistering_deal_fee', '$reg_cource[cource]', '$agr_info[loan_currency_id]', '$agr_info[loan_currency_id]', '', '', '1', '13', 1)");
+                
+                mysql_query("UPDATE `deals_detail`
+                             JOIN    client_loan_schedule_deal ON client_loan_schedule_deal.id = deals_detail.deals_id
+                             JOIN    client_loan_schedule ON client_loan_schedule_deal.schedule_id = client_loan_schedule.id
+                             JOIN    client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
+                                SET `status` = '1'
+                             WHERE   client_loan_agreement.id = $agr_info[id]");
             }
             
             if ($reregistering_sakomiso>0) {
@@ -3315,6 +3330,11 @@ switch ($action) {
                                    </tr>
                                    <tr style="height:10px;"></tr>
                                    <tr>
+                                       <td style="width: 120px;"><label>შეთანხმება</label></td>
+                                       <td colspan="3"><input id="deal_fee3" class="idle" style="width: 100px;" type="text" value="" disabled="disabled"></td>
+                                   </tr>
+                                   <tr style="height:10px;"></tr>
+                                   <tr>
                                        <td style="width: 120px;"><label>საკომისიო</label></td>
                                        <td colspan="3"><input id="sakomiso" class="idle" style="width: 100px;" type="text" value="" disabled="disabled"></td>
                                    </tr>
@@ -3804,6 +3824,17 @@ switch ($action) {
             
         }
 
+        
+       $deal = mysql_fetch_array(mysql_query("SELECT IFNULL(SUM(deals_detail.amount),0) AS `deal_amount`
+                                              FROM   client_loan_schedule_deal
+                                              JOIN   deals_detail ON deals_detail.deals_id = client_loan_schedule_deal.id
+                                              JOIN   client_loan_schedule ON client_loan_schedule.id = client_loan_schedule_deal.schedule_id
+                                              JOIN   client_loan_agreement ON client_loan_schedule.client_loan_agreement_id = client_loan_agreement.id
+                                              WHERE  client_loan_agreement.actived = 1 AND client_loan_schedule.actived = 1 
+                                              AND    client_loan_schedule_deal.actived=1 AND client_loan_schedule_deal.deal_status != 2 
+                                              AND    deals_detail.actived = 1 AND deals_detail.`status` = 0
+                                              AND    client_loan_agreement.client_id = '$local_id'"));
+       
         if (mysql_num_rows($check_count)>1) {
             
             $res1 = mysql_fetch_assoc(mysql_query("SELECT  IFNULL(SUM(money_transactions_detail.pay_amount),0) AS pay_amount
@@ -3814,9 +3845,9 @@ switch ($action) {
                                                    AND     money_transactions_detail.`status` = 3
                                                    AND     money_transactions_detail.actived = 1"));
            
-            $pay_amount = round($remaining_root + $rercent + $penalty + $sakomisio + $nasargeblebi - $res1[pay_amount], 2);
+            $pay_amount = round($remaining_root + $rercent + $penalty + $sakomisio + $nasargeblebi - $res1[pay_amount] + $deal[deal_amount], 2);
            
-            $data = array('pay_amount' => $pay_amount, 'root' => $remaining_root, 'percent' => $rercent, 'penalty' => $penalty, 'pay_amount1' => $res_avans[pay_amount], 'nasargeblebebi' => $nasargeblebi, 'sakomisio' => $sakomisio, 'reg_pledge' => $pledge, 'reg_other' => $other_pay);
+            $data = array('pay_amount' => $pay_amount, 'root' => $remaining_root, 'percent' => $rercent, 'deal_amount' => $deal[deal_amount], 'penalty' => $penalty, 'pay_amount1' => $res_avans[pay_amount], 'nasargeblebebi' => $nasargeblebi, 'sakomisio' => $sakomisio, 'reg_pledge' => $pledge, 'reg_other' => $other_pay);
         }else{
             
             $res_pledge = mysql_fetch_assoc(mysql_query("SELECT  SUM(IFNULL(CASE
@@ -3955,9 +3986,9 @@ switch ($action) {
                                                        AND     money_transactions_detail.`status` = 3
                                                        AND     money_transactions_detail.actived = 1"));
             
-                $pay_amount = round($remainig_root + $result['percent'] + $penalty + $sakomisio + $nasargeblebi-$res1[pay_amount], 2);
+                $pay_amount = round($remainig_root + $result['percent'] + $penalty + $sakomisio + $nasargeblebi-$res1[pay_amount]+$deal[deal_amount], 2);
             
-                $data = array('pay_amount' => $pay_amount, 'root' => $remainig_root, 'percent' => $result[percent], 'penalty' => $penalty, 'pay_amount1' => $res1[pay_amount], 'nasargeblebebi' => $nasargeblebi, 'sakomisio' => $sakomisio, 'reg_pledge' => $pledge, 'reg_other' => $other_pay);
+                $data = array('pay_amount' => $pay_amount, 'root' => $remainig_root, 'percent' => $result[percent], 'deal_amount' => $deal[deal_amount], 'penalty' => $penalty, 'pay_amount1' => $res1[pay_amount], 'nasargeblebebi' => $nasargeblebi, 'sakomisio' => $sakomisio, 'reg_pledge' => $pledge, 'reg_other' => $other_pay);
             }else{
                 global  $error;
                 $error = 'ხელშეკრულება არ არის გააქტიურებული';
@@ -3998,6 +4029,11 @@ switch ($action) {
                            <tr>
                                <td style="width: 120px;"><label>პროცენტი</label></td>
                                <td colspan="3"><input id="reregistering_percent_fee" class="idle" style="width: 100px;" type="text" value="" disabled="disabled"></td>
+                           </tr>
+                           <tr style="height:10px;"></tr>
+                           <tr>
+                               <td style="width: 120px;"><label>შეთანხმება</label></td>
+                               <td colspan="3"><input id="reregistering_deal_fee" class="idle" style="width: 100px;" type="text" value="" disabled="disabled"></td>
                            </tr>
                            <tr style="height:10px;"></tr>
                            <tr>

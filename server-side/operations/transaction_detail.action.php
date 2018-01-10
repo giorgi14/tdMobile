@@ -754,6 +754,13 @@ function Add($hidde_transaction_id, $hidde_id, $transaction_date, $month_fee, $c
                              WHERE  client_loan_schedule.client_loan_agreement_id = '$client_loan_number'
                              AND    client_loan_schedule.actived = 1
                              AND    client_loan_schedule.schedule_date > '$transaction_date'");
+    	       
+    	       mysql_query("UPDATE `deals_detail`
+                            JOIN    client_loan_schedule_deal ON client_loan_schedule_deal.id = deals_detail.deals_id
+                            JOIN    client_loan_schedule ON client_loan_schedule_deal.schedule_id = client_loan_schedule.id
+                            JOIN    client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
+                               SET `status` = '1'
+                            WHERE   client_loan_agreement.id = $client_loan_number");
     	    }
     	}elseif ($all_fee < $all_pay){
     	    if ($penalti_fee>0){
@@ -991,6 +998,13 @@ function Add($hidde_transaction_id, $hidde_id, $transaction_date, $month_fee, $c
             	             WHERE  client_loan_schedule.client_loan_agreement_id = '$client_loan_number'
             	             AND    client_loan_schedule.actived = 1
             	             AND    client_loan_schedule.schedule_date > '$transaction_date'");
+    	        
+    	        mysql_query("UPDATE `deals_detail`
+            	             JOIN    client_loan_schedule_deal ON client_loan_schedule_deal.id = deals_detail.deals_id
+            	             JOIN    client_loan_schedule ON client_loan_schedule_deal.schedule_id = client_loan_schedule.id
+            	             JOIN    client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
+            	                SET `status` = '1'
+            	             WHERE   client_loan_agreement.id = $client_loan_number");
     	    }
     	}else{
     	    

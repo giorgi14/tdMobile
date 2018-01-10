@@ -879,6 +879,8 @@
 	        					$("#yield1").val(data.nasargeblebebi);
 	        					$("#month_fee2").val(data.pay_amount1);
 	        					$("#other_payed1").val(data.other_amount);
+	        					$("#other_payed1").val(data.other_amount);
+	        					$("#deal_Fee1").val(data.deal_amount); 
 	        					//$("#add-edit-form-canceled").html(data.page);
 	    					}
 	    				}
@@ -927,6 +929,7 @@
 	    							$('#currency_id').prop('disabled', true).trigger("chosen:updated");
 	    							$('#client_loan_number').html(data.agrement_data).trigger("chosen:updated");
 	    							$('#attachment_client_id').html(data.client_attachment_data).trigger("chosen:updated");
+	    							$("#deal_Fee1").val(data.deal_amount); 
 	    							$("#other_payed1").val(data.other_amount);
 		    					}else if(data.status==2){
 		    						$("#month_fee1").val(data.insurance_fee);
@@ -962,7 +965,27 @@
 
 	    							$('#currency_id').prop('disabled', false).trigger("chosen:updated");
 	    							$('#attachment_client_id').html(data.client_attachment_data).trigger("chosen:updated");
-	    						}
+	    						}else if(data.status==4){
+	    							$("#month_fee1").val(data.deal_amount);
+        							$("#month_fee").val(data.loan_pay_amount);
+        							$("#month_fee2").val(data.pay_amount1);
+        							$("#daricxvis_tarigi").html(data.deal_end_date);
+        							$("#info_mesage").html(data.info_message);
+        							extra_fee = data.loan_pay_amount;
+        							if(data.loan_pay_amount==''){
+        								extra_fee = 0;
+            						}
+        							$("#extra_fee").val(parseFloat(extra_fee)+parseFloat(data.pay_amount1));
+        							
+        							
+        							$("#hidde_id").val(data.id);
+        							$("#other_payed1").val(data.other_amount);
+        							$("#hidde_deal_id").val(data.deal_id);
+        							$("#deal_Fee1").val(data.deal_amount);
+        							$('#currency_id').prop('disabled', true).trigger("chosen:updated");
+        							$('#attachment_client_id').html(data.client_attachment_data).trigger("chosen:updated");
+        							$('#client_loan_number').html(data.agrement_data).trigger("chosen:updated");
+	            				}
 							}
 						}
 				    }

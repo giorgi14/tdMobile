@@ -406,6 +406,16 @@ switch ($action) {
             
         }
         
+        $deal = mysql_fetch_array(mysql_query(" SELECT IFNULL(SUM(deals_detail.amount),0) AS `deal_amount`
+                                                FROM   client_loan_schedule_deal
+                                                JOIN   deals_detail ON deals_detail.deals_id = client_loan_schedule_deal.id
+                                                JOIN   client_loan_schedule ON client_loan_schedule.id = client_loan_schedule_deal.schedule_id
+                                                JOIN   client_loan_agreement ON client_loan_schedule.client_loan_agreement_id = client_loan_agreement.id
+                                                WHERE  client_loan_agreement.actived = 1 AND client_loan_schedule.actived = 1
+                                                AND    client_loan_schedule_deal.actived=1 AND client_loan_schedule_deal.deal_status != 2
+                                                AND    deals_detail.actived = 1 AND deals_detail.`status` = 0
+                                                AND    client_loan_agreement.client_id = '$local_id'"));
+        
         if (mysql_num_rows($check_count)>1) {
             $res1 = mysql_fetch_assoc(mysql_query("SELECT  IFNULL(ROUND(SUM(CASE
                                         										WHEN money_transactions_detail.currency_id = client_loan_agreement.loan_currency_id THEN money_transactions_detail.pay_amount
@@ -422,8 +432,8 @@ switch ($action) {
                 $sakomisio     = 0;
                 $nasargeblebi  = 0;
             }
-            $all_fee = round($remaining_root + $rercent + $penalty + $sakomisio + $nasargeblebi + $other_amount, 2);
-            $data	= array('all_fee' => $all_fee, 'sakomisio' => $sakomisio, 'percent' => $rercent, 'pay_amount1' => $res1[pay_amount], 'remaining_root' => $remaining_root, 'penalty' => $penalty, 'nasargeblebebi' => $nasargeblebi, 'other_amount' => $other_amount);
+            $all_fee = round($remaining_root + $rercent + $penalty + $sakomisio + $nasargeblebi + $other_amount + $deal['deal_amount'], 2);
+            $data	= array('all_fee' => $all_fee, 'sakomisio' => $sakomisio, 'percent' => $rercent,  'deal_amount' => $deal['deal_amount'], 'pay_amount1' => $res1[pay_amount], 'remaining_root' => $remaining_root, 'penalty' => $penalty, 'nasargeblebebi' => $nasargeblebi, 'other_amount' => $other_amount);
         }else{
             $res = mysql_query("SELECT   client_loan_schedule.id,
                         				 client_loan_agreement.status AS st,
@@ -563,9 +573,9 @@ switch ($action) {
                     $sakomisio     = 0;
                     $nasargeblebi  = 0;
                 }
-                $all_fee = round($remainig_root + $result['percent'] + $penalty + $sakomisio + $nasargeblebi + $other_amount, 2);
+                $all_fee = round($remainig_root + $result['percent'] + $penalty + $sakomisio + $nasargeblebi + $other_amount + $deal['deal_amount'], 2);
                 
-                $data	= array('all_fee' => $all_fee, 'sakomisio' => $sakomisio, 'percent' => $result['percent'], 'remaining_root' => $remainig_root, 'pay_amount1' => $res1[pay_amount], 'penalty' => $penalty, 'nasargeblebebi' => $nasargeblebi, 'other_amount' => $other_amount);
+                $data	= array('all_fee' => $all_fee, 'sakomisio' => $sakomisio, 'percent' => $result['percent'], 'deal_amount' => $deal['deal_amount'], 'remaining_root' => $remainig_root, 'pay_amount1' => $res1[pay_amount], 'penalty' => $penalty, 'nasargeblebebi' => $nasargeblebi, 'other_amount' => $other_amount);
             
             }else{
                 global  $error;

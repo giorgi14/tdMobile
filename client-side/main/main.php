@@ -374,6 +374,7 @@
 			param.reregistering_root_fee     = $('#reregistering_root_fee').val();
 			param.reregistering_percent_fee  = $('#reregistering_percent_fee').val();
 			param.reregistering_penalty_fee  = $('#reregistering_penalty_fee').val();
+			param.reregistering_deal_fee     = $('#reregistering_deal_fee').val();
 			param.reregistering_sakomiso     = $('#reregistering_sakomiso').val();
 			param.reregistering_nasargeblebi = $('#reregistering_nasargeblebi').val();
 			param.reregistering_avans        = $('#reregistering_avans').val();
@@ -466,6 +467,7 @@
     							$("#reregistering_root_fee").val(data.root);
     							$("#reregistering_percent_fee").val(data.percent);
     							$("#reregistering_penalty_fee").val(data.penalty);
+    							$("#reregistering_deal_fee").val(data.deal_amount);
     							$("#reregistering_sakomiso").val(data.sakomisio);
     							$("#reregistering_nasargeblebi").val(data.nasargeblebebi);
     							$("#reregistering_avans").val(data.pay_amount1);
@@ -501,6 +503,7 @@
     							$("#root_fee3").val(data.root);
     							$("#percent_fee3").val(data.percent);
     							$("#penalty_fee3").val(data.penalty);
+    							$("#deal_fee3").val(data.deal_amount);
     							$("#full_pay3").val(data.pay_amount1);
     							$("#dazgveva").val(data.reg_pledge);
     							$("#sxvaxarji").val(data.reg_other);
