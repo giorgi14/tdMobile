@@ -3143,7 +3143,7 @@ switch ($action) {
 	               if ($i == 6 || $i == 7) {
 	                   $row[] = $aRow[$i];
 	               }else if ($i == 8) {
-	                   $sumpercent+=$aRow[$i];
+	                   $sumpercent+=floatval(strip_tags($aRow[$i]));
 	                   if($aRow[number1]==7){
 	                       $row[] = '<div title="'.$aRow[loan_amount_gel].' დღის ჯარიმა" style="background: #009688;  color: #fff;">'.$aRow[$i].'</div>';
 	                   }else if($aRow[number1]==8){
@@ -3154,7 +3154,7 @@ switch ($action) {
     	                   $row[] = $aRow[$i];
     	               }
 	               }else if ($i == 9){
-	                   $sumpercent1+=$aRow[$i];
+	                   $sumpercent1+=floatval(strip_tags($aRow[$i]));
 	                   if($aRow[number1]==7){
 	                       $row[] = '<div title="'.$aRow[loan_amount_gel].' დღის ჯარიმა" style="background: #009688; color: #fff;">'.$aRow[$i].'</div>';
 	                   }else if($aRow[number1]==8){
@@ -3165,42 +3165,42 @@ switch ($action) {
 	                       $row[] = $aRow[$i];
 	                   }
 	               }elseif ($i == 10){
-	                   $sumpercent2+=$aRow[$i];
+	                   $sumpercent2+=floatval(strip_tags($aRow[$i]));
 	                   if($aRow[number1]==5){
 	                       $row[] = '<div title="წინა თვის მეტობა" style="background: #F44336; color: #fff;">'.$aRow[$i].'</div>';
 	                   }else{
 	                       $row[] = $aRow[$i];
 	                   } 
 	               }elseif ($i == 11){
-	                   $sumpercent3+=$aRow[$i];
+	                   $sumpercent3+=floatval(strip_tags($aRow[$i]));
 	                   if($aRow[number1]==5){
 	                       $row[] = '<div title="წინა თვის მეტობა" style="background: #F44336; color: #fff;">'.$aRow[$i].'</div>';
 	                   }else{
 	                       $row[] = $aRow[$i];
 	                   }
 	               }elseif ($i == 12){
-	                   $sumpercent4+=$aRow[$i];
+	                   $sumpercent4+=floatval(strip_tags($aRow[$i]));
 	                   if($aRow[number1]==5){
 	                       $row[] = '<div title="წინა თვის მეტობა" style="background: #F44336; color: #fff;">'.$aRow[$i].'</div>';
 	                   }else{
 	                       $row[] = $aRow[$i];
 	                   }
 	               }elseif ($i == 13){
-	                   $sumpercent5+=$aRow[$i];
+	                   $sumpercent5+=floatval(strip_tags($aRow[$i]));
 	                   if($aRow[number1]==5){
 	                       $row[] = '<div title="წინა თვის მეტობა" style="background: #F44336; color: #fff;">'.$aRow[$i].'</div>';
 	                   }else{
 	                       $row[] = $aRow[$i];
 	                   }
 	               }elseif ($i == 19){
-	                   $sumpercent19+=$aRow[$i];
+	                   $sumpercent19+=floatval(strip_tags($aRow[$i]));
 	                   if($aRow[number1]==3){
 	                       $row[] = '<div title="მეტობა" style="background: #F44336; color: #fff;">'.$aRow[$i].'</div>';
 	                   }else{
 	                       $row[] = $aRow[$i];
 	                   }
 	               }elseif ($i == 20){
-	                   $sumpercent20+=$aRow[$i];
+	                   $sumpercent20+=floatval(strip_tags($aRow[$i]));
 	                   if($aRow[number1]==3){
 	                       $row[] = '<div title="მეტობა" style="background: #F44336; color: #fff;">'.$aRow[$i].'</div>';
 	                   }else{
