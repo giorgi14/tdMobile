@@ -23,7 +23,7 @@ switch ($action) {
 		 
 		$rResult = mysql_query("SELECT id,
                                        DATE(pay_date),
-                                       amount,
+                                       ROUND(amount+root,2),
                                        penalty,
                                        IF(`status` = 0,'გადაუხდელი','გადახდილი') 
                                 FROM   deals_detail
@@ -54,23 +54,27 @@ switch ($action) {
 		$hidde_inc_id           = $_REQUEST['hidde_inc_id'];
 		$deal_amount_payed_date = $_REQUEST['deal_amount_payed_date'];
 		$deal_amount            = $_REQUEST['deal_amount'];
+		$deal_root_amount       = $_REQUEST['deal_root_amount'];
 		$deals_penalty          = $_REQUEST['deals_penalty'];
 		$deals_penalty_date     = $_REQUEST['deals_penalty_date'];
+		$comment                = $_REQUEST['comment'];
 		$user_id                = $_SESSION['USERID'];
 		
 		if($id==''){
 		    mysql_query("INSERT INTO `deals_detail` 
-                                    (`user_id`, `datetime`, `deals_id`, `pay_date`, `amount`, `status`, `actived`) 
+                                    (`user_id`, `datetime`, `deals_id`, `pay_date`, `amount`, `root`, `comment`, `status`, `actived`) 
                               VALUES 
-                                    ('$user_id', NOW(), '$hidde_inc_id', '$deal_amount_payed_date', '$deal_amount', 0, 1)");
+                                    ('$user_id', NOW(), '$hidde_inc_id', '$deal_amount_payed_date', '$deal_amount', '$deal_root_amount', '$comment', 0, 1)");
 		}else{
 		   mysql_query("UPDATE `deals_detail`
                            SET `user_id`      = '$user_id',
                                `datetime`     =  NOW(),
                                `pay_date`     = '$deal_amount_payed_date',
                                `amount`       = '$deal_amount',
+                               `root`         = '$deal_root_amount',
                                `penalty`      = '$deals_penalty',
-		                       `penalty_date` = '$deals_penalty_date'
+		                       `penalty_date` = '$deals_penalty_date',
+                               `comment`      = '$comment'
                         WHERE  `id`           = '$id'");
 		}	    
 		
@@ -107,8 +111,10 @@ function GetSchedule($id){
 	$res = mysql_fetch_assoc(mysql_query("	SELECT id,
                                                    DATE(pay_date) AS `pay_date`,
                                                    amount,
+                                                   root,
                                                    penalty,
-	                                               penalty_date
+	                                               penalty_date,
+                                                   comment
                                             FROM   deals_detail
                                             WHERE  actived = 1 AND id = '$id'"));
     return $res;
@@ -142,6 +148,13 @@ function GetPage($res = ''){
         					</td>
                 	    </tr>
         				<tr style="height:5px;"></tr>
+                        <tr>
+	                        <td style="width: 80px;"><label for="date">ძირი</label></td>
+        				    <td style="width: 260px;">
+        						<input style="width: 260px;" id="deal_root_amount" type="text" value="'.$res[root].'">
+        					</td>
+                	    </tr>
+        				<tr style="height:5px;"></tr>
                 	    <tr>
 	                        <td style="width: 80px;"><label for="date">ჯარიმა</label></td>
         					<td style="width: 260px;">
@@ -156,6 +169,12 @@ function GetPage($res = ''){
         					</td>
 	                    </tr>
 	                    <tr style="height:10px;"></tr>
+                        <tr>
+	                        <td style="width: 80px;"><label for="date">კომენტარი</label></td>
+        					<td style="width: 260px;">
+        						<textarea class="idle" id="comment" style="resize: vertical;width: 98%;height: 40px;">'.$res['comment'].'</textarea>
+        					</td>
+	                    </tr>
         			</table>
         		</fieldset>
     			<!-- ID -->

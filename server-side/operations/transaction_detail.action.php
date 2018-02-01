@@ -358,7 +358,7 @@ function Add($hidde_transaction_id, $hidde_id, $transaction_date, $month_fee, $c
 	$month_fee1    = $_REQUEST['month_fee1'];
 	$payable_Fee   = $_REQUEST['payable_Fee'];
 	$deal_Fee      = $_REQUEST['deal_Fee'];
-	$hidde_deal_id = $_REQUEST['hidde_deal_id'];
+	$hidde_deal1_id = $_REQUEST['hidde_deal1_id'];
 	$yield         = $_REQUEST['yield'];
 	$other_payed   = $_REQUEST['other_payed'];
 	$other_penalty = $_REQUEST['other_penalty'];
@@ -558,10 +558,10 @@ function Add($hidde_transaction_id, $hidde_id, $transaction_date, $month_fee, $c
                           AND     money_transactions_detail.`status` = 3
                           AND     money_transactions_detail.actived = 1");
     	    
-    	    if ($hidde_deal_id > 0) {
+    	    if ($hidde_deal1_id > 0) {
     	        mysql_query("UPDATE `client_loan_schedule_deal`
                                 SET `deal_status` = '1'
-                             WHERE  `id`          = '$hidde_deal_id'");
+    	                     WHERE  `id`          = '$hidde_deal1_id'");
     	        
     	        mysql_query("UPDATE  `client_loan_schedule`
             	             JOIN     client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
@@ -575,13 +575,61 @@ function Add($hidde_transaction_id, $hidde_id, $transaction_date, $month_fee, $c
                         	      VALUES
                         	            (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '$deal_Fee', '$course', '$currency_id', '$received_currency_id', '$root', '', '1', '13', 1)");
     	    
-    	        if ($hidde_deal_id > 0) {
+    	        if ($hidde_deal_id > 0) { 
+    	            
+    	            
     	            mysql_query("UPDATE `deals_detail`
     	                            SET `status` = '1'
-    	                         WHERE  `id`     = '$hidde_deal_id'");
+    	                         WHERE  `id` IN($hidde_deal_id)");
+    	            
+    	            $deal_id = mysql_fetch_array(mysql_query("SELECT deals_id
+                                        	                  FROM   deals_detail
+                                        	                  WHERE  deals_detail.id IN($hidde_deal_id)
+                                        	                  LIMIT  1"));
+    	            
+    	            $check = mysql_num_rows(mysql_query("SELECT id 
+                                                         FROM   deals_detail 
+    	                                                 WHERE  deals_detail.deals_id = $deal_id[deals_id]
+                                                         AND    `status` = 0
+                                                         LIMIT   1"));
+    	            
+    	            if ($check == 0) {
+    	                mysql_query("UPDATE client_loan_schedule_deal
+                                        SET deal_status = 2
+    	                             WHERE  `id` = $deal_id[deals_id]");
+    	            }
     	        }
     	    }
     	    
+    	    if ($deal_Fee>0 && $type_id != 4){
+    	        mysql_query("INSERT INTO `money_transactions_detail`
+                        	            (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
+                        	      VALUES
+                        	            (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '$deal_Fee', '$course', '$currency_id', '$received_currency_id', '', '', '1', '13', 1)");
+    	        
+    	        if ($hidde_deal_id > 0) {
+    	            mysql_query("UPDATE `deals_detail`
+                	                SET `status` = '1'
+                	             WHERE  `id` IN($hidde_deal_id)");
+    	            
+    	            $deal_id = mysql_fetch_array(mysql_query("SELECT deals_id
+                                            	              FROM   deals_detail
+                                            	              WHERE  deals_detail.id IN($hidde_deal_id)
+                                            	              LIMIT  1"));
+    	            
+    	            $check = mysql_num_rows(mysql_query("SELECT id
+                                        	             FROM   deals_detail
+                                        	             WHERE  deals_detail.deals_id = $deal_id[deals_id]
+                                        	             AND    `status` = 0
+                                        	             LIMIT   1"));
+    	            
+    	            if ($check == 0) {
+    	                mysql_query("UPDATE client_loan_schedule_deal
+                	                    SET deal_status = 2
+                	                 WHERE  `id` = $deal_id[deals_id]");
+    	            }
+    	        }
+    	    }
     	    
     	    if (($root>0 || $percent>0) && $type_id != 4) {
     	        
@@ -825,10 +873,10 @@ function Add($hidde_transaction_id, $hidde_id, $transaction_date, $month_fee, $c
                          AND     money_transactions_detail.`status` = 3
                          AND     money_transactions_detail.actived = 1");
     	    
-    	    if ($hidde_deal_id > 0) {
-    	        mysql_query("UPDATE `client_loan_schedule_deal`
+    	    if ($hidde_deal1_id > 0) {
+    	       mysql_query("UPDATE `client_loan_schedule_deal`
                                 SET `deal_status` = '1'
-                             WHERE  `id`          = '$hidde_deal_id'");
+    	                     WHERE  `id`          = '$hidde_deal1_id'");
     	        
     	       mysql_query("UPDATE  `client_loan_schedule`
             	             JOIN     client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
@@ -846,10 +894,56 @@ function Add($hidde_transaction_id, $hidde_id, $transaction_date, $month_fee, $c
     	        if ($hidde_deal_id > 0) {
     	            mysql_query("UPDATE `deals_detail`
     	                            SET `status` = '1'
-    	                         WHERE  `id`     = '$hidde_deal_id'");
+    	                         WHERE  `id` IN($hidde_deal_id)");
+    	            
+    	            $deal_id = mysql_fetch_array(mysql_query("  SELECT deals_id
+                                            	                FROM   deals_detail
+                                            	                WHERE  deals_detail.id IN($hidde_deal_id)
+                                            	                LIMIT  1"));
+    	            
+    	            $check = mysql_num_rows(mysql_query("   SELECT id
+                                        	                FROM   deals_detail
+                                        	                WHERE  deals_detail.deals_id = $deal_id[deals_id]
+                                        	                AND    `status` = 0
+                                        	                LIMIT   1"));
+    	            
+    	            if ($check == 0) {
+    	                mysql_query("UPDATE client_loan_schedule_deal
+                	                    SET deal_status = 2
+                	                 WHERE `id` = $deal_id[deals_id]");
+    	            }
     	        }
     	    }
     	    
+    	    if ($deal_Fee>0 && $type_id != 4){
+    	        mysql_query("INSERT INTO `money_transactions_detail`
+                        	            (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
+                        	      VALUES
+                        	            (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '$deal_Fee', '$course', '$currency_id', '$received_currency_id', '', '', '1', '13', 1)");
+    	        
+    	        if ($hidde_deal_id > 0) {
+    	            mysql_query("UPDATE `deals_detail`
+                	                SET `status` = '1'
+                	            WHERE   `id` IN($hidde_deal_id)");
+    	            
+    	            $deal_id = mysql_fetch_array(mysql_query("  SELECT deals_id
+                                            	                FROM   deals_detail
+                                            	                WHERE  deals_detail.id IN($hidde_deal_id)
+                                            	                LIMIT  1"));
+    	            
+    	            $check = mysql_num_rows(mysql_query("   SELECT id
+                                        	                FROM   deals_detail
+                                        	                WHERE  deals_detail.deals_id = $deal_id[deals_id]
+                                        	                AND    `status` = 0
+                                        	                LIMIT   1"));
+    	            
+    	            if ($check == 0) {
+    	                mysql_query("UPDATE client_loan_schedule_deal
+                	                    SET deal_status = 2
+                	                 WHERE `id` = $deal_id[deals_id]");
+    	            }
+    	        }
+    	    }
     	    //მეტობა სესხი
     	    if ($surplus_type==1) {
     	        if ($attachment_client_id>0) {
@@ -1037,10 +1131,10 @@ function Add($hidde_transaction_id, $hidde_id, $transaction_date, $month_fee, $c
             	                  AND     money_transactions_detail.`status` = 3
             	                  AND     money_transactions_detail.actived = 1");
     	            
-    	            if ($hidde_deal_id > 0) {
+    	            if ($hidde_deal1_id > 0) {
             	        mysql_query("UPDATE `client_loan_schedule_deal`
                                         SET `deal_status` = '1'
-                                     WHERE  `id`          = '$hidde_deal_id'");
+            	                     WHERE  `id`          = '$hidde_deal1_id'");
             	        
             	        mysql_query("UPDATE  `client_loan_schedule`
                     	             JOIN     client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
@@ -1048,16 +1142,33 @@ function Add($hidde_transaction_id, $hidde_id, $transaction_date, $month_fee, $c
                     	             WHERE   `client_loan_schedule`.schedule_date <= '$transaction_date' AND client_loan_agreement.client_id = '$client_id' AND client_loan_schedule.id >= '$res1[id]'");
             	    }
             	    
-            	    if ($deal_Fee>0){
+            	    if ($deal_Fee>0 && $type_id != 4){
             	        mysql_query("INSERT INTO `money_transactions_detail`
                                 	            (`datetime`, `user_id`, `transaction_id`, `pay_datetime`, `pay_amount`, `course`, `currency_id`, `received_currency_id`, `pay_root`, `pay_percent`, `type_id`, `status`, `actived`)
                                 	      VALUES
-                                	            (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '$deal_Fee', '$course', '$currency_id', '$received_currency_id', '', '', '$type_id', '13', 1)");
+                                	            (NOW(), '$user_id', '$hidde_transaction_id', '$transaction_date', '$deal_Fee', '$course', '$currency_id', '$received_currency_id', '', '', '1', '13', 1)");
             	    
             	        if ($hidde_deal_id > 0) {
             	            mysql_query("UPDATE `deals_detail`
             	                            SET `status` = '1'
-            	                         WHERE  `id`     = '$hidde_deal_id'");
+            	                         WHERE  `id` IN($hidde_deal_id)");
+            	            
+            	            $deal_id = mysql_fetch_array(mysql_query("  SELECT deals_id
+                                                    	                FROM   deals_detail
+                                                    	                WHERE  deals_detail.id IN($hidde_deal_id)
+                                                    	                LIMIT  1"));
+            	            
+            	            $check = mysql_num_rows(mysql_query("   SELECT id
+                                                	                FROM   deals_detail
+                                                	                WHERE  deals_detail.deals_id = $deal_id[deals_id]
+                                                	                AND    `status` = 0
+                                                	                LIMIT   1"));
+            	            
+            	            if ($check == 0) {
+            	                mysql_query("UPDATE client_loan_schedule_deal
+                        	                    SET deal_status = 2
+                        	                 WHERE `id` = $deal_id[deals_id]");
+            	            }
             	        }
             	    }
     	             
@@ -2216,8 +2327,10 @@ function GetPage($res = ''){
 			<input type="hidden" id="idd" value="' . $res['id'] . '" />
 			<input type="hidden" id="hidde_status" value="' . $res['status'] . '" />
 			<input type="hidden" id="hidde_new_percent" value="' . $res['status'] . '" />
+
 			<input type="hidden" id="hidde_deal_id" value="" />
-			    
+			<input type="hidden" id="hidde_deal1_id" value="" />  
+  
 			<input type="hidden" id="hidde_root" value="0" />
 	        <input type="hidden" id="hidde_percent" value="0" />
             <input type="hidden" id="hidde_penalty" value="0" />

@@ -3,6 +3,7 @@
 	<script type="text/javascript">
 		var aJaxURL	            = "server-side/view/deal.action.php";
 		var aJaxURL_detail      = "server-side/view/deal_detail.action.php";
+		var aJaxURL_detail_daricxva = "server-side/view/deal_daricxva.action.php";
 		var aJaxURL_show_letter = "server-side/main.action.php";		//server side folder url
 		var tName	            = "example";													//table name
 		var fName	            = "add-edit-form";	
@@ -67,8 +68,13 @@
 
     			LoadTable('table_deal_amount',5,'get_list',"<'F'Cpl>",aJaxURL_detail, '&hidde_inc_id='+$("#hidde_inc_id").val(), '');
          		$("#table_deal_amount_length").css('top', '2px');
-         		SetEvents("add_deal_amount", "delete_deal_amount", "check-all_deals", 'table_deal_amount', 'add-edit-form-deals_det', aJaxURL_detail,'','table_deal_amount',5,'get_list',"<'F'Cpl>",aJaxURL_detail,'');
+         		SetEvents("add_deal_amount", "delete_deal_amount", "check-all_deals", 'table_deal_amount', 'add-edit-form-deals_det', aJaxURL_detail,'','table_deal_amount',5,'get_list',"<'F'Cpl>",aJaxURL_detail,'&hidde_inc_id='+$("#hidde_inc_id").val());
             	GetButtons("add_deal_amount","delete_deal_amount");
+
+            	LoadTable('table_deal_dasaricxi',3,'get_list',"<'F'Cpl>",aJaxURL_detail_daricxva, '&hidde_inc_id='+$("#hidde_inc_id").val(), '');
+         		$("#table_deal_dasaricxi_length").css('top', '2px');
+         		SetEvents("add_deal_dasaricxi", "delete_deal_dasaricxi", "check-all_deals_daricxva", 'table_deal_dasaricxi', 'add-edit-form-deals_daricxva', aJaxURL_detail_daricxva,'','table_deal_dasaricxi',3,'get_list',"<'F'Cpl>",aJaxURL_detail_daricxva,'&hidde_inc_id='+$("#hidde_inc_id").val());
+            	GetButtons("add_deal_dasaricxi","delete_deal_dasaricxi");
             	
     		}else if(fname=='add-edit-form-deals_det'){
     			var buttons = {
@@ -88,6 +94,23 @@
 				GetDateTimes("deal_amount_payed_date");
 				$("#deal_amount").focus();
 				GetDateTimes('deals_penalty_date');
+        	}else if(fname=='add-edit-form-deals_daricxva'){
+    			var buttons = {
+						"save": {
+				            text: "შენახვა",
+				            id: "save-deals_daricxva_amount"
+				        },
+			        	"cancel": {
+				            text: "დახურვა",
+				            id: "cancel-dialog",
+				            click: function () {
+				            	$(this).dialog("close");
+				            }
+				        }
+				    };
+				GetDialog('add-edit-form-deals_daricxva', 400, "auto", buttons,"top");
+				GetDateTimes("deal_amount_daricxva_date");
+				$("#deal_daricxva_amount").focus();
         	}
 		}
 
@@ -161,8 +184,10 @@
 		    param.hidde_inc_id           = $("#hidde_inc_id").val();
 		    param.deal_amount_payed_date = $("#deal_amount_payed_date").val();
 	    	param.deal_amount		     = $("#deal_amount").val();
+	    	param.deal_root_amount		 = $("#deal_root_amount").val();
 	    	param.deals_penalty		     = $("#deals_penalty").val();
 	    	param.deals_penalty_date	 = $("#deals_penalty_date").val();
+	    	param.comment	             = $("#comment").val();
 	    	
 
             if(param.deal_amount_payed_date == ''){
@@ -188,6 +213,40 @@
             }
 		});
 
+		$(document).on("click", "#save-deals_daricxva_amount", function () {
+		    
+		    param 					     = new Object();
+		    param.act		             = "save_deal_det";
+		    param.id		             = $("#deal_daricxva_id").val();
+		    param.hidde_inc_id           = $("#hidde_inc_id").val();
+		    param.deal_amount_payed_date = $("#deal_amount_daricxva_date").val();
+	    	param.deal_amount		     = $("#deal_daricxva_amount").val();
+	    	param.comment	             = $("#daricxva_comment").val();
+	    	
+
+            if(param.deal_amount_payed_date == ''){
+                alert('შეავსე თარიღი');
+            }else if(param.deal_amount== ''){
+            	alert('შეავსე თანხა');
+            }else{
+    	    	$.ajax({
+    		        url: aJaxURL_detail_daricxva,
+    			    data: param,
+    		        success: function(data) {			        
+    					if(typeof(data.error) != 'undefined'){
+    						if(data.error != ''){
+    							alert(data.error);
+    						}else{
+    							LoadTable('table_deal_dasaricxi',3,'get_list',"<'F'Cpl>",aJaxURL_detail_daricxva, '&hidde_inc_id='+$("#hidde_inc_id").val(), '');
+    							$('#add-edit-form-deals_daricxva').dialog('close');
+    			         		$("#table_deal_dasaricxi_length").css('top', '2px');
+    			        	}
+    					}
+    			    }
+    		    });
+            }
+		});
+		
 		$(document).on("click", "#done-dialog", function () {
 		    
 		    param 					   = new Object();
@@ -622,6 +681,7 @@
 	</div>
 	<div id="add-edit-show_letter" class="form-dialog" title="შეთანხმება"></div>
 	<div id="add-edit-form-deals_det" class="form-dialog" title="შეთანხმების თანხა"></div>
+	<div id="add-edit-form-deals_daricxva" class="form-dialog" title="შეთანხმების თანხა "></div>
 </body>
 </html>
 

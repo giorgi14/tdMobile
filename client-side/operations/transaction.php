@@ -548,6 +548,7 @@
 	    	param.hidde_transaction_id = $("#hidde_transaction_id").val();
 	    	param.hidde_status         = $("#hidde_status").val();
 	    	param.hidde_deal_id        = $("#hidde_deal_id").val();
+	    	param.hidde_deal1_id        = $("#hidde_deal1_id").val();
 
 	    	
 
@@ -916,7 +917,8 @@
 	    							$("#root1").val(data.root);
 	    							$("#percent1").val(data.percent);
 	    							$("#penalti_fee1").val(data.penalty);
-
+	    							$("#hidde_deal_id").val(data.deal_id);
+	    							$("#hidde_deal1_id").val(data.deal1_id);
 	    							$("#month_fee2").val(data.pay_amount1);
 	    							$("#root2").val(data.root1);
 	    							$("#percent2").val(data.percent1);
@@ -981,6 +983,7 @@
         							$("#hidde_id").val(data.id);
         							$("#other_payed1").val(data.other_amount);
         							$("#hidde_deal_id").val(data.deal_id);
+        							
         							$("#deal_Fee1").val(data.deal_amount);
         							$('#currency_id').prop('disabled', true).trigger("chosen:updated");
         							$('#attachment_client_id').html(data.client_attachment_data).trigger("chosen:updated");
@@ -1201,6 +1204,7 @@
 	    							$("#hidde_id").val(data.id);
 	    							$("#other_payed1").val(data.other_amount);
 	    							$("#hidde_deal_id").val(data.deal_id);
+	    							$("#hidde_deal1_id").val(data.deal1_id);
 	    							$("#deal_Fee1").val(data.deal_amount);
 	    							$('#currency_id').prop('disabled', true).trigger("chosen:updated");
 								}
@@ -1320,6 +1324,7 @@
     							$("#info_mesage").html(data.info_message);
     							$("#other_payed1").val(data.other_amount);
     							$("#hidde_deal_id").val(data.deal_id);
+    							$("#hidde_deal1_id").val(data.deal1_id);
     							$("#deal_Fee1").val(data.deal_amount);
     							extra_fee = data.loan_pay_amount;
     							if(data.loan_pay_amount==''){
@@ -1440,6 +1445,7 @@
     							$("#info_mesage").html(data.info_message);
     							$("#other_payed1").val(data.other_amount);
     							$("#hidde_deal_id").val(data.deal_id);
+    							$("#hidde_deal1_id").val(data.deal1_id);
     							$("#deal_Fee1").val(data.deal_amount);
     							
     							$("#month_fee").val(data.loan_pay_amount);

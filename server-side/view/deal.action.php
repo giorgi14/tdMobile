@@ -104,7 +104,7 @@ switch ($action) {
                                          IF(client.`name`='',client.ltd_name,CONCAT(client.`name`,' ',client.`lastname`)),
                                          CONCAT('სხ ',IFNULL(client_loan_agreement.agreement_id,client_loan_agreement.oris_code)),
                                          client_loan_agreement.oris_code,
-                                         SUM(deals_detail.amount),
+                                         ROUND(SUM(deals_detail.amount+deals_detail.root),2),
                                          CASE
                             		        WHEN client_loan_schedule_deal.deal_status = 0 THEN 'პირველადი'
                                 		    WHEN client_loan_schedule_deal.deal_status = 1 THEN 'მიმდინარე'
@@ -568,51 +568,96 @@ function GetPage($res = ''){
         				<tr style="height:20px;"></tr>
         			</table>
     			</fieldset>
-        		<fieldset>
-                        <legend>შეთანხმების თანხა</legend>
-                        <div id="button_area">
-                        	<button id="add_deal_amount">დამატება</button>
-                        	<button id="delete_deal_amount">წაშლა</button>
-                        </div>
-                        <table class="display" id="table_deal_amount" style="width: 100%;">
-                            <thead>
-                                <tr id="datatable_header">
-                                    <th>ID</th>
-        						    <th style="width: 30%;">თარიღი</th>
-        						    <th style="width: 20%;">თანხა</th>
-            	                    <th style="width: 20%;">ჯარიმა</th>
-                                    <th style="width: 30%;">სტატუსი</th>
-                                    <th style="width: 25px;">#</th>
-                                </tr>
-                            </thead>
-                            <thead>
-                                <tr class="search_header">
-                                    <th class="colum_hidden">
-                                	   <input type="text" name="search_id" value="ფილტრი" class="search_init" />
-                                    </th>
-                                    <th>
-                                    	<input type="text" name="search_number" value="ფილტრი" class="search_init" />
-                                    </th>
-            	                    <th>
-                                    	<input type="text" name="search_number" value="ფილტრი" class="search_init" />
-                                    </th>
-        						    <th>
-                                    	<input type="text" name="search_number" value="ფილტრი" class="search_init" />
-                                    </th>
-            	                    <th>
-                                    	<input type="text" name="search_number" value="ფილტრი" class="search_init" />
-                                    </th>
-                                    <th style="border-right: 1px solid #A3D0E4;">
-                                        <div class="callapp_checkbox">
-                                            <input type="checkbox" id="check-all_deals" name="check-all_deals" />
-                                            <label for="check-all_deals"></label>
+        		      <table>
+                            <tr>
+                                <td style="width:60%;"> 
+                                    <fieldset>
+                                        <legend>შეთანხმების თანხა</legend>
+                                        <div id="button_area">
+                                        	<button id="add_deal_amount">დამატება</button>
+                                        	<button id="delete_deal_amount">წაშლა</button>
                                         </div>
-                                    </th>            
-                                </tr>
-                            </thead>
-                       </table>
-                    </fieldset>
-    			<fieldset>
+                                        <table class="display" id="table_deal_amount" style="width: 100%;">
+                                            <thead>
+                                                <tr id="datatable_header">
+                                                    <th>ID</th>
+                        						    <th style="width: 30%;">თარიღი</th>
+                        						    <th style="width: 20%;">თანხა</th>
+                            	                    <th style="width: 20%;">ჯარიმა</th>
+                                                    <th style="width: 30%;">სტატუსი</th>
+                                                    <th style="width: 25px;">#</th>
+                                                </tr>
+                                            </thead>
+                                            <thead>
+                                                <tr class="search_header">
+                                                    <th class="colum_hidden">
+                                                	   <input type="text" name="search_id" value="ფილტრი" class="search_init" />
+                                                    </th>
+                                                    <th>
+                                                    	<input type="text" name="search_number" value="ფილტრი" class="search_init" />
+                                                    </th>
+                            	                    <th>
+                                                    	<input type="text" name="search_number" value="ფილტრი" class="search_init" />
+                                                    </th>
+                        						    <th>
+                                                    	<input type="text" name="search_number" value="ფილტრი" class="search_init" />
+                                                    </th>
+                            	                    <th>
+                                                    	<input type="text" name="search_number" value="ფილტრი" class="search_init" />
+                                                    </th>
+                                                    <th style="border-right: 1px solid #A3D0E4;">
+                                                        <div class="callapp_checkbox">
+                                                            <input type="checkbox" id="check-all_deals" name="check-all_deals" />
+                                                            <label for="check-all_deals"></label>
+                                                        </div>
+                                                    </th>            
+                                                </tr>
+                                            </thead>
+                                        </table>
+                                    </fieldset>
+                                </td>
+                                <td  style="width:40%;">
+                                    <fieldset>
+                                        <legend>შეთანხმების შეთანხმება</legend>
+                                        <div id="button_area">
+                                        	<button id="add_deal_dasaricxi">დამატება</button>
+                                        	<button id="delete_deal_dasaricxi">წაშლა</button>
+                                        </div>
+                                        <table class="display" id="table_deal_dasaricxi" style="width: 100%;">
+                                            <thead>
+                                                <tr id="datatable_header">
+                                                    <th>ID</th>
+                        						    <th style="width: 60%;">თარიღი</th>
+                        						    <th style="width: 40%;">თანხა</th>
+                                                    <th style="width: 25px;">#</th>
+                                                </tr>
+                                            </thead>
+                                            <thead>
+                                                <tr class="search_header">
+                                                    <th class="colum_hidden">
+                                                	   <input type="text" name="search_id" value="ფილტრი" class="search_init" />
+                                                    </th>
+                                                    <th>
+                                                    	<input type="text" name="search_number" value="ფილტრი" class="search_init" />
+                                                    </th>
+                            	                    <th>
+                                                    	<input type="text" name="search_number" value="ფილტრი" class="search_init" />
+                                                    </th>
+                                                    <th style="border-right: 1px solid #A3D0E4;">
+                                                        <div class="callapp_checkbox">
+                                                            <input type="checkbox" id="check-all_deals_daricxva" name="check-all_deals_daricxva" />
+                                                            <label for="check-all_deals_daricxva"></label>
+                                                        </div>
+                                                    </th>            
+                                                </tr>
+                                            </thead>
+                                        </table>
+                                    </fieldset>
+                                </td>
+                            </tr>
+                        </table>
+                    
+    			 <fieldset>
     				<legend>შეთანხმების საფუძველზე მიმდინარე გადასახადი</legend>
         			<table class="dialog-form-table">
         				<tr>
