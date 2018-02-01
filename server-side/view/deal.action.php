@@ -290,6 +290,10 @@ switch ($action) {
                             `deal_status` = '2'
                      WHERE  `id`          = '$id'");
 	    
+	    mysql_query("UPDATE deals_detail
+                       SET `status`  = 1
+                     WHERE  deals_id = $id");
+	    
 	
 	    break;
 	case 'disable':
