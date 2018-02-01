@@ -265,9 +265,10 @@
     						if(data.error != ''){
     							alert(data.error);
     						}else{
-    							LoadTable(tName,8,change_colum_main,aJaxURL);
+    							
     			        		CloseDialog(fName);
     			        		alert('შეთანხმება წარმატებით დასრულდა');
+    			        		LoadTable(tName,8,'get_list', change_colum_main,aJaxURL,"&agr_id="+$("#filt_agr_id").val(),'');
     						}
     					}
     			    }
