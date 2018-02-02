@@ -3981,7 +3981,7 @@ switch ($action) {
         }
 
         
-       $deal = mysql_fetch_array(mysql_query("SELECT IFNULL(SUM(deals_detail.amount),0) AS `deal_amount`
+       $deal = mysql_fetch_array(mysql_query("SELECT IFNULL(SUM(deals_detail.amount+deals_detail.penalty),0) AS `deal_amount`
                                               FROM   client_loan_schedule_deal
                                               JOIN   deals_detail ON deals_detail.deals_id = client_loan_schedule_deal.id
                                               JOIN   client_loan_schedule ON client_loan_schedule.id = client_loan_schedule_deal.schedule_id

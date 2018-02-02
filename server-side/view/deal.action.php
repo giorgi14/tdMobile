@@ -78,7 +78,7 @@ switch ($action) {
                 
                 $gadacilebuli_day_count = $gadacilebuli_day_count - $check_holliday_day[count];
                 
-                if ($gadacilebuli_day_count <= $check_penalty[grace_period_caunt]){
+                if ($gadacilebuli_day_count > 0 && $gadacilebuli_day_count <= $check_penalty[grace_period_caunt]){
                     $penalty = 0;
                 }else{
                     $gadacilebuli_day_count=$gadacilebuli_day_count - $check_penalty[grace_period_caunt];
@@ -229,7 +229,7 @@ switch ($action) {
                                                                     AND    DATE(date)< '$transaction_date'"));
                 
                $gadacilebuli_day_count = $gadacilebuli_day_count - $check_holliday_day[count];
-               if ($gadacilebuli_day_count <= $check_penalty[grace_period_caunt]){
+               if ($gadacilebuli_day_count > 0 && $gadacilebuli_day_count <= $check_penalty[grace_period_caunt]){
                    $penalty = 0;
                }else{
                    $gadacilebuli_day_count=$gadacilebuli_day_count - $check_penalty[grace_period_caunt];
