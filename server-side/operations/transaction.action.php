@@ -972,7 +972,7 @@ switch ($action) {
             
             $res_deal = mysql_fetch_array($check_deal);
             
-            $data = array('status' => 4, 'id' => $res_deal[id], 'deal_end_date' => $res_deal[deal_end_date], 'deal_id' => $res_deal[deal_id], 'client_data' => client($check_client[client_id]), 'client_attachment_data' => client_attachment($check_client[agreement_id], $check_client[client_id]), 'agrement_data' => client_loan_number($check_client[id]), 'deal_amount' => $res_deal[deal_amount], 'pay_amount1' => $res1[pay_amount], 'loan_pay_amount' => $loan_pay_amount);
+            $data = array('status' => 4, 'id' => $res_deal[id], 'deal_end_date' => $res_deal[deal_end_date], 'deal_id' => $res_deal[deal_id], 'client_data' => client($check_client[client_id]), 'client_attachment_data' => client_attachment($check_client[agreement_id], $check_client[client_id]), 'agrement_data' => client_loan_number($check_client[id]), 'deal_amount' => $res_deal[deal_amount], 'pay_amount1' => $res1[pay_amount], 'loan_pay_amount' => $loan_pay_amount, 'currenc' => currency($check_client['loan_currency_id']));
 		}
 		
 		break;

@@ -510,9 +510,13 @@
 
 	    	param.month_fee_trasaction = $("#month_fee_trasaction").val();
 	    	param.extra_fee            = $("#extra_fee").val();
-	    	
-	    	param.currency_id	       = $("#currency_id").val();
-	    	param.received_currency_id = $('#received_currency_id').val();
+	    	if(param.type_id == 1 || param.type_id == 4){
+    	    	param.currency_id	       = $("#currency_id").val();
+    	    	param.received_currency_id = $('#received_currency_id').val();
+	    	}else{
+	    		param.currency_id	       = $("#currency_id").val();
+    	    	param.received_currency_id = $('#received_currency_id').val();
+		    }
 	    	param.course	           = $("#course").val();
 	    	param.course_pledge	       = $("#course").val();
 	    	param.transaction_date	   = $("#transaction_date").val();
@@ -985,6 +989,7 @@
         							$("#hidde_deal_id").val(data.deal_id);
         							
         							$("#deal_Fee1").val(data.deal_amount);
+        							$("#currency_id").html(data.currenc).trigger("chosen:updated");
         							$('#currency_id').prop('disabled', true).trigger("chosen:updated");
         							$('#attachment_client_id').html(data.client_attachment_data).trigger("chosen:updated");
         							$('#client_loan_number').html(data.agrement_data).trigger("chosen:updated");
@@ -1389,6 +1394,7 @@
     							$("#other_payed1").val(data.other_amount);
     							$("#hidde_deal_id").val(data.deal_id);
     							$("#deal_Fee1").val(data.deal_amount);
+    							$("#currency_id").html(data.currenc).trigger("chosen:updated");
     							$('#currency_id').prop('disabled', true).trigger("chosen:updated");
     							$('#attachment_client_id').html(data.client_attachment_data).trigger("chosen:updated");
     							$('#client_loan_number').html(data.agrement_data).trigger("chosen:updated");
