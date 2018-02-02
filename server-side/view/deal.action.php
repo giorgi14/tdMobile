@@ -35,6 +35,7 @@ switch ($action) {
 	
         $check_penalty = mysql_fetch_array(mysql_query("SELECT   client_loan_agreement.penalty_days,
                                                 	             client_loan_agreement.penalty_percent,
+                                                                 client_loan_agreement.grace_period_caunt,
                                                 	             client_loan_agreement.penalty_additional_percent,
                                                 	             MAX(client_loan_schedule.root + client_loan_schedule.remaining_root) AS remaining_root
                                         	             
@@ -76,16 +77,22 @@ switch ($action) {
                                                                      AND    DATE(date)< '$deal_penalty_end'"));
                 
                 $gadacilebuli_day_count = $gadacilebuli_day_count - $check_holliday_day[count];
-                if ($i == 1) {
-                    if ($gadacilebuli_day_count>0 && $gadacilebuli_day_count<=$check_penalty[penalty_days]) {
-                        
-                        $penalty1 = round(($remaining_root * ($check_penalty[penalty_percent]/100))*$gadacilebuli_day_count,2);
-                    }elseif ($gadacilebuli_day_count>0 && $gadacilebuli_day_count>$check_penalty[penalty_days] && $check_penalty[penalty_additional_percent] > 0){
-                        $penalty1 = round((($remaining_root * ($check_penalty[penalty_percent]/100))*$check_penalty[penalty_days])+(($remaining_root * ($check_penalty[penalty_additional_percent]/100))*($gadacilebuli_day_count-$check_penalty[penalty_days])),2);
-                    }
+                
+                if ($gadacilebuli_day_count <= $check_penalty[grace_period_caunt]){
+                    $penalty = 0;
                 }else{
-                    $penalty1 = round(($remaining_root * ($check_penalty[penalty_additional_percent]/100))*($gadacilebuli_day_count),2);
-                    
+                    $gadacilebuli_day_count=$gadacilebuli_day_count - $check_penalty[grace_period_caunt];
+                    if ($i == 1) {
+                        if ($gadacilebuli_day_count>0 && $gadacilebuli_day_count<=$check_penalty[penalty_days]) {
+                            
+                            $penalty1 = round(($remaining_root * ($check_penalty[penalty_percent]/100))*$gadacilebuli_day_count,2);
+                        }elseif ($gadacilebuli_day_count>0 && $gadacilebuli_day_count>$check_penalty[penalty_days] && $check_penalty[penalty_additional_percent] > 0){
+                            $penalty1 = round((($remaining_root * ($check_penalty[penalty_percent]/100))*$check_penalty[penalty_days])+(($remaining_root * ($check_penalty[penalty_additional_percent]/100))*($gadacilebuli_day_count-$check_penalty[penalty_days])),2);
+                        }
+                    }else{
+                        $penalty1 = round(($remaining_root * ($check_penalty[penalty_additional_percent]/100))*($gadacilebuli_day_count),2);
+                        
+                    }
                 }
             }
             $i++;
@@ -164,6 +171,7 @@ switch ($action) {
                                                     	             MAX(client_loan_schedule.root + client_loan_schedule.remaining_root) AS remaining_root,
                                                     	             client_loan_agreement.id AS `agreement_id`,
                                                     	             client_loan_agreement.client_id AS `client_id`,
+                                                                     client_loan_agreement.grace_period_caunt,
                                                     	             client_loan_agreement.loan_currency_id
                                             	            FROM     client_loan_schedule
                                             	            JOIN     client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
@@ -221,19 +229,23 @@ switch ($action) {
                                                                     AND    DATE(date)< '$transaction_date'"));
                 
                $gadacilebuli_day_count = $gadacilebuli_day_count - $check_holliday_day[count];
-               if ($i == 1) {
-                   if ($gadacilebuli_day_count>0 && $gadacilebuli_day_count<=$row[penalty_days]) {
-                       $penalty1 = round(($remaining_root * ($row[penalty_percent]/100))*$gadacilebuli_day_count,2);
-                   }elseif ($gadacilebuli_day_count>0 && $gadacilebuli_day_count>$row[penalty_days] && $row[penalty_additional_percent] > 0){
-                       $penalty1 = round((($remaining_root * ($row[penalty_percent]/100))*$row[penalty_days])+($remaining_root * ($row[penalty_additional_percent]/100))*($gadacilebuli_day_count-$row[penalty_days]),2);
-                   }
+               if ($gadacilebuli_day_count <= $check_penalty[grace_period_caunt]){
+                   $penalty = 0;
                }else{
-                   $penalty1 = round(($remaining_root * ($row[penalty_additional_percent]/100))*($gadacilebuli_day_count),2);
+                   $gadacilebuli_day_count=$gadacilebuli_day_count - $check_penalty[grace_period_caunt];
+                   if ($i == 1) {
+                       if ($gadacilebuli_day_count>0 && $gadacilebuli_day_count<=$row[penalty_days]) {
+                           $penalty1 = round(($remaining_root * ($row[penalty_percent]/100))*$gadacilebuli_day_count,2);
+                       }elseif ($gadacilebuli_day_count>0 && $gadacilebuli_day_count>$row[penalty_days] && $row[penalty_additional_percent] > 0){
+                           $penalty1 = round((($remaining_root * ($row[penalty_percent]/100))*$row[penalty_days])+($remaining_root * ($row[penalty_additional_percent]/100))*($gadacilebuli_day_count-$row[penalty_days]),2);
+                       }
+                   }else{
+                       $penalty1 = round(($remaining_root * ($row[penalty_additional_percent]/100))*($gadacilebuli_day_count),2);
+                   }
+                   
+                   $penalty += $penalty1;
+                   $i++;
                }
-               
-               
-               $penalty += $penalty1;
-               $i++;
            }
             $res1 = mysql_fetch_assoc(mysql_query("SELECT   IFNULL(ROUND(SUM(
                                            	                CASE
