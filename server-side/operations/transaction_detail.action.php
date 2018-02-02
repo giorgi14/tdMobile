@@ -565,12 +565,10 @@ function Add($hidde_transaction_id, $hidde_id, $transaction_date, $month_fee, $c
     	        
     	        mysql_query("UPDATE  `client_loan_schedule`
             	             JOIN     client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
-            	               SET    client_loan_schedule.`deal`   = 1
+            	               SET    client_loan_schedule.`deal`   = 1,
+                                      client_loan_schedule.`status` = 1
             	             WHERE   `client_loan_schedule`.schedule_date <= '$transaction_date' AND client_loan_agreement.client_id = '$client_id' AND client_loan_schedule.id >= '$res1[id]'");
     	        
-    	        mysql_query("UPDATE  `client_loan_schedule`
-                	            SET  `status` = '1'
-                	          WHERE  `id`     = '$res1[id]'");
     	    }
     	    
     	    if (($deal_Fee>0 || $root>0)  && $type_id == 4){
@@ -888,7 +886,8 @@ function Add($hidde_transaction_id, $hidde_id, $transaction_date, $month_fee, $c
     	        
     	       mysql_query("UPDATE  `client_loan_schedule`
             	             JOIN     client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
-            	               SET    client_loan_schedule.`deal`   = 1
+            	               SET    client_loan_schedule.`deal`   = 1,
+                                      client_loan_schedule.`status` = 1
             	             WHERE   `client_loan_schedule`.schedule_date <= '$transaction_date' AND client_loan_agreement.client_id = '$client_id' AND client_loan_schedule.id >= '$res1[id]'");
     	        
     	    }
@@ -1150,7 +1149,8 @@ function Add($hidde_transaction_id, $hidde_id, $transaction_date, $month_fee, $c
             	        
             	        mysql_query("UPDATE  `client_loan_schedule`
                     	             JOIN     client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
-                    	               SET    client_loan_schedule.`deal`   = 1
+                    	               SET    client_loan_schedule.`deal`   = 1,
+                                              client_loan_schedule.`status` = 1
                     	             WHERE   `client_loan_schedule`.schedule_date <= '$transaction_date' AND client_loan_agreement.client_id = '$client_id' AND client_loan_schedule.id >= '$res1[id]'");
             	    }
             	    
