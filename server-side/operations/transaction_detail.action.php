@@ -1615,6 +1615,15 @@ function Add1($tr_id, $hidde_id, $transaction_date, $pledge_or_other_payed, $ple
                               VALUES
                                     (NOW(), '$user_id', '$tr_id', '$transaction_date', '$pledge_or_other_payed', '$course', '$currency_id', '$received_currency_id', '', '', '3', '11', 1)");
         }
+        
+        mysql_query(" UPDATE  money_transactions_detail
+                      JOIN    money_transactions ON money_transactions.id = money_transactions_detail.transaction_id
+                      JOIN    client_loan_agreement ON client_loan_agreement.id = money_transactions.agreement_id
+                         SET  money_transactions_detail.actived = 0,
+                              money_transactions_detail.balance_transaction_id = '$tr_id'
+                      WHERE   client_loan_agreement.client_id = '$client_id'
+                      AND     money_transactions_detail.`status` = 3
+                      AND     money_transactions_detail.actived = 1");
         //მეტობა სესხი
         if ($surplus_type==1) {
             if ($attachment_client_id>0) {
