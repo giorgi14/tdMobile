@@ -893,6 +893,19 @@ switch ($action) {
                                         		         AND    money_transactions_detail.actived = 1
                                         		         AND    money_transactions_detail.`status` = 11"));
 		    
+		    $res1 = mysql_fetch_assoc(mysql_query("SELECT  IFNULL(ROUND(SUM(
+                                            		       CASE
+                                                		       WHEN money_transactions_detail.currency_id = client_loan_agreement.loan_currency_id THEN money_transactions_detail.pay_amount
+                                                		       WHEN money_transactions_detail.currency_id !=client_loan_agreement.loan_currency_id AND money_transactions_detail.currency_id = 1 THEN money_transactions_detail.pay_amount/money_transactions_detail.course
+                                                		       WHEN money_transactions_detail.currency_id !=client_loan_agreement.loan_currency_id AND money_transactions_detail.currency_id = 2 THEN money_transactions_detail.pay_amount*money_transactions_detail.course
+                                            		       END),2),0) AS pay_amount
+                                		           FROM    money_transactions_detail
+                                		           JOIN    money_transactions ON money_transactions.id = money_transactions_detail.transaction_id
+                                		           JOIN    client ON client.id = money_transactions.client_id
+                                		           JOIN    client_loan_agreement ON client_loan_agreement.id = money_transactions.agreement_id
+                                		           WHERE   (client.id = '$id' OR client_loan_agreement.id = '$agr_id')
+                                		           AND     money_transactions_detail.`status` = 3
+                                		           AND     money_transactions_detail.actived = 1"));
 		    
 		    $other_pay = round($res_other[pay_amount] - $res_other1[pay_amount],2);
 		    
@@ -907,7 +920,7 @@ switch ($action) {
                                                             JOIN   client ON client.id = client_loan_agreement.client_id
                                                             WHERE  client.id = '$id' OR client_loan_agreement.id = '$agr_id';"));
 		    
-		    $data = array('status'=>3, 'client_data' => client($check_client[client_id]), 'client_attachment_data' => client_attachment($check_client[agreement_id], $check_client[client_id]), 'agrement_data' => client_loan_number($check_client[id]), 'other_pay' => $other_pay);
+		    $data = array('status'=>3, 'client_data' => client($check_client[client_id]), 'client_attachment_data' => client_attachment($check_client[agreement_id], $check_client[client_id]), 'agrement_data' => client_loan_number($check_client[id]), 'other_pay' => $other_pay, 'pay_amount1' => $res1[pay_amount]);
 		}elseif ($type_id == 4){
 		    
 		    $check_client = mysql_fetch_array(mysql_query("SELECT  client_loan_agreement.id, 

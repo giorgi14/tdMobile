@@ -1374,6 +1374,13 @@
     							$('#attachment_client_id').html(data.client_attachment_data).trigger("chosen:updated");
     							$('#client_loan_number').html(data.agrement_data).trigger("chosen:updated");
     						}else if(data.status==3){
+        						
+    							if(data.pay_amount1 == '' || data.pay_amount1 == null){pledge_or_other_balance_gel = 0;}else{pledge_or_other_balance_gel = data.pay_amount1;}
+								pledge_or_other_extra_fee = $("#pledge_or_other_extra_fee").val();
+    							if(pledge_or_other_extra_fee == ''){pledge_or_other_extra_fee = 0;}
+    							$("#pledge_or_other_balance_gel").val(pledge_or_other_balance_gel);
+    							$("#pledge_or_other_extra_fee").val(parseFloat(pledge_or_other_extra_fee)+parseFloat(pledge_or_other_balance_gel));
+    							
     							$('#client_loan_number').html(data.agrement_data).trigger("chosen:updated");
     							$("#month_fee_gel").val(data.other_pay);
     							$('#attachment_client_id').html(data.client_attachment_data).trigger("chosen:updated");
@@ -1499,6 +1506,13 @@
     							$("#currency_id").html(data.currency).trigger("chosen:updated");
     							$('#currency_id').prop('disabled', true).trigger("chosen:updated");
     						}else if(data.status==3){
+        						
+    							if(data.pay_amount1 == '' || data.pay_amount1 == null){pledge_or_other_balance_gel = 0;}else{pledge_or_other_balance_gel = data.pay_amount1;}
+								pledge_or_other_extra_fee = $("#pledge_or_other_extra_fee").val();
+    							if(pledge_or_other_extra_fee == ''){pledge_or_other_extra_fee = 0;}
+    							$("#pledge_or_other_balance_gel").val(pledge_or_other_balance_gel);
+    							$("#pledge_or_other_extra_fee").val(parseFloat(pledge_or_other_extra_fee)+parseFloat(pledge_or_other_balance_gel));
+    							
     							$('#client_id').html(data.client_data).trigger("chosen:updated");
     							$("#month_fee_gel").val(data.other_pay);
     							$('#attachment_client_id').html(data.client_attachment_data).trigger("chosen:updated");
