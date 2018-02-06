@@ -64,6 +64,7 @@
     			$("#client_loan_number").chosen();
     			$("#received_currency_id").chosen();
     			$("#loan_currency_id").chosen();
+    			$("#deals_status").chosen();
     			$("#add-edit-form, .add-edit-form-class").css('overflow', 'visible');
 
     			LoadTable('table_deal_amount',5,'get_list',"<'F'Cpl>",aJaxURL_detail, '&hidde_inc_id='+$("#hidde_inc_id").val(), '');
@@ -152,6 +153,8 @@
 	    	param.penalty1	           = $("#penalty1").val();
 	    	param.unda_daericxos	   = $("#unda_daericxos").val();
 	    	param.deals_penalty  	   = $("#deals_penalty").val();
+	    	param.deals_status  	   = $("#deals_status").val();
+	    	param.client_id      	   = $("#client_id").val();
 	    	//param.penalty_stoped        = $("input[id='penalty_stoped']:checked").val();
 
             if(param.deal_amount == ''){

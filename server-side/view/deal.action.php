@@ -283,6 +283,8 @@ switch ($action) {
 		$penalty1             = $_REQUEST['penalty1'];
 		$unda_daericxos       = $_REQUEST['unda_daericxos'];
 		$deals_penalty        = $_REQUEST['deals_penalty'];
+		$deals_status         = $_REQUEST['deals_status'];
+		$client_id            = $_REQUEST['client_id'];
 		$user_id              = $_SESSION['USERID'];
 		
 		if($id==''){
@@ -290,6 +292,21 @@ switch ($action) {
                 					(`id`, `user_id`, `datetime`, `schedule_id`, `pay_date`, `pay_amount`, `curence_id`, `cource`, `loan_valute_amount`, `penalty_start`, `penalty_end`, `penalty_day_count`, `deal_end_date`, `cur_percent`, `cur_root`, `cur_penalty`, `unda_daericxos`, `deal_status`, `actived`) 
                 			  VALUES 
                 					('$hidde_inc_id', '$user_id', NOW(), '$hidde_schedule_id', '$payed_date', '$payed_amount', '$received_currency_id', '$cource', '$loan_payed_date', '$deal_penalty_start', '$deal_penalty_end', '$penalty_day_count', '$deal_end', '$pescent1', '$root1', '$penalty1', '$unda_daericxos', 0, 1)");
+		
+		}else{
+		    if ($deals_status == 1) {
+		        mysql_query("UPDATE `client_loan_schedule_deal`
+            		            SET `user_id`     = '$user_id',
+            		                `deal_status` = '$deals_status'
+            		         WHERE  `id`          = '$id'");
+		        
+		        mysql_query("UPDATE  `client_loan_schedule`
+		                       JOIN   client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
+		                        SET   client_loan_schedule.`deal`   = 1,
+		                              client_loan_schedule.`status` = 1
+		            WHERE   `client_loan_schedule`.schedule_date <= '$payed_date' AND client_loan_agreement.client_id = '$client_id'");
+		    }
+		   
 		}	    
 		
 		break;
@@ -301,6 +318,8 @@ switch ($action) {
                         SET `user_id`     = '$user_id',
                             `deal_status` = '2'
                      WHERE  `id`          = '$id'");
+	    
+	    
 	    
 // 	    mysql_query("UPDATE deals_detail
 //                        SET `status`  = 1
@@ -412,6 +431,23 @@ function currency($id){
     return $data;
 }
 
+function deals_status($id){
+    $req = mysql_query("SELECT id,
+                              `name`
+                        FROM   deals_status
+                        WHERE  id != 2");
+    
+    $data .= '<option value="">---------</option>';
+    while( $res = mysql_fetch_assoc($req)){
+        if($res['id'] == $id){
+            $data .= '<option value="' . $res['id'] . '" selected="selected">' . $res['name'] . '</option>';
+        } else {
+            $data .= '<option value="' . $res['id'] . '">' . $res['name'] . '</option>';
+        }
+    }
+    return $data;
+}
+
 function GetSchedule($id){
     
 	$res = mysql_fetch_assoc(mysql_query("	SELECT client_loan_schedule_deal.id,
@@ -436,7 +472,8 @@ function GetSchedule($id){
                                                    client_loan_schedule_deal.cur_percent,
                                                    client_loan_schedule_deal.cur_penalty,
 	                                               client_loan_schedule_deal.unda_daericxos,
-	                                               client_loan_schedule_deal.deals_penalty
+	                                               client_loan_schedule_deal.deals_penalty,
+                                                   client_loan_schedule_deal.deal_status
                                             FROM   client_loan_schedule_deal
                                             JOIN   client_loan_schedule ON client_loan_schedule.id = client_loan_schedule_deal.schedule_id
                                             JOIN   client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
@@ -447,8 +484,8 @@ function GetSchedule($id){
 
 function GetPage($res = ''){
     
-    
     if ($res[id]=='') {
+        $display = 'display:none';
         mysql_query("INSERT INTO `client_loan_schedule_deal` 
             					(`user_id`) 
             		      VALUES 
@@ -462,9 +499,18 @@ function GetPage($res = ''){
         $dis='disabled="disabled"';
         $dis1='';
     }else{
+        if ($res[deal_status]==0) {
+            $display == '';
+        }
+        
         $dis='';
         $dis1='disabled="disabled"';
         $hidde_id = $res[id];
+    }
+    if ($res[deal_status]==0) {
+       $disable_status = ''; 
+    }else{
+        $disable_status = 'disabled="disabled"'; 
     }
     
 	$data = '<div id="dialog-form">
@@ -696,6 +742,9 @@ function GetPage($res = ''){
         					</td>
         					<td style="width: 180px;">
         						<input style="width: 130px;" id="unda_daericxos" type="text" value="'.$res[unda_daericxos].'" disabled="disabled">
+        					</td>
+                            <td style="width: 180px; '.$display.'">
+        						<select id="deals_status" calss="label" style="width: 250px;" '.$disable_status.'>'.deals_status($res[deal_status]).'</select>
         					</td>
         	            </tr>
         			</table>
