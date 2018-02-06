@@ -767,7 +767,7 @@ switch ($action) {
                                                                                                                                                                 FROM   money_transactions 
                                                                                                                                                                 JOIN   money_transactions_detail ON money_transactions_detail.transaction_id = money_transactions.id
                                                                                                                                                                 WHERE  money_transactions_detail.actived = 1 AND money_transactions.client_id = $res[client_id]
-                                                                                                                                                                AND    money_transactions_detail.`status` = 1
+                                                                                                                                                                AND    money_transactions_detail.`status` IN(1,13)
                                                                                                                                                                 AND    DATE(money_transactions_detail.pay_datetime) > client_loan_schedule_deal.pay_date) AS remaining_root
                                 		        FROM   client_loan_schedule
         		                                JOIN   client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
