@@ -3934,6 +3934,10 @@ switch ($action) {
         $result1 = mysql_fetch_assoc($res1);
         
         $remaining_root = $resultt[remaining_root];
+        
+        if ($remaining_root == '0.00') {
+            $remaining_root = $deal[remaining_root];
+        }
         $rercent        = $resultt[percent];
         $sakomisio      = '0.00';
         $nasargeblebi   = '0.00';
@@ -3981,7 +3985,13 @@ switch ($action) {
         }
 
         
-       $deal = mysql_fetch_array(mysql_query("SELECT IFNULL(SUM(deals_detail.amount+deals_detail.penalty),0) AS `deal_amount`
+       $deal = mysql_fetch_array(mysql_query("SELECT IFNULL(SUM(deals_detail.amount+deals_detail.penalty),0) AS `deal_amount`, 
+                                                     client_loan_schedule.remaining_root+client_loan_schedule.root - client_loan_schedule_deal.cur_root - (   SELECT IFNULL(SUM(money_transactions_detail.pay_root),0)
+																																								FROM   money_transactions 
+																																								JOIN   money_transactions_detail ON money_transactions_detail.transaction_id = money_transactions.id
+																																						        WHERE  money_transactions_detail.actived = 1 AND money_transactions.client_id = $local_id
+																																								AND    money_transactions_detail.`status` IN(1,13)
+																																								AND    DATE(money_transactions_detail.pay_datetime) > client_loan_schedule_deal.pay_date) AS remaining_root
                                               FROM   client_loan_schedule_deal
                                               JOIN   deals_detail ON deals_detail.deals_id = client_loan_schedule_deal.id
                                               JOIN   client_loan_schedule ON client_loan_schedule.id = client_loan_schedule_deal.schedule_id
@@ -4099,6 +4109,10 @@ switch ($action) {
             $result1 = mysql_fetch_assoc($res1);
             
             $remainig_root = $result[remaining_root];
+            
+            if ($remainig_root == '0.00') {
+                $remainig_root = $deal[remaining_root];
+            }
             
             $gadacilebuli_day_count = $result[gadacilebuli];
             
