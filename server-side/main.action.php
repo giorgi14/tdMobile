@@ -4656,7 +4656,7 @@ function GetPage($id){
     }
     
     $req_deal = mysql_query("SELECT DATE(deals_detail.pay_date) AS `date`,
-                                    deals_detail.amount,
+                                    ROUND(deals_detail.amount+deals_detail.root,2) AS `amount`,
                                     deals_detail.penalty,
                                     IF(deals_detail.status=1,'გადახდილი','გადასახდელი') AS `status`
                              FROM  client_loan_schedule
