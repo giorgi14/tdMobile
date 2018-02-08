@@ -885,7 +885,8 @@
 	        					$("#month_fee2").val(data.pay_amount1);
 	        					$("#other_payed1").val(data.other_amount);
 	        					$("#other_payed1").val(data.other_amount);
-	        					$("#deal_Fee1").val(data.deal_amount); 
+	        					$("#deal_Fee1").val(data.deal_amount);
+	        					$("#hidde_deal_id").val(data.deal_id); 
 	        					//$("#add-edit-form-canceled").html(data.page);
 	    					}
 	    				}
