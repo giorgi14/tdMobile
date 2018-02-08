@@ -412,7 +412,8 @@ switch ($action) {
 																																								JOIN   money_transactions_detail ON money_transactions_detail.transaction_id = money_transactions.id
 																																						        WHERE  money_transactions_detail.actived = 1 AND money_transactions.client_id = $local_id
 																																								AND    money_transactions_detail.`status` IN(1,13)
-																																								AND    DATE(money_transactions_detail.pay_datetime) > client_loan_schedule_deal.pay_date) AS remaining_root
+																																								AND    DATE(money_transactions_detail.pay_datetime) > client_loan_schedule_deal.pay_date) AS remaining_root,
+                                                       GROUP_CONCAT(CONVERT(deals_detail.id, CHAR(8))) AS deal_id
                                                 FROM   client_loan_schedule_deal
                                                 JOIN   deals_detail ON deals_detail.deals_id = client_loan_schedule_deal.id
                                                 JOIN   client_loan_schedule ON client_loan_schedule.id = client_loan_schedule_deal.schedule_id
@@ -444,7 +445,7 @@ switch ($action) {
                 $nasargeblebi  = 0;
             }
             $all_fee = round($remaining_root + $rercent + $penalty + $sakomisio + $nasargeblebi + $other_amount + $deal['deal_amount'], 2);
-            $data	= array('all_fee' => $all_fee, 'sakomisio' => $sakomisio, 'percent' => $rercent,  'deal_amount' => $deal['deal_amount'], 'pay_amount1' => $res1[pay_amount], 'remaining_root' => $remaining_root, 'penalty' => $penalty, 'nasargeblebebi' => $nasargeblebi, 'other_amount' => $other_amount);
+            $data	= array('all_fee' => $all_fee, 'sakomisio' => $sakomisio, 'percent' => $rercent,  'deal_amount' => $deal['deal_amount'], 'pay_amount1' => $res1[pay_amount], 'remaining_root' => $remaining_root, 'penalty' => $penalty, 'nasargeblebebi' => $nasargeblebi, 'other_amount' => $other_amount, 'deal_id' => $deal[deal_id]);
         }else{
             $res = mysql_query("SELECT   client_loan_schedule.id,
                         				 client_loan_agreement.status AS st,
@@ -592,7 +593,7 @@ switch ($action) {
                 
                 $all_fee = round($remainig_root + $result['percent'] + $penalty + $sakomisio + $nasargeblebi + $other_amount + $deal['deal_amount'], 2);
                 
-                $data	= array('all_fee' => $all_fee, 'sakomisio' => $sakomisio, 'percent' => $result['percent'], 'deal_amount' => $deal['deal_amount'], 'remaining_root' => $remainig_root, 'pay_amount1' => $res1[pay_amount], 'penalty' => $penalty, 'nasargeblebebi' => $nasargeblebi, 'other_amount' => $other_amount);
+                $data	= array('all_fee' => $all_fee, 'sakomisio' => $sakomisio, 'percent' => $result['percent'], 'deal_amount' => $deal['deal_amount'], 'remaining_root' => $remainig_root, 'pay_amount1' => $res1[pay_amount], 'penalty' => $penalty, 'nasargeblebebi' => $nasargeblebi, 'other_amount' => $other_amount, 'deal_id' => $deal[deal_id]);
             
             }else{
                 global  $error;
@@ -741,7 +742,7 @@ switch ($action) {
     		
     		$month_fee_trasaction  = $_REQUEST['month_fee_trasaction'];
     		$receivedd_currency_id = $_REQUEST['received_currency_id'];
-    		$loan_cource_id        = $res['loan_currency_id'];
+    		$loan_cource_id        = $check_client['loan_currency_id'];
     		$course                = $_REQUEST['course'];
     		
     		if ($receivedd_currency_id == $loan_cource_id) {
