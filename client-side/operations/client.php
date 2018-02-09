@@ -1167,6 +1167,8 @@
 		param.responsible_user_id         = $('#sub_responsible_user_id').val();
 		param.agreement_no_standart       = $("input[id='agreement_no_standart']:checked").val();
 		param.client_sms                  = $("input[id='client_sms']:checked").val();
+		param.old_balance                 = $('#old_balance').val();
+		param.old_loan_balance_cource     = $('#old_loan_balance_cource').val();
 		
 		if(param.loan_amount == ''){
 			alert('შეავსეთ "სესხის მოცულობა"');
