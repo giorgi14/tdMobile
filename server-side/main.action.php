@@ -422,7 +422,7 @@ switch ($action) {
                     						 client_loan_schedule.id AS `id`,
                                              '' AS number1,
                                              '1' AS sort3,
-                    						 client_loan_schedule.pay_date AS sort,
+                    						 client_loan_schedule.schedule_date AS sort,
                     						 '2' AS sort1,
                     						 client_loan_schedule.number,
                     						 DATE_FORMAT(client_loan_schedule.schedule_date, '%d/%m/%Y') AS `date`,
@@ -454,14 +454,14 @@ switch ($action) {
                             		FROM     client_loan_schedule
                             		JOIN     client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
                             		LEFT JOIN money_transactions ON money_transactions.client_loan_schedule_id = client_loan_schedule.id
-                            		WHERE    client_loan_agreement.client_id = '$sub' AND client_loan_schedule.activ_status = 0 AND client_loan_schedule.actived=1 AND client_loan_schedule.pay_date <= CURDATE()
+                            		WHERE    client_loan_agreement.client_id = '$sub' AND client_loan_schedule.activ_status = 0 AND client_loan_schedule.actived=1 AND client_loan_schedule.schedule_date <= CURDATE()
                             		GROUP BY client_loan_schedule.id
                             		UNION ALL
                             		SELECT   client_loan_agreement.client_id,
                     						 client_loan_schedule.id AS `id`,
                                              '' AS number1,
                                              '1' AS sort3,
-                    						 client_loan_schedule.pay_date AS sort,
+                    						 client_loan_schedule.schedule_date AS sort,
                     						 '2' AS sort1,
                     						 client_loan_schedule.number,
                     						 CONCAT('<div title=\"შეთანხმება\" style=\"background: #ffec04; color: #121111;\">',DATE_FORMAT(client_loan_schedule_deal.pay_date, '%d/%m/%Y'),'</div>') AS `date`,
@@ -493,7 +493,7 @@ switch ($action) {
                             		FROM     client_loan_schedule
                             		JOIN     client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
                                     JOIN client_loan_schedule_deal ON client_loan_schedule_deal.schedule_id = client_loan_schedule.id
-                            		WHERE    client_loan_agreement.client_id = '$sub' AND client_loan_schedule_deal.unda_daericxos>0 AND client_loan_schedule_deal.actived = 1 AND client_loan_schedule.activ_status = 0 AND client_loan_schedule.actived=1 AND client_loan_schedule.pay_date <= CURDATE()
+                            		WHERE    client_loan_agreement.client_id = '$sub' AND client_loan_schedule_deal.unda_daericxos>0 AND client_loan_schedule_deal.actived = 1 AND client_loan_schedule.activ_status = 0 AND client_loan_schedule.actived=1 AND client_loan_schedule.schedule_date <= CURDATE()
                             		GROUP BY client_loan_schedule.id
                                     UNION ALL
                                     SELECT   client_loan_agreement.client_id,
@@ -533,7 +533,7 @@ switch ($action) {
                             		JOIN     client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
                                     JOIN     client_loan_schedule_deal ON client_loan_schedule_deal.schedule_id = client_loan_schedule.id
                                     JOIN     deals_daricxva ON deals_daricxva.deals_id = client_loan_schedule_deal.id
-                            		WHERE    client_loan_agreement.client_id = '$sub' AND deals_daricxva.actived = 1 AND client_loan_schedule_deal.actived = 1 AND deals_daricxva.amount>0 AND client_loan_schedule_deal.actived = 1 AND client_loan_schedule.activ_status = 0 AND client_loan_schedule.actived=1 AND client_loan_schedule.pay_date <= CURDATE()
+                            		WHERE    client_loan_agreement.client_id = '$sub' AND deals_daricxva.actived = 1 AND client_loan_schedule_deal.actived = 1 AND deals_daricxva.amount>0 AND client_loan_schedule_deal.actived = 1 AND client_loan_schedule.activ_status = 0 AND client_loan_schedule.actived=1 AND client_loan_schedule.schedule_date <= CURDATE()
                             		UNION ALL
                             		SELECT   client_loan_agreement.client_id,
                     						 client_loan_schedule.id AS `id`,
@@ -572,7 +572,7 @@ switch ($action) {
                             		JOIN     client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
                                     JOIN client_loan_schedule_deal ON client_loan_schedule_deal.schedule_id = client_loan_schedule.id
                             		JOIN deals_detail ON deals_detail.deals_id = client_loan_schedule_deal.id
-                                    WHERE    client_loan_agreement.client_id = '$sub' AND deals_detail.penalty > 0  AND client_loan_schedule_deal.unda_daericxos>0 AND client_loan_schedule_deal.actived = 1 AND client_loan_schedule.activ_status = 0 AND client_loan_schedule.actived=1 AND client_loan_schedule.pay_date <= CURDATE() AND deals_detail.actived = 1
+                                    WHERE    client_loan_agreement.client_id = '$sub' AND deals_detail.penalty > 0  AND client_loan_schedule_deal.unda_daericxos>0 AND client_loan_schedule_deal.actived = 1 AND client_loan_schedule.activ_status = 0 AND client_loan_schedule.actived=1 AND client_loan_schedule.schedule_date <= CURDATE() AND deals_detail.actived = 1
                             		GROUP BY deals_detail.id
                             		UNION ALL
                             		SELECT  client_loan_agreement.client_id,
@@ -1091,10 +1091,10 @@ switch ($action) {
         							client_loan_schedule.id AS `id`,
                                     '' AS number1,
                                     '1' AS sort3,
-        							client_loan_schedule.pay_date AS sort,
+        							client_loan_schedule.schedule_date AS sort,
         							'2' AS sort1,
         							 client_loan_schedule.number,
-        							 DATE_FORMAT(client_loan_schedule.pay_date, '%d/%m/%Y') AS `date`,
+        							 DATE_FORMAT(client_loan_schedule.schedule_date, '%d/%m/%Y') AS `date`,
         							 (SELECT cur_cource.cource FROM cur_cource WHERE cur_cource.actived = 1 AND DATE(cur_cource.datetime) = DATE(client_loan_schedule.schedule_date) LIMIT 1) AS `exchange`,
         							 '' AS `loan_amount`,
         							 '' AS `loan_amount_gel`,
@@ -1124,14 +1124,14 @@ switch ($action) {
                 			FROM     client_loan_schedule
                 			JOIN     client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
                 			LEFT JOIN     money_transactions ON money_transactions.client_loan_schedule_id = client_loan_schedule.id
-                			WHERE    client_loan_agreement.client_id = '$sub' AND client_loan_schedule.activ_status = 0 AND client_loan_schedule.actived=1 AND client_loan_schedule.pay_date <= CURDATE()
+                			WHERE    client_loan_agreement.client_id = '$sub' AND client_loan_schedule.activ_status = 0 AND client_loan_schedule.actived=1 AND client_loan_schedule.schedule_date <= CURDATE()
                 			GROUP BY client_loan_schedule.id
                 			UNION ALL
                 			SELECT   client_loan_agreement.client_id,
                     						 client_loan_schedule.id AS `id`,
                                              '' AS number1,
                                              '1' AS sort3,
-                    						 client_loan_schedule.pay_date AS sort,
+                    						 client_loan_schedule.schedule_date AS sort,
                     						 '2' AS sort1,
                     						 client_loan_schedule.number,
                     						 CONCAT('<div title=\"შეთანხმება\" style=\"background: #ffec04; color: #121111;\">',DATE_FORMAT(client_loan_schedule_deal.pay_date, '%d/%m/%Y'),'</div>') AS `date`,
@@ -1163,7 +1163,7 @@ switch ($action) {
                             		FROM     client_loan_schedule
                             		JOIN     client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
                                     JOIN client_loan_schedule_deal ON client_loan_schedule_deal.schedule_id = client_loan_schedule.id
-                            		WHERE    client_loan_agreement.client_id = '$sub' AND client_loan_schedule_deal.unda_daericxos > 0 AND client_loan_schedule_deal.actived = 1 AND client_loan_schedule.activ_status = 0 AND client_loan_schedule.actived=1 AND client_loan_schedule.pay_date <= CURDATE()
+                            		WHERE    client_loan_agreement.client_id = '$sub' AND client_loan_schedule_deal.unda_daericxos > 0 AND client_loan_schedule_deal.actived = 1 AND client_loan_schedule.activ_status = 0 AND client_loan_schedule.actived=1 AND client_loan_schedule.schedule_date <= CURDATE()
                             		GROUP BY client_loan_schedule.id
                                     UNION ALL
                                     SELECT   client_loan_agreement.client_id,
@@ -1203,7 +1203,7 @@ switch ($action) {
                             		JOIN     client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
                                     JOIN     client_loan_schedule_deal ON client_loan_schedule_deal.schedule_id = client_loan_schedule.id
                                     JOIN     deals_daricxva ON deals_daricxva.deals_id = client_loan_schedule_deal.id
-                            		WHERE    client_loan_agreement.client_id = '$sub' AND deals_daricxva.actived = 1 AND client_loan_schedule_deal.actived = 1 AND deals_daricxva.amount>0 AND client_loan_schedule_deal.actived = 1 AND client_loan_schedule.activ_status = 0 AND client_loan_schedule.actived=1 AND client_loan_schedule.pay_date <= CURDATE()
+                            		WHERE    client_loan_agreement.client_id = '$sub' AND deals_daricxva.actived = 1 AND client_loan_schedule_deal.actived = 1 AND deals_daricxva.amount>0 AND client_loan_schedule_deal.actived = 1 AND client_loan_schedule.activ_status = 0 AND client_loan_schedule.actived=1 AND client_loan_schedule.schedule_date <= CURDATE()
                             		UNION ALL
                             		SELECT  client_loan_agreement.client_id,
                             				'' AS `id`,
@@ -1284,7 +1284,7 @@ switch ($action) {
                             		JOIN     client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
                                     JOIN client_loan_schedule_deal ON client_loan_schedule_deal.schedule_id = client_loan_schedule.id
                             		JOIN deals_detail ON deals_detail.deals_id = client_loan_schedule_deal.id
-                                    WHERE    client_loan_agreement.client_id = '$sub' AND deals_detail.penalty > 0  AND client_loan_schedule_deal.unda_daericxos>0 AND client_loan_schedule_deal.actived = 1 AND client_loan_schedule.activ_status = 0 AND client_loan_schedule.actived=1 AND client_loan_schedule.pay_date <= CURDATE() AND deals_detail.actived = 1
+                                    WHERE    client_loan_agreement.client_id = '$sub' AND deals_detail.penalty > 0  AND client_loan_schedule_deal.unda_daericxos>0 AND client_loan_schedule_deal.actived = 1 AND client_loan_schedule.activ_status = 0 AND client_loan_schedule.actived=1 AND client_loan_schedule.schedule_date <= CURDATE() AND deals_detail.actived = 1
                             		GROUP BY deals_detail.id
                             		UNION ALL
                             SELECT   client.id,
@@ -1712,7 +1712,7 @@ switch ($action) {
         							client_loan_schedule.id AS `id`,
                                     '7' AS number1,
                                     '2' AS sort3,
-        							client_loan_schedule.pay_date AS sort,
+        							client_loan_schedule.schedule_date AS sort,
         							'2' AS sort1,
         							client_loan_schedule.number,
         							DATE_FORMAT(money_transactions_detail.pay_datetime, '%d/%m/%Y') AS `date`,
@@ -1872,10 +1872,10 @@ switch ($action) {
     						 client_loan_schedule.id AS `id`,
                              '' AS number1,
                              '1' AS sort3,
-    						 client_loan_schedule.pay_date AS sort,
+    						 client_loan_schedule.schedule_date AS sort,
     						 '2' AS sort1,
     						 client_loan_schedule.number,
-    						 DATE_FORMAT(client_loan_schedule.pay_date, '%d/%m/%Y') AS `date`,
+    						 DATE_FORMAT(client_loan_schedule.schedule_date, '%d/%m/%Y') AS `date`,
     						 (SELECT cur_cource.cource FROM cur_cource WHERE cur_cource.actived = 1 AND DATE(cur_cource.datetime) = DATE(client_loan_schedule.schedule_date) LIMIT 1) AS `exchange`,
     						 '' AS `loan_amount`,
     						 '' AS `loan_amount_gel`,
@@ -1904,14 +1904,14 @@ switch ($action) {
             		FROM     client_loan_schedule
             		JOIN     client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
             		LEFT JOIN money_transactions ON money_transactions.client_loan_schedule_id = client_loan_schedule.id
-            		WHERE    client_loan_agreement.client_id = '$sub' AND client_loan_schedule.activ_status = 0 AND client_loan_schedule.actived=1 AND client_loan_schedule.pay_date <= CURDATE()
+            		WHERE    client_loan_agreement.client_id = '$sub' AND client_loan_schedule.activ_status = 0 AND client_loan_schedule.actived=1 AND client_loan_schedule.schedule_date <= CURDATE()
             		GROUP BY client_loan_schedule.id
             		UNION ALL
             		SELECT   client_loan_agreement.client_id,
                     						 client_loan_schedule.id AS `id`,
                                              '' AS number1,
                                              '1' AS sort3,
-                    						 client_loan_schedule.pay_date AS sort,
+                    						 client_loan_schedule.schedule_date AS sort,
                     						 '2' AS sort1,
                     						 client_loan_schedule.number,
                     						 CONCAT('<div title=\"შეთანხმება\" style=\"background: #ffec04; color: #121111;\">',DATE_FORMAT(client_loan_schedule_deal.pay_date, '%d/%m/%Y'),'</div>') AS `date`,
@@ -1943,7 +1943,7 @@ switch ($action) {
                             		FROM     client_loan_schedule
                             		JOIN     client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
                                     JOIN client_loan_schedule_deal ON client_loan_schedule_deal.schedule_id = client_loan_schedule.id
-                            		WHERE    client_loan_agreement.client_id = '$sub' AND client_loan_schedule_deal.unda_daericxos>0 AND client_loan_schedule_deal.actived = 1 AND client_loan_schedule.activ_status = 0 AND client_loan_schedule.actived=1 AND client_loan_schedule.pay_date <= CURDATE()
+                            		WHERE    client_loan_agreement.client_id = '$sub' AND client_loan_schedule_deal.unda_daericxos>0 AND client_loan_schedule_deal.actived = 1 AND client_loan_schedule.activ_status = 0 AND client_loan_schedule.actived=1 AND client_loan_schedule.schedule_date <= CURDATE()
                             		GROUP BY client_loan_schedule.id
                             		UNION ALL
                                     SELECT   client_loan_agreement.client_id,
@@ -1983,7 +1983,7 @@ switch ($action) {
                             		JOIN     client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
                                     JOIN     client_loan_schedule_deal ON client_loan_schedule_deal.schedule_id = client_loan_schedule.id
                                     JOIN     deals_daricxva ON deals_daricxva.deals_id = client_loan_schedule_deal.id
-                            		WHERE    client_loan_agreement.client_id = '$sub' AND deals_daricxva.actived = 1 AND client_loan_schedule_deal.actived = 1 AND deals_daricxva.amount>0 AND client_loan_schedule_deal.actived = 1 AND client_loan_schedule.activ_status = 0 AND client_loan_schedule.actived=1 AND client_loan_schedule.pay_date <= CURDATE()
+                            		WHERE    client_loan_agreement.client_id = '$sub' AND deals_daricxva.actived = 1 AND client_loan_schedule_deal.actived = 1 AND deals_daricxva.amount>0 AND client_loan_schedule_deal.actived = 1 AND client_loan_schedule.activ_status = 0 AND client_loan_schedule.actived=1 AND client_loan_schedule.schedule_date <= CURDATE()
                             		UNION ALL
                             		SELECT   client_loan_agreement.client_id,
                     						 client_loan_schedule.id AS `id`,
@@ -2022,7 +2022,7 @@ switch ($action) {
                             		JOIN     client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
                                     JOIN client_loan_schedule_deal ON client_loan_schedule_deal.schedule_id = client_loan_schedule.id
                             		JOIN deals_detail ON deals_detail.deals_id = client_loan_schedule_deal.id
-                                    WHERE    client_loan_agreement.client_id = '$sub' AND deals_detail.penalty > 0 AND client_loan_schedule_deal.unda_daericxos>0 AND client_loan_schedule_deal.actived = 1 AND client_loan_schedule.activ_status = 0 AND client_loan_schedule.actived=1 AND client_loan_schedule.pay_date <= CURDATE() AND deals_detail.actived = 1
+                                    WHERE    client_loan_agreement.client_id = '$sub' AND deals_detail.penalty > 0 AND client_loan_schedule_deal.unda_daericxos>0 AND client_loan_schedule_deal.actived = 1 AND client_loan_schedule.activ_status = 0 AND client_loan_schedule.actived=1 AND client_loan_schedule.schedule_date <= CURDATE() AND deals_detail.actived = 1
                             		GROUP BY deals_detail.id
                             		UNION ALL
                             		SELECT  client_loan_agreement.client_id,
@@ -2612,10 +2612,10 @@ switch ($action) {
         							client_loan_schedule.id AS `id`,
                                     '' AS number1,
                                     '1' AS sort3,
-        							DATE(client_loan_schedule.pay_date) AS sort,
+        							DATE(client_loan_schedule.schedule_date) AS sort,
         							'2' AS sort1,
         							 client_loan_schedule.number,
-        							 DATE_FORMAT(client_loan_schedule.pay_date, '%d/%m/%Y') AS `date`,
+        							 DATE_FORMAT(client_loan_schedule.schedule_date, '%d/%m/%Y') AS `date`,
         							 (SELECT cur_cource.cource FROM cur_cource WHERE cur_cource.actived = 1 AND DATE(cur_cource.datetime) = DATE(client_loan_schedule.schedule_date) LIMIT 1) AS `exchange`,
         							 '' AS `loan_amount`,
         							 '' AS `loan_amount_gel`,
@@ -2644,14 +2644,14 @@ switch ($action) {
                 			FROM     client_loan_schedule
                 			JOIN     client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
                 			LEFT JOIN     money_transactions ON money_transactions.client_loan_schedule_id = client_loan_schedule.id
-                			WHERE    client_loan_agreement.client_id = '$sub' AND client_loan_schedule.activ_status = 0 AND client_loan_schedule.actived=1 AND client_loan_schedule.pay_date <= CURDATE()
+                			WHERE    client_loan_agreement.client_id = '$sub' AND client_loan_schedule.activ_status = 0 AND client_loan_schedule.actived=1 AND client_loan_schedule.schedule_date <= CURDATE()
                 			GROUP BY client_loan_schedule.id
                 			UNION ALL 
                 			SELECT   client_loan_agreement.client_id,
                     						 client_loan_schedule.id AS `id`,
                                              '' AS number1,
                                              '1' AS sort3,
-                    						 client_loan_schedule.pay_date AS sort,
+                    						 client_loan_schedule.schedule_date AS sort,
                     						 '2' AS sort1,
                     						 client_loan_schedule.number,
                     						 CONCAT('<div title=\"შეთანხმება\" style=\"background: #ffec04; color: #121111;\">',DATE_FORMAT(client_loan_schedule_deal.pay_date, '%d/%m/%Y'),'</div>') AS `date`,
@@ -2683,7 +2683,7 @@ switch ($action) {
                             		FROM     client_loan_schedule
                             		JOIN     client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
                                     JOIN client_loan_schedule_deal ON client_loan_schedule_deal.schedule_id = client_loan_schedule.id
-                            		WHERE    client_loan_agreement.client_id = '$sub' AND client_loan_schedule_deal.unda_daericxos>0 AND client_loan_schedule_deal.actived = 1 AND client_loan_schedule.activ_status = 0 AND client_loan_schedule.actived=1 AND client_loan_schedule.pay_date <= CURDATE()
+                            		WHERE    client_loan_agreement.client_id = '$sub' AND client_loan_schedule_deal.unda_daericxos>0 AND client_loan_schedule_deal.actived = 1 AND client_loan_schedule.activ_status = 0 AND client_loan_schedule.actived=1 AND client_loan_schedule.schedule_date <= CURDATE()
                             		GROUP BY client_loan_schedule.id
                             		UNION ALL
                                     SELECT   client_loan_agreement.client_id,
@@ -2723,7 +2723,7 @@ switch ($action) {
                             		JOIN     client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
                                     JOIN     client_loan_schedule_deal ON client_loan_schedule_deal.schedule_id = client_loan_schedule.id
                                     JOIN     deals_daricxva ON deals_daricxva.deals_id = client_loan_schedule_deal.id
-                            		WHERE    client_loan_agreement.client_id = '$sub' AND deals_daricxva.actived = 1 AND client_loan_schedule_deal.actived = 1 AND deals_daricxva.amount>0 AND client_loan_schedule_deal.actived = 1 AND client_loan_schedule.activ_status = 0 AND client_loan_schedule.actived=1 AND client_loan_schedule.pay_date <= CURDATE()
+                            		WHERE    client_loan_agreement.client_id = '$sub' AND deals_daricxva.actived = 1 AND client_loan_schedule_deal.actived = 1 AND deals_daricxva.amount>0 AND client_loan_schedule_deal.actived = 1 AND client_loan_schedule.activ_status = 0 AND client_loan_schedule.actived=1 AND client_loan_schedule.schedule_date <= CURDATE()
                             		UNION ALL
                             		SELECT   client_loan_agreement.client_id,
                     						 client_loan_schedule.id AS `id`,
@@ -2762,7 +2762,7 @@ switch ($action) {
                             		JOIN     client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
                                     JOIN client_loan_schedule_deal ON client_loan_schedule_deal.schedule_id = client_loan_schedule.id
                             		JOIN deals_detail ON deals_detail.deals_id = client_loan_schedule_deal.id
-                                    WHERE    client_loan_agreement.client_id = '$sub' AND deals_detail.penalty > 0  AND client_loan_schedule_deal.unda_daericxos>0 AND client_loan_schedule_deal.actived = 1 AND client_loan_schedule.activ_status = 0 AND client_loan_schedule.actived=1 AND client_loan_schedule.pay_date <= CURDATE() AND deals_detail.actived = 1
+                                    WHERE    client_loan_agreement.client_id = '$sub' AND deals_detail.penalty > 0  AND client_loan_schedule_deal.unda_daericxos>0 AND client_loan_schedule_deal.actived = 1 AND client_loan_schedule.activ_status = 0 AND client_loan_schedule.actived=1 AND client_loan_schedule.schedule_date <= CURDATE() AND deals_detail.actived = 1
                             		GROUP BY deals_detail.id
                             		UNION ALL
                             		SELECT  client_loan_agreement.client_id,
@@ -3206,7 +3206,7 @@ switch ($action) {
         							client_loan_schedule.id AS `id`,
                                     '7' AS number1,
                                     '2' AS sort3,
-        							DATE(client_loan_schedule.pay_date) AS sort,
+        							DATE(client_loan_schedule.schedule_date) AS sort,
                                     '2' AS sort1,
         							client_loan_schedule.number,
         							DATE_FORMAT(money_transactions_detail.pay_datetime, '%d/%m/%Y') AS `date`,
@@ -4056,7 +4056,7 @@ switch ($action) {
                         					 WHEN client_loan_schedule.`status` = 0 THEN ROUND(client_loan_schedule.root + client_loan_schedule.remaining_root,2)
                                          END AS remaining_root,
                                          0 AS nasargeblebi_dgeebi,
-                        				 DATEDIFF('$pay_datee', client_loan_schedule.pay_date) AS gadacilebuli,
+                        				 DATEDIFF('$pay_datee', client_loan_schedule.schedule_date) AS gadacilebuli,
                                          client_loan_schedule.remaining_root as check_remaining_root,
                                          client_loan_agreement.loan_beforehand_percent,
                         				 client_loan_agreement.penalty_days,
