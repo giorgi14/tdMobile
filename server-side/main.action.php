@@ -3927,7 +3927,7 @@ switch ($action) {
         $res1 = mysql_query("SELECT   client_loan_schedule.percent/30 AS `percent`
                              FROM     client_loan_schedule
                              JOIN     client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
-                             WHERE    client_loan_agreement.client_id = '$local_id' AND client_loan_schedule.schedule_date >= '$pay_datee'
+                             WHERE    client_loan_agreement.client_id = '$local_id' AND client_loan_schedule.actived = 1 AND client_loan_schedule.schedule_date >= '$pay_datee'
                              ORDER BY client_loan_schedule.id ASC
                              LIMIT 1");
         
@@ -4101,7 +4101,7 @@ switch ($action) {
             $res1 = mysql_query("SELECT   client_loan_schedule.percent/30 AS `percent`
                                  FROM     client_loan_schedule
                                  JOIN     client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
-                                 WHERE    client_loan_agreement.client_id = '$local_id' AND client_loan_schedule.schedule_date >= '$pay_datee'
+                                 WHERE    client_loan_agreement.client_id = '$local_id' AND client_loan_schedule.actived = 1 AND client_loan_schedule.schedule_date >= '$pay_datee'
                                  ORDER BY client_loan_schedule.id ASC
                                  LIMIT 1");
             
