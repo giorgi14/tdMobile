@@ -4057,6 +4057,7 @@ switch ($action) {
                                          END AS remaining_root,
                                          0 AS nasargeblebi_dgeebi,
                         				 DATEDIFF('$pay_datee', client_loan_schedule.schedule_date) AS gadacilebuli,
+                                         DATEDIFF('$pay_datee', client_loan_schedule.schedule_date) AS gadacilebuli_nas,
                                          client_loan_schedule.remaining_root as check_remaining_root,
                                          client_loan_agreement.loan_beforehand_percent,
                         				 client_loan_agreement.penalty_days,
@@ -4084,7 +4085,8 @@ switch ($action) {
                         					 WHEN client_loan_schedule.`status` = 0 THEN ROUND(client_loan_schedule.root + client_loan_schedule.remaining_root,2)
                                          END AS remaining_root,
                                          
-                        				 DATEDIFF('$pay_datee', client_loan_schedule.schedule_date) AS gadacilebuli,
+                        				 DATEDIFF('$pay_datee', IF(client.sub_client > 0 AND client_loan_schedule.number = 1,DATE(client_loan_agreement.datetime),client_loan_schedule.schedule_date)) AS gadacilebuli_nas,
+                                         DATEDIFF('$pay_datee', client_loan_schedule.schedule_date) AS gadacilebuli,
                                          client_loan_schedule.remaining_root as check_remaining_root,
                                          client_loan_agreement.loan_beforehand_percent,
                         				 client_loan_agreement.penalty_days,
@@ -4093,6 +4095,7 @@ switch ($action) {
                                          client_loan_agreement.grace_period_caunt
                                 FROM     client_loan_schedule
                                 JOIN     client_loan_agreement ON client_loan_agreement.id = client_loan_schedule.client_loan_agreement_id
+                                JOIN     client ON client_loan_agreement.client_id = client.id
                                 WHERE    client_loan_agreement.client_id = '$local_id' AND client_loan_schedule.schedule_date >= '$pay_datee'
                                 ORDER BY client_loan_schedule.id ASC
                                 LIMIT 1");
@@ -4140,8 +4143,12 @@ switch ($action) {
             
             if ($result[check_remaining_root] > 0){
                 $sakomisio    = round($remainig_root * ($result[loan_beforehand_percent]/100),2);
-                if ($result[gadacilebuli]>=0) {
-                    $nasargeblebi = round($result1[percent]*$result[gadacilebuli],2);
+//                 if ($result[gadacilebuli]>=0) {
+//                     $nasargeblebi = round($result1[percent]*$result[gadacilebuli],2);
+//                 }
+
+                if ($result[gadacilebuli_nas]>=0) {
+                    $nasargeblebi = round($result1[percent]*$result[gadacilebuli_nas],2);
                 }
                 
             }
