@@ -25,29 +25,29 @@ switch ($action) {
     case 'get_add_page':
         $page = GetPage('');
         $data = array('page'	=> $page);
-
+        
         break;
     case 'get_edit_page':
         $page = GetPage(GetClient($id));
         $data = array('page'	=> $page);
-
+        
         break;
     case 'get_list':
         $count    = $_REQUEST['count'];
         $hidden   = $_REQUEST['hidden'];
         $local_id = $_REQUEST['local_id'];
-
+        
         $rResult = mysql_query("SELECT id,
-                                	   name,
-                                       pid,
-                                	   address,
-                                       email,
-                                       phone
-                                FROM   client_quarantors
-                                WHERE  client_id = $local_id AND actived = 1");
-         
+            name,
+            pid,
+            address,
+            email,
+            phone
+            FROM   client_quarantors
+            WHERE  client_id = $local_id AND actived = 1");
+        
         $data = array("aaData"	=> array());
-
+        
         while ( $aRow = mysql_fetch_array( $rResult )){
             $row = array();
             for ( $i = 0 ; $i < $count ; $i++ ){
@@ -61,11 +61,11 @@ switch ($action) {
             }
             $data['aaData'][] = $row;
         }
-
+        
         break;
     case 'disable':
         mysql_query("UPDATE `client_quarantors` SET `actived`='0' WHERE `id`='$id'");
-
+        
         break;
     case 'save_guarantor':
         if($guarantor_hidde == ''){
@@ -84,39 +84,39 @@ $data['error'] = $error;
 echo json_encode($data);
 
 function insert($user_id, $local_id, $guarantor_name, $guarantor_pid, $guarantor_address, $guarantor_fact_address, $guarantor_fact_address_check, $guarantor_mail,$guarantor_phone, $sms_sent_checkbox){
-    mysql_query("INSERT INTO `client_quarantors` 
-                            (`user_id`, `datetime`, `client_id`, `name`, `pid`, `address`, `fact_address`, `fact_address_check`, `email`, `phone`, `sms_sent`, `actived`) 
-                      VALUES 
-                            ('$user_id', NOW(), '$local_id', '$guarantor_name', '$guarantor_pid', '$guarantor_address', '$guarantor_fact_address', '$guarantor_fact_address_check', '$guarantor_mail', '$guarantor_phone', '$sms_sent_checkbox', 1)");
+    mysql_query("INSERT INTO `client_quarantors`
+        (`user_id`, `datetime`, `client_id`, `name`, `pid`, `address`, `fact_address`, `fact_address_check`, `email`, `phone`, `sms_sent`, `actived`)
+        VALUES
+        ('$user_id', NOW(), '$local_id', '$guarantor_name', '$guarantor_pid', '$guarantor_address', '$guarantor_fact_address', '$guarantor_fact_address_check', '$guarantor_mail', '$guarantor_phone', '$sms_sent_checkbox', 1)");
 }
 
 function update($car_driver_hidde, $user_id, $guarantor_name, $guarantor_pid, $guarantor_address, $guarantor_fact_address, $guarantor_fact_address_check, $guarantor_mail,$guarantor_phone, $sms_sent_checkbox){
-   mysql_query("UPDATE `client_quarantors`
-            	   SET `user_id`            = '$user_id',
-            		   `datetime`           =  NOW(),
-            		   `name`               = '$guarantor_name',
-            		   `pid`                = '$guarantor_pid',
-            		   `address`            = '$guarantor_address',
-                       `fact_address`       = '$guarantor_fact_address',
-                       `fact_address_check` = '$guarantor_fact_address_check',
-            		   `email`              = '$guarantor_mail',
-            		   `phone`              = '$guarantor_phone',
-                       `sms_sent`           = '$sms_sent_checkbox'
-                WHERE  `id`                 = '$car_driver_hidde'");
+    mysql_query("UPDATE `client_quarantors`
+        SET `user_id`            = '$user_id',
+        `datetime`           =  NOW(),
+        `name`               = '$guarantor_name',
+        `pid`                = '$guarantor_pid',
+        `address`            = '$guarantor_address',
+        `fact_address`       = '$guarantor_fact_address',
+        `fact_address_check` = '$guarantor_fact_address_check',
+        `email`              = '$guarantor_mail',
+        `phone`              = '$guarantor_phone',
+        `sms_sent`           = '$sms_sent_checkbox'
+        WHERE  `id`                 = '$car_driver_hidde'");
 }
 
 function GetClient($id){
     $res = mysql_fetch_assoc(mysql_query("SELECT id,
-                                                 name,
-                                                 pid,
-                                        		 address,
-                                                 fact_address,
-                                                 fact_address_check,
-                                                 email,
-                                                 phone,
-                                                 sms_sent
-                                          FROM   client_quarantors
-                                          WHERE  id = $id"));
+        name,
+        pid,
+        address,
+        fact_address,
+        fact_address_check,
+        email,
+        phone,
+        sms_sent
+        FROM   client_quarantors
+        WHERE  id = $id"));
     return $res;
 }
 
@@ -179,6 +179,6 @@ function GetPage($res){
                    </table>
             </fieldset>
         </div>';
-
+    
     return $data;
 }

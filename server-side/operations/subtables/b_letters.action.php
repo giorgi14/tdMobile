@@ -35,7 +35,7 @@ switch ($action) {
     case 'get_list':
         $count    = $_REQUEST['count'];
         $hidden   = $_REQUEST['hidden'];
-
+        
         $rResult = mysql_query("SELECT b_letter.id,
                             		   b_letter.datetime,
                             		   b_letter.`name`,
@@ -46,9 +46,9 @@ switch ($action) {
                                 	   b_letter.payment_date
                                 FROM   b_letter
                                 WHERE  b_letter.actived = 1");
-         
+        
         $data = array("aaData" => array());
-
+        
         while ($aRow = mysql_fetch_array($rResult)){
             $row = array();
             for ( $i = 0 ; $i < $count ; $i++ ){
@@ -76,19 +76,19 @@ switch ($action) {
         $client_id = $_REQUEST['client_id'];
         
         $res_b_letter_car = mysql_fetch_assoc(mysql_query("SELECT client_car.car_marc,
-                                                                  client_car.car_id,
-                                                        		  client_car.manufacturing_date,
-                                                        		  client_car.color,
-                                                        	      client_car.registration_number
-                                                           FROM   client
-                                                           JOIN   client_car ON client.id = client_car.client_id
-                                                           WHERE  client.id = '$client_id'"));
+            client_car.car_id,
+            client_car.manufacturing_date,
+            client_car.color,
+            client_car.registration_number
+            FROM   client
+            JOIN   client_car ON client.id = client_car.client_id
+            WHERE  client.id = '$client_id'"));
         
         $data = array('marc'                => $res_b_letter_car[car_marc],
-                      'car_id'              => $res_b_letter_car[car_id],
-                      'manufacturing_date'  => $res_b_letter_car[manufacturing_date],
-                      'color'               => $res_b_letter_car[color],
-                      'registration_number' => $res_b_letter_car[registration_number]);
+            'car_id'              => $res_b_letter_car[car_id],
+            'manufacturing_date'  => $res_b_letter_car[manufacturing_date],
+            'color'               => $res_b_letter_car[color],
+            'registration_number' => $res_b_letter_car[registration_number]);
         break;
         
     default:
@@ -101,29 +101,29 @@ echo json_encode($data);
 
 function insert($user_id, $client_agr_car_mark, $buyer_name, $buyer_pid, $b_letter_car_mark, $b_letter_car_id, $b_letter_manufactur_date, $b_letter_car_color, $b_letter_car_registracion_number, $b_letter_car_selling_price, $b_letter_amount, $b_letter_payment_date, $b_letter_responsible_id){
     
-    mysql_query("INSERT INTO `b_letter` 
-					        (`user_id`, `datetime`, `client_id`, `name`, `pid`, `mark`, `car_id`, `manufactur_date`, `car_color`, `car_registracion_number`, `selling_price`, `amount`, `payment_date`, `responsible_id`, `actived`) 
-		              VALUES 
-					        ('$user_id', NOW(), '$client_agr_car_mark', '$buyer_name', '$buyer_pid', '$b_letter_car_mark', '$b_letter_car_id', '$b_letter_manufactur_date', '$b_letter_car_color', '$b_letter_car_registracion_number', '$b_letter_car_selling_price', '$b_letter_amount', '$b_letter_payment_date', '$b_letter_responsible_id', 1)");
+    mysql_query("INSERT INTO `b_letter`
+        (`user_id`, `datetime`, `client_id`, `name`, `pid`, `mark`, `car_id`, `manufactur_date`, `car_color`, `car_registracion_number`, `selling_price`, `amount`, `payment_date`, `responsible_id`, `actived`)
+        VALUES
+        ('$user_id', NOW(), '$client_agr_car_mark', '$buyer_name', '$buyer_pid', '$b_letter_car_mark', '$b_letter_car_id', '$b_letter_manufactur_date', '$b_letter_car_color', '$b_letter_car_registracion_number', '$b_letter_car_selling_price', '$b_letter_amount', '$b_letter_payment_date', '$b_letter_responsible_id', 1)");
 }
 
 function update($b_letter_hidde, $user_id, $client_agr_car_mark, $buyer_name, $buyer_pid, $b_letter_car_mark, $b_letter_car_id, $b_letter_manufactur_date, $b_letter_car_color, $b_letter_car_registracion_number, $b_letter_car_selling_price, $b_letter_amount, $b_letter_payment_date, $b_letter_responsible_id){
-   
+    
     mysql_query("UPDATE `b_letter`
-                    SET `user_id`                 = '$user_id',
-                        `client_id`               = '$client_agr_car_mark',
-                        `name`                    = '$buyer_name',
-                        `pid`                     = '$buyer_pid',
-                        `mark`                    = '$b_letter_car_mark',
-                        `car_id`                  = '$b_letter_car_id',
-                        `manufactur_date`         = '$b_letter_manufactur_date',
-                        `car_color`               = '$b_letter_car_color',
-                        `car_registracion_number` = '$b_letter_car_registracion_number',
-                        `selling_price`           = '$b_letter_car_selling_price',
-                        `amount`                  = '$b_letter_amount',
-                        `payment_date`            = '$b_letter_payment_date',
-                        `responsible_id`          = '$b_letter_responsible_id'
-                  WHERE `id`                      = '$b_letter_hidde'");
+        SET `user_id`                 = '$user_id',
+        `client_id`               = '$client_agr_car_mark',
+        `name`                    = '$buyer_name',
+        `pid`                     = '$buyer_pid',
+        `mark`                    = '$b_letter_car_mark',
+        `car_id`                  = '$b_letter_car_id',
+        `manufactur_date`         = '$b_letter_manufactur_date',
+        `car_color`               = '$b_letter_car_color',
+        `car_registracion_number` = '$b_letter_car_registracion_number',
+        `selling_price`           = '$b_letter_car_selling_price',
+        `amount`                  = '$b_letter_amount',
+        `payment_date`            = '$b_letter_payment_date',
+        `responsible_id`          = '$b_letter_responsible_id'
+        WHERE `id`                      = '$b_letter_hidde'");
 }
 
 function get_client_car($id){
@@ -132,9 +132,9 @@ function get_client_car($id){
                         	   CONCAT(client.`name`, client.lastname, '/N', client_loan_agreement.id, '/', client_car.car_marc) AS `name`
                         FROM   client
                         JOIN   client_car ON client.id = client_car.client_id
-                        JOIN   client_loan_agreement ON client_loan_agreement.client_id = client.id 
+                        JOIN   client_loan_agreement ON client_loan_agreement.client_id = client.id
                         WHERE  client.actived = 1");
-
+    
     $data .= '<option value="0" selected="selected">----</option>';
     while( $res = mysql_fetch_assoc($req)){
         if($res['id'] == $id){
@@ -153,7 +153,7 @@ function get_b_letter_responsible($id){
                         FROM   users
                         JOIN   user_info ON user_info.user_id = users.id
                         WHERE  users.actived = 1");
-
+    
     $data .= '<option value="0" selected="selected">----</option>';
     while( $res = mysql_fetch_assoc($req)){
         if($res['id'] == $id){
@@ -167,21 +167,21 @@ function get_b_letter_responsible($id){
 
 function GetBletter($id){
     $res = mysql_fetch_assoc(mysql_query("SELECT  id,
-                                                  user_id,
-                                            	  client_id,
-                                            	 `name`,
-                                            	  pid,
-                                                  mark,
-                                                  car_id,
-                                                  manufactur_date,
-                                                  car_color,
-                                                  car_registracion_number,
-                                                  selling_price,
-                                                  amount,
-                                                  payment_date,
-                                                  responsible_id
-                                           FROM   b_letter
-                                           WHERE  id = '$id'"));
+        user_id,
+        client_id,
+        `name`,
+        pid,
+        mark,
+        car_id,
+        manufactur_date,
+        car_color,
+        car_registracion_number,
+        selling_price,
+        amount,
+        payment_date,
+        responsible_id
+        FROM   b_letter
+        WHERE  id = '$id'"));
     return $res;
 }
 
@@ -238,6 +238,6 @@ function GetPage($res){
                    </table>
                </fieldset>
             </div>';
-
+    
     return $data;
 }

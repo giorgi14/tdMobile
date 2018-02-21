@@ -21,26 +21,26 @@ switch ($action) {
     case 'get_add_page':
         $page = GetPage('');
         $data = array('page'	=> $page);
-
+        
         break;
     case 'get_edit_page':
         $page = GetPage(GetClient($id));
         $data = array('page'	=> $page);
-
+        
         break;
     case 'get_list':
         $count    = $_REQUEST['count'];
         $hidden   = $_REQUEST['hidden'];
         $local_id = $_REQUEST['local_id'];
-
+        
         $rResult = mysql_query("SELECT client_person.id,
-                                	   client_person.person,
-                                	   client_person.phone
-                                FROM   client_person
-                                WHERE  client_id = $local_id AND actived = 1");
-         
+            client_person.person,
+            client_person.phone
+            FROM   client_person
+            WHERE  client_id = $local_id AND actived = 1");
+        
         $data = array("aaData"	=> array());
-
+        
         while ( $aRow = mysql_fetch_array( $rResult )){
             $row = array();
             for ( $i = 0 ; $i < $count ; $i++ ){
@@ -54,11 +54,11 @@ switch ($action) {
             }
             $data['aaData'][] = $row;
         }
-
+        
         break;
     case 'disable':
         mysql_query("UPDATE `client_person` SET `actived`='0' WHERE `id`='$id'");
-
+        
         break;
     case 'save_client_pers':
         if($client_pers_hidde == ''){
@@ -76,29 +76,29 @@ $data['error'] = $error;
 echo json_encode($data);
 
 function insert($user_id, $local_id, $client_pers, $client_pers_phone, $sms_sent_checkbox){
-    mysql_query("INSERT INTO `client_person` 
-					         (`user_id`, `client_id`, `datetime`, `person`, `phone`, `sms_sent`, `actived`) 
-		               VALUES 
-					         ('$user_id', '$local_id', NOW(), '$client_pers', '$client_pers_phone', '$sms_sent_checkbox', 1)");
+    mysql_query("INSERT INTO `client_person`
+        (`user_id`, `client_id`, `datetime`, `person`, `phone`, `sms_sent`, `actived`)
+        VALUES
+        ('$user_id', '$local_id', NOW(), '$client_pers', '$client_pers_phone', '$sms_sent_checkbox', 1)");
 }
 
 function update($client_pers_hidde, $user_id, $local_id, $client_pers, $client_pers_phone, $sms_sent_checkbox){
     mysql_query("UPDATE `client_person`
-                	 SET `user_id`  = '$user_id',
-                		 `datetime` = NOW(),
-                	     `person`   = '$client_pers',
-                		 `phone`    = '$client_pers_phone',
-                         `sms_sent` = '$sms_sent_checkbox'
-                  WHERE  `id`       = '$client_pers_hidde' ");
+        SET `user_id`  = '$user_id',
+        `datetime` = NOW(),
+        `person`   = '$client_pers',
+        `phone`    = '$client_pers_phone',
+        `sms_sent` = '$sms_sent_checkbox'
+        WHERE  `id`       = '$client_pers_hidde' ");
 }
 
 function GetClient($id){
     $res = mysql_fetch_assoc(mysql_query("SELECT id,
-                                                 person,
-                                        		 phone,
-                                                 sms_sent
-                                          FROM   client_person
-                                          WHERE  id = $id"));
+        person,
+        phone,
+        sms_sent
+        FROM   client_person
+        WHERE  id = $id"));
     return $res;
 }
 
@@ -130,6 +130,6 @@ function GetPage($res){
                    </table>
             </fieldset>
         </div>';
-
+    
     return $data;
 }

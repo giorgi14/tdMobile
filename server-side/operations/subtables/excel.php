@@ -7,22 +7,22 @@ $file_type	= $_REQUEST['file_type'];
 
 if ($file_type == 'payment_schedule') {
     $res =mysql_query("SELECT    client.id,
-                			     CONCAT(client.`name`, ' ', client.lastname) AS `name`,
-                                 DATE_FORMAT(client_loan_agreement.datetime,'%m') AS `month_id`,
-                        		 DATE_FORMAT(client_loan_agreement.datetime,'%Y') AS `year`,
-                                 DATE_FORMAT(client_loan_agreement.datetime,'%d') AS `day`,
-                                 client_loan_agreement.loan_amount,
-                                 client_loan_agreement.loan_months,
-                                 client_loan_agreement.percent,
-                                 client_loan_agreement.loan_type_id
-                       FROM     `client`
-                       LEFT JOIN client_loan_agreement ON client_loan_agreement.client_id = client.id
-                       LEFT JOIN `month` ON `month`.id = DATE_FORMAT(client_loan_agreement.datetime,'%m')
-                       WHERE     client.id = '$local_id' AND client.actived=1 LIMIT 1");
- 	
-
+        CONCAT(client.`name`, ' ', client.lastname) AS `name`,
+        DATE_FORMAT(client_loan_agreement.datetime,'%m') AS `month_id`,
+        DATE_FORMAT(client_loan_agreement.datetime,'%Y') AS `year`,
+        DATE_FORMAT(client_loan_agreement.datetime,'%d') AS `day`,
+        client_loan_agreement.loan_amount,
+        client_loan_agreement.loan_months,
+        client_loan_agreement.percent,
+        client_loan_agreement.loan_type_id
+        FROM     `client`
+        LEFT JOIN client_loan_agreement ON client_loan_agreement.client_id = client.id
+        LEFT JOIN `month` ON `month`.id = DATE_FORMAT(client_loan_agreement.datetime,'%m')
+        WHERE     client.id = '$local_id' AND client.actived=1 LIMIT 1");
+    
+    
     $row1    = mysql_fetch_assoc($res);
-
+    
     $sum_percent   = 0;
     $sum_P         = 0;
     
@@ -34,7 +34,7 @@ if ($file_type == 'payment_schedule') {
     $year_start            = $row1[year];
     $name                  = $row1[name];
     $loan_type             = $loan_agreement_type;
-            
+    
     if ($loan_type == 2){
         $year_month    = $row1[percent]*12;
         $hint          = 'წლ';
@@ -42,18 +42,18 @@ if ($file_type == 'payment_schedule') {
         $hint = 'თვ';
         $year_month    = $row1[percent];
     }
-            
-    $req = mysql_query("SELECT client_loan_schedule.number,
-                    			client_loan_schedule.schedule_date,
-                    			client_loan_schedule.root,
-                    			client_loan_schedule.percent,
-                    			client_loan_schedule.pay_amount,
-                    			client_loan_schedule.remaining_root
-                         FROM   client_loan_schedule
-                         JOIN   client_loan_agreement ON client_loan_schedule.client_loan_agreement_id = client_loan_agreement.id
-                         WHERE  client_loan_agreement.client_id = $local_id AND client_loan_schedule.actived=1");
     
-    $number = mysql_num_rows($req)+25;        
+    $req = mysql_query("SELECT client_loan_schedule.number,
+        client_loan_schedule.schedule_date,
+        client_loan_schedule.root,
+        client_loan_schedule.percent,
+        client_loan_schedule.pay_amount,
+        client_loan_schedule.remaining_root
+        FROM   client_loan_schedule
+        JOIN   client_loan_agreement ON client_loan_schedule.client_loan_agreement_id = client_loan_agreement.id
+        WHERE  client_loan_agreement.client_id = $local_id AND client_loan_schedule.actived=1");
+    
+    $number = mysql_num_rows($req)+25;
     while ($row = mysql_fetch_assoc($req)){
         $sum_percent += $row[percent];
         $sum_P       += $row[pay_amount];
@@ -73,14 +73,14 @@ if ($file_type == 'payment_schedule') {
     				</ss:Cell>
     				<ss:Cell>
     					<ss:Data ss:Type="String">'.$row[percent].'</ss:Data>
-    				</ss:Cell>							
+    				</ss:Cell>
     				<ss:Cell>
     					<ss:Data ss:Type="String">'.$row[remaining_root].'</ss:Data>
     				</ss:Cell>
     			</ss:Row>';
     }
     
-	$dat .= '   <ss:Row>
+    $dat .= '   <ss:Row>
 				<ss:Cell>
 					<ss:Data ss:Type="String"></ss:Data>
 				</ss:Cell>
@@ -120,11 +120,11 @@ if ($file_type == 'payment_schedule') {
 					<ss:Data ss:Type="String"></ss:Data>
 				</ss:Cell>
 			</ss:Row>';
-	$name = "სესხის დაფარვის გრაფიკი";
-
-
-
-$data = '
+    $name = "სესხის დაფარვის გრაფიკი";
+    
+    
+    
+    $data = '
 <?xml version="1.0" encoding="utf-8"?><?mso-application progid="Excel.Sheet"?>
 <ss:Workbook xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns:o="urn:schemas-microsoft-com:office:office">
 	<o:DocumentProperties>
@@ -170,7 +170,7 @@ $data = '
 		<ss:Names>
 			<ss:NamedRange ss:Name="Print_Titles" ss:RefersTo="=\' '.$number.' \'!R1:R2" />
 		</ss:Names>
-		
+			    
 		<ss:Table x:FullRows="1" x:FullColumns="1" ss:ExpandedColumnCount="16" ss:ExpandedRowCount="'.$number.'">
 		    
 			<ss:Column ss:AutoFitWidth="1" ss:Width="100" />
@@ -344,7 +344,7 @@ $data = '
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 			</ss:Row>
-			
+					    
 			<ss:Row ss:AutoFitHeight="1" ss:Height="25">
 				<ss:Cell ss:StyleID="headercell">
 					<ss:Data ss:Type="String">#</ss:Data>
@@ -365,18 +365,18 @@ $data = '
 				<ss:Cell ss:StyleID="headercell">
 					<ss:Data ss:Type="String">პროცენტი</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
-				</ss:Cell>				
+				</ss:Cell>
 				<ss:Cell ss:StyleID="headercell">
 					<ss:Data ss:Type="String">ნაშთი შენატანის შემდეგ</ss:Data>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 			</ss:Row>
-		
-'; 
-$data .= $dat; 
-  
-		
-$data .='</ss:Table>
+					    
+';
+    $data .= $dat;
+    
+    
+    $data .='</ss:Table>
 		<x:WorksheetOptions>
 			<x:PageSetup>
 				<x:Layout x:CenterHorizontal="1" x:Orientation="Portrait" />
@@ -400,45 +400,45 @@ $data .='</ss:Table>
 	</ss:Worksheet>
 </ss:Workbook>
 		';
-
+    
 }elseif ($file_type == 'download_insurance'){
     $insurance_hidde = $_REQUEST['insurance_hidde'];
     $local_id        = $_REQUEST['local_id'];
     $row1 =mysql_fetch_assoc(mysql_query("SELECT CONCAT(client.name, ' ', client.lastname) AS name,
-                                    			 client.pid,
-                                    			 client.juridical_address,
-                                    			 client.phone,
-                                                 SUBSTRING_INDEX(client_car.car_marc, ' ', 1) AS model,
-                                                 SUBSTRING_INDEX(client_car.car_marc, ' ', -1) AS car_marc,
-                                    			 client_car.car_wheel,
-                                    			 car_type.`name` AS car_type_name,
-                                                 client_car.car_seats,
-                                    			 client_car.engine_size,
-                                    			 client_car.manufacturing_date AS manufacturing_date,
-                                    			 client_car.registration_number,
-                                    			 DATE_FORMAT(client_car.car_sale_date, '%d.%m.%Y') AS car_sale_date,
-                                    			 car_insurance_info.car_real_price AS car_price,
-                                    			 car_insurance_info.car_loan_amount AS loan_amount,
-                                    			 car_insurance_info.car_insurance_amount AS insurance_price_usd,
-                                                 DATE_FORMAT(car_insurance_info.car_insurance_start, '%d.%m.%Y') AS insurance_start_date,
-                                    			 DATE_FORMAT(car_insurance_info.car_insurance_end, '%d.%m.%Y') AS insurance_end_date,
-                                    			 DATE_FORMAT(car_insurance_info.datetime, '%d.%m.%Y') AS car_insurance_info_datetime,
-                                                 client_loan_agreement.loan_currency_id
-                                            FROM car_insurance_info
-                                            JOIN client ON client.id = car_insurance_info.client_id
-                                            JOIN client_loan_agreement ON client.id = client_loan_agreement.client_id
-                                            JOIN client_car ON client.id = client_car.client_id
-                                            JOIN car_type ON car_type.id = client_car.type_id
-                                            WHERE car_insurance_info.id = '$insurance_hidde' AND car_insurance_info.actived = 1"));
+        client.pid,
+        client.juridical_address,
+        client.phone,
+        SUBSTRING_INDEX(client_car.car_marc, ' ', 1) AS model,
+        SUBSTRING_INDEX(client_car.car_marc, ' ', -1) AS car_marc,
+        client_car.car_wheel,
+        car_type.`name` AS car_type_name,
+        client_car.car_seats,
+        client_car.engine_size,
+        client_car.manufacturing_date AS manufacturing_date,
+        client_car.registration_number,
+        DATE_FORMAT(client_car.car_sale_date, '%d.%m.%Y') AS car_sale_date,
+        car_insurance_info.car_real_price AS car_price,
+        car_insurance_info.car_loan_amount AS loan_amount,
+        car_insurance_info.car_insurance_amount AS insurance_price_usd,
+        DATE_FORMAT(car_insurance_info.car_insurance_start, '%d.%m.%Y') AS insurance_start_date,
+        DATE_FORMAT(car_insurance_info.car_insurance_end, '%d.%m.%Y') AS insurance_end_date,
+        DATE_FORMAT(car_insurance_info.datetime, '%d.%m.%Y') AS car_insurance_info_datetime,
+        client_loan_agreement.loan_currency_id
+        FROM car_insurance_info
+        JOIN client ON client.id = car_insurance_info.client_id
+        JOIN client_loan_agreement ON client.id = client_loan_agreement.client_id
+        JOIN client_car ON client.id = client_car.client_id
+        JOIN car_type ON car_type.id = client_car.type_id
+        WHERE car_insurance_info.id = '$insurance_hidde' AND car_insurance_info.actived = 1"));
     
     $req = mysql_query("SELECT `name`,
-                				DATE_FORMAT(born_date, '%d.%m.%Y') AS `born_date`,
-                                position,
-                                TIMESTAMPDIFF(YEAR, born_date, CURDATE()) AS age,
-                				driving_license_type,
-                				DATE_FORMAT(driving_license_date, '%d.%m.%Y') AS `driving_license_date`
-                        FROM   `client_car_drivers`
-                        WHERE   actived = 1 AND client_id = '$local_id'");
+        DATE_FORMAT(born_date, '%d.%m.%Y') AS `born_date`,
+        position,
+        TIMESTAMPDIFF(YEAR, born_date, CURDATE()) AS age,
+        driving_license_type,
+        DATE_FORMAT(driving_license_date, '%d.%m.%Y') AS `driving_license_date`
+        FROM   `client_car_drivers`
+        WHERE   actived = 1 AND client_id = '$local_id'");
     
     $curense = 'აშშ დოლარი';
     if($row1[loan_currency_id] == 1){
@@ -627,9 +627,9 @@ $data .='</ss:Table>
 		<ss:Names>
 			<ss:NamedRange ss:Name="Print_Titles" ss:RefersTo="=\' '.$number.' \'!R1:R2" />
 		</ss:Names>
-    
+			    
 		<ss:Table x:FullRows="1" x:FullColumns="1" ss:ExpandedColumnCount="8" ss:ExpandedRowCount="'.$number.'">
-    
+		    
 			<ss:Column ss:AutoFitWidth="1" ss:Width="50" />
 			<ss:Column ss:AutoFitWidth="1" ss:Width="100" />
 			<ss:Column ss:AutoFitWidth="1" ss:Width="100" />
@@ -937,7 +937,7 @@ $data .='</ss:Table>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 			</ss:Row>
-		    
+			    
 		    <ss:Row ss:AutoFitHeight="1" ss:Height="18">
 				<ss:Cell ss:MergeAcross="5" ss:StyleID="headercell2">
 					<ss:Data ss:Type="String">მართვას თუ არა ავტოტრანსპორტს ნებისმიერი პიროვნება 25 წლამდე</ss:Data>
@@ -948,7 +948,7 @@ $data .='</ss:Table>
 					<ss:NamedCell ss:Name="Print_Titles"/>
 				</ss:Cell>
 			</ss:Row>
-		    
+			    
 		    <ss:Row ss:AutoFitHeight="1" ss:Height="18">
 				<ss:Cell ss:MergeAcross="5" ss:StyleID="headercell2">
 					<ss:Data ss:Type="String">მოთავსებულია თუ არა ავტოტრანსპორტი დაკეტილ ავტოფარეხში ან დაცულ ავტოსადგომზე</ss:Data>
@@ -1296,4 +1296,3 @@ file_put_contents('excel.xls', $data);
 
 
 
-	

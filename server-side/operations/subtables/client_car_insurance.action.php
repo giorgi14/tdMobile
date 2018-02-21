@@ -25,28 +25,28 @@ switch ($action) {
     case 'get_add_page':
         $page = GetPage('');
         $data = array('page'	=> $page);
-
+        
         break;
     case 'get_edit_page':
         $page = GetPage(GetClient($id));
         $data = array('page'	=> $page);
-
+        
         break;
     case 'get_list':
         $count    = $_REQUEST['count'];
         $hidden   = $_REQUEST['hidden'];
         $local_id = $_REQUEST['local_id'];
-
+        
         $rResult = mysql_query("SELECT id,
-                        			   datetime,
-                        			   car_insurance_start,
-                        			   car_insurance_end,
-                        			   car_insurance_amount
-                                FROM   car_insurance_info
-                                WHERE  actived = 1 AND client_id = '$local_id'");
-         
+            datetime,
+            car_insurance_start,
+            car_insurance_end,
+            car_insurance_amount
+            FROM   car_insurance_info
+            WHERE  actived = 1 AND client_id = '$local_id'");
+        
         $data = array("aaData"	=> array());
-
+        
         while ( $aRow = mysql_fetch_array( $rResult )){
             $row = array();
             for ( $i = 0 ; $i < $count ; $i++ ){
@@ -60,11 +60,11 @@ switch ($action) {
             }
             $data['aaData'][] = $row;
         }
-
+        
         break;
     case 'disable':
         mysql_query("UPDATE `car_insurance_info` SET `actived`='0' WHERE `id`='$id'");
-
+        
         break;
     case 'save_insurance_info':
         
@@ -87,36 +87,36 @@ $data['error'] = $error;
 echo json_encode($data);
 
 function insert($user_id, $local_id, $car_loan_amount, $car_real_price, $car_ins_registration_number, $car_insurance_amount, $ins_payy, $car_insurance_start, $car_insurance_end){
-    mysql_query("INSERT INTO `car_insurance_info` 
-            				(`user_id`, `datetime`, `client_id`, `car_loan_amount`, `car_real_price`, `car_ins_registration_number`, `car_insurance_amount`, `ins_payy`, `car_insurance_start`, `car_insurance_end`, `actived`) 
-            		  VALUES 
-            				('$user_id', NOW(), '$local_id', '$car_loan_amount', '$car_real_price', '$car_ins_registration_number', '$car_insurance_amount', '$ins_payy', '$car_insurance_start', '$car_insurance_end', 1)");
+    mysql_query("INSERT INTO `car_insurance_info`
+        (`user_id`, `datetime`, `client_id`, `car_loan_amount`, `car_real_price`, `car_ins_registration_number`, `car_insurance_amount`, `ins_payy`, `car_insurance_start`, `car_insurance_end`, `actived`)
+        VALUES
+        ('$user_id', NOW(), '$local_id', '$car_loan_amount', '$car_real_price', '$car_ins_registration_number', '$car_insurance_amount', '$ins_payy', '$car_insurance_start', '$car_insurance_end', 1)");
 }
 
 function update($car_insurance_hidde, $car_loan_amount, $car_real_price, $car_ins_registration_number, $car_insurance_amount, $ins_payy, $car_insurance_start, $car_insurance_end){
-   mysql_query("UPDATE `car_insurance_info`
-                   SET `user_id`                     = '$user_id',
-        			   `car_loan_amount`             = '$car_loan_amount',
-        			   `car_real_price`              = '$car_real_price',
-        			   `car_ins_registration_number` = '$car_ins_registration_number',
-        			   `car_insurance_amount`        = '$car_insurance_amount',
-                       `ins_payy`                    = '$ins_payy',
-        			   `car_insurance_start`         = '$car_insurance_start',
-        			   `car_insurance_end`           = '$car_insurance_end'
-                WHERE  `id`                          = '$car_insurance_hidde'");
+    mysql_query("UPDATE `car_insurance_info`
+        SET `user_id`                     = '$user_id',
+        `car_loan_amount`             = '$car_loan_amount',
+        `car_real_price`              = '$car_real_price',
+        `car_ins_registration_number` = '$car_ins_registration_number',
+        `car_insurance_amount`        = '$car_insurance_amount',
+        `ins_payy`                    = '$ins_payy',
+        `car_insurance_start`         = '$car_insurance_start',
+        `car_insurance_end`           = '$car_insurance_end'
+        WHERE  `id`                          = '$car_insurance_hidde'");
 }
 
 function GetClient($id){
     $res = mysql_fetch_assoc(mysql_query("SELECT id,
-                                                 car_loan_amount,
-                                                 car_real_price,
-                                        		 car_ins_registration_number,
-                                                 car_insurance_amount,
-                                                 car_insurance_start,
-                                                 car_insurance_end,
-                                                 ins_payy
-                                          FROM   car_insurance_info
-                                          WHERE  id = $id"));
+        car_loan_amount,
+        car_real_price,
+        car_ins_registration_number,
+        car_insurance_amount,
+        car_insurance_start,
+        car_insurance_end,
+        ins_payy
+        FROM   car_insurance_info
+        WHERE  id = $id"));
     return $res;
 }
 
@@ -173,6 +173,6 @@ function GetPage($res){
                    </table>
             </fieldset>
         </div>';
-
+    
     return $data;
 }

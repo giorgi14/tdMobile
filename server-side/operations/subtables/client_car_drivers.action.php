@@ -23,28 +23,28 @@ switch ($action) {
     case 'get_add_page':
         $page = GetPage('');
         $data = array('page'	=> $page);
-
+        
         break;
     case 'get_edit_page':
         $page = GetPage(GetClient($id));
         $data = array('page'	=> $page);
-
+        
         break;
     case 'get_list':
         $count    = $_REQUEST['count'];
         $hidden   = $_REQUEST['hidden'];
         $local_id = $_REQUEST['local_id'];
-
+        
         $rResult = mysql_query("SELECT client_car_drivers.id,
-                                	   client_car_drivers.name,
-                                	   client_car_drivers.born_date,
-                                       client_car_drivers.driving_license_type,
-                                       client_car_drivers.driving_license_date
-                                FROM   client_car_drivers
-                                WHERE  client_id = $local_id AND actived = 1");
-         
+            client_car_drivers.name,
+            client_car_drivers.born_date,
+            client_car_drivers.driving_license_type,
+            client_car_drivers.driving_license_date
+            FROM   client_car_drivers
+            WHERE  client_id = $local_id AND actived = 1");
+        
         $data = array("aaData"	=> array());
-
+        
         while ( $aRow = mysql_fetch_array( $rResult )){
             $row = array();
             for ( $i = 0 ; $i < $count ; $i++ ){
@@ -58,11 +58,11 @@ switch ($action) {
             }
             $data['aaData'][] = $row;
         }
-
+        
         break;
     case 'disable':
         mysql_query("UPDATE `client_car_drivers` SET `actived`='0' WHERE `id`='$id'");
-
+        
         break;
     case 'save_car_drivers':
         
@@ -81,30 +81,30 @@ $data['error'] = $error;
 echo json_encode($data);
 
 function insert($user_id, $local_id, $name, $born,$license_type,$license_born){
-    mysql_query("INSERT INTO `client_car_drivers` 
-						(`user_id`, `datetime`, `client_id`, `name`, `born_date`, `driving_license_type`, `driving_license_date`) 
-					VALUES 
-					('$user_id', NOW(), '$local_id', '$name', '$born', '$license_type', '$license_born')");
+    mysql_query("INSERT INTO `client_car_drivers`
+        (`user_id`, `datetime`, `client_id`, `name`, `born_date`, `driving_license_type`, `driving_license_date`)
+        VALUES
+        ('$user_id', NOW(), '$local_id', '$name', '$born', '$license_type', '$license_born')");
 }
 
 function update($car_driver_hidde, $user_id, $name, $born,$license_type,$license_born){
-   mysql_query("UPDATE `client_car_drivers`
-                    SET `name`                 = '$name',
-                        `born_date`            = '$born',
-                        `driving_license_type` = '$license_type',
-                        `driving_license_date` = '$license_born'
-                 WHERE  `id`                   = '$car_driver_hidde' ");
+    mysql_query("UPDATE `client_car_drivers`
+        SET `name`                 = '$name',
+        `born_date`            = '$born',
+        `driving_license_type` = '$license_type',
+        `driving_license_date` = '$license_born'
+        WHERE  `id`                   = '$car_driver_hidde' ");
 }
 
 function GetClient($id){
     $res = mysql_fetch_assoc(mysql_query("SELECT id,
-                                                 name,
-                                                 position,
-                                        		 born_date,
-                                                 driving_license_type,
-                                                 driving_license_date
-                                          FROM   client_car_drivers
-                                          WHERE  id = $id"));
+        name,
+        position,
+        born_date,
+        driving_license_type,
+        driving_license_date
+        FROM   client_car_drivers
+        WHERE  id = $id"));
     return $res;
 }
 
@@ -137,6 +137,6 @@ function GetPage($res){
                    </table>
             </fieldset>
         </div>';
-
+    
     return $data;
 }

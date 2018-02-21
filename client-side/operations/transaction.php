@@ -1070,7 +1070,7 @@
     							$("#percent2").val('');
     							$("#penalti_fee2").val('');
 
-    							$('#currency_id').html(data.currency_data).trigger("chosen:updated");
+    							$('#currency_id').html(data.currency).trigger("chosen:updated");
     							$('#currency_id').prop('disabled', true).trigger("chosen:updated");
     						}
     					}
@@ -1161,6 +1161,7 @@
 	    							$("#other_payed1").val(data.other_amount);
 	    							$("#hidde_deal_id").val(data.deal_id);
 	    							$("#deal_Fee1").val(data.deal_amount);
+	    							$('#currency_id').html(data.currenc).trigger("chosen:updated");
 	    							$('#currency_id').prop('disabled', true).trigger("chosen:updated");
 								}
 	    					}
@@ -1212,6 +1213,7 @@
 	    							$("#hidde_deal_id").val(data.deal_id);
 	    							$("#hidde_deal1_id").val(data.deal1_id);
 	    							$("#deal_Fee1").val(data.deal_amount);
+	    							$('#currency_id').html(data.currenc).trigger("chosen:updated");
 	    							$('#currency_id').prop('disabled', true).trigger("chosen:updated");
 								}
 	    					}
