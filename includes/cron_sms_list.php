@@ -3,7 +3,7 @@ require_once('classes/core.php');
 
 $user = $_SESSION['USERID'];
 
-$result = mysql_query("SELECT  DATE_FORMAT(client_loan_schedule.pay_date, '%d.%m.%Y') AS `pay_date`,
+$result = mysql_query("SELECT  DATE_FORMAT(client_loan_schedule.schedule_date, '%d.%m.%Y') AS `pay_date`,
                                client_loan_schedule.id,
                                client_loan_agreement.loan_currency_id,
                                client_loan_schedule.pay_amount AS `pay_amount`,
@@ -26,7 +26,7 @@ $result = mysql_query("SELECT  DATE_FORMAT(client_loan_schedule.pay_date, '%d.%m
                         WHERE  client_loan_schedule.actived = 1 AND client.actived = 1
                         AND    client_loan_schedule.status = 0
                         AND    client_loan_agreement.canceled_status = 0
-                        AND    DATEDIFF(client_loan_schedule.pay_date,CURDATE()) IN(SELECT sent_day.count FROM sent_day WHERE sent_day.actived = 1)");
+                        AND    DATEDIFF(client_loan_schedule.schedule_date,CURDATE()) IN(SELECT sent_day.count FROM sent_day WHERE sent_day.actived = 1)");
 
 while ($row = mysql_fetch_array($result)) {
     
